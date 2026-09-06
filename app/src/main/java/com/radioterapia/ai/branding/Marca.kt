@@ -11,7 +11,7 @@ package com.radioterapia.ai.branding
  * acaba deixando pedaço nosso para trás sem má intenção nenhuma.
  *
  * Então tudo o que carrega a marca e é **visível para o usuário** se resolve
- * aqui e nas strings de `values*/strings.xml` (`app_name`, `learn_more`,
+ * aqui e nas strings de cada `res/values-XX` (`app_name`, `learn_more`,
  * `about_title`, `about_website`). Trocar esses dois lugares e o ícone basta.
  *
  * O QUE **NÃO** ENTRA AQUI
