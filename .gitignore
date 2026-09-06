@@ -1,0 +1,50 @@
+# Build
+build/
+app/build/
+.gradle/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# Configuração local da máquina
+local.properties
+.claude/settings.local.json
+
+# IDE
+.idea/
+*.iml
+.DS_Store
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Assinatura — NUNCA versionar.
+# O .gitignore protege o Git e NAO protege o Drive: por isso a chave de release
+# mora fora de C:\AI_PROJETOS, apontada pela variavel PHOTOID_RT_KEYSTORE.
+*.keystore
+*.jks
+keystore.properties
+key.properties
+google-services.json
+
+# Bytecode do Python — carrega o caminho absoluto de onde foi compilado
+__pycache__/
+*.pyc
+
+# Saída de validação
+*.log
+
+# Pasta de entrega (APK gerado)
+entrega/
+
+# DADO DE PACIENTE — nunca dentro de C:\AI, que sincroniza com o Drive.
+# O risco real aqui é procedimental: alguém larga um CSV de verdade da
+# clínica na pasta do projeto para testar a importação da base. O ignore
+# do Git NÃO impede o Drive de sincronizar — ele só evita o commit. Se um
+# CSV real chegar aqui, apagar não basta: ele já subiu.
+*.csv
+*.xlsx
+*.xlsb
+*.dcm

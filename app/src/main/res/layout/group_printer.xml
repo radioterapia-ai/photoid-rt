@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView style="@style/FieldLabel" android:text="@string/printer_ip" />
+    <EditText android:id="@+id/edtPrinterIp"
+        style="@style/InputField"
+        android:hint="192.0.2.50" />
+
+    <TextView style="@style/FieldLabel" android:text="@string/printer_name" />
+    <EditText android:id="@+id/edtPrinterName"
+        style="@style/InputField"
+        android:hint="@string/printer_name_hint" />
+
+    <Button
+        android:id="@+id/btnTestPrinter"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/test_printer"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/brand_primary"
+        android:maxLines="1"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="9sp"
+        android:autoSizeMaxTextSize="14sp"
+        android:autoSizeStepGranularity="1sp" />
+
+    <TextView style="@style/FieldLabel"
+        android:layout_marginTop="12dp"
+        android:text="@string/printer_duplex_title" />
+
+    <RadioGroup
+        android:id="@+id/rgDuplex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton android:id="@+id/rbDuplexOff"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/duplex_off"
+            android:textColor="@color/text_primary" android:textSize="13sp" />
+
+        <RadioButton android:id="@+id/rbDuplexLong"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/duplex_long"
+            android:textColor="@color/text_primary" android:textSize="13sp" />
+
+        <RadioButton android:id="@+id/rbDuplexShort"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/duplex_short"
+            android:textColor="@color/text_primary" android:textSize="13sp" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/txtPrinterTestResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="11sp"
+        android:fontFamily="monospace"
+        android:visibility="gone"
+        android:layout_marginTop="6dp" />
+</LinearLayout>

@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tela de Finalização / Pós-processamento (item 8).
+    
+    Comportamento:
+    - Após o usuário clicar "Finalizar simulação" na câmera, a sessão é ENCERRADA
+      automaticamente (sessionManager.limparSessao() na MainActivity) - assim a Home
+      não mostra mais rascunho em andamento ao voltar.
+    - Esta tela mostra o resultado e oferece 4 ações OPCIONAIS:
+        1. Visualizar PDF  (abre o PDF no app padrão do sistema)
+        2. Enviar para impressora (só habilita se impressora configurada)
+        3. Editar cadastro (abre EditarPacienteActivity)
+        4. Adicionar mais fotos (volta pra MainActivity)
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/txtFinTitulo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/fin_confirm_title"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/txtResumo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:background="@color/bg_card"
+            android:textColor="@color/text_primary" />
+
+        <!-- ===== TIME-OUT (rotina da clínica): sítio opcional + risco/precaução.
+             Visível somente se o PDF inclui a página (Configurações/Onboarding). -->
+        <LinearLayout
+            android:id="@+id/layoutTimeOutCampos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView style="@style/FieldLabel"
+                android:text="@string/team_medico_label" />
+
+            <AutoCompleteTextView
+                android:id="@+id/actTimeoutMedico"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:hint="@string/timeout_medico_hint"
+                android:textSize="14sp"
+                android:textColor="#212121"
+                android:textColorHint="#9E9E9E"
+                android:background="@drawable/bg_input_white"
+                android:paddingHorizontal="12dp"
+                android:inputType="textCapWords"
+                android:completionThreshold="1" />
+
+            <TextView style="@style/FieldLabel"
+                android:layout_marginTop="6dp"
+                android:text="@string/timeout_equip_label" />
+
+            <AutoCompleteTextView
+                android:id="@+id/actTimeoutEquip"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:hint="@string/timeout_equip_hint"
+                android:textSize="14sp"
+                android:textColor="#212121"
+                android:textColorHint="#9E9E9E"
+                android:background="@drawable/bg_input_white"
+                android:paddingHorizontal="12dp"
+                android:focusable="false"
+                android:clickable="true"
+                android:drawableEnd="@drawable/ic_dropdown_arrow"
+                android:completionThreshold="1" />
+
+            <TextView style="@style/FieldLabel"
+                android:layout_marginTop="6dp"
+                android:text="@string/sitio_topografia_label" />
+
+            <AutoCompleteTextView
+                android:id="@+id/actTimeoutSitio"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:hint="@string/sitio_topografia_hint"
+                android:textSize="14sp"
+                android:textColor="#212121"
+                android:textColorHint="#9E9E9E"
+                android:background="@drawable/bg_input_white"
+                android:paddingHorizontal="12dp"
+                android:inputType="textCapCharacters"
+                android:completionThreshold="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="6dp">
+
+                <TextView
+                    android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timeout_risco"
+                    android:textColor="@color/text_primary" android:textSize="13sp" />
+
+                <RadioGroup
+                    android:id="@+id/rgTimeoutRisco"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/rbRiscoSim" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timeout_sim" android:textColor="@color/text_primary" android:textSize="12sp" />
+                    <RadioButton android:id="@+id/rbRiscoNao" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timeout_prec"
+                    android:textColor="@color/text_primary" android:textSize="13sp" />
+
+                <RadioGroup
+                    android:id="@+id/rgTimeoutPrec"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/rbPrecSim" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timeout_sim" android:textColor="@color/text_primary" android:textSize="12sp" />
+                    <RadioButton android:id="@+id/rbPrecNao" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timeout_alergia"
+                    android:textColor="@color/text_primary" android:textSize="13sp" />
+
+                <RadioGroup
+                    android:id="@+id/rgTimeoutAlergia"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton android:id="@+id/rbAlergiaSim" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timeout_sim" android:textColor="@color/text_primary" android:textSize="12sp" />
+                    <RadioButton android:id="@+id/rbAlergiaNI" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
+                </RadioGroup>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!--
+            Protocolo desta simulação.
+
+            DEPOIS dos alertas e da caixa de observações, como pedido: é a
+            última decisão da tela, e a que muda o que sai impresso no fim da
+            ficha. O bloco inteiro só aparece quando há mais de um protocolo —
+            com um só não há escolha a fazer, e a faixa seria ruído.
+        -->
+        <LinearLayout
+            android:id="@+id/layoutProtocolos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="14dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prot_escolher_titulo"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prot_escolher_desc"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginBottom="6dp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/faixaProtocolos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <!--
+            Número máximo de frações (opcional).
+
+            ANTES das observações de propósito: é a última informação de
+            PLANEJAMENTO da tela, e a caixa de observações é texto livre — quem
+            começa a escrever ali não volta para preencher um campo acima.
+        -->
+        <LinearLayout
+            android:id="@+id/layoutFracoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/fin_fracoes_label"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/spFracoes"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <!-- Observações da simulação (vira box na ficha do PDF se preenchido) -->
+        <LinearLayout
+            android:id="@+id/layoutObservacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:minHeight="56dp"
+                android:gravity="center"
+                android:paddingHorizontal="14dp"
+                android:text="@string/fin_observation_label"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:background="#33888888" />
+
+            <EditText
+                android:id="@+id/edtObservacao"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:minHeight="56dp"
+                android:gravity="center"
+                android:padding="10dp"
+                android:hint="@string/fin_observation_hint"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="3"
+                android:textSize="14sp"
+                android:textColor="#212121"
+                android:textColorHint="#9E9E9E"
+                android:background="@drawable/bg_input_white" />
+        </LinearLayout>
+
+        <!-- ===== FASE 1 (pré-finalização): Voltar à câmera | Finalizar simulação ===== -->
+        <LinearLayout
+            android:id="@+id/layoutAcoes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+
+            <Button
+                android:id="@+id/btnCancelar"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:gravity="center"
+                android:text="@string/back_to_camera"
+                android:textSize="15sp"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_neutral"
+                android:maxLines="2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeStepGranularity="1sp" />
+
+            <Button
+                android:id="@+id/btnConfirmar"
+                android:layout_width="0dp"
+                android:layout_height="68dp"
+                android:layout_weight="2"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:gravity="center"
+                android:text="@string/finish_simulation"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_save"
+                android:maxLines="2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="15sp"
+                android:autoSizeStepGranularity="1sp" />
+        </LinearLayout>
+
+        <!-- ===== FASE 1-b (Editar dados, pós-finalização): salvar + atalhos ===== -->
+        <LinearLayout
+            android:id="@+id/layoutEdicao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnAtualizarObs"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:text="@string/fin_save_changes"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_save"
+                android:maxLines="2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeMaxTextSize="16sp"
+                android:autoSizeStepGranularity="1sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    style="@style/ButtonOutlineCyan"
+                    android:id="@+id/btnAddFotos"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:text="@string/add_more_photos"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:maxLines="2"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeStepGranularity="1sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtProgresso"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:background="@color/status_info"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"
+            android:text="@string/loading" />
+
+        <!-- ===== FASE 2: dados prontos (não editáveis) ===== -->
+        <LinearLayout
+            android:id="@+id/layoutResultado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/txtResultado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="18dp"
+                android:textSize="13sp"
+                android:textColor="@color/text_primary"
+                android:lineSpacingExtra="4dp"
+                android:background="@color/status_ok" />
+
+            <!-- Linha 1: Visualizar PDF | Imprimir -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="14dp">
+
+                <Button
+                    style="@style/ButtonOutlineCyan"
+                    android:id="@+id/btnVerPdf"
+                    android:layout_width="0dp"
+                    android:layout_height="74dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:gravity="center"
+                    android:stateListAnimator="@null"
+                    android:text="@string/view_pdf"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:maxLines="2"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="13sp"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:autoSizeStepGranularity="1sp" />
+
+                <Button
+                    style="@style/ButtonOutlineCyan"
+                    android:id="@+id/btnImprimir"
+                    android:layout_width="0dp"
+                    android:layout_height="74dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:gravity="center"
+                    android:stateListAnimator="@null"
+                    android:text="@string/print_only"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:maxLines="2"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="13sp"
+                    android:autoSizeMaxTextSize="18sp"
+                    android:autoSizeStepGranularity="1sp" />
+            </LinearLayout>
+
+            <!-- Linha 2: Compartilhar | Editar dados -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    style="@style/ButtonOutlineCyan"
+                    android:id="@+id/btnCompartilharPdf"
+                    android:layout_width="0dp"
+                    android:layout_height="74dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="6dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:gravity="center"
+                    android:drawableStart="@drawable/ic_share"
+                    android:drawablePadding="6dp"
+                    android:text="@string/share_pdf_btn"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:maxLines="2"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeStepGranularity="1sp" />
+
+                <Button
+                    style="@style/ButtonOutlineCyan"
+                    android:id="@+id/btnEditarDados"
+                    android:layout_width="0dp"
+                    android:layout_height="74dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="6dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:gravity="center"
+                    android:text="@string/fin_edit_data"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:maxLines="2"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="10sp"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeStepGranularity="1sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txtImprInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="10dp"
+                android:textSize="13sp"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card_warning"
+                android:visibility="gone" />
+
+            <!-- Voltar ao Menu -->
+            <Button
+                android:id="@+id/btnEncerrar"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="14dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:gravity="center"
+                android:text="@string/finish_save_home"
+                android:textSize="16sp"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_save"
+                android:maxLines="1"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="11sp"
+                android:autoSizeMaxTextSize="16sp"
+                android:autoSizeStepGranularity="1sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

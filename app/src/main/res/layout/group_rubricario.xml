@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Bloco "Rubricário" das Configurações.
+
+    Ordem deliberada: primeiro o interruptor (a maioria só quer ligar ou
+    desligar), depois a orientação, depois os cargos, e por último a equipe —
+    que é a parte que dá trabalho e só interessa a quem já ligou a função.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/chkRubAtivo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_ativo"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_ativo_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_orientacao"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgRubOrientacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <RadioButton
+            android:id="@+id/rbRubRetrato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/rub_retrato"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
+
+        <RadioButton
+            android:id="@+id/rbRubPaisagem"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:text="@string/rub_paisagem"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" />
+    </RadioGroup>
+
+    <!--
+        EQUIPE (bloco). Vem antes dos cargos porque tudo abaixo — a lista de
+        pessoas, o botao de adicionar, o PDF avulso — se refere ao bloco
+        selecionado aqui. Com um bloco so, o seletor mostra uma linha e a
+        rotina e a de sempre.
+    -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_bloco_titulo"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_bloco_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <Spinner
+        android:id="@+id/spRubBloco"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="12dp">
+
+        <Button
+            android:id="@+id/btnRubBlocoNovo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:text="@string/rub_bloco_novo"
+            android:textSize="12sp"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <Button
+            android:id="@+id/btnRubBlocoRenomear"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:layout_marginStart="6dp"
+            android:text="@string/rub_bloco_renomear"
+            android:textSize="12sp"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <Button
+            android:id="@+id/btnRubBlocoExcluir"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:layout_marginStart="6dp"
+            android:text="@string/rub_excluir"
+            android:textSize="12sp"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
+
+        <Button
+            android:id="@+id/btnRubBlocoExportar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:text="@string/rub_bloco_exportar"
+            android:textSize="12sp"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <Button
+            android:id="@+id/btnRubBlocoImportar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:layout_marginStart="6dp"
+            android:text="@string/rub_bloco_importar"
+            android:textSize="12sp"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_bloco_transf_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="12dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_cargos"
+        android:textColor="@color/text_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_cargos_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/edtRubCargos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minLines="3"
+        android:gravity="top|start"
+        android:inputType="textMultiLine|textCapWords"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:layout_marginBottom="14dp"
+        android:autofillHints="" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_equipe"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtRubTotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Tabela da equipe, montada em código: uma linha por pessoa, com
+         editar e excluir. -->
+    <LinearLayout
+        android:id="@+id/listaRubEquipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/btnRubVerPdf"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/rub_ver_pdf"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_ver_pdf_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/btnRubGerarPdf"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/rub_gerar_pdf"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/rub_gerar_pdf_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/btnRubAdicionar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/rub_add"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/brand_primary_dark" />
+</LinearLayout>

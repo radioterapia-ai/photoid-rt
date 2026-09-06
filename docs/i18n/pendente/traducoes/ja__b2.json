@@ -1,0 +1,546 @@
+[
+ {
+  "k": "flash_on",
+  "v": "フラッシュON"
+ },
+ {
+  "k": "flash_off",
+  "v": "フラッシュOFF"
+ },
+ {
+  "k": "mute_label",
+  "v": "シャッター音"
+ },
+ {
+  "k": "mute_on",
+  "v": "音ON"
+ },
+ {
+  "k": "mute_off",
+  "v": "音OFF"
+ },
+ {
+  "k": "scan_instruction_ocr",
+  "v": "患者ラベルを枠内に合わせ、「撮影」をタップしてください。"
+ },
+ {
+  "k": "scan_instruction_barras",
+  "v": "バーコードにカメラを向けてください。"
+ },
+ {
+  "k": "view_pdf",
+  "v": "📄︎ PDFを表示"
+ },
+ {
+  "k": "finish_save_home",
+  "v": "メニューに戻る"
+ },
+ {
+  "k": "printer_offline",
+  "v": "プリンターを利用できません"
+ },
+ {
+  "k": "no_pdf_viewer",
+  "v": "PDFを表示できるアプリが見つかりません"
+ },
+ {
+  "k": "edit_registration",
+  "v": "患者登録を編集"
+ },
+ {
+  "k": "add_more_photos",
+  "v": "写真を追加"
+ },
+ {
+  "k": "resimulate_patient",
+  "v": "新規シミュレーションを開始"
+ },
+ {
+  "k": "patient_history_title",
+  "v": "患者履歴"
+ },
+ {
+  "k": "terms_and_privacy",
+  "v": "規約とプライバシー"
+ },
+ {
+  "k": "terms_title",
+  "v": "利用規約"
+ },
+ {
+  "k": "privacy_title",
+  "v": "プライバシーポリシー"
+ },
+ {
+  "k": "i_agree",
+  "v": "利用規約およびプライバシーポリシーを読み、同意します。また、本アプリが臨床使用について検証されていない支援ツールであることを理解しました"
+ },
+ {
+  "k": "accept_and_continue",
+  "v": "同意して続ける"
+ },
+ {
+  "k": "select_language",
+  "v": "言語を選択"
+ },
+ {
+  "k": "consent_intro",
+  "v": "本アプリを使用する前に、利用規約とプライバシーポリシーをお読みのうえ、同意してください。本アプリができること、できないこと、どの構成要素が第三者製か、データがどこに保存されるかを説明しています。"
+ },
+ {
+  "k": "open_terms",
+  "v": "利用規約を開く"
+ },
+ {
+  "k": "open_privacy",
+  "v": "プライバシーポリシーを開く"
+ },
+ {
+  "k": "pdf_lbl_patient",
+  "v": "患者"
+ },
+ {
+  "k": "pdf_lbl_record",
+  "v": "患者ID"
+ },
+ {
+  "k": "pdf_lbl_birth",
+  "v": "生年月日"
+ },
+ {
+  "k": "pdf_lbl_simdate",
+  "v": "シミュレーション日："
+ },
+ {
+  "k": "pdf_paste_label_here",
+  "v": "ここに患者ラベルを貼付"
+ },
+ {
+  "k": "pdf_title_line1",
+  "v": "位置決め"
+ },
+ {
+  "k": "pdf_title_line2",
+  "v": "写真"
+ },
+ {
+  "k": "pdf_new_sim",
+  "v": "新規シミュレーション"
+ },
+ {
+  "k": "pdf_lbl_face",
+  "v": "顔"
+ },
+ {
+  "k": "pdf_lbl_label",
+  "v": "患者ラベル"
+ },
+ {
+  "k": "pdf_lbl_positioning",
+  "v": "位置決め"
+ },
+ {
+  "k": "pdf_lbl_accessory",
+  "v": "固定具"
+ },
+ {
+  "k": "fin_patient",
+  "v": "患者：%1$s"
+ },
+ {
+  "k": "fin_record",
+  "v": "患者ID：%1$s"
+ },
+ {
+  "k": "fin_birth",
+  "v": "生年月日：%1$s"
+ },
+ {
+  "k": "fin_total_photos",
+  "v": "写真合計：%1$d 枚"
+ },
+ {
+  "k": "fin_face",
+  "v": "  • 顔：%1$d"
+ },
+ {
+  "k": "fin_label",
+  "v": "  • 患者ラベル：%1$d"
+ },
+ {
+  "k": "fin_positioning",
+  "v": "  • 位置決め：%1$d"
+ },
+ {
+  "k": "fin_accessories",
+  "v": "  • 固定具：%1$d"
+ },
+ {
+  "k": "fin_new_sim",
+  "v": "⚠ 新規シミュレーション %1$d"
+ },
+ {
+  "k": "full_name",
+  "v": "氏名"
+ },
+ {
+  "k": "birth_date_label",
+  "v": "生年月日"
+ },
+ {
+  "k": "birth_date_hint",
+  "v": "日/月/年"
+ },
+ {
+  "k": "record_label",
+  "v": "患者ID"
+ },
+ {
+  "k": "record_hint",
+  "v": "患者ID番号"
+ },
+ {
+  "k": "name_required",
+  "v": "患者氏名を入力してください。"
+ },
+ {
+  "k": "pdf_open_error",
+  "v": "PDFを開けませんでした。"
+ },
+ {
+  "k": "pdf_not_found",
+  "v": "この患者のPDFが見つかりません。"
+ },
+ {
+  "k": "saving_locally",
+  "v": "端末に保存しています…"
+ },
+ {
+  "k": "photos_folder_label",
+  "v": "ベースフォルダ（PhotoID_RTを作成）"
+ },
+ {
+  "k": "folder_not_set",
+  "v": "（フォルダ未選択 — 端末の既定を使用）"
+ },
+ {
+  "k": "foldersync_body",
+  "v": "本アプリは内部ストレージの直下、内部ストレージ/PhotoID_RT に保存します：\n• PhotoID_RT/PHOTOS → 患者ごとに1つのフォルダ。写真とPDFが入ります。\n• PhotoID_RT/DATABASE → 患者データベース（エクスポート／インポート）。\n施設のサーバーと同期するには、FolderSync を 内部ストレージ/PhotoID_RT フォルダに向けてください。"
+ },
+ {
+  "k": "folder_chosen_ok",
+  "v": "フォルダを設定しました。"
+ },
+ {
+  "k": "wiz_photos_folder_desc",
+  "v": "本アプリはタブレットの内部ストレージ直下に PhotoID_RT フォルダを作成します。この既定のままでも、別のフォルダを選んでも構いません。"
+ },
+ {
+  "k": "yes",
+  "v": "はい"
+ },
+ {
+  "k": "crop_hint",
+  "v": "ドラッグと2本指のピンチで拡大縮小できます。枠（16:9）の内側が保存されます。"
+ },
+ {
+  "k": "crop_confirm",
+  "v": "切り抜き"
+ },
+ {
+  "k": "remove",
+  "v": "削除"
+ },
+ {
+  "k": "pdf_button",
+  "v": "PDF"
+ },
+ {
+  "k": "wiz_step_counter",
+  "v": "ステップ %1$d / %2$d"
+ },
+ {
+  "k": "wiz_skip_all",
+  "v": "すべてスキップ"
+ },
+ {
+  "k": "csv_col_hint",
+  "v": "CSVの列番号を入力してください（1、2、3...）"
+ },
+ {
+  "k": "extra_id_1_col",
+  "v": "追加ID 1 — 列"
+ },
+ {
+  "k": "extra_id_2_col",
+  "v": "追加ID 2 — 列"
+ },
+ {
+  "k": "extra_id_3_col",
+  "v": "追加ID 3 — 列"
+ },
+ {
+  "k": "lang_restart_note",
+  "v": "ℹ 言語を変更するとアプリが再起動します。"
+ },
+ {
+  "k": "wiz1_welcome",
+  "v": "ようこそ！"
+ },
+ {
+  "k": "wiz1_intro",
+  "v": "本アプリは、放射線治療における位置決め画像の撮影、PDFの生成、複数の宛先への送信を行います。数ステップで初期設定を行いましょう。"
+ },
+ {
+  "k": "wiz1_list",
+  "v": "設定する項目：施設名とロゴ、写真を保存するフォルダ、ネットワークプリンター（任意）。いずれも後から設定画面で変更できます。"
+ },
+ {
+  "k": "wiz3_clinic_identity",
+  "v": "施設情報"
+ },
+ {
+  "k": "wiz3_appears_pdf",
+  "v": "生成されるPDFに表示されます。"
+ },
+ {
+  "k": "wiz3_clinic_name",
+  "v": "施設名"
+ },
+ {
+  "k": "wiz3_logo_label",
+  "v": "ロゴ（透過PNG/JPG）"
+ },
+ {
+  "k": "wiz3_choose_logo",
+  "v": "ロゴ画像を選択"
+ },
+ {
+  "k": "wiz7_all_ready",
+  "v": "準備完了！"
+ },
+ {
+  "k": "wiz7_summary_title",
+  "v": "概要"
+ },
+ {
+  "k": "wiz7_check_summary",
+  "v": "下の内容をご確認ください。\\\"完了\\\"をタップすると使い始められます。"
+ },
+ {
+  "k": "wiz7_review_note",
+  "v": "ℹ すべての内容は ⚙ 設定 からいつでも確認・編集できます。"
+ },
+ {
+  "k": "finish",
+  "v": "完了"
+ },
+ {
+  "k": "csv_from_database_note",
+  "v": "データベースのCSVは PhotoID_RT/DATABASE（アプリのフォルダ）から読み込まれます。.csvファイルをそこに置くか、そのフォルダへ同期したうえで、\"今すぐ同期\"を使用してください。"
+ },
+ {
+  "k": "all_files_title",
+  "v": "ファイルへのアクセスを許可"
+ },
+ {
+  "k": "all_files_message",
+  "v": "写真とPDFをストレージ直下の PhotoID_RT フォルダ（表示・同期が可能）に保存するには、\"すべてのファイルへのアクセス\"の許可が必要です。許可しない場合は、アプリ内部のフォルダに保存されます。"
+ },
+ {
+  "k": "all_files_grant",
+  "v": "許可"
+ },
+ {
+  "k": "later",
+  "v": "後で"
+ },
+ {
+  "k": "keep_suggested_default",
+  "v": "推奨の既定を使う"
+ },
+ {
+  "k": "choose_other_folder",
+  "v": "別のフォルダを選択"
+ },
+ {
+  "k": "wiz_printer_desc",
+  "v": "ネットワークプリンターのIPアドレスを入力すると、位置決めシートをアプリから直接印刷できます。スキップして後から設定することもできます。"
+ },
+ {
+  "k": "reprint_pdf",
+  "v": "シートを再印刷"
+ },
+ {
+  "k": "reprint_confirm",
+  "v": "%1$s の位置決めシートをプリンターに再送信しますか？"
+ },
+ {
+  "k": "wiz_skip_title",
+  "v": "設定をスキップしますか？"
+ },
+ {
+  "k": "wiz_skip_message",
+  "v": "すべての設定は後から ⚙ 設定 で行えます。\n\n続行しますか？"
+ },
+ {
+  "k": "suggested_default_short",
+  "v": "既定（内部ストレージ/PhotoID_RT）"
+ },
+ {
+  "k": "printer_checking",
+  "v": "⏳ プリンターを確認しています…"
+ },
+ {
+  "k": "printer_status_online",
+  "v": "🟢 プリンターはオンラインです（%1$s）— 印刷できます"
+ },
+ {
+  "k": "printer_status_offline",
+  "v": "🔴 プリンターはオフラインです — タブレットがプリンターと同じWi-Fiネットワークに接続されているか確認してください。ここをタップすると再確認します。"
+ },
+ {
+  "k": "pdf_observations",
+  "v": "備考"
+ },
+ {
+  "k": "back_to_camera",
+  "v": "カメラに戻る"
+ },
+ {
+  "k": "fin_observation_label",
+  "v": "備考"
+ },
+ {
+  "k": "fin_observation_hint",
+  "v": "シミュレーションの備考をここに入力してください（3行まで）"
+ },
+ {
+  "k": "pdf_use_label_space",
+  "v": "シートに患者ラベル用の余白を確保"
+ },
+ {
+  "k": "pdf_label_size_hint",
+  "v": "実物の患者ラベルを貼る領域の大きさです。ラベルを使わない場合はチェックを外してください。"
+ },
+ {
+  "k": "pdf_label_width_mm",
+  "v": "幅（mm）"
+ },
+ {
+  "k": "pdf_label_height_mm",
+  "v": "高さ（mm）"
+ },
+ {
+  "k": "group_database",
+  "v": "データベース"
+ },
+ {
+  "k": "period_1m",
+  "v": "1か月"
+ },
+ {
+  "k": "period_6m",
+  "v": "6か月"
+ },
+ {
+  "k": "period_12m",
+  "v": "12か月"
+ },
+ {
+  "k": "period_all",
+  "v": "すべて"
+ },
+ {
+  "k": "period_n_months",
+  "v": "過去 %1$d か月"
+ },
+ {
+  "k": "cache_nothing",
+  "v": "期間より古い症例はありません — 削除対象はありません。"
+ },
+ {
+  "k": "cache_confirm",
+  "v": "注意：この操作は取り消せません。\\n\\n期間 %4$s の患者 %1$d 名、ファイル %2$d 件（%3$.1f MB）を削除します。\\n\\n削除したデータは復元できません。続行しますか？"
+ },
+ {
+  "k": "cache_done",
+  "v": "患者 %1$d 名、ファイル %2$d 件を削除しました。"
+ },
+ {
+  "k": "db_explain",
+  "v": "単一の保存フォルダ（既定：PhotoID_RT 直下）に写真、PDF、データベースを保存します。FolderSync がこのフォルダをサーバーと同期し、アプリは利用可能なものを読み取るだけです。空き容量を確保するには期間指定の削除をご利用ください。"
+ },
+ {
+  "k": "db_status",
+  "v": "ローカルデータベースに患者 %1$d 名"
+ },
+ {
+  "k": "db_format_note",
+  "v": "構成：PhotoID_RT/PHOTOS（写真とPDF）と PhotoID_RT/DATABASE。サーバーとの同期は FolderSync が行います。"
+ },
+ {
+  "k": "patients_in_treatment",
+  "v": "治療中の患者"
+ },
+ {
+  "k": "search_patient_hint",
+  "v": "氏名または患者IDで検索…"
+ },
+ {
+  "k": "treat_action",
+  "v": "治療に追加"
+ },
+ {
+  "k": "treat_done",
+  "v": "患者を治療に追加しました。"
+ },
+ {
+  "k": "already_in_treatment",
+  "v": "患者はすでに治療中です。"
+ },
+ {
+  "k": "discharge_action",
+  "v": "治療終了"
+ },
+ {
+  "k": "discharge_confirm",
+  "v": "%1$s の放射線治療を終了しますか？\n\n患者は治療リストから外れ、履歴には残ります。"
+ },
+ {
+  "k": "discharge_done",
+  "v": "患者の治療を終了しました。"
+ },
+ {
+  "k": "patients_section",
+  "v": "患者"
+ },
+ {
+  "k": "edit_patients",
+  "v": "✏️ 患者を編集"
+ },
+ {
+  "k": "crop_rotate",
+  "v": "↻ 回転"
+ },
+ {
+  "k": "wiz3_no_logo",
+  "v": "ロゴは未設定です"
+ },
+ {
+  "k": "storage_folder_label",
+  "v": "保存フォルダ"
+ },
+ {
+  "k": "remove_pick_period",
+  "v": "古い症例を削除 — 期間を選択してください："
+ },
+ {
+  "k": "remove_old_desc",
+  "v": "下の期間はこの削除にのみ適用されます。期間より古い症例をタブレットから削除します（\"すべての症例\"を選ぶとすべて削除されます）。"
+ },
+ {
+  "k": "remove_old_button",
+  "v": "🗑️ 期間の症例を削除"
+ }
+]

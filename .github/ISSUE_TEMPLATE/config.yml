@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security report
+    url: https://github.com/radioterapia-ai/photoid-rt/security/advisories/new
+    about: Anything touching patient files, credentials or signing. Do not open a public issue.
+  - name: Radioterapia.AI
+    url: https://radioterapia.ai
+    about: About the project and the rest of the ecosystem.

@@ -1,0 +1,142 @@
+[
+ {
+  "k": "group_protocolo",
+  "v": "Protocole"
+ },
+ {
+  "k": "prot_explica",
+  "v": "Pages que le centre ajoute à la fin de la fiche : consentement, consignes au patient, liste de contrôle interne. L'application imprime le PDF tel quel — elle ne superpose que l'étiquette et le logo, là où vous les calez."
+ },
+ {
+  "k": "prot_titulo",
+  "v": "Protocole"
+ },
+ {
+  "k": "prot_padrao_desc",
+  "v": "La fiche telle qu'elle a toujours été, sans page ajoutée. Ne peut pas être supprimé."
+ },
+ {
+  "k": "prot_nome",
+  "v": "Nom du protocole"
+ },
+ {
+  "k": "prot_miniatura",
+  "v": "Vignette"
+ },
+ {
+  "k": "prot_miniatura_desc",
+  "v": "L'image qui identifie ce protocole au moment du choix, à la fin de la simulation."
+ },
+ {
+  "k": "prot_escolher_miniatura",
+  "v": "Choisir une image"
+ },
+ {
+  "k": "prot_paginas",
+  "v": "Pages"
+ },
+ {
+  "k": "prot_paginas_desc",
+  "v": "Elles sortent dans cet ordre, après la feuille de paraphes. Un PDF de plusieurs pages entre en entier."
+ },
+ {
+  "k": "prot_sem_paginas",
+  "v": "Aucune page. Ce protocole imprime la fiche simple."
+ },
+ {
+  "k": "prot_add_pagina",
+  "v": "Ajouter un PDF"
+ },
+ {
+  "k": "prot_pagina_item",
+  "v": "%1$d. PDF de %2$d page(s)"
+ },
+ {
+  "k": "prot_calibrar",
+  "v": "Caler"
+ },
+ {
+  "k": "prot_excluir_pagina_q",
+  "v": "Retirer cette page du protocole ?"
+ },
+ {
+  "k": "prot_falta_nome",
+  "v": "Donnez un nom au protocole."
+ },
+ {
+  "k": "prot_sem_seletor",
+  "v": "Aucune application pour choisir un PDF."
+ },
+ {
+  "k": "prot_pdf_ilegivel",
+  "v": "Ce PDF n'a pas pu être lu. Les fichiers protégés par mot de passe ne fonctionnent pas."
+ },
+ {
+  "k": "prot_pagina_titulo",
+  "v": "Où tombent l'étiquette et le logo"
+ },
+ {
+  "k": "prot_pagina_ajuda",
+  "v": "Faites glisser les rectangles là où ils ne couvrent pas ce qui est déjà imprimé. La position vaut pour toutes les pages de ce PDF."
+ },
+ {
+  "k": "prot_usar_etiqueta",
+  "v": "Superposer l'étiquette d'identification"
+ },
+ {
+  "k": "prot_usar_logo",
+  "v": "Superposer le logo du centre"
+ },
+ {
+  "k": "prot_box_etiqueta",
+  "v": "Étiquette"
+ },
+ {
+  "k": "prot_box_logo",
+  "v": "Logo"
+ },
+ {
+  "k": "prot_pos_resumo",
+  "v": "Étiquette : %1$d mm depuis la gauche, %2$d mm depuis le haut · Logo : %3$d mm depuis la droite, %4$d mm depuis le haut"
+ },
+ {
+  "k": "prot_add",
+  "v": "Ajouter un protocole"
+ },
+ {
+  "k": "prot_excluir_q",
+  "v": "Supprimer le protocole « %1$s » ?"
+ },
+ {
+  "k": "prot_excluir_msg",
+  "v": "Les PDF qui y ont été chargés sont supprimés eux aussi."
+ },
+ {
+  "k": "prot_total",
+  "v": "%1$d protocole(s)"
+ },
+ {
+  "k": "prot_escolher_titulo",
+  "v": "Protocole de cette simulation"
+ },
+ {
+  "k": "prot_escolher_desc",
+  "v": "Choisissez quelles pages finales entrent dans la fiche."
+ },
+ {
+  "k": "prot_qtd_paginas",
+  "v": "%1$d page(s)"
+ },
+ {
+  "k": "prot_marcar",
+  "v": "Choisir"
+ },
+ {
+  "k": "tr_protocolos",
+  "v": "Protocoles"
+ },
+ {
+  "k": "tr_protocolos_desc",
+  "v": "Les protocoles enregistrés, avec les PDF chargés et le calage de chaque page."
+ }
+]

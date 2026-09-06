@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Edição de UM protocolo: nome, miniatura e a lista de páginas.
+
+    A miniatura vem antes das páginas porque é ela que identifica o protocolo na
+    hora de escolher, no fim da simulação — e é a parte que o usuário esquece de
+    definir se ela estiver depois de uma lista que pode ficar longa.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_nome"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtProtNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:autofillHints="" />
+
+        <!--
+            RUBRICARIO — a primeira pagina que este protocolo imprime, e por
+            isso a primeira configuracao depois do nome. Um tablet que atende
+            duas clinicas tem um protocolo por clinica, e e aqui que se diz qual
+            equipe assina a ficha de cada uma.
+        -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_rubricario"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_rubricario_desc"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/spProtRubricario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_miniatura"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_miniatura_desc"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/imgProtMiniatura"
+            android:layout_width="140dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:background="#22FFFFFF"
+            android:contentDescription="@string/prot_miniatura" />
+
+        <Button
+            android:id="@+id/btnProtMiniatura"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/prot_escolher_miniatura"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginVertical="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_paginas"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtProtPaginasDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/prot_paginas_desc"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Uma linha por página, montada em código. -->
+        <LinearLayout
+            android:id="@+id/listaProtPaginas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/btnProtAddPagina"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/prot_add_pagina"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/brand_primary_dark" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="18dp">
+
+            <Button
+                android:id="@+id/btnProtCancelar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="52dp"
+                android:text="@string/cancel"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_neutral" />
+
+            <Button
+                android:id="@+id/btnProtSalvar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="52dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/save"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/brand_primary_dark" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

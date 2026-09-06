@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"one": "%d patient enregistré", "many": "%d patients enregistrés", "other": "%d patients enregistrés"},
+ "treatment_count_plural":   {"one": "%d patient en cours de traitement", "many": "%d patients en cours de traitement", "other": "%d patients en cours de traitement"},
+ "simulations_count_plural": {"one": "%d simulation", "many": "%d simulations", "other": "%d simulations"}
+}

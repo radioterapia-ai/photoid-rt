@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"other": "등록된 환자 %d명"},
+ "treatment_count_plural":   {"other": "치료 중인 환자 %d명"},
+ "simulations_count_plural": {"other": "모의치료 %d회"}
+}

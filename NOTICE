@@ -1,0 +1,98 @@
+PhotoID RT
+Copyright 2026 Henrique Braga
+
+Este produto inclui software desenvolvido como parte do ecossistema
+Radioterapia.AI (https://radioterapia.ai).
+
+================================================================================
+ O QUE ESTE PROJETO E, E O QUE ELE NAO E
+================================================================================
+
+O PhotoID RT e uma CAMADA DE ACESSIBILIDADE. O que construimos e a interface
+que poe recursos ja existentes ao alcance de quem trabalha na sala de simulacao
+de radioterapia — nao os modelos que fazem o reconhecimento.
+
+O reconhecimento optico de caracteres e a leitura de codigo de barras sao
+executados pelo Google ML Kit, componente de terceiro. Nao somos autores desse
+componente, e nao reivindicamos autoria sobre ele.
+
+O que e de nossa autoria: o fluxo de captura categorizada, a organizacao dos
+arquivos em disco, a geracao da ficha de posicionamento e da pagina de Time-Out,
+e as heuristicas que interpretam o texto JA reconhecido pelo ML Kit
+(scan/EtiquetaParser.kt).
+
+Tornar alcançavel nao e ato neutro: e o que transforma "biblioteca disponivel"
+em "usado na clinica". Por isso os avisos e o desenho com conferencia humana em
+cada campo sugerido sao responsabilidade nossa.
+
+================================================================================
+ COMPONENTES DE TERCEIROS
+================================================================================
+
+Apache License 2.0
+------------------
+  AndroidX (core-ktx, appcompat, constraintlayout, recyclerview, viewpager2,
+    exifinterface, documentfile, security-crypto, room)
+    Copyright The Android Open Source Project
+
+  AndroidX CameraX (camera-core, camera-camera2, camera-lifecycle, camera-view)
+    Copyright The Android Open Source Project
+
+  Material Components for Android
+    Copyright The Android Open Source Project
+
+  kotlinx-coroutines-android
+    Copyright JetBrains s.r.o. e contribuidores
+
+  SMBJ
+    Copyright Jeroen van Erp e contribuidores
+
+  ZXing Android Embedded
+    Copyright Journey Mobile e contribuidores
+    Baseado no ZXing, Copyright ZXing Authors
+
+  OpenCSV
+    Copyright Andrew Rucker Jones e contribuidores
+
+  Uma copia da Apache License 2.0 esta em LICENSE, na raiz deste repositorio.
+
+BSD 2-Clause e Apache License 2.0
+---------------------------------
+  Glide
+    Copyright Google Inc. e Bump Technologies Inc.
+    Licenciado sob BSD 2-Clause com partes sob Apache-2.0.
+
+Termos do Google ML Kit (proprietaria, uso gratuito)
+-----------------------------------------------------
+  ML Kit Text Recognition
+  ML Kit Barcode Scanning
+  ML Kit Document Scanner (Google Play services)
+    Copyright Google LLC
+
+  Sujeitos aos Termos de Servico das APIs do Google e aos termos especificos do
+  ML Kit. Nao sao software livre e nao sao redistribuidos como codigo-fonte
+  neste repositorio; sao resolvidos como dependencia binaria no build.
+
+  POSTURA DECLARADA PELO AUTOR: o Google publica o ML Kit como SDK de proposito
+  geral para desenvolvedores. Nao o declara dispositivo medico nem o destina a
+  uso clinico, e tambem nao publica declaracao especifica a respeito. Registramos
+  a ausencia em vez de atribuir ao autor uma posicao que ele nao escreveu.
+
+Somente em teste (nao distribuidos no APK)
+-------------------------------------------
+  JUnit 4 — Eclipse Public License 1.0
+  org.json — JSON License
+
+================================================================================
+ AVISO
+================================================================================
+
+Ferramenta de apoio. Nao validada para uso clinico.
+
+Os campos preenchidos por leitura de etiqueta ou codigo de barras sao sugestao e
+exigem conferencia. A ficha impressa e documento de responsabilidade da equipe
+que a emitiu.
+
+Este repositorio e publicado como material educacional. Nao e dispositivo
+medico. Quem baixa, modifica e implanta responde pelo proprio build e pela
+validacao no proprio servico.

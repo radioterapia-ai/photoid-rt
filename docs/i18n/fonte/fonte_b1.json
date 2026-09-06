@@ -1,0 +1,546 @@
+[
+ {
+  "k": "app_name",
+  "pt": "PhotoID RT"
+ },
+ {
+  "k": "home_subtitle",
+  "pt": "Fotos de Posicionamento para Radioterapia"
+ },
+ {
+  "k": "simulation",
+  "pt": "Simulação"
+ },
+ {
+  "k": "simulation_desc",
+  "pt": "Capturar fotos de posicionamento"
+ },
+ {
+  "k": "treatment",
+  "pt": "Tratamento"
+ },
+ {
+  "k": "treatment_desc",
+  "pt": "Visualizar fotos do paciente"
+ },
+ {
+  "k": "learn_more",
+  "pt": "powered by radioterapia.ai"
+ },
+ {
+  "k": "language",
+  "pt": "Idioma"
+ },
+ {
+  "k": "settings",
+  "pt": "Configurações"
+ },
+ {
+  "k": "save",
+  "pt": "Salvar"
+ },
+ {
+  "k": "cancel",
+  "pt": "Cancelar"
+ },
+ {
+  "k": "confirm",
+  "pt": "Confirmar"
+ },
+ {
+  "k": "back",
+  "pt": "Voltar"
+ },
+ {
+  "k": "next",
+  "pt": "Próximo"
+ },
+ {
+  "k": "ok",
+  "pt": "OK"
+ },
+ {
+  "k": "loading",
+  "pt": "Carregando…"
+ },
+ {
+  "k": "error",
+  "pt": "Erro"
+ },
+ {
+  "k": "success",
+  "pt": "Sucesso"
+ },
+ {
+  "k": "warning",
+  "pt": "Atenção"
+ },
+ {
+  "k": "settings_saved",
+  "pt": "Configurações salvas"
+ },
+ {
+  "k": "group_clinic_identity",
+  "pt": "Identidade da clínica"
+ },
+ {
+  "k": "group_printer",
+  "pt": "Impressora"
+ },
+ {
+  "k": "group_pdf",
+  "pt": "PDF"
+ },
+ {
+  "k": "group_language",
+  "pt": "Idioma"
+ },
+ {
+  "k": "group_stats",
+  "pt": "Estatísticas"
+ },
+ {
+  "k": "group_audit_log",
+  "pt": "Logs e auditoria"
+ },
+ {
+  "k": "group_restore_defaults",
+  "pt": "Restaurar padrões"
+ },
+ {
+  "k": "group_about",
+  "pt": "Sobre"
+ },
+ {
+  "k": "wifi_connected",
+  "pt": "Conectado a: %1$s"
+ },
+ {
+  "k": "wifi_disconnected",
+  "pt": "⚠ Sem Wi-Fi"
+ },
+ {
+  "k": "pending_count",
+  "pt": "%1$d envio(s) pendente(s)"
+ },
+ {
+  "k": "resend_one",
+  "pt": "Reenviar este"
+ },
+ {
+  "k": "no_pending",
+  "pt": "Nenhum envio pendente"
+ },
+ {
+  "k": "company_logo",
+  "pt": "Logotipo da empresa"
+ },
+ {
+  "k": "company_logo_desc",
+  "pt": "Aparece no canto superior do PDF"
+ },
+ {
+  "k": "select_logo",
+  "pt": "Selecionar logo"
+ },
+ {
+  "k": "remove_logo",
+  "pt": "Remover"
+ },
+ {
+  "k": "logo_saved",
+  "pt": "Logo salvo"
+ },
+ {
+  "k": "logo_removed",
+  "pt": "Logo removido"
+ },
+ {
+  "k": "confirm_remove_logo",
+  "pt": "Remover logo? O PDF não terá logotipo até você selecionar outro."
+ },
+ {
+  "k": "company_name",
+  "pt": "Nome da clínica"
+ },
+ {
+  "k": "company_name_optional",
+  "pt": "Opcional"
+ },
+ {
+  "k": "ip_host",
+  "pt": "IP / Host"
+ },
+ {
+  "k": "port",
+  "pt": "Porta"
+ },
+ {
+  "k": "unc_path",
+  "pt": "Caminho UNC"
+ },
+ {
+  "k": "unc_hint",
+  "pt": "\\\\\\\\servidor\\\\compartilhamento\\\\subpasta"
+ },
+ {
+  "k": "testing",
+  "pt": "Testando…"
+ },
+ {
+  "k": "backup_active",
+  "pt": "Backup ativo"
+ },
+ {
+  "k": "csv_has_header",
+  "pt": "CSV tem cabeçalho?"
+ },
+ {
+  "k": "csv_has_header_yes",
+  "pt": "Sim"
+ },
+ {
+  "k": "csv_has_header_no",
+  "pt": "Não"
+ },
+ {
+  "k": "sync_now",
+  "pt": "Sincronizar agora"
+ },
+ {
+  "k": "import_manually",
+  "pt": "Importar manualmente"
+ },
+ {
+  "k": "column_mapping",
+  "pt": "Mapeamento de colunas"
+ },
+ {
+  "k": "col_name",
+  "pt": "Coluna do nome"
+ },
+ {
+  "k": "col_birth",
+  "pt": "Coluna nascimento"
+ },
+ {
+  "k": "col_record",
+  "pt": "Coluna prontuário (busca chave)"
+ },
+ {
+  "k": "printer_ip",
+  "pt": "IP da impressora"
+ },
+ {
+  "k": "printer_name",
+  "pt": "Nome (opcional)"
+ },
+ {
+  "k": "printer_name_hint",
+  "pt": "Ex: Impressora Sala 3"
+ },
+ {
+  "k": "test_printer",
+  "pt": "Testar conexão da impressora"
+ },
+ {
+  "k": "printer_ok",
+  "pt": "✓ Impressora respondeu via %1$s"
+ },
+ {
+  "k": "printer_fail",
+  "pt": "✗ %1$s"
+ },
+ {
+  "k": "pdf_orientation",
+  "pt": "Orientação do PDF"
+ },
+ {
+  "k": "pdf_portrait",
+  "pt": "Em pé (retrato)"
+ },
+ {
+  "k": "pdf_landscape",
+  "pt": "Deitado (paisagem)"
+ },
+ {
+  "k": "patients_cached",
+  "pt": "%1$d pacientes no cache"
+ },
+ {
+  "k": "no_draft",
+  "pt": "Nenhum rascunho ativo"
+ },
+ {
+  "k": "draft_active",
+  "pt": "Rascunho ativo: %1$s, %2$d foto(s)"
+ },
+ {
+  "k": "restore_all",
+  "pt": "Restaurar tudo"
+ },
+ {
+  "k": "redo_onboarding",
+  "pt": "🔄 Refazer configuração inicial"
+ },
+ {
+  "k": "redo_onboarding_confirm",
+  "pt": "Isso vai reabrir o assistente de configuração inicial. Suas configurações atuais não serão apagadas até você salvá-las de novo. Continuar?"
+ },
+ {
+  "k": "confirm_restore",
+  "pt": "Restaurar todas as configurações? Esta ação não pode ser desfeita."
+ },
+ {
+  "k": "about",
+  "pt": "Sobre"
+ },
+ {
+  "k": "about_title",
+  "pt": "Radioterapia.AI"
+ },
+ {
+  "k": "about_version",
+  "pt": "Versão %1$s"
+ },
+ {
+  "k": "about_build",
+  "pt": "Build %1$s"
+ },
+ {
+  "k": "about_device_id",
+  "pt": "ID do dispositivo: %1$s"
+ },
+ {
+  "k": "about_website",
+  "pt": "Conheça mais sobre o projeto:\\nradioterapia.ai"
+ },
+ {
+  "k": "about_open_website",
+  "pt": "Abrir radioterapia.ai"
+ },
+ {
+  "k": "about_description",
+  "pt": "Documentação fotográfica de posicionamento em radioterapia: captura por categoria, ficha de posicionamento em PDF com página de Time-Out, e consulta das fotos no dia do tratamento. Os arquivos ficam no tablet; quem os leva ao servidor é o FileSync, externo a este aplicativo."
+ },
+ {
+  "k": "patient_history",
+  "pt": "Histórico de pacientes"
+ },
+ {
+  "k": "empty_history",
+  "pt": "Nenhum paciente registrado neste tablet"
+ },
+ {
+  "k": "patient_record",
+  "pt": "Prontuário: %1$s"
+ },
+ {
+  "k": "patient_birth",
+  "pt": "Nascimento: %1$s"
+ },
+ {
+  "k": "last_simulation",
+  "pt": "Última simulação: %1$s"
+ },
+ {
+  "k": "edit_patient",
+  "pt": "Editar paciente"
+ },
+ {
+  "k": "remove_from_history",
+  "pt": "Remover do histórico"
+ },
+ {
+  "k": "patient_removed",
+  "pt": "Paciente removido"
+ },
+ {
+  "k": "edit_warning",
+  "pt": "⚠ Editar nome cria nova pasta no servidor. Pasta antiga não é apagada."
+ },
+ {
+  "k": "edit_logged",
+  "pt": "Edição registrada no log"
+ },
+ {
+  "k": "start_new_patient",
+  "pt": "Iniciar novo paciente"
+ },
+ {
+  "k": "continue_draft",
+  "pt": "Continuar simulação"
+ },
+ {
+  "k": "discard_draft",
+  "pt": "Descartar simulação"
+ },
+ {
+  "k": "draft_in_progress",
+  "pt": "Simulação em andamento"
+ },
+ {
+  "k": "draft_info",
+  "pt": "%1$s • %2$d foto(s) • há %3$d dia(s)"
+ },
+ {
+  "k": "confirm_discard_draft",
+  "pt": "Descartar simulação? Todas as fotos serão perdidas."
+ },
+ {
+  "k": "how_to_identify",
+  "pt": "Selecione uma opção para iniciar a identificação do paciente:"
+ },
+ {
+  "k": "type_name",
+  "pt": "Digitar nome"
+ },
+ {
+  "k": "scan_label",
+  "pt": "Escanear etiqueta"
+ },
+ {
+  "k": "read_barcode",
+  "pt": "Ler código de barras"
+ },
+ {
+  "k": "capture_photo",
+  "pt": "Bater foto"
+ },
+ {
+  "k": "scan_capture",
+  "pt": "Capturar"
+ },
+ {
+  "k": "discard",
+  "pt": "Descartar"
+ },
+ {
+  "k": "finish_simulation",
+  "pt": "Finalizar simulação"
+ },
+ {
+  "k": "cat_face",
+  "pt": "Rosto"
+ },
+ {
+  "k": "cat_label",
+  "pt": "Etiqueta"
+ },
+ {
+  "k": "cat_positioning",
+  "pt": "Posicionamento"
+ },
+ {
+  "k": "cat_accessories",
+  "pt": "Acessórios"
+ },
+ {
+  "k": "photos_count",
+  "pt": "%1$d foto(s)"
+ },
+ {
+  "k": "missing_face",
+  "pt": "⚠ Nenhuma foto de rosto. Prosseguir mesmo assim?"
+ },
+ {
+  "k": "missing_accessories",
+  "pt": "⚠ Nenhuma foto de acessórios. Prosseguir mesmo assim?"
+ },
+ {
+  "k": "suspicious_name",
+  "pt": "⚠ Verifique o nome"
+ },
+ {
+  "k": "proceed_anyway",
+  "pt": "Sim, está correto"
+ },
+ {
+  "k": "edit_name",
+  "pt": "Editar"
+ },
+ {
+  "k": "resimulation_warning",
+  "pt": "⚠ Re-simulação detectada"
+ },
+ {
+  "k": "resimulation_reasons",
+  "pt": "Pode ser:\\n• Reirradiação\\n• Replanejamento (perda de marcas, mudança anatômica)\\n• Novo alvo adicional"
+ },
+ {
+  "k": "same_patient",
+  "pt": "Sim, é o mesmo paciente"
+ },
+ {
+  "k": "not_same_patient",
+  "pt": "Não, refazer identificação"
+ },
+ {
+  "k": "divergence_detected",
+  "pt": "⚠ Divergência detectada"
+ },
+ {
+  "k": "use_csv",
+  "pt": "Usar dados do CSV"
+ },
+ {
+  "k": "use_local",
+  "pt": "Usar dados do histórico"
+ },
+ {
+  "k": "cancel_verify",
+  "pt": "Cancelar e verificar"
+ },
+ {
+  "k": "patient_not_found",
+  "pt": "Paciente não encontrado"
+ },
+ {
+  "k": "add_photo_in_treatment",
+  "pt": "Adicionar foto durante tratamento"
+ },
+ {
+  "k": "print_sheet",
+  "pt": "Imprimir folha de simulação"
+ },
+ {
+  "k": "printing",
+  "pt": "Imprimindo…"
+ },
+ {
+  "k": "printed_via",
+  "pt": "Enviado via %1$s"
+ },
+ {
+  "k": "camera_required",
+  "pt": "O app precisa da câmera para funcionar"
+ },
+ {
+  "k": "stats_title",
+  "pt": "Estatísticas"
+ },
+ {
+  "k": "export_pdf",
+  "pt": "Exportar PDF"
+ },
+ {
+  "k": "logs_title",
+  "pt": "Logs e auditoria"
+ },
+ {
+  "k": "export_logs",
+  "pt": "Exportar TXT"
+ },
+ {
+  "k": "clear_old_logs",
+  "pt": "Limpar logs antigos"
+ },
+ {
+  "k": "zoom",
+  "pt": "Zoom"
+ },
+ {
+  "k": "flash_label",
+  "pt": "Flash"
+ }
+]

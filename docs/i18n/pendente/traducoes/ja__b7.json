@@ -1,0 +1,20 @@
+[
+ {"k": "fin_fracoes_label", "v": "最大来院回数 / 分割回数（任意）"},
+ {"k": "fin_fracoes_nenhuma", "v": "入力しない"},
+ {"k": "fin_fracoes_n", "v": "%1$d 回"},
+ {"k": "fin_faltando_titulo", "v": "未入力のまま進みますか？"},
+ {"k": "fin_faltando_msg", "v": "次の項目が空欄です：\\n\\n%1$s\\n必須ではありませんが、印刷される位置決めシートと Time-Out ページに表示されます。このまま進みますか？"},
+ {"k": "fin_faltando_medico", "v": "• 担当医師"},
+ {"k": "fin_faltando_equip", "v": "• 治療装置"},
+ {"k": "fin_faltando_sitio", "v": "• 部位"},
+ {"k": "fin_faltando_seguir", "v": "このまま進む"},
+ {"k": "fin_faltando_voltar", "v": "戻って入力する"},
+ {"k": "ap_refazer_unica", "v": "%1$sの写真を差し替えますか？"},
+ {"k": "ap_refazer_msg", "v": "このシミュレーションには既に%1$sの写真があります。新しい写真が置き換わり、前の写真はアーカイブされます——シートからは外れますが、患者フォルダーには残ります。"},
+ {"k": "print_pages_menu", "v": "選択したページを印刷"},
+ {"k": "print_pages_title", "v": "どのページを印刷しますか？（全 %1$d ページ）"},
+ {"k": "print_page_n", "v": "%1$d ページ目"},
+ {"k": "print_pages_ok", "v": "選択したページを印刷"},
+ {"k": "print_pages_none", "v": "少なくとも 1 ページを選択してください。"},
+ {"k": "print_pages_fail", "v": "ページを取り出せませんでした。"}
+]

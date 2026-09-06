@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz3_clinic_identity"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/brand_primary"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz3_appears_pdf"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="20dp" />
+
+    <TextView style="@style/FieldLabel" android:text="@string/wiz3_clinic_name" />
+    <EditText android:id="@+id/edtWizClinica"
+        style="@style/InputField"
+        android:hint="@string/hl_clinic_example" />
+
+    <TextView style="@style/FieldLabel"
+        android:layout_marginTop="24dp"
+        android:text="@string/wiz3_logo_label" />
+
+    <Button android:id="@+id/btnWizEscolherLogo"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="6dp"
+        android:text="@string/wiz3_choose_logo"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/brand_primary" />
+
+    <ImageView
+        android:id="@+id/imgWizLogo"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:scaleType="fitCenter"
+        android:background="#F5F5F5"
+        android:contentDescription="Preview do logo"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/txtWizSemLogo"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="14dp"
+        android:gravity="center"
+        android:text="@string/wiz3_no_logo"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:background="@drawable/bg_logo_placeholder" />
+
+    <TextView style="@style/FieldLabel"
+        android:layout_marginTop="14dp"
+        android:text="@string/wiz_medicos_label" />
+    <EditText android:id="@+id/edtWizMedicos"
+        style="@style/InputField"
+        android:minLines="2"
+        android:maxLines="5"
+        android:gravity="top"
+        android:inputType="textMultiLine|textCapWords" />
+
+    <TextView style="@style/FieldLabel"
+        android:layout_marginTop="10dp"
+        android:text="@string/wiz_equip_label" />
+    <EditText android:id="@+id/edtWizEquipamentos"
+        style="@style/InputField"
+        android:minLines="2"
+        android:maxLines="5"
+        android:gravity="top"
+        android:inputType="textMultiLine|textCapWords" />
+</merge>

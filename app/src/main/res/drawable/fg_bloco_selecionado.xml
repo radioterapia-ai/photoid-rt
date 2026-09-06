@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Contorno de seleção desenhado POR CIMA da miniatura (foreground). Como
+     background ele ficava atrás da foto e não aparecia. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <stroke android:width="3dp" android:color="#42A5F5" />
+    <solid android:color="#00000000" />
+</shape>

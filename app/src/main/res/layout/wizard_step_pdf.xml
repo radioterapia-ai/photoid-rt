@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_pdf_title"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/brand_primary"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_pdf_desc"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="14dp" />
+
+    <TextView style="@style/FieldLabel" android:text="@string/wiz_pdf_orientation" />
+    <RadioGroup
+        android:id="@+id/rgWizPdfOrient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/rbWizPdfLand"
+            android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/pdf_landscape"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeMaxTextSize="13sp"
+            android:autoSizeStepGranularity="1sp" />
+        <RadioButton android:id="@+id/rbWizPdfPort"
+            android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/pdf_portrait"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp" android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeMaxTextSize="13sp"
+            android:autoSizeStepGranularity="1sp" />
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/chkWizTimeOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:checked="true"
+        android:text="@string/pdf_timeout_check"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <CheckBox
+        android:id="@+id/chkWizUsarEtiqueta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:checked="true"
+        android:text="@string/wiz_use_label"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp">
+
+        <LinearLayout
+            android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:orientation="vertical">
+            <TextView style="@style/FieldLabel" android:text="@string/label_width_mm" />
+            <EditText android:id="@+id/edtWizEtqLarg"
+                style="@style/InputField"
+                android:inputType="number" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp" android:layout_weight="1"
+            android:layout_height="wrap_content" android:orientation="vertical"
+            android:layout_marginStart="10dp">
+            <TextView style="@style/FieldLabel" android:text="@string/label_height_mm" />
+            <EditText android:id="@+id/edtWizEtqAlt"
+                style="@style/InputField"
+                android:inputType="number" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- RUBRICARIO: no onboarding so a pergunta. O cadastro da equipe e
+         trabalhoso e nao pode travar a primeira configuracao do tablet, entao
+         a coleta fica para as Configuracoes, como diz o texto de apoio. -->
+    <CheckBox
+        android:id="@+id/chkWizRubricario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/wiz_rubricario_q"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_rubricario_desc"
+        android:textSize="11sp"
+        android:textColor="@color/text_tertiary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_pdf_hint"
+        android:textSize="11sp"
+        android:textColor="@color/text_tertiary"
+        android:layout_marginTop="8dp" />
+</merge>

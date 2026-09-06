@@ -1,0 +1,174 @@
+[
+ {
+  "k": "group_transferencia",
+  "v": "Exporter / Importer la configuration"
+ },
+ {
+  "k": "tr_explica",
+  "v": "Emportez la configuration de ce centre vers une autre tablette. Cochez ce qui doit entrer dans le fichier ; il sort en .zip, que tout système sait ouvrir."
+ },
+ {
+  "k": "tr_selecionar_tudo",
+  "v": "Tout sélectionner"
+ },
+ {
+  "k": "tr_exportar",
+  "v": "Exporter la sélection"
+ },
+ {
+  "k": "tr_importar",
+  "v": "Importer depuis un fichier"
+ },
+ {
+  "k": "tr_nao_vai",
+  "v": "Ne sont jamais exportés : le mot de passe SMB et les dossiers choisis sur cet appareil (photos, CSV, sauvegarde). Un dossier est une autorisation accordée à une seule tablette ; sur celle de destination il pointerait vers le vide, sans le moindre avertissement. Celui qui importe rechoisit les dossiers."
+ },
+ {
+  "k": "tr_aviso_paciente",
+  "v": "La sélection contient des données de patients. Le fichier produit devient un document clinique : conservez-le comme tel et ne le laissez pas dans un dossier synchronisé avec un cloud personnel."
+ },
+ {
+  "k": "tr_clinica",
+  "v": "Nom du centre"
+ },
+ {
+  "k": "tr_clinica_desc",
+  "v": "Le nom imprimé en bas de la fiche."
+ },
+ {
+  "k": "tr_logotipo",
+  "v": "Logo"
+ },
+ {
+  "k": "tr_logotipo_desc",
+  "v": "L'image imprimée en haut de chaque page du PDF."
+ },
+ {
+  "k": "tr_medicos",
+  "v": "Médecins et appareils"
+ },
+ {
+  "k": "tr_medicos_desc",
+  "v": "Les listes proposées dans les champs de la simulation."
+ },
+ {
+  "k": "tr_sitios",
+  "v": "Sites anatomiques"
+ },
+ {
+  "k": "tr_sitios_desc",
+  "v": "La liste des sites proposée dans le champ de la simulation."
+ },
+ {
+  "k": "tr_rubricario",
+  "v": "Feuille de paraphes de l'équipe"
+ },
+ {
+  "k": "tr_rubricario_desc",
+  "v": "Fonctions, noms, numéros d'inscription et les paraphes enregistrés."
+ },
+ {
+  "k": "tr_impressora",
+  "v": "Imprimante"
+ },
+ {
+  "k": "tr_impressora_desc",
+  "v": "Adresse, nom et mode recto verso."
+ },
+ {
+  "k": "tr_ficha",
+  "v": "Mise en page de la fiche"
+ },
+ {
+  "k": "tr_ficha_desc",
+  "v": "Orientation, étiquette, marge de reliure et page de Time-Out."
+ },
+ {
+  "k": "tr_rede",
+  "v": "Réseau et serveur"
+ },
+ {
+  "k": "tr_rede_desc",
+  "v": "Adresse SMB, domaine et utilisateur. Le mot de passe n'est pas inclus."
+ },
+ {
+  "k": "tr_base_csv",
+  "v": "Base de patients (CSV)"
+ },
+ {
+  "k": "tr_base_csv_desc",
+  "v": "La façon dont le fichier de la base est lu. Le dossier se choisit sur la tablette de destination."
+ },
+ {
+  "k": "tr_pacientes",
+  "v": "Patients enregistrés"
+ },
+ {
+  "k": "tr_pacientes_desc",
+  "v": "Les patients déjà enregistrés sur cette tablette. Contient des données de patients."
+ },
+ {
+  "k": "tr_fotos",
+  "v": "Photos des patients"
+ },
+ {
+  "k": "tr_fotos_desc",
+  "v": "Toutes les photos et les PDF des dossiers patients. Le fichier peut être volumineux, et contient des données de patients."
+ },
+ {
+  "k": "tr_nada_marcado",
+  "v": "Cochez au moins un élément."
+ },
+ {
+  "k": "tr_exportando",
+  "v": "Création du paquet…"
+ },
+ {
+  "k": "tr_exportado",
+  "v": "Paquet créé : %1$d fichier(s)."
+ },
+ {
+  "k": "tr_erro",
+  "v": "Impossible de terminer : %1$s"
+ },
+ {
+  "k": "tr_arquivo_invalido",
+  "v": "Ce fichier n'est pas un paquet de PhotoID RT."
+ },
+ {
+  "k": "tr_conteudo_titulo",
+  "v": "Ce que contient ce fichier"
+ },
+ {
+  "k": "tr_de_unidade",
+  "v": "De : %1$s"
+ },
+ {
+  "k": "tr_modo_titulo",
+  "v": "Comment l'appliquer ?"
+ },
+ {
+  "k": "tr_modo_somar",
+  "v": "Ajouter : conserve ce qui est déjà ici"
+ },
+ {
+  "k": "tr_modo_sobrescrever",
+  "v": "Remplacer : le paquet fait foi"
+ },
+ {
+  "k": "tr_modo_explica",
+  "v": "Ajouter est le réglage par défaut : rien de ce qui est déjà sur cette tablette n'est effacé, et seul ce qui n'a pas d'équivalent ici entre. Remplacer écrase ce qui existe."
+ },
+ {
+  "k": "tr_importando",
+  "v": "Application en cours…"
+ },
+ {
+  "k": "tr_importado",
+  "v": "%1$d réglage(s) et %2$d fichier(s) appliqués ; %3$d conservés tels quels."
+ },
+ {
+  "k": "tr_itens_marcados",
+  "v": "%1$d sur %2$d cochés"
+ }
+]

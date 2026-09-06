@@ -1,0 +1,142 @@
+[
+ {
+  "k": "group_protocolo",
+  "pt": "Protocolo"
+ },
+ {
+  "k": "prot_explica",
+  "pt": "Páginas que o serviço acrescenta ao fim da ficha: termo de consentimento, orientações, checklist. O app imprime o PDF como ele é — só sobrepõe a etiqueta e o logotipo, onde você calibrar."
+ },
+ {
+  "k": "prot_titulo",
+  "pt": "Protocolo"
+ },
+ {
+  "k": "prot_padrao_desc",
+  "pt": "A ficha como ela sempre foi, sem página acrescentada. Não pode ser excluído."
+ },
+ {
+  "k": "prot_nome",
+  "pt": "Nome do protocolo"
+ },
+ {
+  "k": "prot_miniatura",
+  "pt": "Miniatura"
+ },
+ {
+  "k": "prot_miniatura_desc",
+  "pt": "A imagem que identifica este protocolo na hora de escolher, no fim da simulação."
+ },
+ {
+  "k": "prot_escolher_miniatura",
+  "pt": "Escolher imagem"
+ },
+ {
+  "k": "prot_paginas",
+  "pt": "Páginas"
+ },
+ {
+  "k": "prot_paginas_desc",
+  "pt": "Saem nesta ordem, depois do rubricário. Um PDF com várias páginas entra inteiro."
+ },
+ {
+  "k": "prot_sem_paginas",
+  "pt": "Nenhuma página. Este protocolo imprime a ficha simples."
+ },
+ {
+  "k": "prot_add_pagina",
+  "pt": "Adicionar PDF"
+ },
+ {
+  "k": "prot_pagina_item",
+  "pt": "%1$d. PDF com %2$d página(s)"
+ },
+ {
+  "k": "prot_calibrar",
+  "pt": "Calibrar"
+ },
+ {
+  "k": "prot_excluir_pagina_q",
+  "pt": "Remover esta página do protocolo?"
+ },
+ {
+  "k": "prot_falta_nome",
+  "pt": "Dê um nome ao protocolo."
+ },
+ {
+  "k": "prot_sem_seletor",
+  "pt": "Nenhum aplicativo para escolher PDF."
+ },
+ {
+  "k": "prot_pdf_ilegivel",
+  "pt": "Não foi possível ler este PDF. Arquivos protegidos por senha não funcionam."
+ },
+ {
+  "k": "prot_pagina_titulo",
+  "pt": "Onde a etiqueta e o logotipo caem"
+ },
+ {
+  "k": "prot_pagina_ajuda",
+  "pt": "Arraste os retângulos até onde eles não cobrem o que já está impresso. A posição vale para todas as páginas deste PDF."
+ },
+ {
+  "k": "prot_usar_etiqueta",
+  "pt": "Sobrepor a etiqueta de identificação"
+ },
+ {
+  "k": "prot_usar_logo",
+  "pt": "Sobrepor o logotipo do serviço"
+ },
+ {
+  "k": "prot_box_etiqueta",
+  "pt": "Etiqueta"
+ },
+ {
+  "k": "prot_box_logo",
+  "pt": "Logotipo"
+ },
+ {
+  "k": "prot_pos_resumo",
+  "pt": "Etiqueta: %1$d mm da esquerda, %2$d mm do topo · Logotipo: %3$d mm da direita, %4$d mm do topo"
+ },
+ {
+  "k": "prot_add",
+  "pt": "Adicionar protocolo"
+ },
+ {
+  "k": "prot_excluir_q",
+  "pt": "Excluir o protocolo \\\"%1$s\\\"?"
+ },
+ {
+  "k": "prot_excluir_msg",
+  "pt": "Os PDFs carregados nele também são apagados."
+ },
+ {
+  "k": "prot_total",
+  "pt": "%1$d protocolo(s)"
+ },
+ {
+  "k": "prot_escolher_titulo",
+  "pt": "Protocolo desta simulação"
+ },
+ {
+  "k": "prot_escolher_desc",
+  "pt": "Escolha quais páginas finais entram na ficha."
+ },
+ {
+  "k": "prot_qtd_paginas",
+  "pt": "%1$d página(s)"
+ },
+ {
+  "k": "prot_marcar",
+  "pt": "Escolher"
+ },
+ {
+  "k": "tr_protocolos",
+  "pt": "Protocolos"
+ },
+ {
+  "k": "tr_protocolos_desc",
+  "pt": "Os protocolos cadastrados, com os PDFs carregados e a calibração de cada página."
+ }
+]

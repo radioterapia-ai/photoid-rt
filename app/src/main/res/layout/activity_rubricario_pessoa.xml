@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Cadastro de uma pessoa do rubricário: cargo, nome, registro e a rubrica.
+
+    A rubrica ocupa a maior parte da tela de propósito. Assinar num quadro
+    pequeno com o dedo produz um traço que não se parece com a assinatura da
+    pessoa, e a folha existe justamente para identificá-la.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rub_cargo"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <Spinner
+            android:id="@+id/spCargo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rub_nome"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:layout_marginTop="14dp" />
+
+        <EditText
+            android:id="@+id/edtNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:autofillHints="name" />
+
+        <TextView
+            android:id="@+id/txtRotuloRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rub_registro"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:layout_marginTop="14dp" />
+
+        <EditText
+            android:id="@+id/edtRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:autofillHints="postalCode" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rub_assinatura"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:layout_marginTop="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rub_assinatura_dica"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- layout_gravity porque a View limita a propria largura (ver
+             AssinaturaView.onMeasure): sem isto o quadro estreito encostaria
+             na margem esquerda em vez de ficar centrado. -->
+        <com.radioterapia.ai.rubricario.AssinaturaView
+            android:id="@+id/viewAssinatura"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:id="@+id/btnLimparAssinatura"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="6dp"
+            android:text="@string/rub_limpar_assinatura"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="22dp">
+
+            <Button
+                android:id="@+id/btnCancelar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="56dp"
+                android:layout_marginEnd="6dp"
+                android:text="@string/cancel"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_neutral" />
+
+            <Button
+                android:id="@+id/btnSalvar"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="56dp"
+                android:layout_marginStart="6dp"
+                android:text="@string/rub_salvar"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/brand_primary_dark" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Bloco "Exportar / Importar configurações".
+
+    A LISTA DE ITENS É MONTADA EM CÓDIGO, dentro de `listaTransferItens`, a
+    partir de PacoteConfig.Item. Um item novo no enum aparece aqui sozinho —
+    se as caixas estivessem escritas neste XML, acrescentar uma categoria
+    exigiria lembrar de três lugares, e o esquecido seria justamente o que
+    ninguém testa: a importação.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tr_explica"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="12dp" />
+
+    <CheckBox
+        android:id="@+id/chkTransferTudo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tr_selecionar_tudo"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp" />
+
+    <LinearLayout
+        android:id="@+id/listaTransferItens"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <TextView
+        android:id="@+id/txtTransferAviso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@color/bg_card"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginTop="10dp"
+        android:text="@string/tr_aviso_paciente"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnTransferExportar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/tr_exportar"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/brand_primary_dark" />
+
+    <Button
+        android:id="@+id/btnTransferImportar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/tr_importar"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tr_nao_vai"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginTop="12dp" />
+</LinearLayout>

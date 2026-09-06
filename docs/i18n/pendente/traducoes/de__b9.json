@@ -1,0 +1,142 @@
+[
+ {
+  "k": "group_protocolo",
+  "v": "Protokoll"
+ },
+ {
+  "k": "prot_explica",
+  "v": "Seiten, die die Einrichtung ans Ende des Lagerungsprotokolls hängt: Einwilligung, Patienteninformation, interne Checkliste. Die App druckt das PDF unverändert — sie legt nur Etikett und Logo darüber, an der Stelle, die Sie festlegen."
+ },
+ {
+  "k": "prot_titulo",
+  "v": "Protokoll"
+ },
+ {
+  "k": "prot_padrao_desc",
+  "v": "Das Lagerungsprotokoll wie bisher, ohne zusätzliche Seite. Kann nicht gelöscht werden."
+ },
+ {
+  "k": "prot_nome",
+  "v": "Name des Protokolls"
+ },
+ {
+  "k": "prot_miniatura",
+  "v": "Vorschaubild"
+ },
+ {
+  "k": "prot_miniatura_desc",
+  "v": "Das Bild, an dem dieses Protokoll bei der Auswahl am Ende des Planungs-CT erkannt wird."
+ },
+ {
+  "k": "prot_escolher_miniatura",
+  "v": "Bild auswählen"
+ },
+ {
+  "k": "prot_paginas",
+  "v": "Seiten"
+ },
+ {
+  "k": "prot_paginas_desc",
+  "v": "Sie erscheinen in dieser Reihenfolge, nach der Handzeichenliste. Ein mehrseitiges PDF geht vollständig ein."
+ },
+ {
+  "k": "prot_sem_paginas",
+  "v": "Keine Seiten. Dieses Protokoll druckt das einfache Lagerungsprotokoll."
+ },
+ {
+  "k": "prot_add_pagina",
+  "v": "PDF hinzufügen"
+ },
+ {
+  "k": "prot_pagina_item",
+  "v": "%1$d. PDF mit %2$d Seite(n)"
+ },
+ {
+  "k": "prot_calibrar",
+  "v": "Ausrichten"
+ },
+ {
+  "k": "prot_excluir_pagina_q",
+  "v": "Diese Seite aus dem Protokoll entfernen?"
+ },
+ {
+  "k": "prot_falta_nome",
+  "v": "Geben Sie dem Protokoll einen Namen."
+ },
+ {
+  "k": "prot_sem_seletor",
+  "v": "Keine App zum Auswählen eines PDF vorhanden."
+ },
+ {
+  "k": "prot_pdf_ilegivel",
+  "v": "Dieses PDF konnte nicht gelesen werden. Passwortgeschützte Dateien funktionieren nicht."
+ },
+ {
+  "k": "prot_pagina_titulo",
+  "v": "Wo Etikett und Logo landen"
+ },
+ {
+  "k": "prot_pagina_ajuda",
+  "v": "Ziehen Sie die Rechtecke dorthin, wo sie nichts Gedrucktes überdecken. Die Position gilt für alle Seiten dieses PDF."
+ },
+ {
+  "k": "prot_usar_etiqueta",
+  "v": "Patientenetikett darüberlegen"
+ },
+ {
+  "k": "prot_usar_logo",
+  "v": "Logo der Einrichtung darüberlegen"
+ },
+ {
+  "k": "prot_box_etiqueta",
+  "v": "Etikett"
+ },
+ {
+  "k": "prot_box_logo",
+  "v": "Logo"
+ },
+ {
+  "k": "prot_pos_resumo",
+  "v": "Etikett: %1$d mm von links, %2$d mm von oben · Logo: %3$d mm von rechts, %4$d mm von oben"
+ },
+ {
+  "k": "prot_add",
+  "v": "Protokoll hinzufügen"
+ },
+ {
+  "k": "prot_excluir_q",
+  "v": "Protokoll „%1$s\" löschen?"
+ },
+ {
+  "k": "prot_excluir_msg",
+  "v": "Die darin geladenen PDF werden ebenfalls gelöscht."
+ },
+ {
+  "k": "prot_total",
+  "v": "%1$d Protokoll(e)"
+ },
+ {
+  "k": "prot_escolher_titulo",
+  "v": "Protokoll für dieses Planungs-CT"
+ },
+ {
+  "k": "prot_escolher_desc",
+  "v": "Wählen Sie, welche Schlussseiten in das Lagerungsprotokoll kommen."
+ },
+ {
+  "k": "prot_qtd_paginas",
+  "v": "%1$d Seite(n)"
+ },
+ {
+  "k": "prot_marcar",
+  "v": "Wählen"
+ },
+ {
+  "k": "tr_protocolos",
+  "v": "Protokolle"
+ },
+ {
+  "k": "tr_protocolos_desc",
+  "v": "Die angelegten Protokolle, mit den geladenen PDF und der Ausrichtung jeder Seite."
+ }
+]

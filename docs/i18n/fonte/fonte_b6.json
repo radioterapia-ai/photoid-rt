@@ -1,0 +1,174 @@
+[
+ {
+  "k": "group_transferencia",
+  "pt": "Exportar / Importar configurações"
+ },
+ {
+  "k": "tr_explica",
+  "pt": "Leve a configuração desta unidade para outro tablet. Marque o que deve ir no arquivo; ele sai como um .zip que qualquer sistema abre."
+ },
+ {
+  "k": "tr_selecionar_tudo",
+  "pt": "Selecionar tudo"
+ },
+ {
+  "k": "tr_exportar",
+  "pt": "Exportar seleção"
+ },
+ {
+  "k": "tr_importar",
+  "pt": "Importar de um arquivo"
+ },
+ {
+  "k": "tr_nao_vai",
+  "pt": "Nunca são exportados: a senha do SMB e as pastas escolhidas neste aparelho (fotos, CSV, backup). As pastas são permissões concedidas a um tablet só; no destino elas apontariam para lugar nenhum, em silêncio. Quem importa escolhe as pastas de novo."
+ },
+ {
+  "k": "tr_aviso_paciente",
+  "pt": "A seleção inclui dado de paciente. O arquivo gerado passa a ser documento clínico: guarde-o como tal e não o deixe em pasta que sincroniza com nuvem pessoal."
+ },
+ {
+  "k": "tr_clinica",
+  "pt": "Nome da unidade"
+ },
+ {
+  "k": "tr_clinica_desc",
+  "pt": "O nome que sai no rodapé da ficha impressa."
+ },
+ {
+  "k": "tr_logotipo",
+  "pt": "Logotipo"
+ },
+ {
+  "k": "tr_logotipo_desc",
+  "pt": "A imagem que sai no alto de todas as páginas do PDF."
+ },
+ {
+  "k": "tr_medicos",
+  "pt": "Médicos e equipamentos"
+ },
+ {
+  "k": "tr_medicos_desc",
+  "pt": "As listas que aparecem nos campos da simulação."
+ },
+ {
+  "k": "tr_sitios",
+  "pt": "Sítios anatômicos"
+ },
+ {
+  "k": "tr_sitios_desc",
+  "pt": "A lista de sítios que o campo de simulação oferece."
+ },
+ {
+  "k": "tr_rubricario",
+  "pt": "Rubricário da equipe"
+ },
+ {
+  "k": "tr_rubricario_desc",
+  "pt": "Cargos, nomes, números de conselho e as rubricas gravadas."
+ },
+ {
+  "k": "tr_impressora",
+  "pt": "Impressora"
+ },
+ {
+  "k": "tr_impressora_desc",
+  "pt": "Endereço, nome e modo de impressão frente e verso."
+ },
+ {
+  "k": "tr_ficha",
+  "pt": "Layout da ficha"
+ },
+ {
+  "k": "tr_ficha_desc",
+  "pt": "Orientação, etiqueta, margem de furação e página de Time-Out."
+ },
+ {
+  "k": "tr_rede",
+  "pt": "Rede e servidor"
+ },
+ {
+  "k": "tr_rede_desc",
+  "pt": "Endereço SMB, domínio e usuário. A senha não vai junto."
+ },
+ {
+  "k": "tr_base_csv",
+  "pt": "Base de pacientes (CSV)"
+ },
+ {
+  "k": "tr_base_csv_desc",
+  "pt": "Como o arquivo da base é lido. A pasta é escolhida no destino."
+ },
+ {
+  "k": "tr_pacientes",
+  "pt": "Cadastro de pacientes"
+ },
+ {
+  "k": "tr_pacientes_desc",
+  "pt": "Os pacientes já cadastrados neste tablet. Contém dado de paciente."
+ },
+ {
+  "k": "tr_fotos",
+  "pt": "Fotos dos pacientes"
+ },
+ {
+  "k": "tr_fotos_desc",
+  "pt": "Todas as fotos e PDFs das pastas dos pacientes. Pode ser grande, e contém dado de paciente."
+ },
+ {
+  "k": "tr_nada_marcado",
+  "pt": "Marque ao menos um item."
+ },
+ {
+  "k": "tr_exportando",
+  "pt": "Montando o pacote…"
+ },
+ {
+  "k": "tr_exportado",
+  "pt": "Pacote gerado: %1$d arquivo(s)."
+ },
+ {
+  "k": "tr_erro",
+  "pt": "Não foi possível concluir: %1$s"
+ },
+ {
+  "k": "tr_arquivo_invalido",
+  "pt": "Este arquivo não é um pacote do PhotoID RT."
+ },
+ {
+  "k": "tr_conteudo_titulo",
+  "pt": "O que este arquivo traz"
+ },
+ {
+  "k": "tr_de_unidade",
+  "pt": "De: %1$s"
+ },
+ {
+  "k": "tr_modo_titulo",
+  "pt": "Como aplicar?"
+ },
+ {
+  "k": "tr_modo_somar",
+  "pt": "Somar: mantém o que já existe aqui"
+ },
+ {
+  "k": "tr_modo_sobrescrever",
+  "pt": "Sobrescrever: o pacote manda"
+ },
+ {
+  "k": "tr_modo_explica",
+  "pt": "Somar é o padrão: nada que já está neste tablet é apagado, e entra só o que não tem equivalente aqui. Sobrescrever substitui o que existir."
+ },
+ {
+  "k": "tr_importando",
+  "pt": "Aplicando…"
+ },
+ {
+  "k": "tr_importado",
+  "pt": "%1$d configuração(ões) e %2$d arquivo(s) aplicados; %3$d mantido(s) como estavam."
+ },
+ {
+  "k": "tr_itens_marcados",
+  "pt": "%1$d de %2$d marcados"
+ }
+]

@@ -1,0 +1,546 @@
+[
+ {
+  "k": "hc_no_changes",
+  "v": "Aucune modification"
+ },
+ {
+  "k": "hc_generating_pdf",
+  "v": "Création du PDF…"
+ },
+ {
+  "k": "hc_purge_logs_q",
+  "v": "Supprimer les logs de plus de 90 jours ?"
+ },
+ {
+  "k": "hc_no_logs_export",
+  "v": "Aucun log à exporter"
+ },
+ {
+  "k": "hc_never_synced",
+  "v": "Jamais synchronisé"
+ },
+ {
+  "k": "hl_full_name",
+  "v": "Nom complet"
+ },
+ {
+  "k": "hl_birth_date",
+  "v": "Date de naissance"
+ },
+ {
+  "k": "hl_record",
+  "v": "N° de dossier"
+ },
+ {
+  "k": "hl_filter",
+  "v": "Filtre :"
+ },
+ {
+  "k": "hl_no_records",
+  "v": "Aucune entrée"
+ },
+ {
+  "k": "hl_last_30",
+  "v": "30 derniers jours"
+ },
+ {
+  "k": "hl_last_7",
+  "v": "7 derniers jours"
+ },
+ {
+  "k": "hl_operations",
+  "v": "Opérations"
+ },
+ {
+  "k": "hl_uploads_ok",
+  "v": "Envois OK"
+ },
+ {
+  "k": "hl_prints",
+  "v": "Impressions"
+ },
+ {
+  "k": "hl_errors",
+  "v": "Erreurs"
+ },
+ {
+  "k": "hl_patients",
+  "v": "Patients"
+ },
+ {
+  "k": "hl_reirradiations",
+  "v": "Réirradiations"
+ },
+ {
+  "k": "hl_extra_id1",
+  "v": "ID extra 1 - titre (ex : Mutuelle)"
+ },
+ {
+  "k": "hl_extra_id2",
+  "v": "ID extra 2 - titre (ex : N° de sécurité sociale)"
+ },
+ {
+  "k": "hl_extra_id3",
+  "v": "ID extra 3 - titre"
+ },
+ {
+  "k": "hl_clinic_example",
+  "v": "Ex : Centre Santé Totale"
+ },
+ {
+  "k": "hl_date_mask",
+  "v": "jj/mm/aaaa"
+ },
+ {
+  "k": "draft_kept_count",
+  "v": "Vous avez %1$d photo(s) dans cette simulation. Le brouillon sera CONSERVÉ et vous pourrez continuer plus tard depuis l'accueil Simulation."
+ },
+ {
+  "k": "pront_dup_title",
+  "v": "N° de dossier déjà utilisé"
+ },
+ {
+  "k": "pront_dup_msg",
+  "v": "Le dossier %1$s appartient déjà à %2$s.\\n\\nCela indique en général une erreur de saisie ou un patient en double. Enregistrer quand même ?"
+ },
+ {
+  "k": "disk_full_title",
+  "v": "Espace insuffisant"
+ },
+ {
+  "k": "disk_full_msg",
+  "v": "Il ne reste que %1$d Mo de stockage. Libérez de l'espace avant de terminer, sinon les photos et le PDF risquent d'être enregistrés incomplets."
+ },
+ {
+  "k": "db_export_title",
+  "v": "Exporter la base de données"
+ },
+ {
+  "k": "db_import_title",
+  "v": "Importer la base de données"
+ },
+ {
+  "k": "db_export_desc",
+  "v": "Crée un paquet avec les photos, les PDF et les fiches patient à emporter sur une autre tablette."
+ },
+ {
+  "k": "db_transfer_done",
+  "v": "Terminé : %1$d patient(s), %2$d fichier(s)."
+ },
+ {
+  "k": "db_transfer_section",
+  "v": "Transférer vers une autre tablette"
+ },
+ {
+  "k": "db_working",
+  "v": "Transfert… %1$d sur %2$d"
+ },
+ {
+  "k": "err_generic",
+  "v": "Erreur : %1$s"
+ },
+ {
+  "k": "err_camera",
+  "v": "Erreur caméra : %1$s"
+ },
+ {
+  "k": "err_capture",
+  "v": "Erreur de capture : %1$s"
+ },
+ {
+  "k": "err_save",
+  "v": "Erreur d'enregistrement : %1$s"
+ },
+ {
+  "k": "err_unexpected",
+  "v": "Échec inattendu : %1$s"
+ },
+ {
+  "k": "err_reopen",
+  "v": "Erreur à la réouverture : %1$s"
+ },
+ {
+  "k": "ok_exported",
+  "v": "Exporté : %1$s"
+ },
+ {
+  "k": "ok_record_read",
+  "v": "N° de dossier lu : %1$s"
+ },
+ {
+  "k": "ok_photo_added",
+  "v": "✓ Photo ajoutée (%1$d)"
+ },
+ {
+  "k": "n_entries",
+  "v": "%1$d entrée(s)"
+ },
+ {
+  "k": "viewer_summary",
+  "v": "Résumé"
+ },
+ {
+  "k": "resumo_medico",
+  "v": "Médecin"
+ },
+ {
+  "k": "resumo_sitio",
+  "v": "Localisation"
+ },
+ {
+  "k": "resumo_sem_dados",
+  "v": "— non renseigné —"
+ },
+ {
+  "k": "resumo_alerta_queda",
+  "v": "RISQUE DE CHUTE"
+ },
+ {
+  "k": "resumo_alerta_contato",
+  "v": "PRÉCAUTIONS CONTACT"
+ },
+ {
+  "k": "resumo_alerta_alergia",
+  "v": "ALLERGIE"
+ },
+ {
+  "k": "resumo_sim_numero",
+  "v": "Simulation %1$d"
+ },
+ {
+  "k": "disk_low_title",
+  "v": "Stockage presque plein"
+ },
+ {
+  "k": "disk_low_msg",
+  "v": "Il reste %1$d Mo sur la tablette. Libérez de l'espace (Paramètres → Base de données) avant que les simulations ne commencent à échouer."
+ },
+ {
+  "k": "popup_sec_docs",
+  "v": "Documents"
+ },
+ {
+  "k": "popup_sec_editar",
+  "v": "Modifier"
+ },
+ {
+  "k": "popup_ver_ficha",
+  "v": "Voir la fiche de positionnement"
+ },
+ {
+  "k": "popup_compartilhar",
+  "v": "Partager le PDF"
+ },
+ {
+  "k": "popup_editar_simulacao",
+  "v": "Modifier cette simulation"
+ },
+ {
+  "k": "resumo_obs_tag",
+  "v": "OBS"
+ },
+ {
+  "k": "resumo_mais",
+  "v": "+%1$d de plus…"
+ },
+ {
+  "k": "popup_imprimir",
+  "v": "Imprimer le PDF"
+ },
+ {
+  "k": "print_mode_title",
+  "v": "Comment souhaitez-vous imprimer ?"
+ },
+ {
+  "k": "print_mode_ip",
+  "v": "Imprimante réseau (IP configurée)"
+ },
+ {
+  "k": "print_mode_folder",
+  "v": "Copier dans le dossier d'impression"
+ },
+ {
+  "k": "print_mode_folder_ok",
+  "v": "PDF copié dans %1$s"
+ },
+ {
+  "k": "print_sent",
+  "v": "Envoyé à l'imprimante."
+ },
+ {
+  "k": "print_mode_pendrive",
+  "v": "Enregistrer sur clé USB (câble OTG)"
+ },
+ {
+  "k": "pd_titulo",
+  "v": "Imprimer depuis la clé USB"
+ },
+ {
+  "k": "pd_anim_desc",
+  "v": "Tablette reliée à une clé USB par un câble OTG"
+ },
+ {
+  "k": "pd_sem_cabo",
+  "v": "Branchez la clé USB"
+ },
+ {
+  "k": "pd_sem_cabo_dica",
+  "v": "Branchez l'adaptateur OTG sur le port USB de la tablette, puis insérez la clé. Le bouton ci-dessous se débloque dès qu'elle est reconnue."
+ },
+ {
+  "k": "pd_montando",
+  "v": "Reconnaissance de la clé…"
+ },
+ {
+  "k": "pd_montando_dica",
+  "v": "Le périphérique a déjà été détecté. Attendez qu'Android monte la clé — cela prend en général quelques secondes."
+ },
+ {
+  "k": "pd_pasta_pendente",
+  "v": "Clé USB branchée"
+ },
+ {
+  "k": "pd_pasta_pendente_dica",
+  "v": "Choisissez une fois pour toutes le dossier de la clé où les PDF seront écrits. Les fois suivantes, l'application écrit directement."
+ },
+ {
+  "k": "pd_pronto",
+  "v": "Clé USB prête"
+ },
+ {
+  "k": "pd_escolher_pasta",
+  "v": "Choisir le dossier de la clé"
+ },
+ {
+  "k": "pd_gravar",
+  "v": "Écrire le PDF sur la clé"
+ },
+ {
+  "k": "pd_pasta_atual",
+  "v": "Dossier : %1$s"
+ },
+ {
+  "k": "pd_trocar_pasta",
+  "v": "Changer de dossier"
+ },
+ {
+  "k": "pd_gravando",
+  "v": "Écriture…"
+ },
+ {
+  "k": "pd_pronto_dica_sessao",
+  "v": "Les PDF vont dans des dossiers numérotés à l'intérieur de PHOTOID — 1_PACIENTE_ATUAL, 2_LOTE_INDIVIDUAIS et 3_LOTE_AGRUPADO. La numérotation fait apparaître le bon dossier en premier sur le panneau de l'imprimante."
+ },
+ {
+  "k": "lote_menu_imprimir",
+  "v": "Imprimer les PDF par lot"
+ },
+ {
+  "k": "lote_todos",
+  "v": "Tous"
+ },
+ {
+  "k": "lote_imprimir",
+  "v": "Imprimer"
+ },
+ {
+  "k": "lote_contagem",
+  "v": "%1$d sélectionné(s)"
+ },
+ {
+  "k": "lote_nenhum",
+  "v": "Sélectionnez au moins un patient."
+ },
+ {
+  "k": "lote_preparando",
+  "v": "Préparation de %1$d fiche(s)…"
+ },
+ {
+  "k": "lote_sem_pdf",
+  "v": "Aucun des patients sélectionnés n'a de fiche disponible."
+ },
+ {
+  "k": "filtro_titulo",
+  "v": "Filtrer et trier"
+ },
+ {
+  "k": "filtro_botao",
+  "v": "Filtrer ⇅"
+ },
+ {
+  "k": "filtro_ordenar_por",
+  "v": "Trier par"
+ },
+ {
+  "k": "filtro_campo_nome",
+  "v": "Nom"
+ },
+ {
+  "k": "filtro_campo_data",
+  "v": "Date"
+ },
+ {
+  "k": "filtro_campo_prontuario",
+  "v": "N° de dossier"
+ },
+ {
+  "k": "filtro_ordem",
+  "v": "Ordre"
+ },
+ {
+  "k": "filtro_asc",
+  "v": "Croissant ↑"
+ },
+ {
+  "k": "filtro_desc",
+  "v": "Décroissant ↓"
+ },
+ {
+  "k": "filtro_periodo",
+  "v": "Filtrer par date de simulation"
+ },
+ {
+  "k": "filtro_escolher_data",
+  "v": "Choisir une date"
+ },
+ {
+  "k": "filtro_todas_datas",
+  "v": "Toutes les dates"
+ },
+ {
+  "k": "filtro_data_nenhuma",
+  "v": "Toutes les dates affichées"
+ },
+ {
+  "k": "filtro_data_ativa",
+  "v": "Uniquement %1$s"
+ },
+ {
+  "k": "filtro_aplicar",
+  "v": "Appliquer"
+ },
+ {
+  "k": "filtro_resultado",
+  "v": "%1$d patient(s) dans le filtre"
+ },
+ {
+  "k": "cfg_transfer_titulo",
+  "v": "Paramètres — copie de sauvegarde"
+ },
+ {
+  "k": "cfg_transfer_desc",
+  "v": "Enregistre dans un fichier le nom du centre, les médecins, les appareils, les localisations, l'étiquette, l'orientation et les autres paramètres. Lors d'une mise à jour de l'application ou d'un changement de tablette, il suffit de l'importer. (Le logo est envoyé à part.)"
+ },
+ {
+  "k": "cfg_exportar",
+  "v": "Exporter les paramètres"
+ },
+ {
+  "k": "cfg_importar",
+  "v": "Importer les paramètres"
+ },
+ {
+  "k": "cfg_exportado",
+  "v": "Paramètres enregistrés dans %1$s"
+ },
+ {
+  "k": "cfg_importado",
+  "v": "%1$d paramètre(s) restauré(s). Rouvrez les Paramètres pour les voir."
+ },
+ {
+  "k": "cfg_import_falha",
+  "v": "Fichier invalide ou illisible."
+ },
+ {
+  "k": "cfg_import_confirma",
+  "v": "Cela remplace les paramètres actuels par ceux du fichier. Continuer ?"
+ },
+ {
+  "k": "err_timeout_save",
+  "v": "Échec de l'enregistrement des données du Time-Out de cette simulation."
+ },
+ {
+  "k": "err_obs_save",
+  "v": "Échec de l'enregistrement de l'observation de cette simulation."
+ },
+ {
+  "k": "sim_not_found",
+  "v": "Simulation introuvable."
+ },
+ {
+  "k": "viewer_record",
+  "v": "N° de dossier : %1$s"
+ },
+ {
+  "k": "cfg_last_sync",
+  "v": "Dernière synchronisation : %1$s"
+ },
+ {
+  "k": "cat_switched",
+  "v": "Maintenant : %1$s"
+ },
+ {
+  "k": "export_zip",
+  "v": "Exporter la simulation (ZIP)"
+ },
+ {
+  "k": "export_zip_progress",
+  "v": "Compression de la simulation…"
+ },
+ {
+  "k": "export_zip_ok",
+  "v": "Exporté : %1$s"
+ },
+ {
+  "k": "export_zip_fail",
+  "v": "Impossible d'exporter la simulation."
+ },
+ {
+  "k": "export_zip_empty",
+  "v": "Cette simulation n'a aucun fichier à exporter."
+ },
+ {
+  "k": "wifi_connected_generic",
+  "v": "Wi-Fi connecté"
+ },
+ {
+  "k": "pdf_to_contact_precaution",
+  "v": "PRÉCAUTIONS CONTACT"
+ },
+ {
+  "k": "pdf_to_allergy",
+  "v": "ALLERGIE"
+ },
+ {
+  "k": "pdf_to_fall_risk",
+  "v": "RISQUE DE CHUTE"
+ },
+ {
+  "k": "pdf_to_equipment",
+  "v": "Appareil"
+ },
+ {
+  "k": "pdf_to_doctor",
+  "v": "Médecin référent"
+ },
+ {
+  "k": "pdf_to_site",
+  "v": "Localisation / latéralité"
+ },
+ {
+  "k": "pdf_to_routine",
+  "v": "ROUTINE DE PROCÉDURE SÉCURISÉE :"
+ },
+ {
+  "k": "pdf_to_step1",
+  "v": "• Vérification de l'identité du patient (nom complet, date de naissance, localisation traitée et fraction)"
+ },
+ {
+  "k": "pdf_to_step2",
+  "v": "• Le patient vérifie sa photo et son nom sur la fiche"
+ },
+ {
+  "k": "pdf_to_step3",
+  "v": "• Confirmation verbale de la topographie, du numéro de séance et des plaintes"
+ }
+]

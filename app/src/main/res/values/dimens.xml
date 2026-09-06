@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dimensões PADRÃO = celular (telas menores, paisagem com pouca altura).
+    O tablet sobrescreve com valores maiores em values-sw600dp/dimens.xml.
+    Isso torna o app responsivo entre celular e tablet sem duplicar layouts.
+-->
+<resources>
+    <!-- Telas de seleção: Home / Simulação / Tratamento -->
+    <dimen name="landing_padding">16dp</dimen>
+    <dimen name="brand_title_home">38sp</dimen>
+    <dimen name="brand_title_sub">28sp</dimen>
+    <dimen name="landing_subtitle">14sp</dimen>
+    <dimen name="landing_subtitle_margin">16dp</dimen>
+    <dimen name="module_btn_height">62dp</dimen>
+    <dimen name="module_btn_text">18sp</dimen>
+    <dimen name="module_btn_gap">10dp</dimen>
+    <dimen name="secondary_btn_height">54dp</dimen>
+
+    <!-- Câmera -->
+    <dimen name="cam_tab_height">46dp</dimen>
+    <dimen name="cam_action_height">52dp</dimen>
+    <dimen name="cam_bottom_height">46dp</dimen>
+    <dimen name="hist_thumb_size">82dp</dimen>
+    <dimen name="hist_nome_text">17sp</dimen>
+    <dimen name="hist_sub_text">13sp</dimen>
+    <dimen name="hist_sub2_text">12sp</dimen>
+</resources>

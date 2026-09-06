@@ -1,0 +1,530 @@
+[
+ {
+  "k": "pdf_to_col_fraction",
+  "v": "回数"
+ },
+ {
+  "k": "pdf_to_col_name1",
+  "v": "氏名・"
+ },
+ {
+  "k": "pdf_to_col_name2",
+  "v": "生年月日"
+ },
+ {
+  "k": "pdf_to_col_photo",
+  "v": "写真"
+ },
+ {
+  "k": "pdf_to_col_site1",
+  "v": "治療"
+ },
+ {
+  "k": "pdf_to_col_site2",
+  "v": "部位／"
+ },
+ {
+  "k": "pdf_to_col_site3",
+  "v": "左右"
+ },
+ {
+  "k": "pdf_to_col_frac2",
+  "v": "日／総回数"
+ },
+ {
+  "k": "pdf_to_col_complaint1",
+  "v": "主訴・評価のため"
+ },
+ {
+  "k": "pdf_to_col_complaint2",
+  "v": "紹介"
+ },
+ {
+  "k": "pdf_to_col_sign",
+  "v": "署名"
+ },
+ {
+  "k": "pdf_to_col_tech",
+  "v": "技師"
+ },
+ {
+  "k": "pdf_yes",
+  "v": "有"
+ },
+ {
+  "k": "pdf_no",
+  "v": "無"
+ },
+ {
+  "k": "pdf_accessories_sheet",
+  "v": "固定具シート"
+ },
+ {
+  "k": "pdf_page",
+  "v": "%1$dページ"
+ },
+ {
+  "k": "confirm_name_title",
+  "v": "氏名の確認"
+ },
+ {
+  "k": "lbl_patient_name",
+  "v": "患者氏名："
+ },
+ {
+  "k": "hint_prefilled",
+  "v": "自動入力された候補です。必要に応じて修正してください。"
+ },
+ {
+  "k": "confirm_birth_title",
+  "v": "生年月日の確認"
+ },
+ {
+  "k": "lbl_birth_date",
+  "v": "生年月日："
+ },
+ {
+  "k": "confirm_record_title",
+  "v": "患者IDの確認"
+ },
+ {
+  "k": "lbl_record",
+  "v": "患者ID："
+ },
+ {
+  "k": "csv_found_header",
+  "v": "データベースに患者が見つかりました："
+ },
+ {
+  "k": "csv_found_name",
+  "v": "氏名：%1$s"
+ },
+ {
+  "k": "csv_found_birth",
+  "v": "生年月日：%1$s"
+ },
+ {
+  "k": "csv_found_confirm",
+  "v": "この患者でよろしいですか？"
+ },
+ {
+  "k": "divergence_which",
+  "v": "このシミュレーションではどちらを使いますか？"
+ },
+ {
+  "k": "divergence_note",
+  "v": "ℹ ローカル履歴は自動では更新されません。データベースの更新をご検討ください。"
+ },
+ {
+  "k": "resim_existing",
+  "v": "この患者には、このタブレットにすでに%1$d件のシミュレーションが登録されています。"
+ },
+ {
+  "k": "resim_will_be",
+  "v": "今回は新規シミュレーション%1$dになります。"
+ },
+ {
+  "k": "resim_confirm",
+  "v": "同じ患者であることを確認しますか？"
+ },
+ {
+  "k": "draft_restored",
+  "v": "下書きを復元しました：%2$sの写真%1$d枚"
+ },
+ {
+  "k": "photo_dark",
+  "v": "⚠ 写真が暗いです"
+ },
+ {
+  "k": "photo_bright",
+  "v": "⚠ 写真が明るすぎます"
+ },
+ {
+  "k": "sim_original",
+  "v": "元のシミュレーション（%1$s）"
+ },
+ {
+  "k": "sim_new",
+  "v": "新規シミュレーション%1$d（%2$s）"
+ },
+ {
+  "k": "share_failed",
+  "v": "共有できませんでした：%1$s"
+ },
+ {
+  "k": "select_patient",
+  "v": "患者を選択してください"
+ },
+ {
+  "k": "scan_read_barcode",
+  "v": "バーコードを読み取る"
+ },
+ {
+  "k": "scan_no_barcode",
+  "v": "バーコードを検出できませんでした。もう一度お試しください。"
+ },
+ {
+  "k": "scan_barcode_empty",
+  "v": "バーコードを検出しましたが、内容が空です。"
+ },
+ {
+  "k": "aviso_clinico_titulo",
+  "v": "補助ツールです。臨床使用向けの検証は行っていません。"
+ },
+ {
+  "k": "aviso_clinico_corpo",
+  "v": "ラベルまたはバーコードの読み取りで入力された項目は候補であり、確認が必要です。印刷されたシートは、それを発行したチームが責任を負う文書です。"
+ },
+ {
+  "k": "creditos",
+  "v": "クレジットとライセンス"
+ },
+ {
+  "k": "creditos_intro",
+  "v": "このアプリが作っているのはインターフェースです。ラベルの文字認識とバーコードの読み取りは、第三者のコンポーネントであるGoogle ML Kitが行っており、当方はその作者ではありません。"
+ },
+ {
+  "k": "creditos_nossa_parte",
+  "v": "当方が作成したもの：カテゴリ別の撮影フロー、ファイルの整理、Time-Outページ付きの位置決めシート、および認識済みのテキストを解釈する規則です。"
+ },
+ {
+  "k": "creditos_sec_terceiros",
+  "v": "第三者コンポーネント"
+ },
+ {
+  "k": "creditos_mlkit",
+  "v": "Google ML Kit — Google LLC — ML Kit利用規約（プロプライエタリ、無償利用） — テキスト認識 16.0.1、バーコード読み取り 17.2.0、ドキュメントスキャナー 16.0.0-beta1。GoogleはML Kitを汎用の開発者向けSDKとして公開しており、医療機器として宣言しておらず、臨床使用を意図していません。"
+ },
+ {
+  "k": "creditos_apache",
+  "v": "Apache License 2.0 — AndroidX および CameraX（Android Open Source Project）、Material Components（Google）、kotlinx-coroutines（JetBrains）、SMBJ（Jeroen van Erp）、ZXing Android Embedded（Journey Mobile）、OpenCSV（Andrew Rucker Jones）。"
+ },
+ {
+  "k": "creditos_glide",
+  "v": "Glide — Bump Technologies および Google — BSD 2-Clause および Apache-2.0 — 4.16.0。"
+ },
+ {
+  "k": "creditos_licenca_app",
+  "v": "このアプリはApache License 2.0のもとで配布されます。全文と帰属表示はパッケージに同梱されています。"
+ },
+ {
+  "k": "creditos_regime",
+  "v": "公開されているソースコードは教育目的の資料であり、医療機器ではありません。ダウンロード・改変・導入する者が、自らのビルドと自施設での検証について責任を負います。"
+ },
+ {
+  "k": "add_from_gallery",
+  "v": "ギャラリーから追加"
+ },
+ {
+  "k": "gallery_none_picked",
+  "v": "写真が選択されていません。"
+ },
+ {
+  "k": "gallery_added",
+  "v": "ギャラリーから写真%1$d枚を追加しました。"
+ },
+ {
+  "k": "gallery_fail",
+  "v": "写真%1$d枚を取り込めませんでした。"
+ },
+ {
+  "k": "gallery_pick_title",
+  "v": "写真を選択"
+ },
+ {
+  "k": "gallery_need_category",
+  "v": "先に写真のカテゴリを選択してください。"
+ },
+ {
+  "k": "popup_editar_cadastro_longo",
+  "v": "患者登録を編集"
+ },
+ {
+  "k": "popup_editar_simulacao_longo",
+  "v": "このシミュレーションの情報を編集"
+ },
+ {
+  "k": "popup_fotos_longo",
+  "v": "このシミュレーションの写真を追加／編集"
+ },
+ {
+  "k": "sim_selector_label",
+  "v": "シミュレーション"
+ },
+ {
+  "k": "sim_selector_recent",
+  "v": "%1$s（最新）"
+ },
+ {
+  "k": "photo_existing_title",
+  "v": "このシミュレーションの写真"
+ },
+ {
+  "k": "photo_delete_q",
+  "v": "この写真をシミュレーションから削除しますか？"
+ },
+ {
+  "k": "photo_delete_warn",
+  "v": "ファイルは患者フォルダーから消去され、位置決めシートはこの写真なしで再生成されます。元に戻すことはできません。"
+ },
+ {
+  "k": "photo_deleted",
+  "v": "写真を削除しました。位置決めシートを再生成しました。"
+ },
+ {
+  "k": "photo_delete_fail",
+  "v": "写真を削除できませんでした。"
+ },
+ {
+  "k": "photo_edit_rotate",
+  "v": "回転／トリミングし直す"
+ },
+ {
+  "k": "photo_edited",
+  "v": "写真を再構図しました。位置決めシートを更新しました。"
+ },
+ {
+  "k": "photo_delete_last",
+  "v": "このカテゴリの写真はこれ1枚だけです。それでも削除しますか？"
+ },
+ {
+  "k": "group_rubricario",
+  "v": "署名一覧表"
+ },
+ {
+  "k": "rub_ativo",
+  "v": "PDFに署名一覧表のページを含める"
+ },
+ {
+  "k": "rub_ativo_desc",
+  "v": "施設のスタッフと各自の署名欄を載せたページです。患者については識別情報のみが記載されます。"
+ },
+ {
+  "k": "rub_orientacao",
+  "v": "ページの向き"
+ },
+ {
+  "k": "rub_retrato",
+  "v": "縦向き（ポートレート）"
+ },
+ {
+  "k": "rub_paisagem",
+  "v": "横向き（ランドスケープ）"
+ },
+ {
+  "k": "rub_cargos",
+  "v": "職種と登録番号の種別"
+ },
+ {
+  "k": "rub_cargos_desc",
+  "v": "1行に1職種、「職種 = 登録番号」の形式で入力します。例：医師 = 医籍登録番号"
+ },
+ {
+  "k": "rub_equipe",
+  "v": "登録済みスタッフ"
+ },
+ {
+  "k": "rub_add",
+  "v": "スタッフを追加"
+ },
+ {
+  "k": "rub_editar",
+  "v": "編集"
+ },
+ {
+  "k": "rub_excluir",
+  "v": "削除"
+ },
+ {
+  "k": "rub_vazio",
+  "v": "まだ誰も登録されていません。"
+ },
+ {
+  "k": "rub_total",
+  "v": "登録済み%1$d名"
+ },
+ {
+  "k": "rub_cargo",
+  "v": "職種"
+ },
+ {
+  "k": "rub_nome",
+  "v": "氏名（フルネーム）"
+ },
+ {
+  "k": "rub_registro",
+  "v": "免許登録番号"
+ },
+ {
+  "k": "rub_assinatura",
+  "v": "署名"
+ },
+ {
+  "k": "rub_assinatura_dica",
+  "v": "下の枠内に、指またはタブレットのペンで署名してください。"
+ },
+ {
+  "k": "rub_limpar_assinatura",
+  "v": "消去"
+ },
+ {
+  "k": "rub_salvar",
+  "v": "保存"
+ },
+ {
+  "k": "rub_falta_nome",
+  "v": "氏名を入力してください。"
+ },
+ {
+  "k": "rub_falta_cargo",
+  "v": "職種を選択してください。"
+ },
+ {
+  "k": "rub_falta_assinatura",
+  "v": "枠内に署名してください。"
+ },
+ {
+  "k": "rub_salvo",
+  "v": "%1$sを保存しました。"
+ },
+ {
+  "k": "rub_excluir_q",
+  "v": "署名一覧表から%1$sを削除しますか？"
+ },
+ {
+  "k": "rub_titulo_pdf",
+  "v": "署名一覧表"
+ },
+ {
+  "k": "rub_subtitulo_pdf",
+  "v": "放射線治療"
+ },
+ {
+  "k": "rub_nome_paciente_pdf",
+  "v": "氏名："
+ },
+ {
+  "k": "rub_col_nome",
+  "v": "氏名"
+ },
+ {
+  "k": "rub_col_rubrica",
+  "v": "署名"
+ },
+ {
+  "k": "wiz_rubricario_q",
+  "v": "この施設では、シートに署名一覧表のページを使いますか？"
+ },
+ {
+  "k": "wiz_rubricario_desc",
+  "v": "はいの場合、スタッフは後から「設定 → 署名一覧表」で登録します。少なくとも1名が登録されている場合にのみ、このページがPDFに出力されます。"
+ },
+ {
+  "k": "rub_gerar_pdf",
+  "v": "署名一覧表を印刷／保存"
+ },
+ {
+  "k": "rub_gerar_pdf_desc",
+  "v": "患者なしの1枚だけの用紙を作成します。室内への掲示用です。"
+ },
+ {
+  "k": "rub_sem_equipe",
+  "v": "用紙を作成する前に、少なくとも1名を登録してください。"
+ },
+ {
+  "k": "origem_titulo",
+  "v": "写真をどこから追加しますか？"
+ },
+ {
+  "k": "origem_rolo",
+  "v": "カメラロール"
+ },
+ {
+  "k": "origem_arquivadas",
+  "v": "この患者のアーカイブ済みの写真"
+ },
+ {
+  "k": "origem_procurar",
+  "v": "他のフォルダーを参照"
+ },
+ {
+  "k": "close",
+  "v": "閉じる"
+ },
+ {
+  "k": "arq_titulo",
+  "v": "アーカイブ済みの写真"
+ },
+ {
+  "k": "arq_toque_para_voltar",
+  "v": "写真をタップすると、位置決めシートに戻せます。写真は患者フォルダーに保存されたままです。"
+ },
+ {
+  "k": "arq_vazio",
+  "v": "この患者のアーカイブ済みの写真はありません。"
+ },
+ {
+  "k": "arq_restaurada",
+  "v": "写真を位置決めシートに戻しました。"
+ },
+ {
+  "k": "arq_substituida",
+  "v": "前の写真は消去ではなくアーカイブされました。戻すには：ギャラリーから追加 \\u2192 アーカイブ済みの写真。"
+ },
+ {
+  "k": "arq_arquivar",
+  "v": "アーカイブ（シートから外し、フォルダーに残す）"
+ },
+ {
+  "k": "arq_arquivada_ok",
+  "v": "写真をアーカイブしました。位置決めシートから外れ、患者フォルダーには残っています。"
+ },
+ {
+  "k": "arq_arquivar_falha",
+  "v": "写真をアーカイブできませんでした。"
+ },
+ {
+  "k": "rub_substituir_q",
+  "v": "署名を置き換えますか？"
+ },
+ {
+  "k": "rub_substituir_msg",
+  "v": "この方にはすでに署名が保存されています。もう一度署名すると前の署名は置き換えられ、元の署名は戻りません。\\n\\n氏名または登録番号だけを修正する場合は、キャンセルして各項目を編集してください。署名はそのまま保持されます。"
+ },
+ {
+  "k": "rub_substituir_ok",
+  "v": "もう一度署名する"
+ },
+ {
+  "k": "rub_exportar_equipe",
+  "v": "エクスポートに署名一覧表を含める"
+ },
+ {
+  "k": "rub_exportar_desc",
+  "v": "登録されたスタッフが、氏名・職種・登録番号・署名とともに設定ファイルに含まれます。スタッフの個人情報を含むため、ファイルは施設の文書として管理してください。"
+ },
+ {
+  "k": "rub_ver_pdf",
+  "v": "PDFの見本を見る"
+ },
+ {
+  "k": "rub_ver_pdf_desc",
+  "v": "患者なしの見本の用紙を開き、署名一覧表が印刷時にどう出るかを確認できます。"
+ },
+ {
+  "k": "rub_importadas",
+  "v": "署名一覧表のスタッフ%1$d名を取り込みました。"
+ },
+ {
+  "k": "pdf_lbl_age",
+  "v": "年齢"
+ },
+ {
+  "k": "pdf_lbl_sex",
+  "v": "性別"
+ },
+ {
+  "k": "pdf_lbl_registry",
+  "v": "患者ID"
+ }
+]

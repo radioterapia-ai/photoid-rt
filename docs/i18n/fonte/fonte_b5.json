@@ -1,0 +1,530 @@
+[
+ {
+  "k": "pdf_to_col_fraction",
+  "pt": "Fração"
+ },
+ {
+  "k": "pdf_to_col_name1",
+  "pt": "Nome e"
+ },
+ {
+  "k": "pdf_to_col_name2",
+  "pt": "Data Nasc"
+ },
+ {
+  "k": "pdf_to_col_photo",
+  "pt": "Foto"
+ },
+ {
+  "k": "pdf_to_col_site1",
+  "pt": "Sítio /"
+ },
+ {
+  "k": "pdf_to_col_site2",
+  "pt": "Lateralida"
+ },
+ {
+  "k": "pdf_to_col_site3",
+  "pt": "de"
+ },
+ {
+  "k": "pdf_to_col_frac2",
+  "pt": "Dia/Total"
+ },
+ {
+  "k": "pdf_to_col_complaint1",
+  "pt": "Queixa e encaminhado"
+ },
+ {
+  "k": "pdf_to_col_complaint2",
+  "pt": "para avaliação"
+ },
+ {
+  "k": "pdf_to_col_sign",
+  "pt": "Assinatura"
+ },
+ {
+  "k": "pdf_to_col_tech",
+  "pt": "Técnico"
+ },
+ {
+  "k": "pdf_yes",
+  "pt": "Sim"
+ },
+ {
+  "k": "pdf_no",
+  "pt": "Não"
+ },
+ {
+  "k": "pdf_accessories_sheet",
+  "pt": "FICHA DE ACESSÓRIOS"
+ },
+ {
+  "k": "pdf_page",
+  "pt": "Página %1$d"
+ },
+ {
+  "k": "confirm_name_title",
+  "pt": "Confirme nome"
+ },
+ {
+  "k": "lbl_patient_name",
+  "pt": "Nome do paciente:"
+ },
+ {
+  "k": "hint_prefilled",
+  "pt": "Sugestão pré-preenchida. Edite se necessário."
+ },
+ {
+  "k": "confirm_birth_title",
+  "pt": "Confirme nascimento"
+ },
+ {
+  "k": "lbl_birth_date",
+  "pt": "Data de nascimento:"
+ },
+ {
+  "k": "confirm_record_title",
+  "pt": "Confirme prontuário"
+ },
+ {
+  "k": "lbl_record",
+  "pt": "Prontuário:"
+ },
+ {
+  "k": "csv_found_header",
+  "pt": "Paciente encontrado na base:"
+ },
+ {
+  "k": "csv_found_name",
+  "pt": "Nome: %1$s"
+ },
+ {
+  "k": "csv_found_birth",
+  "pt": "Nascimento: %1$s"
+ },
+ {
+  "k": "csv_found_confirm",
+  "pt": "É este paciente?"
+ },
+ {
+  "k": "divergence_which",
+  "pt": "Para esta simulação, qual usar?"
+ },
+ {
+  "k": "divergence_note",
+  "pt": "ℹ Histórico local não é atualizado automaticamente. Considere atualizar a base de dados."
+ },
+ {
+  "k": "resim_existing",
+  "pt": "Este paciente já tem %1$d simulação(ões) registrada(s) neste tablet."
+ },
+ {
+  "k": "resim_will_be",
+  "pt": "Esta será a NOVA SIMULAÇÃO %1$d."
+ },
+ {
+  "k": "resim_confirm",
+  "pt": "Confirma que é o mesmo paciente?"
+ },
+ {
+  "k": "draft_restored",
+  "pt": "Rascunho restaurado: %1$d foto(s) de %2$s"
+ },
+ {
+  "k": "photo_dark",
+  "pt": "⚠ Foto escura"
+ },
+ {
+  "k": "photo_bright",
+  "pt": "⚠ Foto muito clara"
+ },
+ {
+  "k": "sim_original",
+  "pt": "Simulação original (%1$s)"
+ },
+ {
+  "k": "sim_new",
+  "pt": "Nova simulação %1$d (%2$s)"
+ },
+ {
+  "k": "share_failed",
+  "pt": "Não foi possível compartilhar: %1$s"
+ },
+ {
+  "k": "select_patient",
+  "pt": "Selecione o paciente"
+ },
+ {
+  "k": "scan_read_barcode",
+  "pt": "Ler código de barras"
+ },
+ {
+  "k": "scan_no_barcode",
+  "pt": "Nenhum código de barras detectado. Tente novamente."
+ },
+ {
+  "k": "scan_barcode_empty",
+  "pt": "Código detectado mas vazio."
+ },
+ {
+  "k": "aviso_clinico_titulo",
+  "pt": "Ferramenta de apoio. Não validada para uso clínico."
+ },
+ {
+  "k": "aviso_clinico_corpo",
+  "pt": "Os campos preenchidos por leitura de etiqueta ou código de barras são sugestão e exigem conferência. A ficha impressa é documento de responsabilidade da equipe que a emitiu."
+ },
+ {
+  "k": "creditos",
+  "pt": "Créditos e licenças"
+ },
+ {
+  "k": "creditos_intro",
+  "pt": "O que este aplicativo constrói é a interface. O reconhecimento de texto da etiqueta e a leitura de código de barras são feitos pelo Google ML Kit, componente de terceiro — não somos autores dele."
+ },
+ {
+  "k": "creditos_nossa_parte",
+  "pt": "De nossa autoria: o fluxo de captura por categoria, a organização dos arquivos, a ficha de posicionamento com a página de Time-Out, e as regras que interpretam o texto já reconhecido."
+ },
+ {
+  "k": "creditos_sec_terceiros",
+  "pt": "Componentes de terceiros"
+ },
+ {
+  "k": "creditos_mlkit",
+  "pt": "Google ML Kit — Google LLC — Termos do ML Kit (proprietária, uso gratuito) — reconhecimento de texto 16.0.1, código de barras 17.2.0, scanner de documentos 16.0.0-beta1. O Google publica o ML Kit como SDK de propósito geral; não o declara dispositivo médico nem o destina a uso clínico."
+ },
+ {
+  "k": "creditos_apache",
+  "pt": "Apache License 2.0 — AndroidX e CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones)."
+ },
+ {
+  "k": "creditos_glide",
+  "pt": "Glide — Bump Technologies e Google — BSD 2-Clause e Apache-2.0 — 4.16.0."
+ },
+ {
+  "k": "creditos_licenca_app",
+  "pt": "Este aplicativo é distribuído sob a Apache License 2.0. O texto completo e os avisos de atribuição acompanham o pacote."
+ },
+ {
+  "k": "creditos_regime",
+  "pt": "O código publicado é material educacional e não é dispositivo médico. Quem baixa, modifica e implanta responde pelo próprio build e pela validação no próprio serviço."
+ },
+ {
+  "k": "add_from_gallery",
+  "pt": "Adicionar da galeria"
+ },
+ {
+  "k": "gallery_none_picked",
+  "pt": "Nenhuma foto escolhida."
+ },
+ {
+  "k": "gallery_added",
+  "pt": "%1$d foto(s) adicionada(s) da galeria."
+ },
+ {
+  "k": "gallery_fail",
+  "pt": "Não foi possível importar %1$d foto(s)."
+ },
+ {
+  "k": "gallery_pick_title",
+  "pt": "Escolha as fotos"
+ },
+ {
+  "k": "gallery_need_category",
+  "pt": "Escolha primeiro a categoria da foto."
+ },
+ {
+  "k": "popup_editar_cadastro_longo",
+  "pt": "Editar cadastro do paciente"
+ },
+ {
+  "k": "popup_editar_simulacao_longo",
+  "pt": "Editar as informações desta simulação"
+ },
+ {
+  "k": "popup_fotos_longo",
+  "pt": "Adicionar / Editar fotos desta simulação"
+ },
+ {
+  "k": "sim_selector_label",
+  "pt": "Simulação"
+ },
+ {
+  "k": "sim_selector_recent",
+  "pt": "%1$s (mais recente)"
+ },
+ {
+  "k": "photo_existing_title",
+  "pt": "Fotos desta simulação"
+ },
+ {
+  "k": "photo_delete_q",
+  "pt": "Excluir esta foto da simulação?"
+ },
+ {
+  "k": "photo_delete_warn",
+  "pt": "O arquivo é apagado da pasta do paciente e a ficha é gerada de novo sem ele. Não há como desfazer."
+ },
+ {
+  "k": "photo_deleted",
+  "pt": "Foto excluída. A ficha foi gerada de novo."
+ },
+ {
+  "k": "photo_delete_fail",
+  "pt": "Não foi possível excluir a foto."
+ },
+ {
+  "k": "photo_edit_rotate",
+  "pt": "Girar / recortar de novo"
+ },
+ {
+  "k": "photo_edited",
+  "pt": "Foto reenquadrada. Ficha atualizada."
+ },
+ {
+  "k": "photo_delete_last",
+  "pt": "Esta é a única foto desta categoria. Excluir mesmo assim?"
+ },
+ {
+  "k": "group_rubricario",
+  "pt": "Rubricário"
+ },
+ {
+  "k": "rub_ativo",
+  "pt": "Incluir a página de rubricário no PDF"
+ },
+ {
+  "k": "rub_ativo_desc",
+  "pt": "Página com a equipe do serviço e o espaço de rubrica de cada um. Do paciente, ela leva apenas a identificação."
+ },
+ {
+  "k": "rub_orientacao",
+  "pt": "Orientação da página"
+ },
+ {
+  "k": "rub_retrato",
+  "pt": "Em pé (retrato)"
+ },
+ {
+  "k": "rub_paisagem",
+  "pt": "Deitado (paisagem)"
+ },
+ {
+  "k": "rub_cargos",
+  "pt": "Cargos e tipo de registro"
+ },
+ {
+  "k": "rub_cargos_desc",
+  "pt": "Um cargo por linha, no formato Cargo = Registro. Exemplo: Médico = CRM"
+ },
+ {
+  "k": "rub_equipe",
+  "pt": "Equipe cadastrada"
+ },
+ {
+  "k": "rub_add",
+  "pt": "Adicionar pessoa"
+ },
+ {
+  "k": "rub_editar",
+  "pt": "Editar"
+ },
+ {
+  "k": "rub_excluir",
+  "pt": "Excluir"
+ },
+ {
+  "k": "rub_vazio",
+  "pt": "Ninguém cadastrado ainda."
+ },
+ {
+  "k": "rub_total",
+  "pt": "%1$d pessoa(s) cadastrada(s)"
+ },
+ {
+  "k": "rub_cargo",
+  "pt": "Cargo"
+ },
+ {
+  "k": "rub_nome",
+  "pt": "Nome completo"
+ },
+ {
+  "k": "rub_registro",
+  "pt": "Número do conselho"
+ },
+ {
+  "k": "rub_assinatura",
+  "pt": "Rubrica"
+ },
+ {
+  "k": "rub_assinatura_dica",
+  "pt": "Assine no quadro abaixo com o dedo ou a caneta do tablet."
+ },
+ {
+  "k": "rub_limpar_assinatura",
+  "pt": "Limpar"
+ },
+ {
+  "k": "rub_salvar",
+  "pt": "Salvar"
+ },
+ {
+  "k": "rub_falta_nome",
+  "pt": "Informe o nome."
+ },
+ {
+  "k": "rub_falta_cargo",
+  "pt": "Escolha o cargo."
+ },
+ {
+  "k": "rub_falta_assinatura",
+  "pt": "Faça a rubrica no quadro."
+ },
+ {
+  "k": "rub_salvo",
+  "pt": "%1$s salvo(a)."
+ },
+ {
+  "k": "rub_excluir_q",
+  "pt": "Excluir %1$s do rubricário?"
+ },
+ {
+  "k": "rub_titulo_pdf",
+  "pt": "RUBRICÁRIO"
+ },
+ {
+  "k": "rub_subtitulo_pdf",
+  "pt": "RADIOTERAPIA"
+ },
+ {
+  "k": "rub_nome_paciente_pdf",
+  "pt": "Nome:"
+ },
+ {
+  "k": "rub_col_nome",
+  "pt": "Nome"
+ },
+ {
+  "k": "rub_col_rubrica",
+  "pt": "Rubrica"
+ },
+ {
+  "k": "wiz_rubricario_q",
+  "pt": "Este serviço usa página de rubricário na ficha?"
+ },
+ {
+  "k": "wiz_rubricario_desc",
+  "pt": "Se sim, a equipe é cadastrada depois em Configurações → Rubricário. A página só sai no PDF quando houver pelo menos uma pessoa cadastrada."
+ },
+ {
+  "k": "rub_gerar_pdf",
+  "pt": "Imprimir / salvar o rubricário"
+ },
+ {
+  "k": "rub_gerar_pdf_desc",
+  "pt": "Gera uma folha só, sem paciente, para afixar na sala."
+ },
+ {
+  "k": "rub_sem_equipe",
+  "pt": "Cadastre ao menos uma pessoa antes de gerar a folha."
+ },
+ {
+  "k": "origem_titulo",
+  "pt": "Adicionar fotos de onde?"
+ },
+ {
+  "k": "origem_rolo",
+  "pt": "Rolo da câmera"
+ },
+ {
+  "k": "origem_arquivadas",
+  "pt": "Fotos arquivadas deste paciente"
+ },
+ {
+  "k": "origem_procurar",
+  "pt": "Procurar em outras pastas"
+ },
+ {
+  "k": "close",
+  "pt": "Fechar"
+ },
+ {
+  "k": "arq_titulo",
+  "pt": "Fotos arquivadas"
+ },
+ {
+  "k": "arq_toque_para_voltar",
+  "pt": "Toque numa foto para devolvê-la à ficha. Ela continua guardada na pasta do paciente."
+ },
+ {
+  "k": "arq_vazio",
+  "pt": "Nenhuma foto arquivada deste paciente."
+ },
+ {
+  "k": "arq_restaurada",
+  "pt": "Foto devolvida à ficha."
+ },
+ {
+  "k": "arq_substituida",
+  "pt": "A foto anterior foi arquivada, não apagada. Para trazê-la de volta: Adicionar da galeria \\u2192 Fotos arquivadas."
+ },
+ {
+  "k": "arq_arquivar",
+  "pt": "Arquivar (sai da ficha, fica na pasta)"
+ },
+ {
+  "k": "arq_arquivada_ok",
+  "pt": "Foto arquivada. Saiu da ficha e continua na pasta do paciente."
+ },
+ {
+  "k": "arq_arquivar_falha",
+  "pt": "Não foi possível arquivar a foto."
+ },
+ {
+  "k": "rub_substituir_q",
+  "pt": "Substituir a rubrica?"
+ },
+ {
+  "k": "rub_substituir_msg",
+  "pt": "Esta pessoa já tem uma rubrica gravada. Assinar de novo substitui a anterior, e a antiga não volta.\\n\\nPara corrigir só o nome ou o registro, cancele e edite os campos: a rubrica é preservada."
+ },
+ {
+  "k": "rub_substituir_ok",
+  "pt": "Assinar de novo"
+ },
+ {
+  "k": "rub_exportar_equipe",
+  "pt": "Incluir o rubricário na exportação"
+ },
+ {
+  "k": "rub_exportar_desc",
+  "pt": "As pessoas cadastradas vão junto do arquivo de configurações, com nome, cargo, registro e rubrica. Contém dado pessoal da equipe — guarde o arquivo como documento da instituição."
+ },
+ {
+  "k": "rub_ver_pdf",
+  "pt": "Ver modelo em PDF"
+ },
+ {
+  "k": "rub_ver_pdf_desc",
+  "pt": "Abre uma folha de exemplo, sem paciente, para conferir como o rubricário vai sair na impressora."
+ },
+ {
+  "k": "rub_importadas",
+  "pt": "%1$d pessoa(s) do rubricário importada(s)."
+ },
+ {
+  "k": "pdf_lbl_age",
+  "pt": "IDADE"
+ },
+ {
+  "k": "pdf_lbl_sex",
+  "pt": "SEXO"
+ },
+ {
+  "k": "pdf_lbl_registry",
+  "pt": "REGISTRO"
+ }
+]

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Grupo de idiomas em Configurações (item 10).
+    
+    O modo "auto" foi removido nesta rodada — o app tem 3 idiomas suportados (pt/en/es)
+    e o usuário escolhe um. O checkbox chkLangAuto fica oculto (width=0/height=0/gone) 
+    apenas pra não quebrar o findViewById no SettingsActivity sem precisar mexer no Kt.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <CheckBox
+        android:id="@+id/chkLangAuto"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+
+    <TextView
+        style="@style/FieldLabel"
+        android:text="@string/select_language" />
+
+    <Spinner
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:background="@drawable/bg_card_warning"
+        android:text="@string/lang_restart_note" />
+</LinearLayout>

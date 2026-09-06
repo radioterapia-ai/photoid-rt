@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A categoria "many" existe desde o CLDR 38 em pt, es, fr e it, e cobre os
+    multiplos exatos de um milhao. A diferenca e a preposicao: "um milhao DE
+    pacientes". Sem ela o Android cai em "other" e imprime "1.000.000
+    pacientes", que esta errado — ainda que nenhum servico va chegar la.
+-->
+<resources>
+    <plurals name="patient_count_plural">
+        <item quantity="one">1 paciente registrado</item>
+        <item quantity="many">%d de pacientes registrados</item>
+        <item quantity="other">%d pacientes registrados</item>
+    </plurals>
+    <plurals name="treatment_count_plural">
+        <item quantity="one">1 paciente en tratamiento</item>
+        <item quantity="many">%d de pacientes en tratamiento</item>
+        <item quantity="other">%d pacientes en tratamiento</item>
+    </plurals>
+    <plurals name="simulations_count_plural">
+        <item quantity="one">1 simulación</item>
+        <item quantity="many">%d de simulaciones</item>
+        <item quantity="other">%d simulaciones</item>
+    </plurals>
+</resources>

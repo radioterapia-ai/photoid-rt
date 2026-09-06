@@ -1,0 +1,142 @@
+[
+ {
+  "k": "group_protocolo",
+  "v": "Protokół"
+ },
+ {
+  "k": "prot_explica",
+  "v": "Strony, które ośrodek dołącza na końcu karty ułożenia: zgoda pacjenta, informacje dla pacjenta, wewnętrzna lista kontrolna. Aplikacja drukuje PDF bez zmian — nakłada tylko etykietę i logo tam, gdzie je ustawisz."
+ },
+ {
+  "k": "prot_titulo",
+  "v": "Protokół"
+ },
+ {
+  "k": "prot_padrao_desc",
+  "v": "Karta ułożenia taka jak zawsze, bez dołączonych stron. Nie można go usunąć."
+ },
+ {
+  "k": "prot_nome",
+  "v": "Nazwa protokołu"
+ },
+ {
+  "k": "prot_miniatura",
+  "v": "Miniatura"
+ },
+ {
+  "k": "prot_miniatura_desc",
+  "v": "Obraz rozpoznający ten protokół podczas wyboru, na końcu symulacji."
+ },
+ {
+  "k": "prot_escolher_miniatura",
+  "v": "Wybierz obraz"
+ },
+ {
+  "k": "prot_paginas",
+  "v": "Strony"
+ },
+ {
+  "k": "prot_paginas_desc",
+  "v": "Wychodzą w tej kolejności, po wykazie paraf. Wielostronicowy PDF wchodzi w całości."
+ },
+ {
+  "k": "prot_sem_paginas",
+  "v": "Brak stron. Ten protokół drukuje samą kartę ułożenia."
+ },
+ {
+  "k": "prot_add_pagina",
+  "v": "Dodaj PDF"
+ },
+ {
+  "k": "prot_pagina_item",
+  "v": "%1$d. PDF, stron: %2$d"
+ },
+ {
+  "k": "prot_calibrar",
+  "v": "Ustaw położenie"
+ },
+ {
+  "k": "prot_excluir_pagina_q",
+  "v": "Usunąć tę stronę z protokołu?"
+ },
+ {
+  "k": "prot_falta_nome",
+  "v": "Nadaj protokołowi nazwę."
+ },
+ {
+  "k": "prot_sem_seletor",
+  "v": "Brak aplikacji do wyboru pliku PDF."
+ },
+ {
+  "k": "prot_pdf_ilegivel",
+  "v": "Nie udało się odczytać tego pliku PDF. Pliki chronione hasłem nie działają."
+ },
+ {
+  "k": "prot_pagina_titulo",
+  "v": "Gdzie trafiają etykieta i logo"
+ },
+ {
+  "k": "prot_pagina_ajuda",
+  "v": "Przeciągnij prostokąty tam, gdzie nie zakrywają tego, co już jest wydrukowane. Położenie obowiązuje dla wszystkich stron tego pliku PDF."
+ },
+ {
+  "k": "prot_usar_etiqueta",
+  "v": "Nałóż etykietę identyfikacyjną"
+ },
+ {
+  "k": "prot_usar_logo",
+  "v": "Nałóż logo ośrodka"
+ },
+ {
+  "k": "prot_box_etiqueta",
+  "v": "Etykieta"
+ },
+ {
+  "k": "prot_box_logo",
+  "v": "Logo"
+ },
+ {
+  "k": "prot_pos_resumo",
+  "v": "Etykieta: %1$d mm od lewej, %2$d mm od góry · Logo: %3$d mm od prawej, %4$d mm od góry"
+ },
+ {
+  "k": "prot_add",
+  "v": "Dodaj protokół"
+ },
+ {
+  "k": "prot_excluir_q",
+  "v": "Usunąć protokół „%1$s\"?"
+ },
+ {
+  "k": "prot_excluir_msg",
+  "v": "Wczytane do niego pliki PDF również zostaną usunięte."
+ },
+ {
+  "k": "prot_total",
+  "v": "Protokołów: %1$d"
+ },
+ {
+  "k": "prot_escolher_titulo",
+  "v": "Protokół tej symulacji"
+ },
+ {
+  "k": "prot_escolher_desc",
+  "v": "Wybierz, które strony końcowe trafią do karty ułożenia."
+ },
+ {
+  "k": "prot_qtd_paginas",
+  "v": "Stron: %1$d"
+ },
+ {
+  "k": "prot_marcar",
+  "v": "Wybierz"
+ },
+ {
+  "k": "tr_protocolos",
+  "v": "Protokoły"
+ },
+ {
+  "k": "tr_protocolos_desc",
+  "v": "Zapisane protokoły, wraz z wczytanymi plikami PDF i ustawieniem położenia na każdej stronie."
+ }
+]

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-feature android:name="android.hardware.camera.any" android:required="true" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Pen-drive por cabo OTG: o tablet atua como HOST USB. Declarada como
+         NÃO obrigatória para não impedir a instalação em aparelhos sem OTG. -->
+    <uses-feature android:name="android.hardware.usb.host" android:required="false" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <!-- Acesso a todos os arquivos: uso interno nas clínicas. Permite criar
+         PhotoID_RT na RAIZ do armazenamento e gravar fotos + PDF. -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <!-- SEM permissão de microfone, de propósito.
+         O comando por voz chegou a ser implementado e foi RETIRADO: a garantia
+         de que o áudio não sai do aparelho depende da API on-device do Android
+         13+. Abaixo disso, EXTRA_PREFER_OFFLINE é apenas uma preferência, e sem
+         o pacote de idioma instalado o sistema envia o áudio à rede. Como o app
+         é universal e o parque de tablets das clínicas é desconhecido, não há
+         como prometer processamento local em todas as versões — e o microfone
+         de uma sala de simulação capta a conversa com o paciente.
+         Não reintroduzir sem que a promessa valha em TODAS as versões alvo. -->
+
+    <application
+        android:name=".RadioterapiaApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:theme="@style/Theme.Radioterapia"
+        tools:targetApi="33">
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="ocr,barcode" />
+
+        <!-- Splash (única que NÃO é landscape porque a logo é horizontal e funciona em
+             qualquer orientação inicial; demais activities travadas em landscape - item 2) -->
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Radioterapia.Splash"
+            android:configChanges="keyboardHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Consentimento (LGPD, primeiro acesso) - item 11 -->
+        <activity
+            android:name=".consent.ConsentActivity"
+            android:exported="false"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".SimulationHomeActivity"
+            android:exported="false"
+            android:label="@string/simulation"
+            android:parentActivityName=".HomeActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden"
+            android:parentActivityName=".SimulationHomeActivity" />
+
+        <activity
+            android:name=".crop.CropActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <activity
+            android:name=".protocolo.ProtocoloActivity"
+            android:exported="false"
+            android:label="@string/group_protocolo"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden" />
+
+        <!--
+            Calibracao da pagina: configChanges com orientation e screenSize
+            porque girar o tablet aqui recriaria a Activity e perderia o
+            arrasto em andamento, junto com o bitmap ja renderizado.
+        -->
+        <activity
+            android:name=".protocolo.ProtocoloPaginaActivity"
+            android:exported="false"
+            android:label="@string/prot_pagina_titulo"
+            android:parentActivityName=".protocolo.ProtocoloActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <activity
+            android:name=".rubricario.RubricarioPessoaActivity"
+            android:exported="false"
+            android:label="@string/group_rubricario"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/settings"
+            android:parentActivityName=".HomeActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".ui.HistoricoActivity"
+            android:exported="false"
+            android:label="@string/patient_history"
+            android:parentActivityName=".HomeActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".ui.EditarPacienteActivity"
+            android:exported="false"
+            android:label="@string/edit_patient"
+            android:parentActivityName=".ui.HistoricoActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".ui.EditarSimulacaoActivity"
+            android:exported="false"
+            android:label="@string/edit_sim_title"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <activity
+            android:name=".treatment.TreatmentActivity"
+            android:exported="false"
+            android:label="@string/treatment"
+            android:parentActivityName=".HomeActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".treatment.PatientViewerActivity"
+            android:exported="false"
+            android:label="@string/treatment"
+            android:parentActivityName=".treatment.TreatmentActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <activity
+            android:name=".treatment.AddPhotoInTreatmentActivity"
+            android:exported="false"
+            android:label="@string/add_photo_in_treatment"
+            android:parentActivityName=".treatment.PatientViewerActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <activity
+            android:name=".wizard.WizardActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <activity
+            android:name=".ui.LogsActivity"
+            android:exported="false"
+            android:label="@string/logs_title"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".stats.StatsActivity"
+            android:exported="false"
+            android:label="@string/stats_title"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".ui.FinalizarActivity"
+            android:exported="false"
+            android:label="@string/finish_simulation"
+            android:parentActivityName=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <activity
+            android:name=".ui.AboutActivity"
+            android:exported="false"
+            android:label="@string/about"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:configChanges="keyboardHidden" />
+
+        <activity
+            android:name=".scan.ScanPacienteActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
+
+        <!-- FileProvider para abrir PDFs em outros apps (item 8 - Visualizar PDF) -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+    </application>
+
+</manifest>

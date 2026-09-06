@@ -1,0 +1,546 @@
+[
+ {
+  "k": "period_all_cases",
+  "v": "すべて"
+ },
+ {
+  "k": "in_treatment_tag",
+  "v": "治療中"
+ },
+ {
+  "k": "only_discharge_in_list",
+  "v": "この患者はすでに治療中です。治療終了の処理は治療中患者リストから行います。"
+ },
+ {
+  "k": "developed_by",
+  "v": "開発：Henrique Braga"
+ },
+ {
+  "k": "storage_choose",
+  "v": "📁 フォルダを選択"
+ },
+ {
+  "k": "storage_use_default",
+  "v": "既定（ルート）を使用"
+ },
+ {
+  "k": "storage_set_ok",
+  "v": "保存先フォルダを設定しました。"
+ },
+ {
+  "k": "storage_reset_ok",
+  "v": "既定のフォルダ（タブレットのルート）に戻しました。"
+ },
+ {
+  "k": "storage_path_error",
+  "v": "そのフォルダは使用できません。内部ストレージ内のフォルダを選択してください。"
+ },
+ {
+  "k": "group_stats_logs",
+  "v": "統計とログ"
+ },
+ {
+  "k": "stats_logs_explain",
+  "v": "このタブレットでのアプリの利用状況と監査ログ（logs）を確認できます。"
+ },
+ {
+  "k": "sort_by",
+  "v": "並べ替え ⇅"
+ },
+ {
+  "k": "sim_showing",
+  "v": "表示中のシミュレーション："
+ },
+ {
+  "k": "storage_perm_msg",
+  "v": "タブレットのルート（内部ストレージ/PhotoID_RT）に保存するには、\\\"すべてのファイルへのアクセス\\\" の権限が必要です。設定画面を開きますので、有効にしてください。"
+ },
+ {
+  "k": "cat_documents",
+  "v": "印刷物"
+ },
+ {
+  "k": "docs_not_in_pdf",
+  "v": "📄 印刷物のスキャン：これらの画像はシミュレーションのPDFには含まれません。"
+ },
+ {
+  "k": "docs_added_n",
+  "v": "印刷物として%1$dページを追加しました。"
+ },
+ {
+  "k": "fin_documents",
+  "v": "スキャンした印刷物：%1$d（PDFには含まれません）"
+ },
+ {
+  "k": "docs_viewer_label",
+  "v": "印刷物"
+ },
+ {
+  "k": "doc_scan_fail_fallback",
+  "v": "この端末ではスキャナーを利用できません — 通常のカメラを使用します。"
+ },
+ {
+  "k": "rotate_action",
+  "v": "⟳ 回転"
+ },
+ {
+  "k": "label_scanned_ok",
+  "v": "患者ラベルを自動トリミングで撮影しました。"
+ },
+ {
+  "k": "reuse_prev_photos_ok",
+  "v": "前回のシミュレーションから顔写真と患者ラベルをコピーしました。新しい位置決めから続けてください。"
+ },
+ {
+  "k": "edit_migrate_title",
+  "v": "識別情報の変更"
+ },
+ {
+  "k": "edit_migrate_msg",
+  "v": "\\\"%1$s\\\" から \\\"%2$s\\\" に変更します。\\n\\n• すべて更新：フォルダ名を変更し、写真とPDFを移行し、治療リストを更新してシートを再生成します（推奨）。\\n• 新規作成：写真を含む既存の登録をそのまま残し、新しい空の登録を作成します。"
+ },
+ {
+  "k": "edit_opt_update_all",
+  "v": "すべて更新"
+ },
+ {
+  "k": "edit_opt_keep_both",
+  "v": "新規作成（既存を残す）"
+ },
+ {
+  "k": "edit_folder_conflict",
+  "v": "その氏名／患者IDの患者フォルダはすでに存在します。データを修正するか、重複したフォルダを処理してから移行してください。"
+ },
+ {
+  "k": "edit_done_migrated",
+  "v": "患者登録を更新しました。写真を移行し、新しい氏名でPDFを再生成しました。"
+ },
+ {
+  "k": "edit_treat_q_title",
+  "v": "治療中の患者"
+ },
+ {
+  "k": "edit_treat_q_msg",
+  "v": "\\\"%1$s\\\" は治療中患者リストに登録されています。どのように処理しますか？"
+ },
+ {
+  "k": "edit_treat_only_new",
+  "v": "新しい方のみ"
+ },
+ {
+  "k": "edit_treat_both",
+  "v": "両方を残す"
+ },
+ {
+  "k": "confirm_remove_patient_full",
+  "v": "\"%1$s\" のローカルデータと写真をすべて削除しますか？この操作はこのタブレット上の患者フォルダを消去し、元に戻せません。"
+ },
+ {
+  "k": "remove_local_data",
+  "v": "ローカルデータを削除"
+ },
+ {
+  "k": "remove_local_done_server_note",
+  "v": "ローカルのデータと写真を削除しました。同期サーバー上のファイルは削除されていません — 完全に削除するには、外部サーバー上で手動で削除してください。"
+ },
+ {
+  "k": "obs_updated",
+  "v": "備考を反映してPDFを更新しました。"
+ },
+ {
+  "k": "ap_add_carousel",
+  "v": "カルーセルに追加"
+ },
+ {
+  "k": "ap_finish",
+  "v": "完了"
+ },
+ {
+  "k": "ap_finishing",
+  "v": "更新したPDFを生成しています…"
+ },
+ {
+  "k": "scan_label_quick_fail",
+  "v": "患者ラベルを読み取れません — 下のカメラを使用してください。"
+ },
+ {
+  "k": "timeout_medico_hint",
+  "v": "医師を選択してください"
+ },
+ {
+  "k": "timeout_risco",
+  "v": "転倒リスク"
+ },
+ {
+  "k": "timeout_prec",
+  "v": "接触予防策"
+ },
+ {
+  "k": "timeout_sim",
+  "v": "はい"
+ },
+ {
+  "k": "timeout_nao",
+  "v": "いいえ／情報なし"
+ },
+ {
+  "k": "timeout_medicos_cfg_hint",
+  "v": "Time-Outの担当医（1行に1名）。シミュレーションの完了時に候補として表示されます。"
+ },
+ {
+  "k": "timeout_medicos_cfg_ex",
+  "v": "例：\\n山田 太郎\\n佐藤 花子"
+ },
+ {
+  "k": "printer_duplex_title",
+  "v": "複数ページの印刷"
+ },
+ {
+  "k": "duplex_off",
+  "v": "1枚に1ページ"
+ },
+ {
+  "k": "duplex_long",
+  "v": "両面 — 長辺とじ（横方向に反転）"
+ },
+ {
+  "k": "duplex_short",
+  "v": "両面 — 短辺とじ（縦方向に反転）"
+ },
+ {
+  "k": "wiz_pdf_title",
+  "v": "PDFと患者ラベル"
+ },
+ {
+  "k": "wiz_pdf_desc",
+  "v": "位置決めシートの生成方法と、患者の実物ラベル用に確保するスペースの設定です。"
+ },
+ {
+  "k": "wiz_pdf_orientation",
+  "v": "PDFの向き"
+ },
+ {
+  "k": "wiz_use_label",
+  "v": "実物ラベル用のスペースを確保する"
+ },
+ {
+  "k": "label_width_mm",
+  "v": "幅（mm）"
+ },
+ {
+  "k": "label_height_mm",
+  "v": "高さ（mm）"
+ },
+ {
+  "k": "wiz_pdf_hint",
+  "v": "これらはすべて後から 設定 → PDF で変更できます。"
+ },
+ {
+  "k": "detected_text",
+  "v": "検出されたテキスト（参考）："
+ },
+ {
+  "k": "confirm_field_alert",
+  "v": "続行する前に ✓ をタップして%1$sを確認してください。"
+ },
+ {
+  "k": "cad_sexo_m",
+  "v": "男"
+ },
+ {
+  "k": "cad_sexo_f",
+  "v": "女"
+ },
+ {
+  "k": "team_medico_label",
+  "v": "担当医"
+ },
+ {
+  "k": "confirm_birth_hint",
+  "v": "必須。dd/mm/yyyy 形式。"
+ },
+ {
+  "k": "confirm_pront_hint",
+  "v": "必須。"
+ },
+ {
+  "k": "birth_invalid",
+  "v": "生年月日が正しくありません（dd/mm/yyyy 形式で入力）。"
+ },
+ {
+  "k": "pront_required",
+  "v": "患者IDは必須です。"
+ },
+ {
+  "k": "cad_sexo_required",
+  "v": "性別（男／女）を選択し、✓ で確認してください。"
+ },
+ {
+  "k": "cad_sexo_label_req",
+  "v": "性別"
+ },
+ {
+  "k": "pdf_timeout_check",
+  "v": "PDFにTime-Outページを含める（1ページ目）"
+ },
+ {
+  "k": "sitio_topografia_label",
+  "v": "治療部位／トポグラフィ"
+ },
+ {
+  "k": "sitio_topografia_hint",
+  "v": "治療部位／トポグラフィを選択"
+ },
+ {
+  "k": "ap_discard_roll",
+  "v": "新しい写真を破棄"
+ },
+ {
+  "k": "ap_save_roll_zero",
+  "v": "保存して追加"
+ },
+ {
+  "k": "ap_save_roll",
+  "v": "保存して追加（%1$d）"
+ },
+ {
+  "k": "ap_roll_added",
+  "v": "ロール内：写真%1$d枚"
+ },
+ {
+  "k": "ap_roll_empty",
+  "v": "ロールに新しい写真はありません。"
+ },
+ {
+  "k": "ap_discard_roll_confirm",
+  "v": "新しい写真%1$d枚を破棄しますか？まだ保存も送信もされていません。"
+ },
+ {
+  "k": "ap_save_roll_title",
+  "v": "新しい写真を保存"
+ },
+ {
+  "k": "ap_save_roll_msg",
+  "v": "写真%1$d枚を保存して送信します。シミュレーションの備考を確認してください（PDFに入ります）："
+ },
+ {
+  "k": "review_ident_title",
+  "v": "識別情報の確認"
+ },
+ {
+  "k": "switch_cam_label",
+  "v": "切替"
+ },
+ {
+  "k": "timeout_equip_label",
+  "v": "治療装置"
+ },
+ {
+  "k": "timeout_equip_hint",
+  "v": "治療装置を選択"
+ },
+ {
+  "k": "timeout_alergia",
+  "v": "アレルギー"
+ },
+ {
+  "k": "fin_ok_short",
+  "v": "✅ シミュレーションを保存し、送信しました。"
+ },
+ {
+  "k": "fin_fail_short",
+  "v": "❌ 保存中に問題が発生しました："
+ },
+ {
+  "k": "wiz_medicos_label",
+  "v": "担当医（1行に1名）"
+ },
+ {
+  "k": "wiz_equip_label",
+  "v": "治療装置（1行に1台）"
+ },
+ {
+  "k": "cfg_equip_hint",
+  "v": "施設の治療装置（1行に1台）。シミュレーションの完了時にドロップダウンに表示されます。"
+ },
+ {
+  "k": "cfg_sitios_hint",
+  "v": "治療部位／トポグラフィ（1行に1件）。完了画面のドロップダウンに表示されます。"
+ },
+ {
+  "k": "fin_confirm_title",
+  "v": "データの確認"
+ },
+ {
+  "k": "fin_done_title",
+  "v": "シミュレーションを完了しました"
+ },
+ {
+  "k": "share_pdf",
+  "v": "🔗 共有"
+ },
+ {
+  "k": "print_only",
+  "v": "🖨︎ 印刷"
+ },
+ {
+  "k": "fin_edit_data",
+  "v": "✏︎ シミュレーションを編集"
+ },
+ {
+  "k": "fin_save_changes",
+  "v": "💾 変更を保存"
+ },
+ {
+  "k": "fin_edit_title",
+  "v": "データを編集"
+ },
+ {
+  "k": "patient_actions",
+  "v": "患者に関する操作"
+ },
+ {
+  "k": "dd_type_other",
+  "v": "✏︎ その他を入力…"
+ },
+ {
+  "k": "pdf_margin_label",
+  "v": "印刷余白（mm）"
+ },
+ {
+  "k": "pdf_margin_hint_portrait",
+  "v": "左余白（縦）。既定は15 mm。"
+ },
+ {
+  "k": "pdf_margin_hint_landscape",
+  "v": "上余白（横）。既定は15 mm。"
+ },
+ {
+  "k": "cache_confirm_delete",
+  "v": "完全に削除"
+ },
+ {
+  "k": "cache_confirm_warning",
+  "v": "この操作は対象患者のローカルの写真とPDFを削除し、元に戻せません。期間内に治療中の患者も併せて削除されます。"
+ },
+ {
+  "k": "edit_sim_title",
+  "v": "シミュレーションを編集"
+ },
+ {
+  "k": "edit_sim_subtitle",
+  "v": "このシミュレーションの医師、治療装置、治療部位、リスク、備考。"
+ },
+ {
+  "k": "edit_sim_save",
+  "v": "💾 保存してPDFを更新"
+ },
+ {
+  "k": "view_pdf_only",
+  "v": "👁 PDFを表示"
+ },
+ {
+  "k": "finish_close",
+  "v": "完了"
+ },
+ {
+  "k": "ap_saved_title",
+  "v": "写真を保存しました"
+ },
+ {
+  "k": "ap_saved_msg",
+  "v": "新しい写真でPDFを更新しました。次にどうしますか？"
+ },
+ {
+  "k": "share_pdf_btn",
+  "v": "共有"
+ },
+ {
+  "k": "hc_no_browser",
+  "v": "ブラウザーがインストールされていません"
+ },
+ {
+  "k": "hc_name_empty",
+  "v": "氏名が未入力です"
+ },
+ {
+  "k": "hc_patient_identified",
+  "v": "✓ 患者を特定しました"
+ },
+ {
+  "k": "hc_yes_proceed",
+  "v": "はい、続行"
+ },
+ {
+  "k": "hc_edit_manually",
+  "v": "手動で編集"
+ },
+ {
+  "k": "hc_did_you_mean",
+  "v": "もしかして？"
+ },
+ {
+  "k": "hc_type_manually",
+  "v": "手動で入力"
+ },
+ {
+  "k": "hc_patient_not_in_base",
+  "v": "患者がデータベースに見つかりません。氏名を入力してください："
+ },
+ {
+  "k": "hc_empty",
+  "v": "未入力です"
+ },
+ {
+  "k": "hc_remove_photo_q",
+  "v": "この写真を破棄しますか？"
+ },
+ {
+  "k": "hc_back",
+  "v": "戻る"
+ },
+ {
+  "k": "hc_draft_kept",
+  "v": "下書きは保持されます。あとでシミュレーションのホーム画面から続行できます。"
+ },
+ {
+  "k": "hc_no_photo",
+  "v": "写真なし"
+ },
+ {
+  "k": "hc_patient_not_identified",
+  "v": "患者が特定されていません"
+ },
+ {
+  "k": "hc_processing",
+  "v": "処理中..."
+ },
+ {
+  "k": "hc_capture",
+  "v": "撮影"
+ },
+ {
+  "k": "hc_sending_new_pdf",
+  "v": "新しいPDFを送信しています..."
+ },
+ {
+  "k": "hc_photos_saved",
+  "v": "写真を保存しました"
+ },
+ {
+  "k": "hc_photos_saved_no_pdf",
+  "v": "写真は保存されましたが、PDFを再生成できませんでした "
+ },
+ {
+  "k": "hc_finish_error",
+  "v": "完了処理エラー"
+ },
+ {
+  "k": "hc_pdf_open_fail",
+  "v": "PDFを開けませんでした。"
+ },
+ {
+  "k": "hc_patient_not_found",
+  "v": "患者が見つかりません"
+ }
+]

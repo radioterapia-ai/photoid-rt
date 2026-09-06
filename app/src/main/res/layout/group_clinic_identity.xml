@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView style="@style/FieldLabel"
+        android:layout_marginTop="4dp"
+        android:text="@string/company_name" />
+    <EditText
+        android:id="@+id/edtCompanyName"
+        style="@style/InputField"
+        android:hint="@string/company_name_optional" />
+
+    <TextView style="@style/SectionDesc"
+        android:layout_marginTop="16dp"
+        android:text="@string/company_logo_desc" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="@color/bg_card">
+
+        <ImageView
+            android:id="@+id/imgLogoPreview"
+            android:layout_width="100dp"
+            android:layout_height="80dp"
+            android:scaleType="fitCenter"
+            android:background="@color/text_on_dark"
+            android:src="@drawable/logo_radioterapia"
+            android:contentDescription="@string/company_logo" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/btnSelectLogo"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="@string/select_logo"
+                android:textSize="12sp"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/brand_primary" />
+
+            <Button
+                android:id="@+id/btnRemoveLogo"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/remove_logo"
+                android:textSize="12sp"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_neutral" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--
+        A transferencia de configuracao SAIU desta aba.
+
+        Mora agora em "Exportar / Importar configuracoes", onde o usuario
+        escolhe item a item o que vai no arquivo. Aqui era tudo ou nada, e por
+        isso nao servia a dois usos legitimos: levar so a identidade visual para
+        uma unidade nova, e levar a base de pacientes sem levar junto a
+        configuracao de rede da outra unidade.
+    -->
+
+</LinearLayout>

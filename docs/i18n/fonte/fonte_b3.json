@@ -1,0 +1,546 @@
+[
+ {
+  "k": "period_all_cases",
+  "pt": "Todos"
+ },
+ {
+  "k": "in_treatment_tag",
+  "pt": "Em tratamento"
+ },
+ {
+  "k": "only_discharge_in_list",
+  "pt": "Este paciente já está em tratamento. A alta é feita pela lista de Pacientes em Tratamento."
+ },
+ {
+  "k": "developed_by",
+  "pt": "Desenvolvido por Henrique Braga"
+ },
+ {
+  "k": "storage_choose",
+  "pt": "📁 Escolher pasta"
+ },
+ {
+  "k": "storage_use_default",
+  "pt": "Usar padrão (raiz)"
+ },
+ {
+  "k": "storage_set_ok",
+  "pt": "Pasta de armazenamento definida."
+ },
+ {
+  "k": "storage_reset_ok",
+  "pt": "Voltou para a pasta padrão (raiz do tablet)."
+ },
+ {
+  "k": "storage_path_error",
+  "pt": "Não foi possível usar essa pasta. Escolha uma pasta no armazenamento interno."
+ },
+ {
+  "k": "group_stats_logs",
+  "pt": "Estatísticas e registros"
+ },
+ {
+  "k": "stats_logs_explain",
+  "pt": "Veja os números de uso e o registro de auditoria (logs) do aplicativo neste tablet."
+ },
+ {
+  "k": "sort_by",
+  "pt": "Ordenar ⇅"
+ },
+ {
+  "k": "sim_showing",
+  "pt": "Simulação exibida:"
+ },
+ {
+  "k": "storage_perm_msg",
+  "pt": "Para salvar na raiz do tablet (Armazenamento interno/PhotoID_RT), o app precisa da permissão \\\"Acesso a todos os arquivos\\\". Vamos abrir a tela do sistema para você ativar."
+ },
+ {
+  "k": "cat_documents",
+  "pt": "Impressos"
+ },
+ {
+  "k": "docs_not_in_pdf",
+  "pt": "📄 Scan de impressos: estas imagens NÃO entram no PDF da simulação."
+ },
+ {
+  "k": "docs_added_n",
+  "pt": "%1$d página(s) adicionada(s) como impressos."
+ },
+ {
+  "k": "fin_documents",
+  "pt": "Impressos escaneados: %1$d (não entram no PDF)"
+ },
+ {
+  "k": "docs_viewer_label",
+  "pt": "Impressos"
+ },
+ {
+  "k": "doc_scan_fail_fallback",
+  "pt": "Scanner indisponível neste aparelho — usando a câmera comum."
+ },
+ {
+  "k": "rotate_action",
+  "pt": "⟳ Girar"
+ },
+ {
+  "k": "label_scanned_ok",
+  "pt": "Etiqueta capturada com recorte automático."
+ },
+ {
+  "k": "reuse_prev_photos_ok",
+  "pt": "Rosto e etiqueta copiados da simulação anterior. Siga com os novos posicionamentos."
+ },
+ {
+  "k": "edit_migrate_title",
+  "pt": "Alteração de identificação"
+ },
+ {
+  "k": "edit_migrate_msg",
+  "pt": "Alterando de \\\"%1$s\\\" para \\\"%2$s\\\".\\n\\n• ATUALIZAR TUDO: renomeia a pasta, migra fotos e PDF, atualiza a lista de tratamento e regenera a folha (recomendado).\\n• CRIAR NOVO: mantém o cadastro antigo com as fotos e cria um novo registro vazio."
+ },
+ {
+  "k": "edit_opt_update_all",
+  "pt": "Atualizar tudo"
+ },
+ {
+  "k": "edit_opt_keep_both",
+  "pt": "Criar novo (manter antigo)"
+ },
+ {
+  "k": "edit_folder_conflict",
+  "pt": "Já existe uma pasta de paciente com esse novo nome/prontuário. Ajuste os dados ou trate a pasta duplicada antes de migrar."
+ },
+ {
+  "k": "edit_done_migrated",
+  "pt": "Cadastro atualizado: fotos migradas e PDF regenerado com o novo nome."
+ },
+ {
+  "k": "edit_treat_q_title",
+  "pt": "Paciente em tratamento"
+ },
+ {
+  "k": "edit_treat_q_msg",
+  "pt": "\\\"%1$s\\\" está na lista de Pacientes em Tratamento. Como deseja proceder?"
+ },
+ {
+  "k": "edit_treat_only_new",
+  "pt": "Somente o novo"
+ },
+ {
+  "k": "edit_treat_both",
+  "pt": "Manter ambos"
+ },
+ {
+  "k": "confirm_remove_patient_full",
+  "pt": "Excluir TODOS os dados e fotos locais de \"%1$s\"? Esta ação apaga a pasta do paciente neste tablet e não pode ser desfeita."
+ },
+ {
+  "k": "remove_local_data",
+  "pt": "Excluir dados locais"
+ },
+ {
+  "k": "remove_local_done_server_note",
+  "pt": "Dados e fotos locais excluídos. Os arquivos no servidor de sincronização NÃO foram removidos — para exclusão definitiva, apague-os manualmente no servidor externo."
+ },
+ {
+  "k": "obs_updated",
+  "pt": "PDF atualizado com a observação."
+ },
+ {
+  "k": "ap_add_carousel",
+  "pt": "Adicionar ao carrossel"
+ },
+ {
+  "k": "ap_finish",
+  "pt": "Finalizar"
+ },
+ {
+  "k": "ap_finishing",
+  "pt": "Gerando PDF atualizado…"
+ },
+ {
+  "k": "scan_label_quick_fail",
+  "pt": "Etiqueta não legível — use a câmera abaixo."
+ },
+ {
+  "k": "timeout_medico_hint",
+  "pt": "Selecione o médico"
+ },
+ {
+  "k": "timeout_risco",
+  "pt": "Risco de queda"
+ },
+ {
+  "k": "timeout_prec",
+  "pt": "Precaução de contato"
+ },
+ {
+  "k": "timeout_sim",
+  "pt": "Sim"
+ },
+ {
+  "k": "timeout_nao",
+  "pt": "Não / Não informado"
+ },
+ {
+  "k": "timeout_medicos_cfg_hint",
+  "pt": "Médicos responsáveis do Time-Out (um por linha). Eles aparecem como sugestões ao finalizar a simulação."
+ },
+ {
+  "k": "timeout_medicos_cfg_ex",
+  "pt": "Ex.:\\nDr. Henrique Braga\\nDra. Maria Silva"
+ },
+ {
+  "k": "printer_duplex_title",
+  "pt": "Impressão de várias folhas"
+ },
+ {
+  "k": "duplex_off",
+  "pt": "1 página por folha"
+ },
+ {
+  "k": "duplex_long",
+  "pt": "Frente e verso — virar na borda longa (flip horizontal)"
+ },
+ {
+  "k": "duplex_short",
+  "pt": "Frente e verso — virar na borda curta (flip vertical)"
+ },
+ {
+  "k": "wiz_pdf_title",
+  "pt": "PDF e etiqueta"
+ },
+ {
+  "k": "wiz_pdf_desc",
+  "pt": "Como a folha de posicionamento será gerada e o espaço reservado para a etiqueta física do paciente."
+ },
+ {
+  "k": "wiz_pdf_orientation",
+  "pt": "Orientação do PDF"
+ },
+ {
+  "k": "wiz_use_label",
+  "pt": "Reservar espaço para etiqueta física"
+ },
+ {
+  "k": "label_width_mm",
+  "pt": "Largura (mm)"
+ },
+ {
+  "k": "label_height_mm",
+  "pt": "Altura (mm)"
+ },
+ {
+  "k": "wiz_pdf_hint",
+  "pt": "Tudo isso pode ser ajustado depois em Configurações → PDF."
+ },
+ {
+  "k": "detected_text",
+  "pt": "Texto detectado (referência):"
+ },
+ {
+  "k": "confirm_field_alert",
+  "pt": "Toque no visto ✓ para confirmar %1$s antes de continuar."
+ },
+ {
+  "k": "cad_sexo_m",
+  "pt": "M"
+ },
+ {
+  "k": "cad_sexo_f",
+  "pt": "F"
+ },
+ {
+  "k": "team_medico_label",
+  "pt": "Médico responsável"
+ },
+ {
+  "k": "confirm_birth_hint",
+  "pt": "Obrigatório. Formato dd/mm/aaaa."
+ },
+ {
+  "k": "confirm_pront_hint",
+  "pt": "Obrigatório."
+ },
+ {
+  "k": "birth_invalid",
+  "pt": "Data de nascimento inválida (use dd/mm/aaaa)."
+ },
+ {
+  "k": "pront_required",
+  "pt": "Prontuário é obrigatório."
+ },
+ {
+  "k": "cad_sexo_required",
+  "pt": "Selecione o sexo (M/F) e confirme no ✓."
+ },
+ {
+  "k": "cad_sexo_label_req",
+  "pt": "Sexo"
+ },
+ {
+  "k": "pdf_timeout_check",
+  "pt": "Incluir página de Time-Out no PDF (1ª página)"
+ },
+ {
+  "k": "sitio_topografia_label",
+  "pt": "Sítio anatômico / Topografia"
+ },
+ {
+  "k": "sitio_topografia_hint",
+  "pt": "Selecione o sítio / topografia"
+ },
+ {
+  "k": "ap_discard_roll",
+  "pt": "Descartar novas fotos"
+ },
+ {
+  "k": "ap_save_roll_zero",
+  "pt": "Salvar e adicionar"
+ },
+ {
+  "k": "ap_save_roll",
+  "pt": "Salvar e adicionar (%1$d)"
+ },
+ {
+  "k": "ap_roll_added",
+  "pt": "No rolo: %1$d foto(s)"
+ },
+ {
+  "k": "ap_roll_empty",
+  "pt": "Nenhuma foto nova no rolo."
+ },
+ {
+  "k": "ap_discard_roll_confirm",
+  "pt": "Descartar as %1$d foto(s) novas? Nada foi salvo ou enviado."
+ },
+ {
+  "k": "ap_save_roll_title",
+  "pt": "Salvar novas fotos"
+ },
+ {
+  "k": "ap_save_roll_msg",
+  "pt": "%1$d foto(s) serão salvas e enviadas. Revise a observação da simulação (entra no PDF):"
+ },
+ {
+  "k": "review_ident_title",
+  "pt": "Revisar identificação"
+ },
+ {
+  "k": "switch_cam_label",
+  "pt": "Trocar"
+ },
+ {
+  "k": "timeout_equip_label",
+  "pt": "Equipamento"
+ },
+ {
+  "k": "timeout_equip_hint",
+  "pt": "Selecione o equipamento"
+ },
+ {
+  "k": "timeout_alergia",
+  "pt": "Alergia"
+ },
+ {
+  "k": "fin_ok_short",
+  "pt": "✅ Simulação salva e enviada com sucesso."
+ },
+ {
+  "k": "fin_fail_short",
+  "pt": "❌ Houve problemas ao salvar:"
+ },
+ {
+  "k": "wiz_medicos_label",
+  "pt": "Médicos responsáveis (um por linha)"
+ },
+ {
+  "k": "wiz_equip_label",
+  "pt": "Equipamentos de tratamento (um por linha)"
+ },
+ {
+  "k": "cfg_equip_hint",
+  "pt": "Equipamentos da clínica (um por linha). Aparecem no dropdown ao finalizar a simulação."
+ },
+ {
+  "k": "cfg_sitios_hint",
+  "pt": "Sítios anatômicos / Topografias (um por linha). Aparecem no dropdown da finalização."
+ },
+ {
+  "k": "fin_confirm_title",
+  "pt": "Confirmar dados"
+ },
+ {
+  "k": "fin_done_title",
+  "pt": "Simulação finalizada!"
+ },
+ {
+  "k": "share_pdf",
+  "pt": "🔗 Compartilhar"
+ },
+ {
+  "k": "print_only",
+  "pt": "🖨︎ Imprimir"
+ },
+ {
+  "k": "fin_edit_data",
+  "pt": "✏︎ Editar simulação"
+ },
+ {
+  "k": "fin_save_changes",
+  "pt": "💾 Salvar alterações"
+ },
+ {
+  "k": "fin_edit_title",
+  "pt": "Editar dados"
+ },
+ {
+  "k": "patient_actions",
+  "pt": "Ações do paciente"
+ },
+ {
+  "k": "dd_type_other",
+  "pt": "✏︎ Digitar outro…"
+ },
+ {
+  "k": "pdf_margin_label",
+  "pt": "Margem de impressão (mm)"
+ },
+ {
+  "k": "pdf_margin_hint_portrait",
+  "pt": "Margem esquerda (retrato). Padrão 15 mm."
+ },
+ {
+  "k": "pdf_margin_hint_landscape",
+  "pt": "Margem superior (paisagem). Padrão 15 mm."
+ },
+ {
+  "k": "cache_confirm_delete",
+  "pt": "Apagar definitivamente"
+ },
+ {
+  "k": "cache_confirm_warning",
+  "pt": "Esta ação APAGA as fotos e PDFs locais desses pacientes e NÃO pode ser desfeita. Pacientes em tratamento no período também são removidos."
+ },
+ {
+  "k": "edit_sim_title",
+  "pt": "Editar simulação"
+ },
+ {
+  "k": "edit_sim_subtitle",
+  "pt": "Médico, equipamento, sítio, riscos e observações desta simulação."
+ },
+ {
+  "k": "edit_sim_save",
+  "pt": "💾 Salvar e atualizar PDF"
+ },
+ {
+  "k": "view_pdf_only",
+  "pt": "👁 Ver PDF"
+ },
+ {
+  "k": "finish_close",
+  "pt": "Concluir"
+ },
+ {
+  "k": "ap_saved_title",
+  "pt": "Fotos salvas"
+ },
+ {
+  "k": "ap_saved_msg",
+  "pt": "PDF atualizado com as novas fotos. O que deseja fazer?"
+ },
+ {
+  "k": "share_pdf_btn",
+  "pt": "Compartilhar"
+ },
+ {
+  "k": "hc_no_browser",
+  "pt": "Nenhum navegador instalado"
+ },
+ {
+  "k": "hc_name_empty",
+  "pt": "Nome vazio"
+ },
+ {
+  "k": "hc_patient_identified",
+  "pt": "✓ Paciente identificado"
+ },
+ {
+  "k": "hc_yes_proceed",
+  "pt": "Sim, prosseguir"
+ },
+ {
+  "k": "hc_edit_manually",
+  "pt": "Editar manualmente"
+ },
+ {
+  "k": "hc_did_you_mean",
+  "pt": "Você quis dizer?"
+ },
+ {
+  "k": "hc_type_manually",
+  "pt": "Digitar manualmente"
+ },
+ {
+  "k": "hc_patient_not_in_base",
+  "pt": "Paciente não encontrado na base. Digite o nome:"
+ },
+ {
+  "k": "hc_empty",
+  "pt": "Vazio"
+ },
+ {
+  "k": "hc_remove_photo_q",
+  "pt": "Remover esta foto?"
+ },
+ {
+  "k": "hc_back",
+  "pt": "Voltar"
+ },
+ {
+  "k": "hc_draft_kept",
+  "pt": "O rascunho será mantido. Você pode continuar depois pela Simulação Home."
+ },
+ {
+  "k": "hc_no_photo",
+  "pt": "Nenhuma foto"
+ },
+ {
+  "k": "hc_patient_not_identified",
+  "pt": "Paciente não identificado"
+ },
+ {
+  "k": "hc_processing",
+  "pt": "PROCESSANDO..."
+ },
+ {
+  "k": "hc_capture",
+  "pt": "CAPTURAR"
+ },
+ {
+  "k": "hc_sending_new_pdf",
+  "pt": "Enviando novo PDF..."
+ },
+ {
+  "k": "hc_photos_saved",
+  "pt": "Fotos salvas"
+ },
+ {
+  "k": "hc_photos_saved_no_pdf",
+  "pt": "As fotos foram salvas, mas o PDF não pôde ser regerado "
+ },
+ {
+  "k": "hc_finish_error",
+  "pt": "Erro ao finalizar"
+ },
+ {
+  "k": "hc_pdf_open_fail",
+  "pt": "Não foi possível abrir o PDF."
+ },
+ {
+  "k": "hc_patient_not_found",
+  "pt": "Paciente não encontrado"
+ }
+]

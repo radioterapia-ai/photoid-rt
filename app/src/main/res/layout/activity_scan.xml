@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <TextView
+        android:id="@+id/txtInstrucao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="14dp"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:textColor="@color/text_on_dark"
+        android:background="@color/brand_primary_dark" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/scanPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!-- Grade dos terços para alinhar etiqueta/código -->
+        <com.radioterapia.ai.ui.GridOverlay
+            android:id="@+id/scanGridOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+
+    <Button
+        android:id="@+id/btnCapturarScan"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:text="@string/scan_capture"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_primary" />
+</LinearLayout>

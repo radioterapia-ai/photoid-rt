@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"other": "登録患者%d名"},
+ "treatment_count_plural":   {"other": "治療中の患者%d名"},
+ "simulations_count_plural": {"other": "シミュレーション%d件"}
+}

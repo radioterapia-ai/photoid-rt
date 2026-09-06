@@ -1,0 +1,74 @@
+[
+ {
+  "k": "fin_fracoes_label",
+  "pt": "Número máximo de visitas / frações (opcional)"
+ },
+ {
+  "k": "fin_fracoes_nenhuma",
+  "pt": "Não informar"
+ },
+ {
+  "k": "fin_fracoes_n",
+  "pt": "%1$d frações"
+ },
+ {
+  "k": "fin_faltando_titulo",
+  "pt": "Continuar sem preencher?"
+ },
+ {
+  "k": "fin_faltando_msg",
+  "pt": "Estes campos ficaram em branco:\\n\\n%1$s\\nEles não são obrigatórios, mas aparecem na ficha impressa e no Time-Out. Continuar assim?"
+ },
+ {
+  "k": "fin_faltando_medico",
+  "pt": "• Médico responsável"
+ },
+ {
+  "k": "fin_faltando_equip",
+  "pt": "• Equipamento"
+ },
+ {
+  "k": "fin_faltando_sitio",
+  "pt": "• Sítio anatômico"
+ },
+ {
+  "k": "fin_faltando_seguir",
+  "pt": "Continuar assim"
+ },
+ {
+  "k": "fin_faltando_voltar",
+  "pt": "Voltar e preencher"
+ },
+ {
+  "k": "ap_refazer_unica",
+  "pt": "Substituir a foto de %1$s?"
+ },
+ {
+  "k": "ap_refazer_msg",
+  "pt": "Esta simulação já tem uma foto de %1$s. A nova entra no lugar dela, e a anterior é arquivada — sai da ficha, mas continua na pasta do paciente."
+ },
+ {
+  "k": "print_pages_menu",
+  "pt": "Imprimir páginas selecionadas"
+ },
+ {
+  "k": "print_pages_title",
+  "pt": "Quais páginas imprimir? (%1$d no total)"
+ },
+ {
+  "k": "print_page_n",
+  "pt": "Página %1$d"
+ },
+ {
+  "k": "print_pages_ok",
+  "pt": "Imprimir selecionadas"
+ },
+ {
+  "k": "print_pages_none",
+  "pt": "Marque ao menos uma página."
+ },
+ {
+  "k": "print_pages_fail",
+  "pt": "Não foi possível extrair as páginas."
+ }
+]

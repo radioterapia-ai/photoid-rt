@@ -1,0 +1,174 @@
+[
+ {
+  "k": "group_transferencia",
+  "v": "Eksport / import ustawień"
+ },
+ {
+  "k": "tr_explica",
+  "v": "Przenieś ustawienia tego ośrodka na inny tablet. Zaznacz, co ma trafić do pliku; powstaje jako .zip, który otworzy każdy system."
+ },
+ {
+  "k": "tr_selecionar_tudo",
+  "v": "Zaznacz wszystko"
+ },
+ {
+  "k": "tr_exportar",
+  "v": "Eksportuj zaznaczone"
+ },
+ {
+  "k": "tr_importar",
+  "v": "Importuj z pliku"
+ },
+ {
+  "k": "tr_nao_vai",
+  "v": "Nigdy nie są eksportowane: hasło SMB oraz foldery wybrane na tym urządzeniu (zdjęcia, CSV, kopia zapasowa). Folder to uprawnienie przyznane jednemu tabletowi; na urządzeniu docelowym wskazywałby donikąd, i to bez żadnego ostrzeżenia. Osoba importująca wybiera foldery na nowo."
+ },
+ {
+  "k": "tr_aviso_paciente",
+  "v": "Zaznaczenie obejmuje dane pacjentów. Powstały plik staje się dokumentem medycznym: przechowuj go jako taki i nie zostawiaj w folderze synchronizowanym z prywatną chmurą."
+ },
+ {
+  "k": "tr_clinica",
+  "v": "Nazwa ośrodka"
+ },
+ {
+  "k": "tr_clinica_desc",
+  "v": "Nazwa drukowana w stopce karty ułożenia."
+ },
+ {
+  "k": "tr_logotipo",
+  "v": "Logo"
+ },
+ {
+  "k": "tr_logotipo_desc",
+  "v": "Obraz drukowany u góry każdej strony pliku PDF."
+ },
+ {
+  "k": "tr_medicos",
+  "v": "Lekarze i aparaty"
+ },
+ {
+  "k": "tr_medicos_desc",
+  "v": "Listy podpowiadane w polach symulacji."
+ },
+ {
+  "k": "tr_sitios",
+  "v": "Lokalizacje anatomiczne"
+ },
+ {
+  "k": "tr_sitios_desc",
+  "v": "Lista lokalizacji podpowiadana w polu symulacji."
+ },
+ {
+  "k": "tr_rubricario",
+  "v": "Wykaz paraf zespołu"
+ },
+ {
+  "k": "tr_rubricario_desc",
+  "v": "Stanowiska, nazwiska, numery uprawnień i zapisane parafy."
+ },
+ {
+  "k": "tr_impressora",
+  "v": "Drukarka"
+ },
+ {
+  "k": "tr_impressora_desc",
+  "v": "Adres, nazwa i tryb druku dwustronnego."
+ },
+ {
+  "k": "tr_ficha",
+  "v": "Układ karty"
+ },
+ {
+  "k": "tr_ficha_desc",
+  "v": "Orientacja, etykieta, margines na bindowanie i strona Time-Out."
+ },
+ {
+  "k": "tr_rede",
+  "v": "Sieć i serwer"
+ },
+ {
+  "k": "tr_rede_desc",
+  "v": "Adres SMB, domena i użytkownik. Hasło nie jest dołączane."
+ },
+ {
+  "k": "tr_base_csv",
+  "v": "Baza pacjentów (CSV)"
+ },
+ {
+  "k": "tr_base_csv_desc",
+  "v": "Sposób odczytu pliku bazy. Folder wybiera się na urządzeniu docelowym."
+ },
+ {
+  "k": "tr_pacientes",
+  "v": "Zapisani pacjenci"
+ },
+ {
+  "k": "tr_pacientes_desc",
+  "v": "Pacjenci już zapisani na tym tablecie. Zawiera dane pacjentów."
+ },
+ {
+  "k": "tr_fotos",
+  "v": "Zdjęcia pacjentów"
+ },
+ {
+  "k": "tr_fotos_desc",
+  "v": "Wszystkie zdjęcia i pliki PDF w folderach pacjentów. Może być duży i zawiera dane pacjentów."
+ },
+ {
+  "k": "tr_nada_marcado",
+  "v": "Zaznacz co najmniej jedną pozycję."
+ },
+ {
+  "k": "tr_exportando",
+  "v": "Tworzenie paczki…"
+ },
+ {
+  "k": "tr_exportado",
+  "v": "Paczka utworzona: plików %1$d."
+ },
+ {
+  "k": "tr_erro",
+  "v": "Nie udało się ukończyć: %1$s"
+ },
+ {
+  "k": "tr_arquivo_invalido",
+  "v": "Ten plik nie jest paczką PhotoID RT."
+ },
+ {
+  "k": "tr_conteudo_titulo",
+  "v": "Co zawiera ten plik"
+ },
+ {
+  "k": "tr_de_unidade",
+  "v": "Z: %1$s"
+ },
+ {
+  "k": "tr_modo_titulo",
+  "v": "Jak zastosować?"
+ },
+ {
+  "k": "tr_modo_somar",
+  "v": "Dodaj: zachowuje to, co już tu jest"
+ },
+ {
+  "k": "tr_modo_sobrescrever",
+  "v": "Zastąp: decyduje paczka"
+ },
+ {
+  "k": "tr_modo_explica",
+  "v": "Dodawanie jest ustawieniem domyślnym: nic z tego, co już jest na tym tablecie, nie zostaje usunięte, a wchodzi tylko to, co nie ma tu odpowiednika. Zastąpienie nadpisuje istniejące dane."
+ },
+ {
+  "k": "tr_importando",
+  "v": "Trwa stosowanie…"
+ },
+ {
+  "k": "tr_importado",
+  "v": "Zastosowano ustawień: %1$d i plików: %2$d; bez zmian pozostawiono: %3$d."
+ },
+ {
+  "k": "tr_itens_marcados",
+  "v": "Zaznaczono %1$d z %2$d"
+ }
+]

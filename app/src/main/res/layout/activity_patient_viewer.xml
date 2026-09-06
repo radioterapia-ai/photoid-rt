@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Visualização do paciente (RETRATO):
+    - Visor grande no TOPO ocupando toda a largura (carrossel/foto única).
+    - Linha inferior: 3 miniaturas lado a lado (Rosto, Etiqueta, Posic.&Acess.).
+    - Rodapé: Adicionar fotos / Resimular.
+    A versão paisagem (padrão do app) está em layout-land/.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_main">
+
+    <!-- Seletor de simulação: só aparece quando há mais de uma simulação -->
+    <LinearLayout
+        android:id="@+id/rowSimSelector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@color/bg_card"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sim_showing"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:paddingEnd="8dp" />
+
+        <Spinner
+            android:id="@+id/spinnerSim"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- IDs do paciente mantidos no layout (ocultos) para compatibilidade do código -->
+    <TextView android:id="@+id/txtPvNome" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <TextView android:id="@+id/txtPvMeta" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    <TextView android:id="@+id/txtPvOrigem" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/progressPv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/layoutPvVazio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/patient_not_found"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary" />
+    </LinearLayout>
+
+    <!-- VISOR GRANDE no topo (toda a largura) -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="6dp"
+        android:background="#000000">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPagerCarrossel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#000000" />
+
+        <!-- Visor para foto única (Rosto/Etiqueta) sobreposto ao ViewPager -->
+        <com.radioterapia.ai.util.ZoomableImageView
+            android:id="@+id/imgPvVisorUnico"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:background="#000000"
+            android:visibility="gone"
+            android:contentDescription="Foto" />
+
+        <!-- RESUMO: conferência à beira do acelerador (design Claude Design).
+             Rail de identificação + rosto grande com miniaturas empilhadas.
+             A orientação do container é definida em runtime: lado a lado no
+             tablet deitado, empilhado no celular em pé — uma fonte única de
+             layout para as duas orientações. -->
+        <LinearLayout
+            android:id="@+id/layoutPvResumo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg_main"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <!-- ===== RAIL DE IDENTIFICAÇÃO ===== -->
+            <ScrollView
+                android:id="@+id/scrollResumoRail"
+                android:layout_width="264dp"
+                android:layout_height="match_parent"
+                android:paddingHorizontal="18dp"
+                android:paddingVertical="16dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtResumoNome"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="23sp"
+                        android:lineSpacingMultiplier="1.18"
+                        android:textColor="#FFFFFF" />
+
+                    <View
+                        android:layout_width="64dp"
+                        android:layout_height="2dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/rule_gradient" />
+
+                    <TextView
+                        android:id="@+id/txtResumoIds"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="9dp"
+                        android:textSize="14sp"
+                        android:textColor="#B8C5D6" />
+
+                    <!-- Pílulas de alerta (mesmas cores da ficha de Time-Out) -->
+                    <LinearLayout
+                        android:id="@+id/boxResumoAlertas"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:orientation="vertical" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="#1E2D52" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/timeout_equip_label"
+                        android:textSize="10sp"
+                        android:textColor="#8896AC"
+                        android:letterSpacing="0.13" />
+
+                    <TextView
+                        android:id="@+id/txtResumoEquip"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textSize="20sp"
+                        android:textColor="#FFFFFF" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="@string/resumo_sitio"
+                        android:textSize="10sp"
+                        android:textColor="#8896AC"
+                        android:letterSpacing="0.13" />
+
+                    <TextView
+                        android:id="@+id/txtResumoSitio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:textSize="20sp"
+                        android:textColor="#FFFFFF" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="@string/resumo_medico"
+                        android:textSize="10sp"
+                        android:textColor="#8896AC"
+                        android:letterSpacing="0.13" />
+
+                    <TextView
+                        android:id="@+id/txtResumoMedico"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="8dp"
+                        android:textSize="20sp"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+            </ScrollView>
+
+            <!-- ===== ROSTO + MINIATURAS + OBSERVAÇÕES ===== -->
+            <LinearLayout
+                android:id="@+id/boxResumoFotos"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <FrameLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:background="@color/bg_card">
+
+                        <ImageView
+                            android:id="@+id/imgResumoRosto"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:contentDescription="@string/cat_face" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|start"
+                            android:paddingHorizontal="9dp"
+                            android:paddingVertical="5dp"
+                            android:background="@drawable/bg_tag_foto"
+                            android:text="@string/cat_face"
+                            android:textAllCaps="true"
+                            android:textSize="11sp"
+                            android:textColor="#FFFFFF"
+                            android:letterSpacing="0.09" />
+                    </FrameLayout>
+
+                    <!-- Miniaturas empilhadas (montadas em código: 0 a 4 + "+N mais") -->
+                    <LinearLayout
+                        android:id="@+id/stackResumoMiniaturas"
+                        android:layout_width="138dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="6dp"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/boxResumoObs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@color/bg_card"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="12dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/resumo_obs_tag"
+                        android:textSize="10sp"
+                        android:textColor="#8896AC"
+                        android:letterSpacing="0.13"
+                        android:layout_marginEnd="10dp" />
+
+                    <TextView
+                        android:id="@+id/txtResumoObs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:lineSpacingMultiplier="1.35"
+                        android:textColor="#FFFFFF" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- Ícone PDF flutuante (canto superior direito) -->
+        <ImageButton
+            android:id="@+id/btnAbrirPdf"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="6dp"
+            android:src="@drawable/ic_more_actions"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:alpha="0.85"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/patient_actions"
+            android:visibility="gone" />
+
+        <!-- FAIXA CINZA INFERIOR: identificação do paciente -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="11dp"
+            android:background="#C2424242">
+
+            <TextView
+                android:id="@+id/txtViewerLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:id="@+id/txtViewerPaciente"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF" 
+                android:maxLines="2"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="9sp"
+                android:autoSizeMaxTextSize="14sp"
+                android:autoSizeStepGranularity="1sp" />
+        </LinearLayout>
+
+        <!-- Mantido oculto para compatibilidade do código -->
+        <TextView android:id="@+id/txtCarrosselInfo" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+        <TextView android:id="@+id/txtVisorUnicoLabel" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+        <Button android:id="@+id/btnVoltarCarrossel" android:layout_width="0dp" android:layout_height="0dp" android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- LINHA INFERIOR: 3 miniaturas lado a lado -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="6dp">
+
+        <FrameLayout
+            android:id="@+id/frameThumbResumo"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_bloco_normal">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_resumo_linhas"
+                android:contentDescription="@string/viewer_summary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:padding="4dp"
+                android:text="@string/viewer_summary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:background="#CC1565C0" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frameThumbRosto"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_bloco_normal">
+
+            <ImageView
+                android:id="@+id/imgPvRosto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/cat_face" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:padding="4dp"
+                android:text="@string/cat_face"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:background="#CC1565C0" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frameThumbEtiqueta"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/bg_bloco_normal">
+
+            <ImageView
+                android:id="@+id/imgPvEtiqueta"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/cat_label" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:padding="4dp"
+                android:text="@string/cat_label"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:background="#CC1565C0" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/frameThumbPosic"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_bloco_normal">
+
+            <ImageView
+                android:id="@+id/imgPvPosic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/cat_positioning" />
+
+            <TextView
+                android:id="@+id/txtTagPosic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:padding="4dp"
+                android:text="@string/cat_positioning"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:background="#CC1565C0" />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/frameThumbDocs"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/bg_bloco_normal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/imgPvDocs"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/docs_viewer_label" />
+
+            <TextView
+                android:id="@+id/txtTagDocs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|start"
+                android:padding="4dp"
+                android:text="@string/docs_viewer_label"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_on_dark"
+                android:background="#CC1565C0" />
+        </FrameLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

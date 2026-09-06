@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Política de rede do PhotoID RT.
+
+    Substitui o android:usesCleartextTraffic="true" que ficava no <application>.
+    O booleano dizia "pode tudo" sem dizer por quê, e ninguém que abrisse o
+    manifest ficava sabendo o que dependia dele. Aqui a decisão fica escrita,
+    num arquivo que existe para ser revisado.
+
+    O QUE ESTA POLÍTICA REALMENTE ALCANÇA — e é menos do que parece.
+
+    A política de segurança de rede do Android governa apenas as pilhas HTTP
+    (HttpURLConnection, OkHttp, WebView, Cronet). Ela NÃO governa socket cru.
+    Medido neste app:
+
+      PrinterClient.kt  JetDirect, porta 9100  Socket cru     NÃO governado
+      PrinterClient.kt  IPP, porta 631         HttpURLConnection   governado
+      SmbClient.kt      SMB, porta 445         Socket (smbj)  NÃO governado
+
+    Portanto o único caminho que este arquivo controla é o fallback IPP da
+    impressora. A foto de paciente, que sai pelo SMB quando o módulo de
+    Tratamento lê a pasta do servidor, nunca passou por aqui — quem a protege é
+    a assinatura e a cifragem configuradas em SmbClient.kt, não este XML.
+
+    POR QUE NÃO NEGAMOS TEXTO CLARO POR PADRÃO
+
+    Seria o desejável, e não é implementável neste app. O Android não aceita
+    faixa CIDR nesta configuração, só host ou domínio literal, e o endereço da
+    impressora é definido por CADA CLÍNICA em tempo de execução. Enumerar num
+    XML estático exigiria um build por clínica, o que contraria a premissa de
+    que o app é universal.
+
+    Negar por padrão, na prática, desligaria o fallback IPP em campo para
+    proteger um caminho por onde nenhum dado de paciente trafega. Custo clínico
+    real, ganho de segurança nenhum.
+
+    O QUE DE FATO FECHA O RISCO, e está implementado:
+
+      1. SMB assinado sempre e cifrado em SMB3 (SmbClient.kt). É o caminho por
+         onde foto de paciente realmente anda.
+      2. Verificação no portão de qualidade que FALHA o build se primitiva de
+         rede aparecer fora dos arquivos autorizados
+         (docs/scripts_validacao.py, verificação "Primitivas de rede").
+         Era o risco de verdade: uma biblioteca acrescentada amanhã sairia para
+         a internet sem ninguém decidir. Agora quebra o build.
+
+    O que NUNCA trafega em rede por este app: as fotos capturadas e os PDFs
+    gerados. Ficam no armazenamento do tablet; quem os leva ao servidor é o
+    FileSync, externo e independente.
+-->
+<network-security-config>
+
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+
+</network-security-config>

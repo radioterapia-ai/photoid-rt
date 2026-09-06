@@ -1,0 +1,530 @@
+[
+ {
+  "k": "pdf_to_col_fraction",
+  "v": "Frazione"
+ },
+ {
+  "k": "pdf_to_col_name1",
+  "v": "Nome e"
+ },
+ {
+  "k": "pdf_to_col_name2",
+  "v": "Data nasc."
+ },
+ {
+  "k": "pdf_to_col_photo",
+  "v": "Foto"
+ },
+ {
+  "k": "pdf_to_col_site1",
+  "v": "Sede /"
+ },
+ {
+  "k": "pdf_to_col_site2",
+  "v": "Lateralit"
+ },
+ {
+  "k": "pdf_to_col_site3",
+  "v": "à"
+ },
+ {
+  "k": "pdf_to_col_frac2",
+  "v": "Giorno/Totale"
+ },
+ {
+  "k": "pdf_to_col_complaint1",
+  "v": "Disturbo riferito e invio"
+ },
+ {
+  "k": "pdf_to_col_complaint2",
+  "v": "a valutazione"
+ },
+ {
+  "k": "pdf_to_col_sign",
+  "v": "Firma"
+ },
+ {
+  "k": "pdf_to_col_tech",
+  "v": "TSRM"
+ },
+ {
+  "k": "pdf_yes",
+  "v": "Sì"
+ },
+ {
+  "k": "pdf_no",
+  "v": "No"
+ },
+ {
+  "k": "pdf_accessories_sheet",
+  "v": "SCHEDA DEGLI ACCESSORI"
+ },
+ {
+  "k": "pdf_page",
+  "v": "Pagina %1$d"
+ },
+ {
+  "k": "confirm_name_title",
+  "v": "Confermi il nome"
+ },
+ {
+  "k": "lbl_patient_name",
+  "v": "Nome del paziente:"
+ },
+ {
+  "k": "hint_prefilled",
+  "v": "Suggerimento precompilato. Lo modifichi se necessario."
+ },
+ {
+  "k": "confirm_birth_title",
+  "v": "Confermi la nascita"
+ },
+ {
+  "k": "lbl_birth_date",
+  "v": "Data di nascita:"
+ },
+ {
+  "k": "confirm_record_title",
+  "v": "Confermi il n. cartella"
+ },
+ {
+  "k": "lbl_record",
+  "v": "N. cartella:"
+ },
+ {
+  "k": "csv_found_header",
+  "v": "Paziente trovato nella banca dati:"
+ },
+ {
+  "k": "csv_found_name",
+  "v": "Nome: %1$s"
+ },
+ {
+  "k": "csv_found_birth",
+  "v": "Nascita: %1$s"
+ },
+ {
+  "k": "csv_found_confirm",
+  "v": "È questo il paziente?"
+ },
+ {
+  "k": "divergence_which",
+  "v": "Per questa simulazione, quale usare?"
+ },
+ {
+  "k": "divergence_note",
+  "v": "ℹ Lo storico locale non viene aggiornato automaticamente. Valuti di aggiornare la banca dati."
+ },
+ {
+  "k": "resim_existing",
+  "v": "Questo paziente ha già %1$d simulazione/i registrata/e in questo tablet."
+ },
+ {
+  "k": "resim_will_be",
+  "v": "Questa sarà la NUOVA SIMULAZIONE %1$d."
+ },
+ {
+  "k": "resim_confirm",
+  "v": "Conferma che è lo stesso paziente?"
+ },
+ {
+  "k": "draft_restored",
+  "v": "Bozza ripristinata: %1$d foto di %2$s"
+ },
+ {
+  "k": "photo_dark",
+  "v": "⚠ Foto scura"
+ },
+ {
+  "k": "photo_bright",
+  "v": "⚠ Foto troppo chiara"
+ },
+ {
+  "k": "sim_original",
+  "v": "Simulazione originale (%1$s)"
+ },
+ {
+  "k": "sim_new",
+  "v": "Nuova simulazione %1$d (%2$s)"
+ },
+ {
+  "k": "share_failed",
+  "v": "Non è stato possibile condividere: %1$s"
+ },
+ {
+  "k": "select_patient",
+  "v": "Selezioni il paziente"
+ },
+ {
+  "k": "scan_read_barcode",
+  "v": "Leggi codice a barre"
+ },
+ {
+  "k": "scan_no_barcode",
+  "v": "Nessun codice a barre rilevato. Riprovi."
+ },
+ {
+  "k": "scan_barcode_empty",
+  "v": "Codice rilevato ma vuoto."
+ },
+ {
+  "k": "aviso_clinico_titulo",
+  "v": "Strumento di supporto. Non validato per uso clinico."
+ },
+ {
+  "k": "aviso_clinico_corpo",
+  "v": "I campi compilati tramite la lettura dell'etichetta o del codice a barre sono un suggerimento e richiedono verifica. La scheda stampata è un documento di responsabilità dell'équipe che l'ha emessa."
+ },
+ {
+  "k": "creditos",
+  "v": "Crediti e licenze"
+ },
+ {
+  "k": "creditos_intro",
+  "v": "Ciò che questa applicazione realizza è l'interfaccia. Il riconoscimento del testo dell'etichetta e la lettura del codice a barre sono eseguiti da Google ML Kit, componente di terzi — non ne siamo gli autori."
+ },
+ {
+  "k": "creditos_nossa_parte",
+  "v": "Di nostra realizzazione: il flusso di acquisizione per categoria, l'organizzazione dei file, la scheda di posizionamento con la sua pagina di Time-Out, e le regole che interpretano il testo già riconosciuto."
+ },
+ {
+  "k": "creditos_sec_terceiros",
+  "v": "Componenti di terzi"
+ },
+ {
+  "k": "creditos_mlkit",
+  "v": "Google ML Kit — Google LLC — Termini del ML Kit (proprietaria, uso gratuito) — riconoscimento del testo 16.0.1, codice a barre 17.2.0, scanner di documenti 16.0.0-beta1. Google pubblica ML Kit come SDK di uso generale; non lo dichiara dispositivo medico né lo destina a uso clinico."
+ },
+ {
+  "k": "creditos_apache",
+  "v": "Apache License 2.0 — AndroidX e CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones)."
+ },
+ {
+  "k": "creditos_glide",
+  "v": "Glide — Bump Technologies e Google — BSD 2-Clause e Apache-2.0 — 4.16.0."
+ },
+ {
+  "k": "creditos_licenca_app",
+  "v": "Questa applicazione è distribuita sotto la Apache License 2.0. Il testo completo e le note di attribuzione accompagnano il pacchetto."
+ },
+ {
+  "k": "creditos_regime",
+  "v": "Il codice pubblicato è materiale didattico e non è un dispositivo medico. Chi lo scarica, lo modifica e lo installa risponde della propria build e della validazione nel proprio servizio."
+ },
+ {
+  "k": "add_from_gallery",
+  "v": "Aggiungi dalla galleria"
+ },
+ {
+  "k": "gallery_none_picked",
+  "v": "Nessuna foto selezionata."
+ },
+ {
+  "k": "gallery_added",
+  "v": "%1$d foto aggiunta/e dalla galleria."
+ },
+ {
+  "k": "gallery_fail",
+  "v": "Non è stato possibile importare %1$d foto."
+ },
+ {
+  "k": "gallery_pick_title",
+  "v": "Selezioni le foto"
+ },
+ {
+  "k": "gallery_need_category",
+  "v": "Selezioni prima la categoria della foto."
+ },
+ {
+  "k": "popup_editar_cadastro_longo",
+  "v": "Modifica anagrafica del paziente"
+ },
+ {
+  "k": "popup_editar_simulacao_longo",
+  "v": "Modifica i dati di questa simulazione"
+ },
+ {
+  "k": "popup_fotos_longo",
+  "v": "Aggiungi / Modifica foto di questa simulazione"
+ },
+ {
+  "k": "sim_selector_label",
+  "v": "Simulazione"
+ },
+ {
+  "k": "sim_selector_recent",
+  "v": "%1$s (più recente)"
+ },
+ {
+  "k": "photo_existing_title",
+  "v": "Foto di questa simulazione"
+ },
+ {
+  "k": "photo_delete_q",
+  "v": "Eliminare questa foto dalla simulazione?"
+ },
+ {
+  "k": "photo_delete_warn",
+  "v": "Il file viene cancellato dalla cartella del paziente e la scheda viene generata di nuovo senza di esso. Non è possibile annullare."
+ },
+ {
+  "k": "photo_deleted",
+  "v": "Foto eliminata. La scheda è stata generata di nuovo."
+ },
+ {
+  "k": "photo_delete_fail",
+  "v": "Non è stato possibile eliminare la foto."
+ },
+ {
+  "k": "photo_edit_rotate",
+  "v": "Ruota / ritaglia di nuovo"
+ },
+ {
+  "k": "photo_edited",
+  "v": "Foto reinquadrata. Scheda aggiornata."
+ },
+ {
+  "k": "photo_delete_last",
+  "v": "È l'unica foto di questa categoria. Eliminare comunque?"
+ },
+ {
+  "k": "group_rubricario",
+  "v": "Registro delle sigle"
+ },
+ {
+  "k": "rub_ativo",
+  "v": "Includi la pagina del registro delle sigle nel PDF"
+ },
+ {
+  "k": "rub_ativo_desc",
+  "v": "Pagina con l'équipe del servizio e il riquadro per la sigla di ciascuno. Del paziente riporta solo l'identificazione."
+ },
+ {
+  "k": "rub_orientacao",
+  "v": "Orientamento della pagina"
+ },
+ {
+  "k": "rub_retrato",
+  "v": "Verticale (ritratto)"
+ },
+ {
+  "k": "rub_paisagem",
+  "v": "Orizzontale (panorama)"
+ },
+ {
+  "k": "rub_cargos",
+  "v": "Qualifiche e tipo di albo"
+ },
+ {
+  "k": "rub_cargos_desc",
+  "v": "Una qualifica per riga, nel formato Qualifica = Albo. Esempio: Medico = OMCeO"
+ },
+ {
+  "k": "rub_equipe",
+  "v": "Équipe registrata"
+ },
+ {
+  "k": "rub_add",
+  "v": "Aggiungi persona"
+ },
+ {
+  "k": "rub_editar",
+  "v": "Modifica"
+ },
+ {
+  "k": "rub_excluir",
+  "v": "Elimina"
+ },
+ {
+  "k": "rub_vazio",
+  "v": "Ancora nessuno registrato."
+ },
+ {
+  "k": "rub_total",
+  "v": "%1$d persona/e registrata/e"
+ },
+ {
+  "k": "rub_cargo",
+  "v": "Qualifica"
+ },
+ {
+  "k": "rub_nome",
+  "v": "Nome completo"
+ },
+ {
+  "k": "rub_registro",
+  "v": "Numero di iscrizione all'albo"
+ },
+ {
+  "k": "rub_assinatura",
+  "v": "Sigla"
+ },
+ {
+  "k": "rub_assinatura_dica",
+  "v": "Apponga la sigla nel riquadro qui sotto con il dito o con la penna del tablet."
+ },
+ {
+  "k": "rub_limpar_assinatura",
+  "v": "Cancella"
+ },
+ {
+  "k": "rub_salvar",
+  "v": "Salva"
+ },
+ {
+  "k": "rub_falta_nome",
+  "v": "Inserisca il nome."
+ },
+ {
+  "k": "rub_falta_cargo",
+  "v": "Selezioni la qualifica."
+ },
+ {
+  "k": "rub_falta_assinatura",
+  "v": "Apponga la sigla nel riquadro."
+ },
+ {
+  "k": "rub_salvo",
+  "v": "%1$s salvato/a."
+ },
+ {
+  "k": "rub_excluir_q",
+  "v": "Eliminare %1$s dal registro delle sigle?"
+ },
+ {
+  "k": "rub_titulo_pdf",
+  "v": "REGISTRO DELLE SIGLE"
+ },
+ {
+  "k": "rub_subtitulo_pdf",
+  "v": "RADIOTERAPIA"
+ },
+ {
+  "k": "rub_nome_paciente_pdf",
+  "v": "Nome:"
+ },
+ {
+  "k": "rub_col_nome",
+  "v": "Nome"
+ },
+ {
+  "k": "rub_col_rubrica",
+  "v": "Sigla"
+ },
+ {
+  "k": "wiz_rubricario_q",
+  "v": "Questo servizio usa la pagina del registro delle sigle nella scheda?"
+ },
+ {
+  "k": "wiz_rubricario_desc",
+  "v": "In caso affermativo, l'équipe si aggiunge dopo in Impostazioni → Registro delle sigle. La pagina esce nel PDF solo quando è stata inserita almeno una persona."
+ },
+ {
+  "k": "rub_gerar_pdf",
+  "v": "Stampa / salva il registro delle sigle"
+ },
+ {
+  "k": "rub_gerar_pdf_desc",
+  "v": "Genera un solo foglio, senza paziente, da affiggere in sala."
+ },
+ {
+  "k": "rub_sem_equipe",
+  "v": "Registri almeno una persona prima di generare il foglio."
+ },
+ {
+  "k": "origem_titulo",
+  "v": "Da dove aggiungere le foto?"
+ },
+ {
+  "k": "origem_rolo",
+  "v": "Rullino della fotocamera"
+ },
+ {
+  "k": "origem_arquivadas",
+  "v": "Foto archiviate di questo paziente"
+ },
+ {
+  "k": "origem_procurar",
+  "v": "Cerca in altre cartelle"
+ },
+ {
+  "k": "close",
+  "v": "Chiudi"
+ },
+ {
+  "k": "arq_titulo",
+  "v": "Foto archiviate"
+ },
+ {
+  "k": "arq_toque_para_voltar",
+  "v": "Tocchi una foto per riportarla nella scheda. Resta comunque conservata nella cartella del paziente."
+ },
+ {
+  "k": "arq_vazio",
+  "v": "Nessuna foto archiviata per questo paziente."
+ },
+ {
+  "k": "arq_restaurada",
+  "v": "Foto riportata nella scheda."
+ },
+ {
+  "k": "arq_substituida",
+  "v": "La foto precedente è stata archiviata, non eliminata. Per riaverla: Aggiungi dalla galleria \\u2192 Foto archiviate."
+ },
+ {
+  "k": "arq_arquivar",
+  "v": "Archivia (esce dalla scheda, resta in cartella)"
+ },
+ {
+  "k": "arq_arquivada_ok",
+  "v": "Foto archiviata. È uscita dalla scheda e resta nella cartella del paziente."
+ },
+ {
+  "k": "arq_arquivar_falha",
+  "v": "Non è stato possibile archiviare la foto."
+ },
+ {
+  "k": "rub_substituir_q",
+  "v": "Sostituire la sigla?"
+ },
+ {
+  "k": "rub_substituir_msg",
+  "v": "Questa persona ha già una sigla registrata. Siglare di nuovo sostituisce la precedente, e quella vecchia non torna.\\n\\nPer correggere solo il nome o il numero di albo, annulli e modifichi i campi: la sigla viene conservata."
+ },
+ {
+  "k": "rub_substituir_ok",
+  "v": "Siglare di nuovo"
+ },
+ {
+  "k": "rub_exportar_equipe",
+  "v": "Includi il registro delle sigle nell'esportazione"
+ },
+ {
+  "k": "rub_exportar_desc",
+  "v": "Le persone registrate vengono esportate insieme al file di configurazione, con nome, qualifica, numero di albo e sigla. Contiene dati personali dell'équipe — conservi il file come documento dell'istituzione."
+ },
+ {
+  "k": "rub_ver_pdf",
+  "v": "Vedi modello in PDF"
+ },
+ {
+  "k": "rub_ver_pdf_desc",
+  "v": "Apre un foglio di esempio, senza paziente, per verificare come il registro delle sigle uscirà dalla stampante."
+ },
+ {
+  "k": "rub_importadas",
+  "v": "%1$d persona/e importata/e nel registro delle sigle."
+ },
+ {
+  "k": "pdf_lbl_age",
+  "v": "ETÀ"
+ },
+ {
+  "k": "pdf_lbl_sex",
+  "v": "SESSO"
+ },
+ {
+  "k": "pdf_lbl_registry",
+  "v": "CODICE PAZIENTE"
+ }
+]

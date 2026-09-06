@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/db_explain"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Pasta de armazenamento (editável) -->
+    <TextView style="@style/FieldLabel" android:text="@string/storage_folder_label" />
+    <TextView
+        android:id="@+id/txtBackupFolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="12sp"
+        android:textColor="@color/text_primary"
+        android:background="@color/bg_card" />
+
+    <!--
+        Aviso do fallback. Fica invisivel por padrao e so aparece quando as
+        fotos estao mesmo na pasta privada do app - aviso fixo vira paisagem e
+        ninguem le justamente no aparelho em que ele importa.
+    -->
+    <TextView
+        android:id="@+id/txtBackupAviso"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="@color/error_red"
+        android:text="@string/storage_privada_aviso"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp">
+        <Button
+            android:id="@+id/btnChooseBackupFolder"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:layout_marginEnd="4dp"
+            android:text="@string/storage_choose"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+        <Button
+            android:id="@+id/btnResetBackupFolder"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:layout_marginStart="4dp"
+            android:text="@string/storage_use_default"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/success_green" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/txtDbStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        android:paddingTop="8dp"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary" />
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="#33888888" android:layout_marginTop="16dp" android:layout_marginBottom="12dp" />
+
+    <!-- REMOVER CASOS ANTIGOS (única ação de gestão de espaço) -->
+    <TextView style="@style/FieldLabel" android:text="@string/remove_pick_period" />
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/remove_old_desc" android:textSize="12sp"
+        android:textColor="@color/text_secondary" android:layout_marginBottom="4dp" />
+    <RadioGroup android:id="@+id/rgRemovePeriodo"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton android:id="@+id/rbRm1" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="42dp" android:gravity="center_vertical" android:text="@string/period_1m" android:textColor="@color/text_primary" android:textSize="12sp" android:maxLines="1" />
+        <RadioButton android:id="@+id/rbRm6" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="42dp" android:gravity="center_vertical" android:text="@string/period_6m" android:textColor="@color/text_primary" android:checked="true" android:textSize="12sp" android:maxLines="1" />
+        <RadioButton android:id="@+id/rbRm12" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="42dp" android:gravity="center_vertical" android:text="@string/period_12m" android:textColor="@color/text_primary" android:textSize="12sp" android:maxLines="1" />
+        <RadioButton android:id="@+id/rbRmAll" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:minHeight="42dp" android:gravity="center_vertical" android:text="@string/period_all_cases" android:textColor="@color/text_primary" android:textSize="12sp" android:maxLines="1" />
+    </RadioGroup>
+    <Button android:id="@+id/btnCleanCache"
+        android:layout_width="match_parent" android:layout_height="50dp" android:layout_marginTop="6dp"
+        android:text="@string/remove_old_button" android:textColor="@color/text_on_dark" android:backgroundTint="@color/error_red" />
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:background="#33888888" android:layout_marginTop="16dp" android:layout_marginBottom="12dp" />
+
+    <!-- PACIENTES: edição -->
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/patients_section" android:textStyle="bold"
+        android:textColor="@color/text_primary" android:textSize="15sp" />
+    <TextView android:id="@+id/txtDraftStatus"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:textSize="12sp" android:textColor="@color/text_secondary" android:layout_marginBottom="8dp" />
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:layout_marginTop="14dp" android:layout_marginBottom="10dp"
+        android:background="#33FFFFFF" />
+
+    <TextView style="@style/FieldLabel" android:text="@string/db_transfer_section" />
+
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/db_export_desc" android:textSize="12sp"
+        android:textColor="@color/text_secondary" android:layout_marginBottom="8dp" />
+
+    <Button android:id="@+id/btnExportarBase"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="@string/db_export_title" android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral"
+        android:maxLines="2" android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp" android:autoSizeMaxTextSize="14sp" />
+
+    <Button android:id="@+id/btnImportarBase"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/db_import_title" android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral"
+        android:maxLines="2" android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp" android:autoSizeMaxTextSize="14sp" />
+
+    <View android:layout_width="match_parent" android:layout_height="1dp"
+        android:layout_marginTop="14dp" android:layout_marginBottom="10dp"
+        android:background="#33FFFFFF" />
+
+    <Button android:id="@+id/btnOpenHistory"
+        android:layout_width="match_parent" android:layout_height="48dp"
+        android:text="@string/edit_patients" android:textColor="@color/text_on_dark" android:backgroundTint="@color/action_neutral" />
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="@string/db_format_note" android:textSize="11sp"
+        android:textColor="@color/text_secondary" android:layout_marginTop="12dp" />
+</LinearLayout>

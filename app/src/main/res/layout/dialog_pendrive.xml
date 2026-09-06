@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pen-drive via OTG: animação em loop, estado da conexão e ação de gravar.
+     O botão só habilita quando o volume removível está montado. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_card"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="18dp"
+    android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/imgOtgAnim"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:layout_marginBottom="14dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/anim_otg"
+        android:contentDescription="@string/pd_anim_desc" />
+
+    <TextView
+        android:id="@+id/txtOtgEstado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary" />
+
+    <TextView
+        android:id="@+id/txtOtgDica"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:lineSpacingExtra="3dp"
+        android:textColor="@color/text_secondary" />
+
+    <TextView
+        android:id="@+id/txtOtgPasta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:textSize="12sp"
+        android:textColor="#8896AC"
+        android:background="@color/bg_main"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnOtgEscolherPasta"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="14dp"
+        android:text="@string/pd_escolher_pasta"
+        android:textColor="@color/text_primary"
+        style="@style/ButtonOutlineCyan"
+        android:maxLines="2"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp"
+        android:autoSizeMaxTextSize="15sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnOtgGravar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/pd_gravar"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_save"
+        android:maxLines="2"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="11sp"
+        android:autoSizeMaxTextSize="16sp" />
+</LinearLayout>

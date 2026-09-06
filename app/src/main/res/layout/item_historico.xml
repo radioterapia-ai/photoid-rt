@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Item compacto: miniatura à esquerda, dados no meio, pilha (contagem/PDF/ação) à direita. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="4dp"
+    android:layout_marginBottom="4dp"
+    android:background="@drawable/bg_settings_group"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical">
+
+    <ImageView
+        android:id="@+id/imgPacienteThumb"
+        android:layout_width="@dimen/hist_thumb_size"
+        android:layout_height="@dimen/hist_thumb_size"
+        android:scaleType="centerCrop"
+        android:background="@color/bg_input"
+        android:src="@drawable/icon_circle"
+        android:contentDescription="@string/cat_face" />
+
+    <!-- Coluna central: nome + dados -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txtNomePaciente"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/hist_nome_text"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:includeFontPadding="false" />
+
+        <TextView
+            android:id="@+id/txtRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/hist_sub_text"
+            android:textColor="@color/text_secondary"
+            android:includeFontPadding="false"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/txtBirth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/hist_sub_text"
+            android:textColor="@color/text_secondary"
+            android:includeFontPadding="false" />
+
+        <TextView
+            android:id="@+id/txtLast"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/hist_sub2_text"
+            android:textColor="@color/text_tertiary"
+            android:includeFontPadding="false"
+            android:layout_marginTop="1dp" />
+    </LinearLayout>
+
+    <!-- Pilha à direita: contagem, PDF, impressora, ação -->
+    <!-- Modo LOTE: esta coluna some e dá lugar ao checkbox, mantendo a linha
+         com a mesma altura para a lista não "pular" ao entrar/sair do modo. -->
+    <CheckBox
+        android:id="@+id/chkHistSelecao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="8dp"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/colHistAcoes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/txtCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:background="@color/brand_primary_dark"
+            android:paddingHorizontal="9dp"
+            android:paddingVertical="2dp" />
+
+        <ImageButton
+            android:id="@+id/btnHistPdf"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_pdf"
+            android:scaleType="fitCenter"
+            android:padding="5dp"
+            android:background="@drawable/bg_pdf_icon_btn"
+            android:contentDescription="@string/pdf_button"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btnHistPrint"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_printer"
+            android:scaleType="fitCenter"
+            android:padding="5dp"
+            android:background="@drawable/bg_pdf_icon_btn"
+            android:contentDescription="@string/reprint_pdf"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnHistTrat"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/treat_action"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:paddingHorizontal="10dp"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:backgroundTint="@color/brand_primary"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

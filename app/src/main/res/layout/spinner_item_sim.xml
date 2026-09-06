@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Item FECHADO do seletor de simulacao.
+
+    SEM drawableEnd: o proprio Spinner ja desenha a seta do dropdown no seu
+    fundo. Desenhar outra aqui punha duas setas lado a lado, e a de fora nao
+    respondia ao toque — parecia controle quebrado.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="10dp"
+    android:paddingHorizontal="4dp"
+    android:textColor="#FFFFFF"
+    android:textStyle="bold"
+    android:textSize="15sp"
+    android:gravity="center_vertical" />

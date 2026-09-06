@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/photos_folder_label"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/brand_primary"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_photos_folder_desc"
+        android:textSize="13sp"
+        android:textColor="@color/text_secondary"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/txtWizPastaFotos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textColor="@color/text_primary"
+        android:padding="8dp"
+        android:background="@color/bg_main" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnWizPastaPadrao"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:layout_marginEnd="6dp"
+            android:text="@string/keep_suggested_default"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/success_green"
+            android:maxLines="2"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeStepGranularity="1sp" />
+
+        <Button
+            android:id="@+id/btnWizEscolherPastaFotos"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:text="@string/choose_other_folder"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/brand_primary"
+            android:maxLines="2"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeStepGranularity="1sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:textSize="12sp"
+        android:textColor="@color/text_secondary"
+        android:background="@color/bg_main"
+        android:text="@string/foldersync_body" />
+</merge>

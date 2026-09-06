@@ -1,0 +1,142 @@
+[
+ {
+  "k": "group_protocolo",
+  "v": "프로토콜"
+ },
+ {
+  "k": "prot_explica",
+  "v": "의료기관이 기록지 끝에 덧붙이는 페이지입니다. 동의서, 환자 안내문, 내부 점검표 등. 앱은 PDF를 그대로 인쇄하며, 지정한 위치에 라벨과 로고만 겹쳐 놓습니다."
+ },
+ {
+  "k": "prot_titulo",
+  "v": "프로토콜"
+ },
+ {
+  "k": "prot_padrao_desc",
+  "v": "지금까지와 같은 기록지로, 추가 페이지가 없습니다. 삭제할 수 없습니다."
+ },
+ {
+  "k": "prot_nome",
+  "v": "프로토콜 이름"
+ },
+ {
+  "k": "prot_miniatura",
+  "v": "미리보기 이미지"
+ },
+ {
+  "k": "prot_miniatura_desc",
+  "v": "모의치료 마지막에 선택할 때 이 프로토콜을 알아보게 하는 이미지입니다."
+ },
+ {
+  "k": "prot_escolher_miniatura",
+  "v": "이미지 선택"
+ },
+ {
+  "k": "prot_paginas",
+  "v": "페이지"
+ },
+ {
+  "k": "prot_paginas_desc",
+  "v": "이 순서로, 서명 등록지 뒤에 출력됩니다. 여러 쪽짜리 PDF는 전체가 들어갑니다."
+ },
+ {
+  "k": "prot_sem_paginas",
+  "v": "페이지가 없습니다. 이 프로토콜은 기본 기록지만 인쇄합니다."
+ },
+ {
+  "k": "prot_add_pagina",
+  "v": "PDF 추가"
+ },
+ {
+  "k": "prot_pagina_item",
+  "v": "%1$d. %2$d쪽짜리 PDF"
+ },
+ {
+  "k": "prot_calibrar",
+  "v": "위치 조정"
+ },
+ {
+  "k": "prot_excluir_pagina_q",
+  "v": "이 페이지를 프로토콜에서 제거하시겠습니까?"
+ },
+ {
+  "k": "prot_falta_nome",
+  "v": "프로토콜 이름을 입력하십시오."
+ },
+ {
+  "k": "prot_sem_seletor",
+  "v": "PDF를 선택할 수 있는 앱이 없습니다."
+ },
+ {
+  "k": "prot_pdf_ilegivel",
+  "v": "이 PDF를 읽을 수 없습니다. 비밀번호로 보호된 파일은 사용할 수 없습니다."
+ },
+ {
+  "k": "prot_pagina_titulo",
+  "v": "라벨과 로고가 놓이는 위치"
+ },
+ {
+  "k": "prot_pagina_ajuda",
+  "v": "이미 인쇄된 내용을 가리지 않는 위치로 사각형을 끌어 옮기십시오. 위치는 이 PDF의 모든 페이지에 적용됩니다."
+ },
+ {
+  "k": "prot_usar_etiqueta",
+  "v": "환자 라벨 겹쳐 넣기"
+ },
+ {
+  "k": "prot_usar_logo",
+  "v": "의료기관 로고 겹쳐 넣기"
+ },
+ {
+  "k": "prot_box_etiqueta",
+  "v": "라벨"
+ },
+ {
+  "k": "prot_box_logo",
+  "v": "로고"
+ },
+ {
+  "k": "prot_pos_resumo",
+  "v": "라벨: 왼쪽에서 %1$d mm, 위에서 %2$d mm · 로고: 오른쪽에서 %3$d mm, 위에서 %4$d mm"
+ },
+ {
+  "k": "prot_add",
+  "v": "프로토콜 추가"
+ },
+ {
+  "k": "prot_excluir_q",
+  "v": "프로토콜 \"%1$s\"을(를) 삭제하시겠습니까?"
+ },
+ {
+  "k": "prot_excluir_msg",
+  "v": "그 안에 넣은 PDF도 함께 삭제됩니다."
+ },
+ {
+  "k": "prot_total",
+  "v": "프로토콜 %1$d개"
+ },
+ {
+  "k": "prot_escolher_titulo",
+  "v": "이번 모의치료의 프로토콜"
+ },
+ {
+  "k": "prot_escolher_desc",
+  "v": "기록지 끝에 넣을 페이지를 선택하십시오."
+ },
+ {
+  "k": "prot_qtd_paginas",
+  "v": "%1$d쪽"
+ },
+ {
+  "k": "prot_marcar",
+  "v": "선택"
+ },
+ {
+  "k": "tr_protocolos",
+  "v": "프로토콜"
+ },
+ {
+  "k": "tr_protocolos_desc",
+  "v": "등록된 프로토콜. 넣어 둔 PDF와 각 페이지의 위치 설정을 포함합니다."
+ }
+]

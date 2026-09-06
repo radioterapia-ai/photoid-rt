@@ -1,0 +1,546 @@
+[
+ {
+  "k": "flash_on",
+  "v": "Flash acceso"
+ },
+ {
+  "k": "flash_off",
+  "v": "Flash spento"
+ },
+ {
+  "k": "mute_label",
+  "v": "Suono dello scatto"
+ },
+ {
+  "k": "mute_on",
+  "v": "Suono attivo"
+ },
+ {
+  "k": "mute_off",
+  "v": "Suono disattivato"
+ },
+ {
+  "k": "scan_instruction_ocr",
+  "v": "Posizioni l'etichetta dentro il riquadro e tocchi CATTURA."
+ },
+ {
+  "k": "scan_instruction_barras",
+  "v": "Punti la fotocamera sul codice a barre."
+ },
+ {
+  "k": "view_pdf",
+  "v": "📄︎ Visualizza PDF"
+ },
+ {
+  "k": "finish_save_home",
+  "v": "Torna al menu"
+ },
+ {
+  "k": "printer_offline",
+  "v": "Stampante non disponibile"
+ },
+ {
+  "k": "no_pdf_viewer",
+  "v": "Nessuna app trovata per visualizzare il PDF"
+ },
+ {
+  "k": "edit_registration",
+  "v": "Modifica anagrafica"
+ },
+ {
+  "k": "add_more_photos",
+  "v": "Aggiungi altre foto"
+ },
+ {
+  "k": "resimulate_patient",
+  "v": "Nuova simulazione paziente"
+ },
+ {
+  "k": "patient_history_title",
+  "v": "Storico dei pazienti"
+ },
+ {
+  "k": "terms_and_privacy",
+  "v": "Condizioni e privacy"
+ },
+ {
+  "k": "terms_title",
+  "v": "Condizioni d'uso"
+ },
+ {
+  "k": "privacy_title",
+  "v": "Informativa sulla privacy"
+ },
+ {
+  "k": "i_agree",
+  "v": "Ho letto e accetto le Condizioni d'uso e l'Informativa sulla privacy, e ho compreso che questo è uno strumento di supporto non validato per l'uso clinico"
+ },
+ {
+  "k": "accept_and_continue",
+  "v": "Accetta e continua"
+ },
+ {
+  "k": "select_language",
+  "v": "Selezioni la lingua"
+ },
+ {
+  "k": "consent_intro",
+  "v": "Prima di usare l'app, legga e accetti le Condizioni d'uso e l'Informativa sulla privacy. Spiegano che cosa fa l'applicazione, che cosa non fa, quali componenti sono di terzi e dove restano i dati."
+ },
+ {
+  "k": "open_terms",
+  "v": "Apri le Condizioni d'uso"
+ },
+ {
+  "k": "open_privacy",
+  "v": "Apri l'Informativa sulla privacy"
+ },
+ {
+  "k": "pdf_lbl_patient",
+  "v": "PAZIENTE"
+ },
+ {
+  "k": "pdf_lbl_record",
+  "v": "N. CARTELLA"
+ },
+ {
+  "k": "pdf_lbl_birth",
+  "v": "NASCITA"
+ },
+ {
+  "k": "pdf_lbl_simdate",
+  "v": "DATA DELLA SIMULAZIONE:"
+ },
+ {
+  "k": "pdf_paste_label_here",
+  "v": "INCOLLARE QUI L'ETICHETTA"
+ },
+ {
+  "k": "pdf_title_line1",
+  "v": "FOTO DI"
+ },
+ {
+  "k": "pdf_title_line2",
+  "v": "POSIZIONAMENTO"
+ },
+ {
+  "k": "pdf_new_sim",
+  "v": "NUOVA SIMULAZIONE"
+ },
+ {
+  "k": "pdf_lbl_face",
+  "v": "Viso"
+ },
+ {
+  "k": "pdf_lbl_label",
+  "v": "Etichetta"
+ },
+ {
+  "k": "pdf_lbl_positioning",
+  "v": "Posizionamento"
+ },
+ {
+  "k": "pdf_lbl_accessory",
+  "v": "Accessorio"
+ },
+ {
+  "k": "fin_patient",
+  "v": "Paziente: %1$s"
+ },
+ {
+  "k": "fin_record",
+  "v": "N. cartella: %1$s"
+ },
+ {
+  "k": "fin_birth",
+  "v": "Nascita: %1$s"
+ },
+ {
+  "k": "fin_total_photos",
+  "v": "Foto totali: %1$d"
+ },
+ {
+  "k": "fin_face",
+  "v": "  • Viso: %1$d"
+ },
+ {
+  "k": "fin_label",
+  "v": "  • Etichetta: %1$d"
+ },
+ {
+  "k": "fin_positioning",
+  "v": "  • Posizionamento: %1$d"
+ },
+ {
+  "k": "fin_accessories",
+  "v": "  • Accessori: %1$d"
+ },
+ {
+  "k": "fin_new_sim",
+  "v": "⚠ NUOVA SIMULAZIONE %1$d"
+ },
+ {
+  "k": "full_name",
+  "v": "Nome completo"
+ },
+ {
+  "k": "birth_date_label",
+  "v": "Data di nascita"
+ },
+ {
+  "k": "birth_date_hint",
+  "v": "gg/mm/aaaa"
+ },
+ {
+  "k": "record_label",
+  "v": "N. cartella"
+ },
+ {
+  "k": "record_hint",
+  "v": "Numero di cartella"
+ },
+ {
+  "k": "name_required",
+  "v": "Inserisca il nome del paziente."
+ },
+ {
+  "k": "pdf_open_error",
+  "v": "Impossibile aprire il PDF."
+ },
+ {
+  "k": "pdf_not_found",
+  "v": "Nessun PDF trovato per questo paziente."
+ },
+ {
+  "k": "saving_locally",
+  "v": "Salvataggio in locale…"
+ },
+ {
+  "k": "photos_folder_label",
+  "v": "Cartella base (crea PhotoID_RT)"
+ },
+ {
+  "k": "folder_not_set",
+  "v": "(nessuna cartella scelta — si usa quella predefinita del dispositivo)"
+ },
+ {
+  "k": "foldersync_body",
+  "v": "L'app salva nella radice della memoria interna, in Memoria interna/PhotoID_RT:\n• PhotoID_RT/PHOTOS → una cartella per paziente con le foto e il PDF.\n• PhotoID_RT/DATABASE → l'archivio dei pazienti (esportazione/importazione).\nPer sincronizzare con il server della struttura, indichi a FolderSync la cartella Memoria interna/PhotoID_RT."
+ },
+ {
+  "k": "folder_chosen_ok",
+  "v": "Cartella impostata."
+ },
+ {
+  "k": "wiz_photos_folder_desc",
+  "v": "L'app crea la cartella PhotoID_RT nella radice della memoria interna del tablet. Può mantenere questa impostazione predefinita o scegliere un'altra cartella."
+ },
+ {
+  "k": "yes",
+  "v": "Sì"
+ },
+ {
+  "k": "crop_hint",
+  "v": "Trascini e usi due dita per lo zoom. Verrà salvata l'area interna alla cornice (16:9)."
+ },
+ {
+  "k": "crop_confirm",
+  "v": "Ritaglia"
+ },
+ {
+  "k": "remove",
+  "v": "Rimuovi"
+ },
+ {
+  "k": "pdf_button",
+  "v": "PDF"
+ },
+ {
+  "k": "wiz_step_counter",
+  "v": "Passaggio %1$d / %2$d"
+ },
+ {
+  "k": "wiz_skip_all",
+  "v": "Salta tutto"
+ },
+ {
+  "k": "csv_col_hint",
+  "v": "Indichi il numero della colonna nel CSV (1, 2, 3...)"
+ },
+ {
+  "k": "extra_id_1_col",
+  "v": "ID extra 1 — colonna"
+ },
+ {
+  "k": "extra_id_2_col",
+  "v": "ID extra 2 — colonna"
+ },
+ {
+  "k": "extra_id_3_col",
+  "v": "ID extra 3 — colonna"
+ },
+ {
+  "k": "lang_restart_note",
+  "v": "ℹ Cambiare lingua riavvia l'app."
+ },
+ {
+  "k": "wiz1_welcome",
+  "v": "Benvenuto!"
+ },
+ {
+  "k": "wiz1_intro",
+  "v": "Questa è l'app per l'acquisizione delle immagini di posizionamento, la generazione del PDF e l'invio multidestinazione in radioterapia. La configuriamo per la prima volta in pochi passaggi."
+ },
+ {
+  "k": "wiz1_list",
+  "v": "Dovrà indicare: il nome e il logo della struttura, la cartella in cui si salvano le foto e la stampante di rete (opzionale). Tutto può essere modificato in seguito nelle Impostazioni."
+ },
+ {
+  "k": "wiz3_clinic_identity",
+  "v": "Identità della struttura"
+ },
+ {
+  "k": "wiz3_appears_pdf",
+  "v": "Compare nei PDF generati."
+ },
+ {
+  "k": "wiz3_clinic_name",
+  "v": "Nome della struttura"
+ },
+ {
+  "k": "wiz3_logo_label",
+  "v": "Logo (PNG/JPG trasparente)"
+ },
+ {
+  "k": "wiz3_choose_logo",
+  "v": "Scegli immagine del logo"
+ },
+ {
+  "k": "wiz7_all_ready",
+  "v": "Tutto pronto!"
+ },
+ {
+  "k": "wiz7_summary_title",
+  "v": "Riepilogo"
+ },
+ {
+  "k": "wiz7_check_summary",
+  "v": "Controlli il riepilogo qui sotto. Tocchi \\\"Fine\\\" per iniziare a usare l'app."
+ },
+ {
+  "k": "wiz7_review_note",
+  "v": "ℹ Può rivedere e modificare tutto in qualsiasi momento nelle ⚙ Impostazioni."
+ },
+ {
+  "k": "finish",
+  "v": "Fine"
+ },
+ {
+  "k": "csv_from_database_note",
+  "v": "Il CSV dell'archivio viene letto da PhotoID_RT/DATABASE (cartella dell'app). Metta lì il file .csv (o sincronizzi in quella cartella) e usi \"Sincronizza ora\"."
+ },
+ {
+  "k": "all_files_title",
+  "v": "Consentire l'accesso ai file"
+ },
+ {
+  "k": "all_files_message",
+  "v": "Per salvare le foto e il PDF nella cartella PhotoID_RT nella radice della memoria (visibile e sincronizzabile), l'app ha bisogno dell'\"Accesso a tutti i file\". Senza questa autorizzazione salva in una cartella interna dell'app."
+ },
+ {
+  "k": "all_files_grant",
+  "v": "Consenti"
+ },
+ {
+  "k": "later",
+  "v": "Non ora"
+ },
+ {
+  "k": "keep_suggested_default",
+  "v": "Usa cartella predefinita"
+ },
+ {
+  "k": "choose_other_folder",
+  "v": "Scegli un'altra cartella"
+ },
+ {
+  "k": "wiz_printer_desc",
+  "v": "Indichi l'IP della stampante di rete per stampare la scheda di simulazione direttamente dall'app. Può saltare e configurarla in seguito."
+ },
+ {
+  "k": "reprint_pdf",
+  "v": "Ristampa scheda"
+ },
+ {
+  "k": "reprint_confirm",
+  "v": "Inviare di nuovo alla stampante la scheda di simulazione di %1$s?"
+ },
+ {
+  "k": "wiz_skip_title",
+  "v": "Saltare la configurazione?"
+ },
+ {
+  "k": "wiz_skip_message",
+  "v": "Potrà configurare tutto in seguito nelle ⚙ Impostazioni.\n\nVuole continuare?"
+ },
+ {
+  "k": "suggested_default_short",
+  "v": "Predefinita (Memoria interna/PhotoID_RT)"
+ },
+ {
+  "k": "printer_checking",
+  "v": "⏳ Verifica della stampante…"
+ },
+ {
+  "k": "printer_status_online",
+  "v": "🟢 Stampante online (%1$s) — pronta per stampare"
+ },
+ {
+  "k": "printer_status_offline",
+  "v": "🔴 Stampante offline — verifichi che il tablet sia sulla stessa rete Wi-Fi della stampante. Tocchi qui per riprovare."
+ },
+ {
+  "k": "pdf_observations",
+  "v": "NOTE"
+ },
+ {
+  "k": "back_to_camera",
+  "v": "Torna alla fotocamera"
+ },
+ {
+  "k": "fin_observation_label",
+  "v": "Note"
+ },
+ {
+  "k": "fin_observation_hint",
+  "v": "Scriva qui le note della simulazione (max 3 righe)"
+ },
+ {
+  "k": "pdf_use_label_space",
+  "v": "Riserva spazio per l'etichetta sulla scheda"
+ },
+ {
+  "k": "pdf_label_size_hint",
+  "v": "Dimensione dell'area in cui incollare l'etichetta fisica. Tolga la spunta se non usa etichette."
+ },
+ {
+  "k": "pdf_label_width_mm",
+  "v": "Larghezza (mm)"
+ },
+ {
+  "k": "pdf_label_height_mm",
+  "v": "Altezza (mm)"
+ },
+ {
+  "k": "group_database",
+  "v": "Archivio dati"
+ },
+ {
+  "k": "period_1m",
+  "v": "1m"
+ },
+ {
+  "k": "period_6m",
+  "v": "6m"
+ },
+ {
+  "k": "period_12m",
+  "v": "12m"
+ },
+ {
+  "k": "period_all",
+  "v": "Tutti"
+ },
+ {
+  "k": "period_n_months",
+  "v": "ultimi %1$d mesi"
+ },
+ {
+  "k": "cache_nothing",
+  "v": "Nessun caso più vecchio del periodo — niente da rimuovere."
+ },
+ {
+  "k": "cache_confirm",
+  "v": "ATTENZIONE: questa azione è irreversibile.\\n\\nVerranno eliminati %1$d paziente/i, %2$d file (%3$.1f MB) del periodo: %4$s.\\n\\nI dati eliminati NON possono essere recuperati. Vuole continuare?"
+ },
+ {
+  "k": "cache_done",
+  "v": "Rimossi %1$d paziente/i e %2$d file."
+ },
+ {
+  "k": "db_explain",
+  "v": "Un'unica cartella di archiviazione (predefinita: radice PhotoID_RT) contiene foto, PDF e archivio. FolderSync sincronizza questa cartella con il server; l'app legge soltanto ciò che è disponibile. Usi la rimozione per periodo per liberare spazio."
+ },
+ {
+  "k": "db_status",
+  "v": "%1$d paziente/i nell'archivio locale"
+ },
+ {
+  "k": "db_format_note",
+  "v": "Struttura: PhotoID_RT/PHOTOS (foto e PDF) e PhotoID_RT/DATABASE. La sincronizzazione con il server è affidata a FolderSync."
+ },
+ {
+  "k": "patients_in_treatment",
+  "v": "Pazienti in trattamento"
+ },
+ {
+  "k": "search_patient_hint",
+  "v": "Cerca per nome o n. cartella…"
+ },
+ {
+  "k": "treat_action",
+  "v": "Tratta"
+ },
+ {
+  "k": "treat_done",
+  "v": "Paziente assegnato al trattamento."
+ },
+ {
+  "k": "already_in_treatment",
+  "v": "Il paziente è già in trattamento."
+ },
+ {
+  "k": "discharge_action",
+  "v": "DIMETTI"
+ },
+ {
+  "k": "discharge_confirm",
+  "v": "Dimettere %1$s dal trattamento di radioterapia?\n\nIl paziente esce dall'elenco di trattamento e resta nello storico."
+ },
+ {
+  "k": "discharge_done",
+  "v": "Paziente dimesso dal trattamento."
+ },
+ {
+  "k": "patients_section",
+  "v": "Pazienti"
+ },
+ {
+  "k": "edit_patients",
+  "v": "✏️ Modifica pazienti"
+ },
+ {
+  "k": "crop_rotate",
+  "v": "↻ Ruota"
+ },
+ {
+  "k": "wiz3_no_logo",
+  "v": "Nessun logo impostato"
+ },
+ {
+  "k": "storage_folder_label",
+  "v": "Cartella di archiviazione"
+ },
+ {
+  "k": "remove_pick_period",
+  "v": "Rimozione dei casi vecchi — selezioni il periodo:"
+ },
+ {
+  "k": "remove_old_desc",
+  "v": "Il periodo qui sotto vale solo per questa rimozione. Rimuove dal tablet i casi più vecchi del periodo (o TUTTI, se sceglie \"Tutti i casi\")."
+ },
+ {
+  "k": "remove_old_button",
+  "v": "🗑️ Rimuovi i casi del periodo"
+ }
+]

@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tela de captura (redesenho v8):
+    - Barra de topo única: id paciente (esq) + tema (centro) + contador (dir).
+    - Visor 16:9 ocupa quase tudo.
+    - Zoom VERTICAL funcional no canto esquerdo (SeekBar girada, clipChildren=false).
+    - Flash + Som = ícones flutuantes compactos no canto SUPERIOR DIREITO (sempre visíveis).
+    - Miniaturas das fotos = faixa TRANSPARENTE sobreposta na base do visor.
+    - Região inferior: à esquerda tabs + Voltar/Finalizar; à DIREITA o botão
+      CAPTURAR redondo vermelho 3D (sempre visível, perto do polegar direito).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/brand_primary_dark"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:id="@+id/txtPacienteAtivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/txtCategoriaAtiva"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:maxLines="2"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/txtCategoriaAtiva"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:text="Rosto" />
+
+        <TextView
+            android:id="@+id/txtSessaoStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textSize="13sp"
+            android:textColor="#CFE0FF" />
+
+        <TextView
+            android:id="@+id/txtWifiStatus"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipChildren="false">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/viewFinder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/imgPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:contentDescription="Foto" />
+
+        <!-- Recorte 16:9 integrado: aparece no lugar do preview para foto recém-tirada -->
+        <com.radioterapia.ai.crop.CropImageView
+            android:id="@+id/cropPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <!-- Ícone GIRAR (pós-captura): canto superior direito do visor -->
+        <ImageButton
+            android:id="@+id/btnGirarVisor"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="10dp"
+            android:src="@android:drawable/ic_menu_rotate"
+            android:background="@drawable/bg_icon_visor"
+            android:scaleType="centerInside"
+            android:contentDescription="@string/rotate_action"
+            android:visibility="gone" />
+
+
+        <com.radioterapia.ai.ui.GridOverlay
+            android:id="@+id/gridOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <!-- ZOOM vertical funcional (esquerda). clipChildren=false deixa a
+             SeekBar girada aparecer e receber toque. -->
+        <LinearLayout
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:clipChildren="false"
+            android:background="#33000000">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zoom"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="4dp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clipChildren="false">
+
+                <SeekBar
+                    android:id="@+id/seekZoom"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:rotation="270"
+                    android:max="100"
+                    android:progress="0" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- FLASH + SOM flutuantes compactos (canto superior direito) -->
+        <LinearLayout
+            android:id="@+id/layoutControlesCamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="6dp"
+            android:background="@drawable/bg_step_pill">
+
+            <ImageButton
+                android:id="@+id/btnSwitchCam"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_switch_camera"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/switch_cam_label" />
+
+
+            <TextView
+                android:id="@+id/txtSwitchCamLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/switch_cam_label"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginBottom="6dp" />
+
+
+            <ImageButton
+                android:id="@+id/btnFlash"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_flash_off"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/flash_label" />
+
+            <TextView
+                android:id="@+id/txtFlashLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/flash_label"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF" />
+
+            <ImageButton
+                android:id="@+id/btnMute"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/ic_sound_on"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="6dp"
+                android:contentDescription="@string/mute_label" />
+
+            <TextView
+                android:id="@+id/txtMuteLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mute_label"
+                android:textSize="10sp"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+        <!-- Miniaturas das fotos tiradas: faixa TRANSPARENTE na base do visor -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerThumbs"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="62dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:background="#55000000"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtIndicadorQualidade"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:background="#CC1A2545"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- REGIÃO INFERIOR: esquerda (tabs + ações) | direita (botão capturar redondo) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/bg_card">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/tabsCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <include layout="@layout/category_tab" android:id="@+id/tabFace" />
+                <include layout="@layout/category_tab" android:id="@+id/tabLabel" />
+                <include layout="@layout/category_tab" android:id="@+id/tabPositioning" />
+                <include layout="@layout/category_tab" android:id="@+id/tabAccessories" />
+                <include layout="@layout/category_tab" android:id="@+id/tabDocs" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutAcoesPosFoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btnDescartar"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/cam_bottom_height"
+                    android:layout_weight="1"
+                    android:text="@string/discard"
+                    android:maxLines="1"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_on_dark"
+                    android:backgroundTint="@color/action_discard" />
+
+                <Button
+                    android:id="@+id/btnSalvar"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/cam_bottom_height"
+                    android:layout_weight="2"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/save"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_on_dark"
+                    android:backgroundTint="@color/action_save" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/barraNavegacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="6dp">
+
+                <Button
+                    android:id="@+id/btnVoltarLanding"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/cam_bottom_height"
+                    android:layout_weight="1"
+                    android:text="@string/back"
+                    android:textColor="@color/text_on_dark"
+                    android:textSize="15sp"
+                    android:backgroundTint="@color/action_neutral"
+            android:maxLines="2"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeStepGranularity="1sp" />
+
+                <Button
+                    android:id="@+id/btnGaleria"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/cam_bottom_height"
+                    android:layout_weight="1.4"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/add_from_gallery"
+                    android:textColor="@color/text_on_dark"
+                    android:textSize="15sp"
+                    android:backgroundTint="@color/action_neutral"
+                    android:maxLines="2"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="9sp"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeStepGranularity="1sp" />
+
+                <Button
+                    android:id="@+id/btnFinalizar"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/cam_bottom_height"
+                    android:layout_weight="2"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/finish_simulation"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_on_dark"
+                    android:textSize="15sp"
+                    android:backgroundTint="@color/brand_primary_dark"
+            android:maxLines="2"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="9sp"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeStepGranularity="1sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- BOTÃO CAPTURAR redondo vermelho 3D (sempre visível, lado direito) -->
+        <FrameLayout
+            android:id="@+id/holderCapturar"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="8dp"
+            android:paddingEnd="10dp">
+
+            <ImageButton
+                android:id="@+id/btnCapturar"
+                android:layout_width="78dp"
+                android:layout_height="78dp"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_capture_round"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/capture_photo" />
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

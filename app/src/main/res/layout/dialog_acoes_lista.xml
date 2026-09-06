@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ações da LISTA (histórico / pacientes em tratamento). Mesmo desenho do
+     popup do carrossel: seções, alvos de 52dp, divisores discretos. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_card"
+    android:orientation="vertical"
+    android:paddingVertical="8dp">
+
+    <TextView
+        style="@style/PopupSecao"
+        android:text="@string/popup_sec_docs" />
+
+    <TextView
+        android:id="@+id/popLoteImprimir"
+        style="@style/PopupItem"
+        android:text="@string/lote_menu_imprimir" />
+</LinearLayout>

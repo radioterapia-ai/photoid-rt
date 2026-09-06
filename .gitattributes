@@ -1,0 +1,16 @@
+# Fim de linha e codificacao. Regra do ecossistema: C:\AI\CLAUDE.md
+
+* text=auto
+
+# ─── cmd.exe exige CRLF (regra do ecossistema, ver C:\AI\CLAUDE.md) ─────────
+# O cmd.exe le o lote por OFFSET DE BYTE. Com LF ele perde o rumo e passa a
+# executar como comando do prompt o que vier depois -- inclusive linha de
+# PowerShell. O sintoma nao parece erro de fim de linha: parece codigo errado.
+# Quebra bloco `if (...)` e `goto :label` primeiro; script linear sobrevive, o
+# que faz a armadilha ficar latente ate alguem acrescentar um bloco.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# .ps1 em CRLF por simetria: nao e exigencia do PowerShell, e o que evita
+# diferenca de fim de linha entre o .cmd e o .ps1 do mesmo instalador.
+*.ps1 text eol=crlf

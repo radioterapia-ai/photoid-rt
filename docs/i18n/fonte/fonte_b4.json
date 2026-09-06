@@ -1,0 +1,546 @@
+[
+ {
+  "k": "hc_no_changes",
+  "pt": "Nenhuma alteração"
+ },
+ {
+  "k": "hc_generating_pdf",
+  "pt": "Gerando PDF…"
+ },
+ {
+  "k": "hc_purge_logs_q",
+  "pt": "Apagar logs com mais de 90 dias?"
+ },
+ {
+  "k": "hc_no_logs_export",
+  "pt": "Sem logs para exportar"
+ },
+ {
+  "k": "hc_never_synced",
+  "pt": "Nunca sincronizado"
+ },
+ {
+  "k": "hl_full_name",
+  "pt": "Nome completo"
+ },
+ {
+  "k": "hl_birth_date",
+  "pt": "Data de nascimento"
+ },
+ {
+  "k": "hl_record",
+  "pt": "Prontuário"
+ },
+ {
+  "k": "hl_filter",
+  "pt": "Filtro:"
+ },
+ {
+  "k": "hl_no_records",
+  "pt": "Sem registros"
+ },
+ {
+  "k": "hl_last_30",
+  "pt": "Últimos 30 dias"
+ },
+ {
+  "k": "hl_last_7",
+  "pt": "Últimos 7 dias"
+ },
+ {
+  "k": "hl_operations",
+  "pt": "Operações"
+ },
+ {
+  "k": "hl_uploads_ok",
+  "pt": "Envios OK"
+ },
+ {
+  "k": "hl_prints",
+  "pt": "Impressões"
+ },
+ {
+  "k": "hl_errors",
+  "pt": "Erros"
+ },
+ {
+  "k": "hl_patients",
+  "pt": "Pacientes"
+ },
+ {
+  "k": "hl_reirradiations",
+  "pt": "Reirradiações"
+ },
+ {
+  "k": "hl_extra_id1",
+  "pt": "ID extra 1 - título (ex: Convênio)"
+ },
+ {
+  "k": "hl_extra_id2",
+  "pt": "ID extra 2 - título (ex: CPF)"
+ },
+ {
+  "k": "hl_extra_id3",
+  "pt": "ID extra 3 - título"
+ },
+ {
+  "k": "hl_clinic_example",
+  "pt": "Ex: Clínica Saúde Total"
+ },
+ {
+  "k": "hl_date_mask",
+  "pt": "dd/mm/aaaa"
+ },
+ {
+  "k": "draft_kept_count",
+  "pt": "Você tem %1$d foto(s) nesta simulação. O rascunho será MANTIDO e você pode continuar depois pela Simulação Home."
+ },
+ {
+  "k": "pront_dup_title",
+  "pt": "Prontuário já cadastrado"
+ },
+ {
+  "k": "pront_dup_msg",
+  "pt": "O prontuário %1$s já pertence a %2$s.\\n\\nIsso costuma indicar erro de digitação ou paciente duplicado. Deseja salvar mesmo assim?"
+ },
+ {
+  "k": "disk_full_title",
+  "pt": "Espaço insuficiente"
+ },
+ {
+  "k": "disk_full_msg",
+  "pt": "Restam apenas %1$d MB no armazenamento. Libere espaço antes de finalizar, senão as fotos e o PDF podem ser gravados pela metade."
+ },
+ {
+  "k": "db_export_title",
+  "pt": "Exportar base de dados"
+ },
+ {
+  "k": "db_import_title",
+  "pt": "Importar base de dados"
+ },
+ {
+  "k": "db_export_desc",
+  "pt": "Gera um pacote com fotos, PDFs e cadastro para levar a outro tablet."
+ },
+ {
+  "k": "db_transfer_done",
+  "pt": "Concluído: %1$d paciente(s), %2$d arquivo(s)."
+ },
+ {
+  "k": "db_transfer_section",
+  "pt": "Transferir para outro tablet"
+ },
+ {
+  "k": "db_working",
+  "pt": "Transferindo… %1$d de %2$d"
+ },
+ {
+  "k": "err_generic",
+  "pt": "Erro: %1$s"
+ },
+ {
+  "k": "err_camera",
+  "pt": "Erro câmera: %1$s"
+ },
+ {
+  "k": "err_capture",
+  "pt": "Erro ao capturar: %1$s"
+ },
+ {
+  "k": "err_save",
+  "pt": "Erro ao salvar: %1$s"
+ },
+ {
+  "k": "err_unexpected",
+  "pt": "Falha inesperada: %1$s"
+ },
+ {
+  "k": "err_reopen",
+  "pt": "Erro ao reabrir: %1$s"
+ },
+ {
+  "k": "ok_exported",
+  "pt": "Exportado: %1$s"
+ },
+ {
+  "k": "ok_record_read",
+  "pt": "Prontuário lido: %1$s"
+ },
+ {
+  "k": "ok_photo_added",
+  "pt": "✓ Foto adicionada (%1$d)"
+ },
+ {
+  "k": "n_entries",
+  "pt": "%1$d entrada(s)"
+ },
+ {
+  "k": "viewer_summary",
+  "pt": "Resumo"
+ },
+ {
+  "k": "resumo_medico",
+  "pt": "Médico"
+ },
+ {
+  "k": "resumo_sitio",
+  "pt": "Sítio"
+ },
+ {
+  "k": "resumo_sem_dados",
+  "pt": "— não informado —"
+ },
+ {
+  "k": "resumo_alerta_queda",
+  "pt": "RISCO DE QUEDA"
+ },
+ {
+  "k": "resumo_alerta_contato",
+  "pt": "PRECAUÇÃO DE CONTATO"
+ },
+ {
+  "k": "resumo_alerta_alergia",
+  "pt": "ALERGIA"
+ },
+ {
+  "k": "resumo_sim_numero",
+  "pt": "Simulação %1$d"
+ },
+ {
+  "k": "disk_low_title",
+  "pt": "Armazenamento quase cheio"
+ },
+ {
+  "k": "disk_low_msg",
+  "pt": "Restam %1$d MB no tablet. Libere espaço (Configurações → Base de dados) antes que as simulações comecem a falhar."
+ },
+ {
+  "k": "popup_sec_docs",
+  "pt": "Documentos"
+ },
+ {
+  "k": "popup_sec_editar",
+  "pt": "Editar"
+ },
+ {
+  "k": "popup_ver_ficha",
+  "pt": "Ver ficha de posicionamento"
+ },
+ {
+  "k": "popup_compartilhar",
+  "pt": "Compartilhar PDF"
+ },
+ {
+  "k": "popup_editar_simulacao",
+  "pt": "Editar esta simulação"
+ },
+ {
+  "k": "resumo_obs_tag",
+  "pt": "OBS"
+ },
+ {
+  "k": "resumo_mais",
+  "pt": "+%1$d mais…"
+ },
+ {
+  "k": "popup_imprimir",
+  "pt": "Imprimir PDF"
+ },
+ {
+  "k": "print_mode_title",
+  "pt": "Como deseja imprimir?"
+ },
+ {
+  "k": "print_mode_ip",
+  "pt": "Impressora da rede (IP configurado)"
+ },
+ {
+  "k": "print_mode_folder",
+  "pt": "Copiar para pasta de impressão"
+ },
+ {
+  "k": "print_mode_folder_ok",
+  "pt": "PDF copiado para %1$s"
+ },
+ {
+  "k": "print_sent",
+  "pt": "Enviado para a impressora."
+ },
+ {
+  "k": "print_mode_pendrive",
+  "pt": "Salvar em pen-drive (cabo OTG)"
+ },
+ {
+  "k": "pd_titulo",
+  "pt": "Imprimir pelo pen-drive"
+ },
+ {
+  "k": "pd_anim_desc",
+  "pt": "Tablet conectado a um pen-drive por cabo OTG"
+ },
+ {
+  "k": "pd_sem_cabo",
+  "pt": "Conecte o pen-drive"
+ },
+ {
+  "k": "pd_sem_cabo_dica",
+  "pt": "Ligue o adaptador OTG na entrada USB do tablet e espete o pen-drive. Assim que ele for reconhecido, o botão abaixo libera."
+ },
+ {
+  "k": "pd_montando",
+  "pt": "Reconhecendo o pen-drive…"
+ },
+ {
+  "k": "pd_montando_dica",
+  "pt": "O dispositivo já foi visto. Aguarde o Android montar o pen-drive — costuma levar poucos segundos."
+ },
+ {
+  "k": "pd_pasta_pendente",
+  "pt": "Pen-drive conectado"
+ },
+ {
+  "k": "pd_pasta_pendente_dica",
+  "pt": "Escolha uma vez a pasta do pen-drive onde os PDFs serão gravados. Nas próximas vezes o app grava direto."
+ },
+ {
+  "k": "pd_pronto",
+  "pt": "Pen-drive pronto"
+ },
+ {
+  "k": "pd_escolher_pasta",
+  "pt": "Escolher pasta do pen-drive"
+ },
+ {
+  "k": "pd_gravar",
+  "pt": "Gravar PDF no pen-drive"
+ },
+ {
+  "k": "pd_pasta_atual",
+  "pt": "Pasta: %1$s"
+ },
+ {
+  "k": "pd_trocar_pasta",
+  "pt": "Trocar pasta"
+ },
+ {
+  "k": "pd_gravando",
+  "pt": "Gravando…"
+ },
+ {
+  "k": "pd_pronto_dica_sessao",
+  "pt": "Os PDFs vão para pastas numeradas dentro de PHOTOID — 1_PACIENTE_ATUAL, 2_LOTE_INDIVIDUAIS e 3_LOTE_AGRUPADO. A numeração faz a pasta certa aparecer primeiro no painel da impressora."
+ },
+ {
+  "k": "lote_menu_imprimir",
+  "pt": "Imprimir PDFs em lote"
+ },
+ {
+  "k": "lote_todos",
+  "pt": "Todos"
+ },
+ {
+  "k": "lote_imprimir",
+  "pt": "Imprimir"
+ },
+ {
+  "k": "lote_contagem",
+  "pt": "%1$d selecionado(s)"
+ },
+ {
+  "k": "lote_nenhum",
+  "pt": "Selecione ao menos um paciente."
+ },
+ {
+  "k": "lote_preparando",
+  "pt": "Preparando %1$d ficha(s)…"
+ },
+ {
+  "k": "lote_sem_pdf",
+  "pt": "Nenhum dos pacientes selecionados tem ficha disponível."
+ },
+ {
+  "k": "filtro_titulo",
+  "pt": "Filtrar e ordenar"
+ },
+ {
+  "k": "filtro_botao",
+  "pt": "Filtrar ⇅"
+ },
+ {
+  "k": "filtro_ordenar_por",
+  "pt": "Ordenar por"
+ },
+ {
+  "k": "filtro_campo_nome",
+  "pt": "Nome"
+ },
+ {
+  "k": "filtro_campo_data",
+  "pt": "Data"
+ },
+ {
+  "k": "filtro_campo_prontuario",
+  "pt": "Prontuário"
+ },
+ {
+  "k": "filtro_ordem",
+  "pt": "Ordem"
+ },
+ {
+  "k": "filtro_asc",
+  "pt": "Crescente ↑"
+ },
+ {
+  "k": "filtro_desc",
+  "pt": "Decrescente ↓"
+ },
+ {
+  "k": "filtro_periodo",
+  "pt": "Filtrar por data da simulação"
+ },
+ {
+  "k": "filtro_escolher_data",
+  "pt": "Escolher data"
+ },
+ {
+  "k": "filtro_todas_datas",
+  "pt": "Todas as datas"
+ },
+ {
+  "k": "filtro_data_nenhuma",
+  "pt": "Mostrando todas as datas"
+ },
+ {
+  "k": "filtro_data_ativa",
+  "pt": "Somente %1$s"
+ },
+ {
+  "k": "filtro_aplicar",
+  "pt": "Aplicar"
+ },
+ {
+  "k": "filtro_resultado",
+  "pt": "%1$d paciente(s) no filtro"
+ },
+ {
+  "k": "cfg_transfer_titulo",
+  "pt": "Configurações — cópia de segurança"
+ },
+ {
+  "k": "cfg_transfer_desc",
+  "pt": "Salva num arquivo o nome da clínica, médicos, equipamentos, sítios, etiqueta, orientação e demais ajustes. Ao atualizar o app ou trocar de tablet, é só importar. (O logotipo é reenviado à parte.)"
+ },
+ {
+  "k": "cfg_exportar",
+  "pt": "Exportar configurações"
+ },
+ {
+  "k": "cfg_importar",
+  "pt": "Importar configurações"
+ },
+ {
+  "k": "cfg_exportado",
+  "pt": "Configurações salvas em %1$s"
+ },
+ {
+  "k": "cfg_importado",
+  "pt": "%1$d ajuste(s) restaurado(s). Reabra as Configurações para ver."
+ },
+ {
+  "k": "cfg_import_falha",
+  "pt": "Arquivo inválido ou ilegível."
+ },
+ {
+  "k": "cfg_import_confirma",
+  "pt": "Isto substitui os ajustes atuais pelos do arquivo. Continuar?"
+ },
+ {
+  "k": "err_timeout_save",
+  "pt": "Falha ao gravar os dados do Time-Out desta simulação."
+ },
+ {
+  "k": "err_obs_save",
+  "pt": "Falha ao gravar a observação desta simulação."
+ },
+ {
+  "k": "sim_not_found",
+  "pt": "Simulação não localizada."
+ },
+ {
+  "k": "viewer_record",
+  "pt": "Prontuário: %1$s"
+ },
+ {
+  "k": "cfg_last_sync",
+  "pt": "Última sincronização: %1$s"
+ },
+ {
+  "k": "cat_switched",
+  "pt": "Agora: %1$s"
+ },
+ {
+  "k": "export_zip",
+  "pt": "Exportar simulação (ZIP)"
+ },
+ {
+  "k": "export_zip_progress",
+  "pt": "Compactando simulação…"
+ },
+ {
+  "k": "export_zip_ok",
+  "pt": "Exportado: %1$s"
+ },
+ {
+  "k": "export_zip_fail",
+  "pt": "Não foi possível exportar a simulação."
+ },
+ {
+  "k": "export_zip_empty",
+  "pt": "Esta simulação não tem arquivos para exportar."
+ },
+ {
+  "k": "wifi_connected_generic",
+  "pt": "Wi-Fi conectado"
+ },
+ {
+  "k": "pdf_to_contact_precaution",
+  "pt": "PRECAUÇÃO DE CONTATO"
+ },
+ {
+  "k": "pdf_to_allergy",
+  "pt": "ALERGIA"
+ },
+ {
+  "k": "pdf_to_fall_risk",
+  "pt": "RISCO DE QUEDA"
+ },
+ {
+  "k": "pdf_to_equipment",
+  "pt": "Equipamento"
+ },
+ {
+  "k": "pdf_to_doctor",
+  "pt": "Médico Responsável"
+ },
+ {
+  "k": "pdf_to_site",
+  "pt": "Sítio anatômico / lateralidade"
+ },
+ {
+  "k": "pdf_to_routine",
+  "pt": "ROTINA DE PROCEDIMENTO SEGURO:"
+ },
+ {
+  "k": "pdf_to_step1",
+  "pt": "• Verificação da Identificação do Paciente (Nome completo, data de nasc, sítio de tratamento e fração)"
+ },
+ {
+  "k": "pdf_to_step2",
+  "pt": "• Paciente faz conferência da sua foto e de seu nome na ficha"
+ },
+ {
+  "k": "pdf_to_step3",
+  "pt": "• Confirmação verbal de topografia, número da aplicação e queixas"
+ }
+]

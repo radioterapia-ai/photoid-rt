@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Calibração de UMA página do protocolo.
+
+    A página ocupa a maior parte da tela e os controles ficam embaixo: o que se
+    confere aqui é se os boxes cobrem algo do documento, e isso só se vê olhando
+    a página inteira.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_main">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/prot_pagina_ajuda"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:padding="10dp" />
+
+    <com.radioterapia.ai.protocolo.ProtocoloPaginaView
+        android:id="@+id/viewPagina"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="8dp" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="240dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <CheckBox
+                android:id="@+id/chkProtEtq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prot_usar_etiqueta"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/linhaTamEtq"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pdf_label_width_mm"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+
+                <EditText
+                    android:id="@+id/edtProtEtqW"
+                    android:layout_width="64dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginStart="6dp"
+                    android:autofillHints="" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pdf_label_height_mm"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:layout_marginStart="14dp" />
+
+                <EditText
+                    android:id="@+id/edtProtEtqH"
+                    android:layout_width="64dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginStart="6dp"
+                    android:autofillHints="" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/chkProtLogo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/prot_usar_logo"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:layout_marginTop="6dp" />
+
+            <TextView
+                android:id="@+id/txtProtPos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp"
+                android:layout_marginTop="6dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp">
+
+                <Button
+                    android:id="@+id/btnProtPagCancelar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="52dp"
+                    android:text="@string/cancel"
+                    android:textColor="@color/text_on_dark"
+                    android:backgroundTint="@color/action_neutral" />
+
+                <Button
+                    android:id="@+id/btnProtPagSalvar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/save"
+                    android:textColor="@color/text_on_dark"
+                    android:backgroundTint="@color/brand_primary_dark" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

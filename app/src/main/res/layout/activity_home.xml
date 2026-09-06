@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tela principal. Responsiva: ScrollView (fillViewport) permite rolar em
+    telas baixas (celular paisagem) e centraliza no tablet. Tamanhos vêm de
+    @dimen (celular compacto em values/, tablet generoso em values-sw600dp/).
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/landing_padding">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.7" />
+
+        <com.radioterapia.ai.ui.PhotoIdHeaderView
+            android:id="@+id/headerHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/brand_title_home"
+            android:text="RT" />
+
+        <TextView
+            android:id="@+id/txtHomeSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/home_subtitle"
+            android:textSize="@dimen/landing_subtitle"
+            android:textColor="@color/text_secondary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="@dimen/landing_subtitle_margin" />
+
+        <Button
+            android:id="@+id/btnSimulation"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/module_btn_height"
+            android:text="@string/simulation"
+            android:textSize="@dimen/module_btn_text"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:background="@drawable/btn_module_3d"
+            android:layout_marginBottom="@dimen/module_btn_gap" />
+
+        <Button
+            android:id="@+id/btnTreatment"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/module_btn_height"
+            android:text="@string/treatment"
+            android:textSize="@dimen/module_btn_text"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:background="@drawable/btn_module_3d" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/txtLearnMore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/learn_more"
+            android:textSize="14sp"
+            android:textColor="@color/brand_primary"
+            android:padding="14dp"
+            android:background="?attr/selectableItemBackground" />
+    </LinearLayout>
+</ScrollView>

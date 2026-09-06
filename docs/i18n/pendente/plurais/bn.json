@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"one": "সংরক্ষিত %d জন রোগী", "other": "সংরক্ষিত %d জন রোগী"},
+ "treatment_count_plural":   {"one": "চিকিৎসাধীন %d জন রোগী", "other": "চিকিৎসাধীন %d জন রোগী"},
+ "simulations_count_plural": {"one": "%dটি সিমুলেশন", "other": "%dটি সিমুলেশন"}
+}

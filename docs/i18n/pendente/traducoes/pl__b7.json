@@ -1,0 +1,74 @@
+[
+ {
+  "k": "fin_fracoes_label",
+  "v": "Maksymalna liczba wizyt / frakcji (opcjonalnie)"
+ },
+ {
+  "k": "fin_fracoes_nenhuma",
+  "v": "Nie podawaj"
+ },
+ {
+  "k": "fin_fracoes_n",
+  "v": "%1$d frakcji"
+ },
+ {
+  "k": "fin_faltando_titulo",
+  "v": "Kontynuować bez uzupełnienia?"
+ },
+ {
+  "k": "fin_faltando_msg",
+  "v": "Te pola pozostały puste:\\n\\n%1$s\\nNie są obowiązkowe, ale pojawiają się na wydrukowanej karcie ułożenia i na stronie Time-Out. Kontynuować mimo to?"
+ },
+ {
+  "k": "fin_faltando_medico",
+  "v": "• Lekarz odpowiedzialny"
+ },
+ {
+  "k": "fin_faltando_equip",
+  "v": "• Aparat"
+ },
+ {
+  "k": "fin_faltando_sitio",
+  "v": "• Lokalizacja anatomiczna"
+ },
+ {
+  "k": "fin_faltando_seguir",
+  "v": "Kontynuuj mimo to"
+ },
+ {
+  "k": "fin_faltando_voltar",
+  "v": "Wróć i uzupełnij"
+ },
+ {
+  "k": "ap_refazer_unica",
+  "v": "Zastąpić zdjęcie: %1$s?"
+ },
+ {
+  "k": "ap_refazer_msg",
+  "v": "Ta symulacja ma już zdjęcie: %1$s. Nowe zajmie jego miejsce, a poprzednie zostanie zarchiwizowane — zniknie z karty ułożenia, ale pozostanie w folderze pacjenta."
+ },
+ {
+  "k": "print_pages_menu",
+  "v": "Drukuj wybrane strony"
+ },
+ {
+  "k": "print_pages_title",
+  "v": "Które strony wydrukować? (łącznie %1$d)"
+ },
+ {
+  "k": "print_page_n",
+  "v": "Strona %1$d"
+ },
+ {
+  "k": "print_pages_ok",
+  "v": "Drukuj wybrane"
+ },
+ {
+  "k": "print_pages_none",
+  "v": "Zaznacz co najmniej jedną stronę."
+ },
+ {
+  "k": "print_pages_fail",
+  "v": "Nie udało się wyodrębnić stron."
+ }
+]

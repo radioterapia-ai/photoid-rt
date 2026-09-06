@@ -1,0 +1,174 @@
+[
+ {
+  "k": "group_transferencia",
+  "v": "Konfiguration exportieren / importieren"
+ },
+ {
+  "k": "tr_explica",
+  "v": "Bringen Sie die Konfiguration dieser Einrichtung auf ein anderes Tablet. Haken Sie an, was in die Datei soll; sie entsteht als .zip, die jedes System öffnet."
+ },
+ {
+  "k": "tr_selecionar_tudo",
+  "v": "Alles auswählen"
+ },
+ {
+  "k": "tr_exportar",
+  "v": "Auswahl exportieren"
+ },
+ {
+  "k": "tr_importar",
+  "v": "Aus einer Datei importieren"
+ },
+ {
+  "k": "tr_nao_vai",
+  "v": "Werden nie exportiert: das SMB-Passwort und die auf diesem Gerät gewählten Ordner (Fotos, CSV, Sicherung). Ein Ordner ist eine Berechtigung, die nur einem Tablet erteilt wurde; auf dem Zielgerät zeigte sie ins Leere, und zwar ohne jede Meldung. Wer importiert, wählt die Ordner neu."
+ },
+ {
+  "k": "tr_aviso_paciente",
+  "v": "Die Auswahl enthält Patientendaten. Die erzeugte Datei wird damit zu einem klinischen Dokument: Bewahren Sie sie als solches auf und legen Sie sie nicht in einen Ordner, der mit einer privaten Cloud abgeglichen wird."
+ },
+ {
+  "k": "tr_clinica",
+  "v": "Name der Einrichtung"
+ },
+ {
+  "k": "tr_clinica_desc",
+  "v": "Der Name, der im Fuß des Lagerungsprotokolls gedruckt wird."
+ },
+ {
+  "k": "tr_logotipo",
+  "v": "Logo"
+ },
+ {
+  "k": "tr_logotipo_desc",
+  "v": "Das Bild oben auf jeder Seite des PDF."
+ },
+ {
+  "k": "tr_medicos",
+  "v": "Ärzte und Geräte"
+ },
+ {
+  "k": "tr_medicos_desc",
+  "v": "Die Listen, die in den Feldern des Planungs-CT vorgeschlagen werden."
+ },
+ {
+  "k": "tr_sitios",
+  "v": "Bestrahlungsregionen"
+ },
+ {
+  "k": "tr_sitios_desc",
+  "v": "Die Liste der Regionen im entsprechenden Feld."
+ },
+ {
+  "k": "tr_rubricario",
+  "v": "Handzeichenliste des Teams"
+ },
+ {
+  "k": "tr_rubricario_desc",
+  "v": "Funktionen, Namen, Registriernummern und die gespeicherten Handzeichen."
+ },
+ {
+  "k": "tr_impressora",
+  "v": "Drucker"
+ },
+ {
+  "k": "tr_impressora_desc",
+  "v": "Adresse, Name und Duplexmodus."
+ },
+ {
+  "k": "tr_ficha",
+  "v": "Aufbau des Protokolls"
+ },
+ {
+  "k": "tr_ficha_desc",
+  "v": "Ausrichtung, Etikett, Heftrand und Time-Out-Seite."
+ },
+ {
+  "k": "tr_rede",
+  "v": "Netzwerk und Server"
+ },
+ {
+  "k": "tr_rede_desc",
+  "v": "SMB-Adresse, Domäne und Benutzer. Das Passwort ist nicht enthalten."
+ },
+ {
+  "k": "tr_base_csv",
+  "v": "Patientenbasis (CSV)"
+ },
+ {
+  "k": "tr_base_csv_desc",
+  "v": "Wie die Datei der Basis gelesen wird. Der Ordner wird auf dem Zielgerät gewählt."
+ },
+ {
+  "k": "tr_pacientes",
+  "v": "Erfasste Patienten"
+ },
+ {
+  "k": "tr_pacientes_desc",
+  "v": "Die auf diesem Tablet bereits erfassten Patienten. Enthält Patientendaten."
+ },
+ {
+  "k": "tr_fotos",
+  "v": "Patientenfotos"
+ },
+ {
+  "k": "tr_fotos_desc",
+  "v": "Alle Fotos und PDF in den Patientenordnern. Kann groß werden und enthält Patientendaten."
+ },
+ {
+  "k": "tr_nada_marcado",
+  "v": "Haken Sie mindestens einen Punkt an."
+ },
+ {
+  "k": "tr_exportando",
+  "v": "Paket wird erstellt…"
+ },
+ {
+  "k": "tr_exportado",
+  "v": "Paket erstellt: %1$d Datei(en)."
+ },
+ {
+  "k": "tr_erro",
+  "v": "Konnte nicht abgeschlossen werden: %1$s"
+ },
+ {
+  "k": "tr_arquivo_invalido",
+  "v": "Diese Datei ist kein Paket von PhotoID RT."
+ },
+ {
+  "k": "tr_conteudo_titulo",
+  "v": "Was diese Datei enthält"
+ },
+ {
+  "k": "tr_de_unidade",
+  "v": "Von: %1$s"
+ },
+ {
+  "k": "tr_modo_titulo",
+  "v": "Wie anwenden?"
+ },
+ {
+  "k": "tr_modo_somar",
+  "v": "Hinzufügen: behält, was schon hier ist"
+ },
+ {
+  "k": "tr_modo_sobrescrever",
+  "v": "Überschreiben: das Paket gibt vor"
+ },
+ {
+  "k": "tr_modo_explica",
+  "v": "Hinzufügen ist die Voreinstellung: Nichts von dem, was schon auf diesem Tablet ist, wird gelöscht, und es kommt nur herein, wozu es hier keine Entsprechung gibt. Überschreiben ersetzt das Vorhandene."
+ },
+ {
+  "k": "tr_importando",
+  "v": "Wird angewendet…"
+ },
+ {
+  "k": "tr_importado",
+  "v": "%1$d Einstellung(en) und %2$d Datei(en) übernommen; %3$d blieben unverändert."
+ },
+ {
+  "k": "tr_itens_marcados",
+  "v": "%1$d von %2$d angehakt"
+ }
+]

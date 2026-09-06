@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ScrollView: em telas pequenas o popup rola em vez de cortar campos. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/lblNome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary" />
+
+    <EditText
+        android:id="@+id/etNovoNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/full_name"
+        android:inputType="textCapWords"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/lblNasc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary" />
+
+    <EditText
+        android:id="@+id/etNovoNascimento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/birth_date_hint"
+        android:inputType="number"
+        android:digits="0123456789/"
+        android:maxLength="10"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:id="@+id/lblPront"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_primary" />
+
+    <EditText
+        android:id="@+id/etNovoProntuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/record_hint"
+        android:inputType="text" />
+
+    <!-- Opcionais (etiqueta virtual personalizada nas Configurações) -->
+    <LinearLayout
+        android:id="@+id/layoutCadSexo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/lblSexo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_primary" />
+
+        <RadioGroup
+            android:id="@+id/rgCadSexo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbCadSexoM"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/cad_sexo_m" android:textColor="@color/text_primary" />
+            <RadioButton android:id="@+id/rbCadSexoF"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:text="@string/cad_sexo_f" android:textColor="@color/text_primary" />
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>
+</ScrollView>

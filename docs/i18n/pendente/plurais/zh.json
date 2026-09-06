@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"other": "已登记 %d 名患者"},
+ "treatment_count_plural":   {"other": "%d 名患者治疗中"},
+ "simulations_count_plural": {"other": "%d 次模拟定位"}
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Popup de ações do paciente: agrupado por intenção (documentos, edição) com
+     a ação destrutiva separada e em vermelho. Alvos de 48dp. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_card"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingVertical="8dp">
+
+        <TextView
+            style="@style/PopupSecao"
+            android:text="@string/popup_sec_docs" />
+
+        <TextView
+            android:id="@+id/popVerPdf"
+            style="@style/PopupItem"
+            android:text="@string/popup_ver_ficha" />
+
+        <TextView
+            android:id="@+id/popImprimir"
+            style="@style/PopupItem"
+            android:text="@string/popup_imprimir" />
+
+        <TextView
+            android:id="@+id/popImprimirPaginas"
+            style="@style/PopupItem"
+            android:text="@string/print_pages_menu" />
+
+        <TextView
+            android:id="@+id/popCompartilhar"
+            style="@style/PopupItem"
+            android:text="@string/popup_compartilhar" />
+
+        <TextView
+            android:id="@+id/popExportarZip"
+            style="@style/PopupItem"
+            android:text="@string/export_zip" />
+
+        <View style="@style/PopupDivisor" />
+
+        <TextView
+            style="@style/PopupSecao"
+            android:text="@string/popup_sec_editar" />
+
+        <TextView
+            android:id="@+id/popEditarCadastro"
+            style="@style/PopupItem"
+            android:text="@string/popup_editar_cadastro_longo" />
+
+        <TextView
+            android:id="@+id/popEditarSimulacao"
+            style="@style/PopupItem"
+            android:text="@string/popup_editar_simulacao_longo" />
+
+        <TextView
+            android:id="@+id/popAddFotos"
+            style="@style/PopupItem"
+            android:text="@string/popup_fotos_longo" />
+
+        <View style="@style/PopupDivisor" />
+
+        <TextView
+            android:id="@+id/popResimular"
+            style="@style/PopupItem"
+            android:textColor="#EF5350"
+            android:text="@string/resimulate_patient" />
+    </LinearLayout>
+</ScrollView>

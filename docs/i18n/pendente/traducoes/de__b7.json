@@ -1,0 +1,74 @@
+[
+ {
+  "k": "fin_fracoes_label",
+  "v": "Höchstzahl der Besuche / Fraktionen (optional)"
+ },
+ {
+  "k": "fin_fracoes_nenhuma",
+  "v": "Nicht angeben"
+ },
+ {
+  "k": "fin_fracoes_n",
+  "v": "%1$d Fraktionen"
+ },
+ {
+  "k": "fin_faltando_titulo",
+  "v": "Ohne Eintrag fortfahren?"
+ },
+ {
+  "k": "fin_faltando_msg",
+  "v": "Diese Felder sind leer geblieben:\\n\\n%1$s\\nSie sind nicht verpflichtend, erscheinen aber auf dem gedruckten Protokoll und auf dem Time-Out. Trotzdem fortfahren?"
+ },
+ {
+  "k": "fin_faltando_medico",
+  "v": "• Verantwortlicher Arzt"
+ },
+ {
+  "k": "fin_faltando_equip",
+  "v": "• Gerät"
+ },
+ {
+  "k": "fin_faltando_sitio",
+  "v": "• Bestrahlungsregion"
+ },
+ {
+  "k": "fin_faltando_seguir",
+  "v": "So fortfahren"
+ },
+ {
+  "k": "fin_faltando_voltar",
+  "v": "Zurück und ausfüllen"
+ },
+ {
+  "k": "ap_refazer_unica",
+  "v": "Foto von %1$s ersetzen?"
+ },
+ {
+  "k": "ap_refazer_msg",
+  "v": "Für dieses Planungs-CT gibt es bereits ein Foto von %1$s. Das neue tritt an seine Stelle, das bisherige wird archiviert: Es verlässt das Protokoll, bleibt aber im Patientenordner."
+ },
+ {
+  "k": "print_pages_menu",
+  "v": "Ausgewählte Seiten drucken"
+ },
+ {
+  "k": "print_pages_title",
+  "v": "Welche Seiten drucken? (%1$d insgesamt)"
+ },
+ {
+  "k": "print_page_n",
+  "v": "Seite %1$d"
+ },
+ {
+  "k": "print_pages_ok",
+  "v": "Auswahl drucken"
+ },
+ {
+  "k": "print_pages_none",
+  "v": "Wählen Sie mindestens eine Seite."
+ },
+ {
+  "k": "print_pages_fail",
+  "v": "Die Seiten konnten nicht entnommen werden."
+ }
+]

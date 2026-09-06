@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Página do carrossel: foto preenchendo (fundo preto, faixas pretas).
+     A identificação (Posicionamento.N / Acessório.N + paciente) fica na faixa
+     cinza inferior COMPARTILHADA do visor, não por página. -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <com.radioterapia.ai.util.ZoomableImageView
+        android:id="@+id/imgCarrosselFoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:contentDescription="Foto da simulação" />
+
+    <!-- Mantido oculto para compatibilidade do adapter -->
+    <TextView
+        android:id="@+id/txtCarrosselTag"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone" />
+</FrameLayout>

@@ -1,0 +1,74 @@
+[
+ {
+  "k": "fin_fracoes_label",
+  "v": "Nombre maximal de visites / fractions (facultatif)"
+ },
+ {
+  "k": "fin_fracoes_nenhuma",
+  "v": "Ne pas indiquer"
+ },
+ {
+  "k": "fin_fracoes_n",
+  "v": "%1$d fractions"
+ },
+ {
+  "k": "fin_faltando_titulo",
+  "v": "Continuer sans remplir ?"
+ },
+ {
+  "k": "fin_faltando_msg",
+  "v": "Ces champs sont restés vides :\\n\\n%1$s\\nIls ne sont pas obligatoires, mais ils apparaissent sur la fiche imprimée et sur le Time-Out. Continuer ainsi ?"
+ },
+ {
+  "k": "fin_faltando_medico",
+  "v": "• Médecin responsable"
+ },
+ {
+  "k": "fin_faltando_equip",
+  "v": "• Appareil de traitement"
+ },
+ {
+  "k": "fin_faltando_sitio",
+  "v": "• Site anatomique"
+ },
+ {
+  "k": "fin_faltando_seguir",
+  "v": "Continuer ainsi"
+ },
+ {
+  "k": "fin_faltando_voltar",
+  "v": "Revenir et remplir"
+ },
+ {
+  "k": "ap_refazer_unica",
+  "v": "Remplacer la photo de %1$s ?"
+ },
+ {
+  "k": "ap_refazer_msg",
+  "v": "Cette simulation a déjà une photo de %1$s. La nouvelle prend sa place, et la précédente est archivée : elle sort de la fiche, mais reste dans le dossier du patient."
+ },
+ {
+  "k": "print_pages_menu",
+  "v": "Imprimer les pages sélectionnées"
+ },
+ {
+  "k": "print_pages_title",
+  "v": "Quelles pages imprimer ? (%1$d au total)"
+ },
+ {
+  "k": "print_page_n",
+  "v": "Page %1$d"
+ },
+ {
+  "k": "print_pages_ok",
+  "v": "Imprimer la sélection"
+ },
+ {
+  "k": "print_pages_none",
+  "v": "Sélectionnez au moins une page."
+ },
+ {
+  "k": "print_pages_fail",
+  "v": "Impossible d'extraire les pages."
+ }
+]

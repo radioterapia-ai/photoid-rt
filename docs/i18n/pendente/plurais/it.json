@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"one": "1 paziente in anagrafica", "many": "%d di pazienti in anagrafica", "other": "%d pazienti in anagrafica"},
+ "treatment_count_plural":   {"one": "1 paziente in trattamento", "many": "%d di pazienti in trattamento", "other": "%d pazienti in trattamento"},
+ "simulations_count_plural": {"one": "1 simulazione", "many": "%d di simulazioni", "other": "%d simulazioni"}
+}

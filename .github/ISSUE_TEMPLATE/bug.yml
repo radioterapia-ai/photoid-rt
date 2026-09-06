@@ -1,0 +1,51 @@
+name: Bug report
+description: Something behaves incorrectly on a tablet
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not include patient data.** No names, no record numbers, no
+        photographs of patients. If a screenshot is essential, cover the label
+        and the face first.
+
+        For anything that exposes patient files, signing, or credentials, use
+        private vulnerability reporting instead — see SECURITY.md.
+  - type: input
+    id: versao
+    attributes:
+      label: App version
+      description: Settings → About, or the package name of the APK you installed
+      placeholder: "3.2 (build 22)"
+    validations:
+      required: true
+  - type: input
+    id: tablet
+    attributes:
+      label: Tablet and Android version
+      placeholder: "Galaxy Tab S6, Android 12"
+    validations:
+      required: true
+  - type: dropdown
+    id: idioma
+    attributes:
+      label: App language
+      options: [Portuguese, English, Spanish, French, German, Italian, Polish, Chinese, Japanese, Korean, Arabic, Bengali]
+    validations:
+      required: true
+  - type: textarea
+    id: passos
+    attributes:
+      label: What you did, and what happened
+      description: The steps, then what you expected, then what you got.
+    validations:
+      required: true
+  - type: checkboxes
+    id: pdf
+    attributes:
+      label: If it involves the PDF
+      options:
+        - label: Physical label is enabled
+        - label: Page is in landscape
+        - label: Rubricário (signature register) page is enabled
+        - label: A protocol other than the default was selected

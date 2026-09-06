@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="@dimen/cam_tab_height"
+    android:layout_weight="1"
+    android:background="#263238"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tabTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#B0BEC5"
+        android:text="ROSTO"
+            android:maxLines="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeMaxTextSize="13sp"
+            android:autoSizeStepGranularity="1sp" />
+
+    <View
+        android:id="@+id/tabDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/badge_dot"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tabCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="6dp"
+        android:textSize="10sp"
+        android:textColor="#FFFFFF"
+        android:background="#FF9800"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:visibility="gone" />
+</FrameLayout>

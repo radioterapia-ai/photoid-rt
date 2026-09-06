@@ -1,0 +1,20 @@
+[
+ {"k": "fin_fracoes_label", "v": "最多就诊 / 分次数（选填）"},
+ {"k": "fin_fracoes_nenhuma", "v": "不填写"},
+ {"k": "fin_fracoes_n", "v": "%1$d 次"},
+ {"k": "fin_faltando_titulo", "v": "未填写就继续？"},
+ {"k": "fin_faltando_msg", "v": "以下字段为空：\\n\\n%1$s\\n它们不是必填项，但会出现在打印的记录单和 Time-Out 页上。仍要继续吗？"},
+ {"k": "fin_faltando_medico", "v": "• 负责医师"},
+ {"k": "fin_faltando_equip", "v": "• 治疗设备"},
+ {"k": "fin_faltando_sitio", "v": "• 解剖部位"},
+ {"k": "fin_faltando_seguir", "v": "仍要继续"},
+ {"k": "fin_faltando_voltar", "v": "返回填写"},
+ {"k": "ap_refazer_unica", "v": "替换%1$s照片？"},
+ {"k": "ap_refazer_msg", "v": "本次模拟定位已有一张%1$s照片。新照片将取而代之，原照片转入归档——不再出现在记录单上，但仍保留在患者文件夹中。"},
+ {"k": "print_pages_menu", "v": "打印选定页"},
+ {"k": "print_pages_title", "v": "打印哪几页？（共 %1$d 页）"},
+ {"k": "print_page_n", "v": "第 %1$d 页"},
+ {"k": "print_pages_ok", "v": "打印选定页"},
+ {"k": "print_pages_none", "v": "请至少勾选一页。"},
+ {"k": "print_pages_fail", "v": "无法提取所选页面。"}
+]

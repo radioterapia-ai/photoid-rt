@@ -1,0 +1,74 @@
+[
+ {
+  "k": "fin_fracoes_label",
+  "v": "최대 내원 / 분할 횟수(선택)"
+ },
+ {
+  "k": "fin_fracoes_nenhuma",
+  "v": "입력하지 않음"
+ },
+ {
+  "k": "fin_fracoes_n",
+  "v": "%1$d회"
+ },
+ {
+  "k": "fin_faltando_titulo",
+  "v": "입력하지 않고 계속하시겠습니까?"
+ },
+ {
+  "k": "fin_faltando_msg",
+  "v": "다음 항목이 비어 있습니다:\\n\\n%1$s\\n필수는 아니지만 인쇄되는 자세 기록지와 Time-Out 페이지에 표시됩니다. 이대로 계속하시겠습니까?"
+ },
+ {
+  "k": "fin_faltando_medico",
+  "v": "• 담당 의사"
+ },
+ {
+  "k": "fin_faltando_equip",
+  "v": "• 치료장비"
+ },
+ {
+  "k": "fin_faltando_sitio",
+  "v": "• 치료부위"
+ },
+ {
+  "k": "fin_faltando_seguir",
+  "v": "이대로 계속"
+ },
+ {
+  "k": "fin_faltando_voltar",
+  "v": "돌아가서 입력"
+ },
+ {
+  "k": "ap_refazer_unica",
+  "v": "%1$s 사진을 교체하시겠습니까?"
+ },
+ {
+  "k": "ap_refazer_msg",
+  "v": "이 모의치료에는 이미 %1$s 사진이 있습니다. 새 사진이 그 자리를 대신하고 이전 사진은 보관됩니다. 기록지에서는 빠지지만 환자 폴더에는 남습니다."
+ },
+ {
+  "k": "print_pages_menu",
+  "v": "선택한 페이지 인쇄"
+ },
+ {
+  "k": "print_pages_title",
+  "v": "어느 페이지를 인쇄할까요? (전체 %1$d쪽)"
+ },
+ {
+  "k": "print_page_n",
+  "v": "%1$d쪽"
+ },
+ {
+  "k": "print_pages_ok",
+  "v": "선택한 페이지 인쇄"
+ },
+ {
+  "k": "print_pages_none",
+  "v": "한 쪽 이상 선택하십시오."
+ },
+ {
+  "k": "print_pages_fail",
+  "v": "페이지를 추출할 수 없습니다."
+ }
+]

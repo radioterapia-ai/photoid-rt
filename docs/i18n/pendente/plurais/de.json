@@ -1,0 +1,5 @@
+{
+ "patient_count_plural":     {"one": "1 Patient erfasst", "other": "%d Patienten erfasst"},
+ "treatment_count_plural":   {"one": "1 Patient in Bestrahlung", "other": "%d Patienten in Bestrahlung"},
+ "simulations_count_plural": {"one": "1 Planungs-CT", "other": "%d Planungs-CTs"}
+}

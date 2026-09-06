@@ -1,0 +1,30 @@
+name: Feature request
+description: Something the app should do and does not
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Some things are **settled and not reopened** — see CONTRIBUTING.md:
+        extra clicks, service-specific flows, sync inside the app, Bluetooth
+        printing protocols, and the microphone.
+  - type: textarea
+    id: problema
+    attributes:
+      label: The problem, in the room
+      description: >-
+        What happens today during simulation or treatment that makes this
+        necessary. Describe the situation, not the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposta
+    attributes:
+      label: What you would like it to do
+    validations:
+      required: true
+  - type: input
+    id: frequencia
+    attributes:
+      label: How often does this come up?
+      placeholder: "every patient / a few times a week / once a month"

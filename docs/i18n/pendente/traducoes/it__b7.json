@@ -1,0 +1,20 @@
+[
+ {"k": "fin_fracoes_label", "v": "Numero massimo di visite / frazioni (facoltativo)"},
+ {"k": "fin_fracoes_nenhuma", "v": "Non indicare"},
+ {"k": "fin_fracoes_n", "v": "%1$d frazioni"},
+ {"k": "fin_faltando_titulo", "v": "Continuare senza compilare?"},
+ {"k": "fin_faltando_msg", "v": "Questi campi sono rimasti vuoti:\\n\\n%1$s\\nNon sono obbligatori, ma compaiono sulla scheda stampata e nel Time-Out. Continuare così?"},
+ {"k": "fin_faltando_medico", "v": "• Medico responsabile"},
+ {"k": "fin_faltando_equip", "v": "• Apparecchiatura"},
+ {"k": "fin_faltando_sitio", "v": "• Sede anatomica"},
+ {"k": "fin_faltando_seguir", "v": "Continua così"},
+ {"k": "fin_faltando_voltar", "v": "Torna e compila"},
+ {"k": "ap_refazer_unica", "v": "Sostituire la foto di %1$s?"},
+ {"k": "ap_refazer_msg", "v": "Questa simulazione ha già una foto di %1$s. La nuova prende il suo posto e la precedente viene archiviata: esce dalla scheda, ma resta nella cartella del paziente."},
+ {"k": "print_pages_menu", "v": "Stampa le pagine selezionate"},
+ {"k": "print_pages_title", "v": "Quali pagine stampare? (%1$d in totale)"},
+ {"k": "print_page_n", "v": "Pagina %1$d"},
+ {"k": "print_pages_ok", "v": "Stampa le selezionate"},
+ {"k": "print_pages_none", "v": "Selezioni almeno una pagina."},
+ {"k": "print_pages_fail", "v": "Non è stato possibile estrarre le pagine."}
+]
