@@ -604,8 +604,16 @@ abstract class BaseActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val res = withContext(Dispatchers.IO) {
                 try {
+                    // FICHA COM VERSO MANDA NO MODO. Se o protocolo trouxe uma
+                    // folha frente-e-verso, imprimir em simplex separaria as duas
+                    // faces em folhas diferentes — e o impresso que a clinica
+                    // desenhou para ser virado deixaria de funcionar. Nos demais
+                    // casos vale a configuracao da impressora, como sempre.
+                    val modo =
+                        if (com.radioterapia.ai.pdf.PdfBuilder.temFrenteVerso(pdf)) "long"
+                        else cfg.printerDuplexMode
                     com.radioterapia.ai.print.PrinterClient(cfg.impressoraIp)
-                        .imprimirPdf(pdf, cfg.printerDuplexMode)
+                        .imprimirPdf(pdf, modo)
                 } catch (e: Exception) { null }
             }
             android.widget.Toast.makeText(this@BaseActivity,

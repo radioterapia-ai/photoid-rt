@@ -45,4 +45,30 @@ class TreatmentListManager(context: Context) {
     fun chavesEmTratamento(): Set<String> = ler()
 
     fun total(): Int = ler().size
+
+    /**
+     * Aplica um conjunto vindo de um pacote de transferência.
+     *
+     * A LISTA CONTINUA SENDO DESTE APARELHO — ela não sincroniza sozinha, e este
+     * método só roda quando alguém marca o item na tela de importação. O que
+     * mudou foi o reconhecimento de que "transferir" cobre dois casos que a
+     * decisão original tratava como um: mandar a configuração para OUTRO tablet,
+     * onde a agenda de fato não deve ir, e RESTAURAR o mesmo tablet depois de
+     * reinstalar, onde ela é justamente o que se quer de volta.
+     *
+     * NUNCA ESVAZIA. Conjunto vindo vazio não apaga a agenda local nem em
+     * substituir: um pacote exportado de um tablet ocioso apagaria, em silêncio,
+     * a lista de quem está em tratamento no aparelho de destino — e ninguém
+     * confere uma lista para ver se ela sumiu.
+     *
+     * @return quantas chaves entraram que ainda não estavam aqui.
+     */
+    fun importarChaves(chaves: Set<String>, substituir: Boolean): Int {
+        val limpas = chaves.map { it.trim() }.filter { it.isNotBlank() }.toSet()
+        if (limpas.isEmpty()) return 0
+        val atual = ler()
+        val novas = limpas.count { it !in atual }
+        gravar(if (substituir) limpas else atual + limpas)
+        return novas
+    }
 }

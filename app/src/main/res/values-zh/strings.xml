@@ -558,13 +558,12 @@
     <string name="pdf_to_step3">• 口头确认治疗部位、治疗次数和不适主诉</string>
     <string name="pdf_to_col_fraction">分次</string>
     <string name="pdf_to_col_name1">姓名</string>
-    <string name="pdf_to_col_name2">出生日期</string>
+    <string name="pdf_to_col_name2">与</string>
     <string name="pdf_to_col_photo">照片</string>
-    <string name="pdf_to_col_site1">治疗</string>
-    <string name="pdf_to_col_site2">部位/</string>
-    <string name="pdf_to_col_site3">侧别</string>
-    <string name="pdf_to_col_frac2">当日/总数</string>
-    <string name="pdf_to_col_complaint1">主诉及</string>
+    <string name="pdf_to_col_site1">部位与</string>
+    <string name="pdf_to_col_site2">侧别</string>
+    <string name="pdf_to_col_frac2">日 &amp;</string>
+    <string name="pdf_to_col_complaint1">主诉已</string>
     <string name="pdf_to_col_complaint2">转诊评估</string>
     <string name="pdf_to_col_sign">签名</string>
     <string name="pdf_to_col_tech">技师</string>
@@ -803,4 +802,16 @@
     <string name="prot_rubricario">签名留样表</string>
     <string name="prot_rubricario_desc">本协议文件第一页由哪个团队签名。</string>
     <string name="storage_privada_aviso">注意：这些照片位于应用的私有目录中，卸载应用时会被删除。请授予\"所有文件访问权限\"，以便保存到内部存储/PhotoID_RT。</string>
+    <string name="wiz_import_title">已经配置好另一台平板了吗？</string>
+    <string name="wiz_import_desc">把它的配置带过来，跳过接下来已填好的步骤：单位、标志、医师、设备、打印机和表单版式。</string>
+    <string name="wiz_import_fotos_depois">患者照片现在不会导入——存放照片的文件夹要到两步之后才选择。如果文件中含有照片，请稍后在设置中重新导入。</string>
+    <string name="tr_pasta_quando">把整个资料库逐位患者复制到文件夹，带进度显示，可随时取消。当资料超过 4 GB 时请用这种方式：FAT32 格式的U盘放不下单个那么大的文件。</string>
+    <string name="tr_tratamento">治疗中的患者</string>
+    <string name="tr_tratamento_desc">本机的治疗名单：当前正在治疗的患者。恢复同一台平板时勾选；配置第二台时请不要勾选，它有自己的名单。出院状态不会随之传递——导入永远不会把任何人移出名单。</string>
+    <string name="pdf_to_col_name3">生日</string>
+    <string name="pdf_to_col_frac3">总数</string>
+    <string name="prot_verso_add">背面</string>
+    <string name="prot_verso_remover">移除背面</string>
+    <string name="prot_verso_remover_q">背面的 PDF 将被删除。正面仍保留在协议文件中。</string>
+    <string name="prot_pagina_item_verso">第 %1$d 页 — %2$d 张 + 背面</string>
 </resources>

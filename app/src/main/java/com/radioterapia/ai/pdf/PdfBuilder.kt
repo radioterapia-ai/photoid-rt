@@ -146,13 +146,15 @@ object PdfBuilder {
     private var txtToPasso1 = ""
     private var txtToPasso2 = ""
     private var txtToPasso3 = ""
+    private var txtToColNum = "#"
     private var txtToColFracao = "Fração"
     private var txtToColNome1 = "Nome e"
-    private var txtToColNome2 = "Data Nasc"
+    private var txtToColNome2 = "e"
+    private var txtToColNome3 = "Nasc."
     private var txtToColFoto = "Foto"
     private var txtToColSitio1 = "Sítio /"
     private var txtToColSitio2 = "Lateralida"
-    private var txtToColSitio3 = "de"
+    private var txtToColFrac3 = "Total"
     private var txtToColFrac2 = "Dia/Total"
     private var txtToColQueixa1 = "Queixa e encaminhado"
     private var txtToColQueixa2 = "para avaliação"
@@ -184,7 +186,9 @@ object PdfBuilder {
         txtToColFoto = context.getString(R.string.pdf_to_col_photo)
         txtToColSitio1 = context.getString(R.string.pdf_to_col_site1)
         txtToColSitio2 = context.getString(R.string.pdf_to_col_site2)
-        txtToColSitio3 = context.getString(R.string.pdf_to_col_site3)
+        txtToColNum = context.getString(R.string.pdf_to_col_num)
+        txtToColNome3 = context.getString(R.string.pdf_to_col_name3)
+        txtToColFrac3 = context.getString(R.string.pdf_to_col_frac3)
         txtToColFrac2 = context.getString(R.string.pdf_to_col_frac2)
         txtToColQueixa1 = context.getString(R.string.pdf_to_col_complaint1)
         txtToColQueixa2 = context.getString(R.string.pdf_to_col_complaint2)
@@ -344,7 +348,7 @@ object PdfBuilder {
         val doc = PdfDocument()
         val logo = LogoManager(context).obterBitmap()
         try {
-            desenharSimulacao(doc, context, item, logo)
+            if (desenharSimulacao(doc, context, item, logo)) marcarFrenteVerso(arquivoSaida)
             FileOutputStream(arquivoSaida).use { saida -> doc.writeTo(saida) }
             return arquivoSaida
         } finally {
@@ -372,7 +376,8 @@ object PdfBuilder {
         try {
             for (item in itens) {
                 try {
-                    desenharSimulacao(doc, context, item, logo)
+                    if (desenharSimulacao(doc, context, item, logo))
+                        marcarFrenteVerso(arquivoSaida)
                     desenhadas++
                 } catch (_: Exception) {
                     // Uma simulação com foto corrompida não derruba o lote inteiro.
@@ -394,9 +399,11 @@ object PdfBuilder {
      * PdfDocument já aberto. Não cria nem fecha o documento — é o que permite
      * empilhar vários pacientes no mesmo arquivo.
      */
+    /** @return `true` se a ficha desta simulacao tem folha frente-e-verso. */
     private fun desenharSimulacao(
         doc: PdfDocument, context: Context, item: ItemLote, logo: android.graphics.Bitmap?
-    ) {
+    ): Boolean {
+        var comVerso = false
         configurarOrientacao(item.landscape)
         carregarTextos(context)
 
@@ -491,9 +498,11 @@ object PdfBuilder {
         // quem assinou, e por ultimo os documentos proprios da instituicao.
         // Quem manuseia a ficha procura a foto, nao o termo de consentimento.
         if (item.protocoloId.isNotBlank()) {
-            try { desenharProtocolo(doc, context, dados, item, logo) }
-            catch (_: Exception) { /* anexo do servico nunca derruba a ficha */ }
+            try {
+                if (desenharProtocolo(doc, context, dados, item, logo)) comVerso = true
+            } catch (_: Exception) { /* anexo do servico nunca derruba a ficha */ }
         }
+        return comVerso
     }
 
     /**
@@ -683,20 +692,44 @@ object PdfBuilder {
      * paginas do protocolo diria um total que ainda nao existe — e a folha
      * anexada contradiria a que a antecede.
      */
+    /** @return `true` se alguma folha do protocolo tem verso. */
     private fun desenharProtocolo(
         doc: PdfDocument, context: Context, dados: DadosCabecalho,
         item: ItemLote, logo: android.graphics.Bitmap?
-    ) {
+    ): Boolean {
         val store = com.radioterapia.ai.protocolo.ProtocoloStore(context)
-        val prot = store.obter(item.protocoloId) ?: return
-        if (prot.paginas.isEmpty()) return
+        val prot = store.obter(item.protocoloId) ?: return false
+        if (prot.paginas.isEmpty()) return false
 
         val jaFeitas = doc.pages.size
-        val aAcrescentar = prot.paginas.sumOf { pag ->
-            store.arquivoPagina(prot, pag)
+
+        /*
+            A CONTA TEM DE INCLUIR O VERSO E A FOLHA DE AJUSTE.
+
+            O rodape diz "n de N", e o N e calculado aqui, antes de desenhar. A
+            simulacao abaixo repete a MESMA regra de pareamento do
+            ProtocoloRenderer: quando uma folha tem verso e a frente cairia em
+            posicao par, entra uma pagina em branco antes. Contar so as frentes
+            faria a ficha anunciar um total menor do que ela tem — e num
+            documento clinico o rodape que erra o total e pior que rodape nenhum.
+         */
+        var posicao = jaFeitas
+        var aAcrescentar = 0
+        var temVerso = false
+        prot.paginas.forEach { pag ->
+            val nFrente = store.arquivoPagina(prot, pag)
                 ?.let { com.radioterapia.ai.pdf.PdfPaginas.contar(it) } ?: 0
+            if (nFrente == 0) return@forEach
+            val nVerso = store.arquivoVerso(prot, pag)
+                ?.let { com.radioterapia.ai.pdf.PdfPaginas.contar(it) } ?: 0
+            if (nVerso > 0) {
+                temVerso = true
+                if ((posicao + 1) % 2 == 0) { aAcrescentar++; posicao++ }
+            }
+            aAcrescentar += nFrente + nVerso
+            posicao += nFrente + nVerso
         }
-        if (aAcrescentar == 0) return
+        if (aAcrescentar == 0) return false
 
         val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         com.radioterapia.ai.protocolo.ProtocoloRenderer.desenhar(
@@ -709,6 +742,7 @@ object PdfBuilder {
             logo,
             numeroInicial = jaFeitas + 1,
             totalDaFicha = jaFeitas + aAcrescentar)
+        return temVerso
     }
 
     /**
@@ -1069,7 +1103,17 @@ object PdfBuilder {
 
         // ===== Grade de 40 frações =====
         val topoTab = bandBot + 8f
-        val headerB = topoTab + 22f
+
+        /*
+            CABEÇALHO DE 32 pt, e não mais 22.
+
+            A folga sempre esteve aqui e ninguém tinha medido: a tabela ocupa de
+            320 a 742 pt, e alargar o cabeçalho em 10 pt tira 0,5 pt de cada uma
+            das 20 linhas — de 7,06 para 6,88 mm de altura, que ninguém percebe
+            escrevendo à mão. O cabeçalho, em troca, quase dobra de corpo.
+         */
+        val alturaCab = 32f
+        val headerB = topoTab + alturaCab
         val fimObs = ph - MARGIN
         val obsTop = fimObs - 66f
         val fimTab = obsTop - 6f
@@ -1077,6 +1121,50 @@ object PdfBuilder {
         val prop = floatArrayOf(0f, 22.5f, 48f, 73.5f, 98.5f, 124f, 175f, 213.5f, 252f)
         val fator = blocoW / 252f
         fun cols(base: Float) = FloatArray(prop.size) { base + prop[it] * fator }
+
+        /*
+            OS RÓTULOS, e o corpo em que eles cabem.
+
+            O TAMANHO É MEDIDO, NÃO FIXADO. Em português tudo cabe em 7,4 pt, e
+            é esse o alvo — é a língua em que a ficha é preenchida. Mas
+            "Nasc." tem outro comprimento em alemão, e rótulo que estoura a
+            célula sai por cima da grade, em silêncio, numa folha que ninguém
+            confere antes de imprimir.
+
+            A alternativa seria fixar o corpo que serve ao pior idioma, e aí o
+            português pagaria por uma palavra polonesa. Aqui cada idioma fica no
+            maior corpo que couber no SEU texto: mede-se uma vez, por página.
+
+            O PISO É 4,2 pt — o tamanho de hoje. Abaixo disso a folha estaria
+            pior do que estava, e a redução deixa de ser aceitável: é sinal de
+            que o rótulo daquele idioma precisa ser encurtado na tradução.
+         */
+        val colunasCabecalho = listOf(
+            listOf(txtToColNum),
+            listOf(txtToColNome1, txtToColNome2, txtToColNome3),
+            listOf(txtToColFoto),
+            listOf(txtToColSitio1, txtToColSitio2),
+            listOf(txtToColFracao, txtToColFrac2, txtToColFrac3),
+            listOf(txtToColQueixa1, txtToColQueixa2),
+            listOf(txtToColAssinatura, "$txtToColTecnico 1"),
+            listOf(txtToColAssinatura, "$txtToColTecnico 2"))
+
+        val tamCabecalho = run {
+            val larguras = cols(0f)
+            val regua = Paint().apply {
+                isAntiAlias = true; typeface = Typeface.DEFAULT_BOLD; textSize = 10f
+            }
+            var tam = 7.4f
+            colunasCabecalho.forEachIndexed { ci, linhas ->
+                // 1,2 pt de folga de cada lado: o texto nao deve encostar na grade.
+                val disponivel = (larguras[ci + 1] - larguras[ci]) - 2.4f
+                linhas.forEach { rotulo ->
+                    val larg10 = regua.measureText(rotulo)
+                    if (larg10 > 0f) tam = minOf(tam, disponivel * 10f / larg10)
+                }
+            }
+            maxOf(tam, 4.2f)
+        }
         fun desenharBloco(colsArr: FloatArray, numIni: Int) {
             val l = colsArr.first(); val r = colsArr.last()
             fundo.color = cinzaMedio; cv.drawRect(l, topoTab, r, headerB, fundo)
@@ -1110,17 +1198,16 @@ object PdfBuilder {
             }
             fun hc(ci: Int) = (colsArr[ci] + colsArr[ci + 1]) / 2
             fun cab(ci: Int, linhas: List<String>) {
-                var y = topoTab + 7f
-                linhas.forEach { s -> texto(s, hc(ci), y, 4.2f, bold = true, align = Paint.Align.CENTER); y += 5f }
+                val entrelinha = tamCabecalho * 1.15f
+                var y = topoTab + (alturaCab - (linhas.size - 1) * entrelinha) / 2f +
+                        tamCabecalho * 0.36f
+                linhas.forEach { txtLinha ->
+                    texto(txtLinha, hc(ci), y, tamCabecalho, bold = true,
+                          align = Paint.Align.CENTER)
+                    y += entrelinha
+                }
             }
-            cab(0, listOf(txtToColFracao))
-            cab(1, listOf(txtToColNome1, txtToColNome2))
-            cab(2, listOf(txtToColFoto))
-            cab(3, listOf(txtToColSitio1, txtToColSitio2, txtToColSitio3))
-            cab(4, listOf(txtToColFracao, txtToColFrac2))
-            cab(5, listOf(txtToColQueixa1, txtToColQueixa2))
-            cab(6, listOf(txtToColAssinatura, txtToColTecnico, "1"))
-            cab(7, listOf(txtToColAssinatura, txtToColTecnico, "2"))
+            colunasCabecalho.forEachIndexed { ci, linhas -> cab(ci, linhas) }
             for (i2 in 0 until 20) {
                 val yT = headerB + i2 * alturaLinha
                 val yC = yT + alturaLinha / 2
@@ -1142,10 +1229,23 @@ object PdfBuilder {
                 }
                 val simX = colsArr[5] + (colsArr[6] - colsArr[5]) * 0.28f
                 val naoX = colsArr[5] + (colsArr[6] - colsArr[5]) * 0.72f
+                // CAIXA DE 10 pt, e nao mais 5,2 — de 1,83 para 3,53 mm.
+                //
+                // O aperto nunca foi horizontal: esta e a coluna MAIS LARGA da
+                // tabela, e os dois quadrados tem 23 pt entre os centros. Era
+                // vertical — o rotulo ficava em cima da caixa e os dois
+                // disputavam os 20 pt da linha. Descer a caixa ate 1,3 pt da
+                // borda inferior resolveu sem tocar em largura nenhuma.
+                //
+                // O tamanho passa a bater com o das caixas das colunas
+                // vizinhas, que e a comparacao que quem preenche faz olhando a
+                // propria linha.
+                val ladoSimNao = 10f
+                val cySimNao = yT + alturaLinha - 1.3f - ladoSimNao / 2f
                 texto(txtSim, simX, yT + 7f, 6.5f, align = Paint.Align.CENTER)
                 texto(txtNao, naoX, yT + 7f, 6.5f, align = Paint.Align.CENTER)
-                checkbox(simX, yT + 12f, 5.2f, false)
-                checkbox(naoX, yT + 12f, 5.2f, false)
+                checkbox(simX, cySimNao, ladoSimNao, false)
+                checkbox(naoX, cySimNao, ladoSimNao, false)
             }
         }
         desenharBloco(cols(mL.toFloat()), 1)
@@ -1431,6 +1531,28 @@ object PdfBuilder {
     private const val TO_ALTURA_TOPO = 150f    // altura da faixa etiqueta/foto do rosto
 
     /** Altura do logo, a MESMA em todas as paginas. Ver desenharLogoPadrao. */
+    /**
+     * Fichas desta sessao que contem folha frente-e-verso de protocolo.
+     *
+     * O caminho de impressao recebe so o File, e a essa altura nao ha mais como
+     * saber que protocolo gerou aquele PDF. Este conjunto responde isso sem
+     * arrastar o id do protocolo por cinco assinaturas de funcao.
+     *
+     * VIVE EM MEMORIA, e o degrade e deliberado: reimprimir do Historico depois
+     * de reabrir o app cai na configuracao de duplex da impressora, que e o
+     * comportamento de sempre. Melhor perder o automatismo numa reimpressao do
+     * que gravar estado em disco para um dado que so vale por alguns minutos.
+     */
+    private val fichasFrenteVerso =
+        java.util.Collections.synchronizedSet(mutableSetOf<String>())
+
+    fun marcarFrenteVerso(arquivo: File) {
+        try { fichasFrenteVerso.add(arquivo.absolutePath) } catch (_: Exception) {}
+    }
+
+    fun temFrenteVerso(arquivo: File): Boolean =
+        try { fichasFrenteVerso.contains(arquivo.absolutePath) } catch (_: Exception) { false }
+
     private const val LOGO_ALTURA = 40f
 
     /** Fracao da altura da celula que a rubrica ocupa. Igual para todas:

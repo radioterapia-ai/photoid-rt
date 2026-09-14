@@ -42,6 +42,14 @@ class ProtocoloActivity : BaseActivity() {
     private lateinit var lista: LinearLayout
     private lateinit var imgMini: ImageView
 
+    /**
+     * Frente cuja folha está esperando um verso.
+     *
+     * Guardado num campo porque o seletor de arquivo do sistema volta por
+     * callback, e ali não há como saber em qual linha o usuário tocou.
+     */
+    private var frenteAguardandoVerso: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_protocolo)
@@ -188,8 +196,50 @@ class ProtocoloActivity : BaseActivity() {
         }
     }
 
-    private fun copiarPdf(uri: android.net.Uri): String? = try {
-        val nome = "pag_${System.currentTimeMillis()}.pdf"
+    private val escolherVerso = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        val frente = frenteAguardandoVerso
+        frenteAguardandoVerso = ""
+        if (uri == null || frente.isBlank()) return@registerForActivityResult
+        CoroutineScope(Dispatchers.Main).launch {
+            val nome = withContext(Dispatchers.IO) { copiarPdf(uri, "verso") }
+            if (isFinishing || isDestroyed) return@launch
+            if (nome == null) {
+                Toast.makeText(this@ProtocoloActivity, R.string.prot_pdf_ilegivel,
+                    Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            atual = atual.copy(paginas = atual.paginas.map {
+                if (it.arquivo == frente) it.copy(verso = nome) else it
+            })
+            store.salvar(atual)
+            desenharPaginas()
+            // NÃO abre a calibração: o verso não recebe etiqueta nem logotipo,
+            // então não há box nenhum para posicionar nele.
+            Toast.makeText(this@ProtocoloActivity, R.string.prot_verso_add,
+                Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun confirmarRemoverVerso(pag: ProtocoloStore.Pagina) {
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(R.string.prot_verso_remover)
+            .setMessage(R.string.prot_verso_remover_q)
+            .setPositiveButton(R.string.rub_excluir) { _, _ ->
+                try { File(store.pastaDe(atual.id), pag.verso).delete() } catch (_: Exception) {}
+                atual = atual.copy(paginas = atual.paginas.map {
+                    if (it.arquivo == pag.arquivo) it.copy(verso = "") else it
+                })
+                store.salvar(atual)
+                desenharPaginas()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun copiarPdf(uri: android.net.Uri, prefixo: String = "pag"): String? = try {
+        val nome = "${prefixo}_${System.currentTimeMillis()}.pdf"
         val destino = File(store.pastaDe(atual.id), nome)
         contentResolver.openInputStream(uri)?.use { ent ->
             destino.outputStream().use { ent.copyTo(it) }
@@ -231,7 +281,9 @@ class ProtocoloActivity : BaseActivity() {
             val n = com.radioterapia.ai.pdf.PdfPaginas.contar(
                 File(store.pastaDe(atual.id), pag.arquivo))
             linha.addView(TextView(this).apply {
-                text = getString(R.string.prot_pagina_item, i + 1, n)
+                text = if (pag.verso.isNotBlank())
+                    getString(R.string.prot_pagina_item_verso, i + 1, n)
+                else getString(R.string.prot_pagina_item, i + 1, n)
                 setTextColor(androidx.core.content.ContextCompat.getColor(
                     this@ProtocoloActivity, R.color.text_primary))
                 textSize = 14f
@@ -244,6 +296,23 @@ class ProtocoloActivity : BaseActivity() {
                 setOnClickListener {
                     ProtocoloPaginaActivity.abrir(
                         this@ProtocoloActivity, editarPagina, atual.id, pag.arquivo)
+                }
+            })
+            linha.addView(Button(this).apply {
+                setText(if (pag.verso.isNotBlank()) R.string.prot_verso_remover
+                        else R.string.prot_verso_add)
+                textSize = 12f
+                setOnClickListener {
+                    if (pag.verso.isNotBlank()) confirmarRemoverVerso(pag)
+                    else {
+                        frenteAguardandoVerso = pag.arquivo
+                        try { escolherVerso.launch(arrayOf("application/pdf")) }
+                        catch (_: Exception) {
+                            frenteAguardandoVerso = ""
+                            Toast.makeText(this@ProtocoloActivity,
+                                R.string.prot_sem_seletor, Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             })
             linha.addView(Button(this).apply {
@@ -260,6 +329,11 @@ class ProtocoloActivity : BaseActivity() {
             .setTitle(R.string.prot_excluir_pagina_q)
             .setPositiveButton(R.string.rub_excluir) { _, _ ->
                 try { File(store.pastaDe(atual.id), pag.arquivo).delete() } catch (_: Exception) {}
+                // O verso sai junto: sem isto o PDF dele ficaria na pasta do
+                // protocolo sem nada apontando para ele, e viajaria na
+                // exportacao como peso morto.
+                if (pag.verso.isNotBlank())
+                    try { File(store.pastaDe(atual.id), pag.verso).delete() } catch (_: Exception) {}
                 atual = atual.copy(paginas = atual.paginas.filter { it.arquivo != pag.arquivo })
                 store.salvar(atual)
                 desenharPaginas()

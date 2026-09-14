@@ -49,5 +49,25 @@
     <color name="overlay_dark">#CC000000</color>
     <color name="watermark_bg">#CC000000</color>
     <color name="success_green">#2E7D32</color>
+
+    <!--
+        VERDE DO VISTO CONFIRMADO, nos dialogos de conferencia do OCR.
+
+        Nao usa success_green (#2E7D32), e a diferenca nao e gosto: aquele verde
+        foi escolhido para ser FUNDO de botao preenchido, com texto branco por
+        cima. Aqui a cor e o PROPRIO icone, sobre bg_main (#00030E) — uso
+        invertido, e verde escuro sobre fundo quase preto praticamente some.
+
+        #00E676 e verde de primeiro plano: contra bg_main da ~12,6:1, contra o
+        cinza do estado nao confirmado (#90A4AE a 50% de opacidade) a diferenca
+        deixa de ser so de matiz e passa a ser de BRILHO — o que mantem o estado
+        legivel para quem nao distingue vermelho e verde.
+    -->
+    <color name="confirm_green">#00E676</color>
+
+    <!-- Estado NAO confirmado do mesmo visto. Cinza-azulado, aplicado com 50%
+         de opacidade pela View: apagado de proposito, para o confirmado ter
+         para onde subir. -->
+    <color name="confirm_pendente">#90A4AE</color>
     <color name="error_red">#C62828</color>
 </resources>

@@ -657,16 +657,15 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="pdf_to_step2">• Paciente faz conferência da sua foto e de seu nome na ficha</string>
     <string name="pdf_to_step3">• Confirmação verbal de topografia, número da aplicação e queixas</string>
     <string name="pdf_to_col_fraction">Fração</string>
-    <string name="pdf_to_col_name1">Nome e</string>
-    <string name="pdf_to_col_name2">Data Nasc</string>
+    <string name="pdf_to_col_name1">Nome</string>
+    <string name="pdf_to_col_name2">e</string>
     <string name="pdf_to_col_photo">Foto</string>
-    <string name="pdf_to_col_site1">Sítio /</string>
-    <string name="pdf_to_col_site2">Lateralida</string>
-    <string name="pdf_to_col_site3">de</string>
-    <string name="pdf_to_col_frac2">Dia/Total</string>
-    <string name="pdf_to_col_complaint1">Queixa e encaminhado</string>
-    <string name="pdf_to_col_complaint2">para avaliação</string>
-    <string name="pdf_to_col_sign">Assinatura</string>
+    <string name="pdf_to_col_site1">Sítio e</string>
+    <string name="pdf_to_col_site2">Lado</string>
+    <string name="pdf_to_col_frac2">Dia &amp;</string>
+    <string name="pdf_to_col_complaint1">Queixa enc.</string>
+    <string name="pdf_to_col_complaint2">p/ avaliação</string>
+    <string name="pdf_to_col_sign">Ass.</string>
     <string name="pdf_to_col_tech">Técnico</string>
     <string name="pdf_yes">Sim</string>
     <string name="pdf_no">Não</string>
@@ -929,4 +928,17 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="prot_rubricario">Rubricário</string>
     <string name="prot_rubricario_desc">Qual equipe assina a primeira página deste protocolo.</string>
     <string name="storage_privada_aviso">Atenção: estas fotos estão na pasta privada do aplicativo e serão APAGADAS se ele for desinstalado. Conceda \"Acesso a todos os arquivos\" para gravá-las em Armazenamento interno/PhotoID_RT.</string>
+    <string name="wiz_import_title">Já tem outro tablet configurado?</string>
+    <string name="wiz_import_desc">Traga a configuração dele e pule os próximos passos já preenchidos: unidade, logotipo, médicos, equipamentos, impressora e o formato da ficha.</string>
+    <string name="wiz_import_fotos_depois">As fotos dos pacientes NÃO entram agora — a pasta onde elas vão ficar ainda será escolhida daqui a dois passos. Se o arquivo tiver fotos, importe-o de novo depois, em Configurações.</string>
+    <string name="tr_pasta_quando">Copia a base inteira para uma pasta, paciente por paciente, com progresso e opção de cancelar. Use quando o acervo passar de 4 GB: um arquivo único não cabe nisso num pen-drive formatado em FAT32.</string>
+    <string name="tr_tratamento">Pacientes em tratamento</string>
+    <string name="tr_tratamento_desc">A agenda deste aparelho: quem está em tratamento agora. Marque ao restaurar o MESMO tablet; deixe desmarcado ao configurar um segundo, que tem a própria agenda. A alta não viaja — importar nunca tira ninguém da lista.</string>
+    <string name="pdf_to_col_name3">Nasc.</string>
+    <string name="pdf_to_col_frac3">Total</string>
+    <string name="pdf_to_col_num" translatable="false">#</string>
+    <string name="prot_verso_add">Verso</string>
+    <string name="prot_verso_remover">Tirar verso</string>
+    <string name="prot_verso_remover_q">O PDF do verso é apagado. A frente da folha continua no protocolo.</string>
+    <string name="prot_pagina_item_verso">Página %1$d — %2$d folha(s) + verso</string>
 </resources>

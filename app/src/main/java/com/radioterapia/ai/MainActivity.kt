@@ -1427,7 +1427,9 @@ class MainActivity : BaseActivity() {
         // desfaz a confirmação (precisa validar o valor final).
         var confirmado = false
         fun pintarVisto() {
-            btnVisto.setColorFilter(if (confirmado) 0xFF2E7D32.toInt() else 0xFF90A4AE.toInt())
+            btnVisto.setColorFilter(androidx.core.content.ContextCompat.getColor(
+                this@MainActivity,
+                if (confirmado) R.color.confirm_green else R.color.confirm_pendente))
             btnVisto.alpha = if (confirmado) 1f else 0.5f
         }
         pintarVisto()
@@ -1499,7 +1501,9 @@ class MainActivity : BaseActivity() {
         }
         var confirmado = false
         fun pintar() {
-            btnVisto.setColorFilter(if (confirmado) 0xFF2E7D32.toInt() else 0xFF90A4AE.toInt())
+            btnVisto.setColorFilter(androidx.core.content.ContextCompat.getColor(
+                this@MainActivity,
+                if (confirmado) R.color.confirm_green else R.color.confirm_pendente))
             btnVisto.alpha = if (confirmado) 1f else 0.5f
         }
         pintar()

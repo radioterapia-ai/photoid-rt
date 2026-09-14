@@ -115,10 +115,31 @@ object PacoteConfig {
 
         FOTOS("fotos", com.radioterapia.ai.R.string.tr_fotos,
             com.radioterapia.ai.R.string.tr_fotos_desc),
+
+        /**
+         * A agenda deste aparelho: quem está em tratamento.
+         *
+         * Ela ficou de fora do pacote até 14/09/2026, e por decisão explícita —
+         * a lista é por tablet, e cada tablet cuida de um acelerador. O que a
+         * decisão não previu foi o tablet sendo RESTAURADO: na migração de
+         * setembro a base voltou inteira e a aba de Tratamentos veio vazia,
+         * porque a agenda não estava no arquivo. Todo mundo caiu no histórico.
+         *
+         * Entra como item MARCÁVEL, e não como comportamento fixo, porque as
+         * duas leituras continuam válidas: restaurar o mesmo aparelho quer a
+         * agenda de volta; configurar um segundo aparelho, não.
+         *
+         * NÃO CARREGA A ALTA. O que viaja é quem está presente na lista; a alta
+         * é ausência, e ausência só tem efeito em SUBSTITUIR. Em SOMAR — que é o
+         * padrão — importar nunca tira ninguém.
+         */
+        TRATAMENTO("tratamento", com.radioterapia.ai.R.string.tr_tratamento,
+            com.radioterapia.ai.R.string.tr_tratamento_desc),
         ;
 
         /** Leva dado de paciente — muda o que o arquivo exige de quem o guarda. */
-        val ehDadoDePaciente: Boolean get() = this == PACIENTES || this == FOTOS
+        val ehDadoDePaciente: Boolean
+            get() = this == PACIENTES || this == FOTOS || this == TRATAMENTO
     }
 
     /** Como aplicar o que veio, quando já existe algo equivalente no aparelho. */
@@ -237,6 +258,19 @@ object PacoteConfig {
                 }
                 n += quantas
                 contagens.put(Item.FOTOS.chave, quantas)
+            }
+
+            if (Item.TRATAMENTO in selecao) {
+                val chaves = com.radioterapia.ai.treatment.TreatmentListManager(context)
+                    .chavesEmTratamento()
+                // CONJUNTO VAZIO NÃO VIRA ARQUIVO. Um pacote com uma lista vazia
+                // dentro seria indistinguível de "esvazie a agenda do destino",
+                // e em SUBSTITUIR é o que ele faria. Sem arquivo, não há ordem.
+                if (chaves.isNotEmpty()) {
+                    gravarTexto(zip, "tratamento.json", JSONArray(chaves.toList()).toString())
+                    n++
+                    contagens.put(Item.TRATAMENTO.chave, chaves.size)
+                }
             }
 
             val manifesto = JSONObject().apply {
@@ -404,6 +438,21 @@ object PacoteConfig {
                         } else {
                             nArq += fundirPacientes(destino, vindo)
                         }
+                    }
+
+                    nome == "tratamento.json" && Item.TRATAMENTO in selecao -> {
+                        val arr = JSONArray(zip.readBytes().toString(Charsets.UTF_8))
+                        val chaves = (0 until arr.length())
+                            .mapNotNull { arr.optString(it).takeIf { c -> c.isNotBlank() } }
+                            .toSet()
+                        // SUBSTITUIR espelha a agenda do aparelho de origem;
+                        // SOMAR funde as duas e não dá alta em ninguém, que é o
+                        // contrato de SOMAR em todo o resto do pacote.
+                        val entraram = com.radioterapia.ai.treatment
+                            .TreatmentListManager(context)
+                            .importarChaves(chaves, modo == Modo.SOBRESCREVER)
+                        nArq += entraram
+                        pulados += chaves.size - entraram
                     }
 
                     nome.startsWith("fotos/") && Item.FOTOS in selecao -> {

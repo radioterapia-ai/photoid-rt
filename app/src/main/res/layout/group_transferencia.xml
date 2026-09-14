@@ -80,4 +80,42 @@
         android:textColor="@color/text_secondary"
         android:textSize="12sp"
         android:layout_marginTop="12dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/divider"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="14dp" />
+
+    <!--
+        A OUTRA FORMA DE TRANSFERIR, que ate 14/09/2026 vivia no grupo "Base de
+        dados". Nao e duplicata da de cima: aquela escolhe item a item e sai num
+        arquivo so; esta copia a base inteira para uma pasta, com progresso e
+        cancelamento, e e a unica que aguenta acervo grande.
+    -->
+    <TextView style="@style/FieldLabel" android:text="@string/db_transfer_section" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tr_pasta_quando"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp"
+        android:layout_marginBottom="10dp" />
+
+    <Button android:id="@+id/btnExportarBase"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:text="@string/db_export_title" android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral"
+        android:maxLines="2" android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp" android:autoSizeMaxTextSize="14sp" />
+
+    <Button android:id="@+id/btnImportarBase"
+        android:layout_width="match_parent" android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/db_import_title" android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral"
+        android:maxLines="2" android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="10sp" android:autoSizeMaxTextSize="14sp" />
 </LinearLayout>

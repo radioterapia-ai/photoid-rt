@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    PASSO 2 do onboarding: trazer a configuracao de outro tablet.
+
+    Inflado com attachToRoot=true dentro de wizardStepContainer, como os demais
+    passos — por isso a raiz e <merge> e nao um LinearLayout proprio.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_import_title"
+        android:textColor="@color/brand_primary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginTop="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/wiz_import_desc"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/btnWizImportar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/tr_importar"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/brand_primary_dark" />
+
+    <!-- So aparece depois de uma importacao, com o que entrou. -->
+    <TextView
+        android:id="@+id/txtWizImportResultado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="12dp"
+        android:background="@color/bg_card"
+        android:textColor="@color/confirm_green"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:background="@color/bg_card"
+        android:text="@string/wiz_import_fotos_depois"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+</merge>

@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.radioterapia.ai.AppConfig
@@ -18,6 +19,7 @@ import com.radioterapia.ai.branding.LogoManager
 import com.radioterapia.ai.csv.CsvMapping
 import com.radioterapia.ai.i18n.LocaleManager
 import com.radioterapia.ai.security.CredentialStore
+import kotlinx.coroutines.launch
 
 /**
  * Wizard de primeira execução. 7 passos navegando com Próximo/Anterior.
@@ -50,12 +52,28 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
     private lateinit var txtPasso: TextView
 
     private var passoAtual: Int = 1
-    private val totalPassos = 6
+
+    /**
+     * SETE desde 14/09/2026 — o passo 2 passou a oferecer importar a
+     * configuracao de outro tablet.
+     *
+     * O numero do passo e absoluto em quatro lugares independentes: aqui, no
+     * `when` de [mostrarPasso], no `when` de [salvarPassoAtual] e nos
+     * `mostrarPasso(n)` cravados dentro dos launchers. Os nomes das funcoes NAO
+     * acompanham a ordem (`mostrarPasso3` desenha o passo 3 por coincidencia,
+     * `mostrarPasso7` desenha o 7) porque um passo de idioma foi removido sem
+     * renomear o resto. Entao o `when` de [mostrarPasso] e a UNICA fonte de
+     * verdade da ordem — conferir por ali, nunca pelo nome da funcao.
+     */
+    private val totalPassos = 7
 
     // Estados temporários (consolidados ao final em onPasso7Concluir)
     private var idiomaSelecionado: String = "pt"
     private var nomeClinicaTemp: String = ""
     private var logoUriTemp: android.net.Uri? = null
+
+    /** Resumo da ultima importacao, para o passo 2 nao esquecer o que fez. */
+    private var ultimoImportado: String = ""
     private var csvTemCabecalhoTemp: Boolean = true
     private var colNomeTemp: Int = 0
     private var colNascTemp: Int = 0
@@ -63,6 +81,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
 
     private lateinit var pickLogoLauncher: ActivityResultLauncher<Intent>
     private lateinit var cropLogoLauncher: ActivityResultLauncher<Intent>
+    private lateinit var importarPacoteWizard: ActivityResultLauncher<Array<String>>
     private lateinit var pickPastaFotosLauncher: ActivityResultLauncher<Intent>
     private lateinit var pickPastaCsvLauncher: ActivityResultLauncher<Intent>
 
@@ -106,8 +125,15 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
             } catch (_: Exception) {
                 // fallback: usa a imagem sem recorte
                 logoUriTemp = uri
-                mostrarPasso(2)  // volta ao passo do logo p/ ver a miniatura
+                mostrarPasso(3)  // volta ao passo do logo p/ ver a miniatura
             }
+        }
+
+        importarPacoteWizard = registerForActivityResult(
+            ActivityResultContracts.OpenDocument()
+        ) { uri ->
+            if (uri == null) return@registerForActivityResult
+            aplicarPacoteNoWizard(uri)
         }
 
         cropLogoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -115,7 +141,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
             val tmp = java.io.File(cacheDir, "logo_crop_tmp.jpg")
             if (tmp.exists()) {
                 logoUriTemp = android.net.Uri.fromFile(tmp)
-                mostrarPasso(2)  // volta ao passo do logo p/ ver a miniatura
+                mostrarPasso(3)  // volta ao passo do logo p/ ver a miniatura
             }
         }
 
@@ -129,7 +155,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
                 config.pastaBaseCustom = base
                 com.radioterapia.ai.util.StorageLocal.garantirEstrutura(this)
             }
-            mostrarPasso(3)
+            mostrarPasso(4)
         }
         pickPastaCsvLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode != RESULT_OK) return@registerForActivityResult
@@ -177,11 +203,12 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
         containerStep.removeAllViews()
         when (numero) {
             1 -> mostrarPasso1()
-            2 -> mostrarPasso3()
-            3 -> mostrarPasso4()
-            4 -> mostrarPassoImpressora()
-            5 -> mostrarPassoPdfEtiqueta()
-            6 -> mostrarPasso7()
+            2 -> mostrarPassoImportar()
+            3 -> mostrarPasso3()
+            4 -> mostrarPasso4()
+            5 -> mostrarPassoImpressora()
+            6 -> mostrarPassoPdfEtiqueta()
+            7 -> mostrarPasso7()
         }
     }
 
@@ -200,6 +227,42 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
         } catch (_: Exception) {}
     }
 
+
+    /**
+     * PASSO 2 — trazer a configuracao de outro tablet.
+     *
+     * Fica no COMECO porque e aqui que ele poupa trabalho: quem esta preparando
+     * o segundo tablet de um servico importa e pula os passos seguintes ja
+     * preenchidos. Descobrir isso depois de digitar tudo a mao nao adianta nada.
+     *
+     * AS FOTOS FICAM DE FORA, e essa e a decisao que menos se adivinha lendo o
+     * codigo. Neste ponto a pasta de armazenamento ainda nao existe: ela so e
+     * escolhida no passo 4, e a permissao "Acesso a todos os arquivos" so e
+     * pedida la. [StorageLocal.base] sem nenhuma das duas cai no diretorio
+     * privado do app — que o Android APAGA na desinstalacao e que o proprio app
+     * deixa de olhar assim que a pasta for definida. O acervo inteiro iria para
+     * um lugar errado sem lancar excecao nenhuma. Quem quiser as fotos importa
+     * de novo em Configuracoes, depois da pasta escolhida.
+     *
+     * NAO PERGUNTA SOMAR OU SUBSTITUIR. Num tablet que esta sendo configurado
+     * agora nao ha nada com que fundir, entao a pergunta nao tem resposta errada
+     * — e confirmacao que pode ser inferida e exatamente o que a regra de
+     * produto proibe acrescentar.
+     */
+    private fun mostrarPassoImportar() {
+        val v = layoutInflater.inflate(R.layout.wizard_step_import, containerStep, true)
+        val txtResultado = v.findViewById<TextView>(R.id.txtWizImportResultado)
+        txtResultado.text = ultimoImportado
+        txtResultado.visibility = if (ultimoImportado.isBlank()) View.GONE else View.VISIBLE
+
+        v.findViewById<Button>(R.id.btnWizImportar).setOnClickListener {
+            try {
+                importarPacoteWizard.launch(arrayOf("application/zip", "application/octet-stream", "*/*"))
+            } catch (_: Exception) {
+                Toast.makeText(this, R.string.prot_sem_seletor, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     private fun mostrarPasso3() {
         val v = layoutInflater.inflate(R.layout.wizard_step_3, containerStep, true)
@@ -344,9 +407,60 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
         resumo.text = sb.toString()
     }
 
+    /**
+     * Le o pacote e aplica, sem os dois dialogos que as Configuracoes mostram.
+     *
+     * TUDO MENOS AS FOTOS — o motivo esta no KDoc de [mostrarPassoImportar]. E
+     * SEMPRE em modo SOMAR: substituir so faz diferenca quando ha algo do outro
+     * lado, e aqui nao ha.
+     *
+     * Se o arquivo nao for um pacote valido, [PacoteConfig.inspecionar] devolve
+     * nulo e a tela diz isso — sem tentar o formato JSON antigo de proposito.
+     * Aquele caminho aplica o bloco de preferencias INTEIRO, inclusive os
+     * caminhos de pasta do tablet de origem, e no passo 2 isso configuraria o
+     * armazenamento com um caminho que nao existe aqui.
+     */
+    private fun aplicarPacoteNoWizard(uri: android.net.Uri) {
+        val ctx = this
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            val aplicado = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                try {
+                    val resumo = contentResolver.openInputStream(uri)?.use {
+                        com.radioterapia.ai.transfer.PacoteConfig.inspecionar(it)
+                    } ?: return@withContext null
+                    val selecao = resumo.itens.filterNot {
+                        it == com.radioterapia.ai.transfer.PacoteConfig.Item.FOTOS
+                    }.toSet()
+                    if (selecao.isEmpty()) return@withContext null
+                    contentResolver.openInputStream(uri)?.use {
+                        com.radioterapia.ai.transfer.PacoteConfig.importar(
+                            ctx, it, selecao,
+                            com.radioterapia.ai.transfer.PacoteConfig.Modo.SOMAR)
+                    }
+                } catch (_: Exception) { null }
+            }
+            if (isFinishing || isDestroyed) return@launch
+            if (aplicado == null) {
+                Toast.makeText(ctx, R.string.tr_arquivo_invalido, Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            // Recarrega os temporarios A PARTIR do que entrou: o passo seguinte
+            // le nomeClinicaTemp, nao o config, e sem isto o campo apareceria
+            // vazio mesmo com o nome ja gravado.
+            nomeClinicaTemp = config.nomeClinica
+            // Reusa a mesma frase de resultado das Configuracoes: a operacao e a
+            // mesma, e duas redacoes para o mesmo fato divergem na primeira vez
+            // que so uma for revista.
+            ultimoImportado = getString(R.string.tr_importado,
+                aplicado.prefs, aplicado.arquivos, aplicado.pulados)
+            mostrarPasso(passoAtual)
+        }
+    }
+
     private fun salvarPassoAtual() {
         when (passoAtual) {
-            2 -> {
+            // O passo 2 (importar) nao tem campo a salvar: ele aplica na hora.
+            3 -> {
                 nomeClinicaTemp = containerStep.findViewById<EditText>(R.id.edtWizClinica)?.text?.toString()?.trim() ?: ""
                 // Persiste imediatamente: robusto mesmo se o usuário usar "Pular tudo" depois.
                 if (nomeClinicaTemp.isNotBlank()) config.nomeClinica = nomeClinicaTemp
@@ -358,7 +472,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
                 }
                 logoUriTemp?.let { logoManager.salvarLogo(it) }
             }
-            3 -> {
+            4 -> {
                 // Mesmo sem interação nos botões: garante o acesso à pasta padrão
                 if (config.pastaBaseCustom.isBlank() &&
                     !com.radioterapia.ai.util.StorageLocal.temAcessoTotal()) {
@@ -368,7 +482,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
                 }
                 // Pasta das fotos é salva no momento da escolha (launcher). Nada aqui.
             }
-            4 -> {
+            5 -> {
                 // Impressora: persiste imediatamente (robusto a "Pular tudo")
                 val ip = containerStep.findViewById<EditText>(R.id.edtWizPrinterIp)?.text?.toString()?.trim() ?: ""
                 val nomeImp = containerStep.findViewById<EditText>(R.id.edtWizPrinterName)?.text?.toString()?.trim() ?: ""
@@ -382,7 +496,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
                     }
                 }
             }
-            5 -> {
+            6 -> {
                 // PDF & etiqueta: persiste imediatamente
                 containerStep.findViewById<android.widget.RadioButton>(R.id.rbWizPdfLand)?.let {
                     config.pdfLandscape = it.isChecked
@@ -416,8 +530,11 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
         // Aplica idioma
         LocaleManager.definirIdiomaManual(this, idiomaSelecionado)
 
-        // Aplica nome clínica
-        config.nomeClinica = nomeClinicaTemp
+        // Aplica nome clínica SE houver. A guarda nao e enfeite: com a
+        // importacao no passo 2, o nome pode ter vindo do pacote e o campo da
+        // tela seguinte nunca ter sido tocado — gravar o temporario vazio por
+        // cima devolveria o nome da unidade a branco no ultimo passo do wizard.
+        if (nomeClinicaTemp.isNotBlank()) config.nomeClinica = nomeClinicaTemp
 
         // Aplica logo
         logoUriTemp?.let { logoManager.salvarLogo(it) }

@@ -104,35 +104,13 @@
     <TextView android:id="@+id/txtDraftStatus"
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:textSize="12sp" android:textColor="@color/text_secondary" android:layout_marginBottom="8dp" />
-    <View android:layout_width="match_parent" android:layout_height="1dp"
-        android:layout_marginTop="14dp" android:layout_marginBottom="10dp"
-        android:background="#33FFFFFF" />
-
-    <TextView style="@style/FieldLabel" android:text="@string/db_transfer_section" />
-
-    <TextView
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="@string/db_export_desc" android:textSize="12sp"
-        android:textColor="@color/text_secondary" android:layout_marginBottom="8dp" />
-
-    <Button android:id="@+id/btnExportarBase"
-        android:layout_width="match_parent" android:layout_height="52dp"
-        android:text="@string/db_export_title" android:textColor="@color/text_on_dark"
-        android:backgroundTint="@color/action_neutral"
-        android:maxLines="2" android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="10sp" android:autoSizeMaxTextSize="14sp" />
-
-    <Button android:id="@+id/btnImportarBase"
-        android:layout_width="match_parent" android:layout_height="52dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/db_import_title" android:textColor="@color/text_on_dark"
-        android:backgroundTint="@color/action_neutral"
-        android:maxLines="2" android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="10sp" android:autoSizeMaxTextSize="14sp" />
-
-    <View android:layout_width="match_parent" android:layout_height="1dp"
-        android:layout_marginTop="14dp" android:layout_marginBottom="10dp"
-        android:background="#33FFFFFF" />
+    <!--
+        A transferencia para outro tablet SAIU DAQUI em 14/09/2026.
+        Ela vivia neste grupo e tambem em "Exportar / Importar configuracoes", e
+        quem abria as Configuracoes via a mesma funcao em dois lugares sem saber
+        qual escolher. Agora as duas formas — .zip com itens marcados e pasta
+        inteira — moram juntas naquele grupo, onde da para compara-las.
+    -->
 
     <Button android:id="@+id/btnOpenHistory"
         android:layout_width="match_parent" android:layout_height="48dp"

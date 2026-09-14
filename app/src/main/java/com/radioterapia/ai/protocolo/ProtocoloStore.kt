@@ -56,6 +56,19 @@ class ProtocoloStore(private val context: Context) {
      */
     data class Pagina(
         val arquivo: String,
+        /**
+         * PDF do VERSO desta folha, dentro da mesma pasta. Vazio = só frente.
+         *
+         * Uma das clínicas tem um impresso que é frente-e-verso, e antes disso
+         * a única saída era carregar as duas faces como páginas separadas — o
+         * que sai em duas folhas, e faz a etiqueta de identificação aparecer
+         * duas vezes.
+         *
+         * O VERSO NÃO RECEBE ETIQUETA NEM LOGOTIPO. Eles já estão na frente da
+         * mesma folha: repetir seria gastar duas etiquetas por paciente e sujar
+         * um impresso que a clínica desenhou com o espaço contado.
+         */
+        val verso: String = "",
         val etqAtiva: Boolean = true,
         val etqXmm: Float = 10f,
         val etqYmm: Float = 10f,
@@ -146,6 +159,12 @@ class ProtocoloStore(private val context: Context) {
     fun arquivoPagina(p: Protocolo, pag: Pagina): File? =
         File(pastaDe(p.id), pag.arquivo).takeIf { it.exists() && it.length() > 0 }
 
+    /** O PDF do verso, se esta página tiver um. */
+    fun arquivoVerso(p: Protocolo, pag: Pagina): File? =
+        pag.verso.takeIf { it.isNotBlank() }
+            ?.let { File(pastaDe(p.id), it) }
+            ?.takeIf { it.exists() && it.length() > 0 }
+
     // ---------------------------------------------------------------- escrita
 
     /** Cria ou atualiza. O protocolo padrão pode ser editado como qualquer outro. */
@@ -208,6 +227,7 @@ class ProtocoloStore(private val context: Context) {
                     p.paginas.forEach { pg ->
                         put(JSONObject().apply {
                             put("arquivo", pg.arquivo)
+                            put("verso", pg.verso)
                             put("etq", pg.etqAtiva)
                             put("ex", pg.etqXmm.toDouble()); put("ey", pg.etqYmm.toDouble())
                             put("ew", pg.etqWmm.toDouble()); put("eh", pg.etqHmm.toDouble())
@@ -264,6 +284,7 @@ class ProtocoloStore(private val context: Context) {
                 val arq = po.optString("arquivo")
                 if (arq.isBlank()) null else Pagina(
                     arquivo = arq,
+                    verso = po.optString("verso"),
                     etqAtiva = po.optBoolean("etq", true),
                     etqXmm = po.optDouble("ex", 10.0).toFloat(),
                     etqYmm = po.optDouble("ey", 10.0).toFloat(),
@@ -294,6 +315,7 @@ class ProtocoloStore(private val context: Context) {
                     p.paginas.forEach { pg ->
                         put(JSONObject().apply {
                             put("arquivo", pg.arquivo)
+                            put("verso", pg.verso)
                             put("etq", pg.etqAtiva)
                             put("ex", pg.etqXmm.toDouble()); put("ey", pg.etqYmm.toDouble())
                             put("ew", pg.etqWmm.toDouble()); put("eh", pg.etqHmm.toDouble())

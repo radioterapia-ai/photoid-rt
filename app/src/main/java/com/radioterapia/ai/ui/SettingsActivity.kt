@@ -259,16 +259,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                 it.findViewById(R.id.btnChooseBackupFolder),
                 it.findViewById(R.id.btnResetBackupFolder))
             it.findViewById<Button>(R.id.btnCleanCache).setOnClickListener { limparCacheAntigo() }
-            // Migração de tablet: os listeners haviam se perdido, e os botões
-            // ficavam inertes.
-            it.findViewById<Button>(R.id.btnExportarBase).setOnClickListener {
-                modoTransferencia = true
-                abrirSeletorPasta(seletorTransferenciaLauncher)
-            }
-            it.findViewById<Button>(R.id.btnImportarBase).setOnClickListener {
-                modoTransferencia = false
-                abrirSeletorPasta(seletorTransferenciaLauncher)
-            }
             txtDraftStatus = it.findViewById(R.id.txtDraftStatus)
             it.findViewById<Button>(R.id.btnOpenHistory).setOnClickListener {
                 val intent = Intent(this, HistoricoActivity::class.java)
@@ -866,6 +856,18 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                 exportarPacoteLauncher.launch("PhotoIDRT_config_$carimbo.zip")
             }
         }
+        // A TRANSFERENCIA POR PASTA, no mesmo grupo desde 14/09/2026. Os IDs
+        // agora pertencem a group_transferencia.xml, que e o layout declarado
+        // por este adicionarGrupo — a regra de R.id por grupo continua valendo.
+        v.findViewById<Button>(R.id.btnExportarBase).setOnClickListener {
+            modoTransferencia = true
+            abrirSeletorPasta(seletorTransferenciaLauncher)
+        }
+        v.findViewById<Button>(R.id.btnImportarBase).setOnClickListener {
+            modoTransferencia = false
+            abrirSeletorPasta(seletorTransferenciaLauncher)
+        }
+
         v.findViewById<Button>(R.id.btnTransferImportar).setOnClickListener {
             importarPacoteLauncher.launch(arrayOf(
                 com.radioterapia.ai.transfer.PacoteConfig.MIME, "*/*"))

@@ -77,11 +77,69 @@ object ProtocoloRenderer {
 
         protocolo.paginas.forEach { pag ->
             val arq = store.arquivoPagina(protocolo, pag) ?: return@forEach
+            val verso = store.arquivoVerso(protocolo, pag)
+
+            /*
+                PAREAMENTO DA FOLHA, quando há verso.
+
+                A impressora em frente-e-verso junta as páginas aos pares: 1 com
+                2, 3 com 4. Para a frente e o verso caírem na MESMA folha, a
+                frente precisa estar em posição ímpar — e isso depende de
+                quantas páginas a ficha teve antes, que varia com o número de
+                fotos do paciente.
+
+                Sem esta folha em branco, o verso de um paciente com número par
+                de páginas anteriores sairia impresso no verso da página de
+                Time-Out, e a frente do impresso ficaria sozinha. Uma folha
+                gasta é mais barata que um impresso clínico montado errado.
+             */
+            if (verso != null && (numeroInicial + desenhadas) % 2 == 0) {
+                desenhadas += paginaEmBranco(doc, arq)
+            }
+
             desenhadas += desenharArquivo(
                 doc, arq, pag, ident, logo,
                 numeroInicial + desenhadas, totalDaFicha)
+
+            if (verso != null) {
+                // SEM SOBREPOSIÇÃO: a etiqueta e o logotipo já estão na frente
+                // desta mesma folha.
+                desenhadas += desenharArquivo(
+                    doc, verso, pag, ident, logo,
+                    numeroInicial + desenhadas, totalDaFicha, sobrepor = false)
+            }
         }
         return desenhadas
+    }
+
+    /**
+     * Folha em branco, do tamanho da página que vem a seguir.
+     *
+     * Existe só para acertar o pareamento do frente-e-verso (ver [desenhar]).
+     * Sai limpa: sem número de rodapé, porque ela não é uma página do documento
+     * do ponto de vista de quem lê — é um efeito da impressão.
+     */
+    private fun paginaEmBranco(doc: PdfDocument, modelo: File): Int = try {
+        var pfd: ParcelFileDescriptor? = null
+        var r: PdfRenderer? = null
+        try {
+            pfd = ParcelFileDescriptor.open(modelo, ParcelFileDescriptor.MODE_READ_ONLY)
+            r = PdfRenderer(pfd)
+            val p0 = r.openPage(0)
+            val w = p0.width; val h = p0.height
+            p0.close()
+            val nova = doc.startPage(
+                PdfDocument.PageInfo.Builder(w, h, doc.pages.size + 1).create())
+            nova.canvas.drawColor(Color.WHITE)
+            doc.finishPage(nova)
+            1
+        } finally {
+            try { r?.close() } catch (_: Exception) {}
+            try { pfd?.close() } catch (_: Exception) {}
+        }
+    } catch (_: Exception) {
+        // Sem a folha em branco o pareamento fica errado, mas a ficha sai.
+        0
     }
 
     /** Um PDF do protocolo pode ter mais de uma página; todas entram. */
@@ -92,7 +150,9 @@ object ProtocoloRenderer {
         ident: Identificacao,
         logo: Bitmap?,
         numeroInicial: Int,
-        totalDaFicha: Int
+        totalDaFicha: Int,
+        /** `false` no verso: etiqueta e logotipo já vieram na frente da folha. */
+        sobrepor: Boolean = true
     ): Int {
         var pfd: ParcelFileDescriptor? = null
         var r: PdfRenderer? = null
@@ -127,8 +187,9 @@ object ProtocoloRenderer {
                 cv.drawBitmap(bmp, null, RectF(0f, 0f, wPt.toFloat(), hPt.toFloat()), null)
                 bmp.recycle()
 
-                if (pag.etqAtiva) desenharEtiqueta(cv, pag, ident)
-                if (pag.logoAtivo && logo != null) desenharLogo(cv, pag, logo, wPt.toFloat())
+                if (sobrepor && pag.etqAtiva) desenharEtiqueta(cv, pag, ident)
+                if (sobrepor && pag.logoAtivo && logo != null)
+                    desenharLogo(cv, pag, logo, wPt.toFloat())
                 desenharNumero(cv, wPt.toFloat(), hPt.toFloat(), numeroInicial + n, totalDaFicha)
 
                 doc.finishPage(nova)
