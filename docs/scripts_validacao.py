@@ -417,14 +417,36 @@ def ids_por_grupo():
 
 
 def lixo_filesystem():
+    """Arquivo ou pasta que entrou sem querer.
+
+    Duas famílias, e as duas já aconteceram:
+
+    BRACE EXPANSION — `arquivo{1,2}.kt` criado por um shell que não expandiu a
+    chave. O nome é visivelmente estranho, mas ninguém olha a listagem.
+
+    CÓPIA MANUAL — `_bak_values`, `values_old`, `layout copy`. Esta é pior,
+    porque o nome não tem nada de errado: ela só não deveria existir. Dentro de
+    `res/`, uma pasta de recursos duplicada muda o que o AAPT compila, e o
+    defeito aparece num recurso que ninguém tocou. Nasceu de uma cópia de
+    segurança feita antes de uma alteração grande, e que sobreviveu a ela.
+    """
     secao("Lixo no filesystem")
+    achou = False
     lixo = [f for f in glob.glob("**/*", recursive=True)
             if "{" in os.path.basename(f) or "}" in os.path.basename(f)]
-    if lixo:
-        for f in lixo[:5]:
-            falha(f"nome suspeito (brace expansion?): {f}")
-    else:
-        print("  ✓ nenhum arquivo com nome suspeito")
+    for f in lixo[:5]:
+        falha(f"nome suspeito (brace expansion?): {f}")
+        achou = True
+
+    suspeitas = re.compile(r"(^_bak|_bak$|^bak_|\bcop(y|ia)\b|_old$|^old_|~$)", re.I)
+    for f in glob.glob("**/*", recursive=True):
+        base = os.path.basename(f.rstrip("/\\"))
+        if suspeitas.search(base):
+            falha(f"cópia manual esquecida: {f}")
+            achou = True
+
+    if not achou:
+        print("  ✓ nenhum arquivo suspeito nem cópia esquecida")
 
 
 def texto_fixo_em_kotlin():
