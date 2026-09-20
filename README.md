@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/img/banner.png" alt="PhotoID RT — positioning photo documentation for radiation therapy" width="100%">
+</p>
+
 # PhotoID RT
 
 > **Support tool. Not validated for clinical use.**
