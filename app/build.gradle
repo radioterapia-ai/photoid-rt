@@ -175,4 +175,34 @@ dependencies {
 
     // OpenCSV (E3)
     implementation 'com.opencsv:opencsv:5.9'
+
+    /*
+        MOTOR DE SINCRONIZACAO (v4.0).
+
+        As tres bibliotecas abaixo existem porque o app passou a levar os
+        arquivos ao servidor por conta propria, em vez de depender de um
+        aplicativo externo. Cada uma cobre um protocolo que alguma clinica ja
+        tem de pe — nenhuma delas e alternativa das outras.
+
+        WORKMANAGER: a fila que sobrevive ao tablet ser reiniciado no meio do
+        turno. Sem ele, "sincronizar depois" seria uma promessa que o Android
+        quebra a primeira vez que mata o processo.
+
+        COMMONS-NET: FTP e FTPS. E a biblioteca de FTP em Java que nao precisa
+        de nada do lado do servidor, e servico antigo costuma ter so FTP.
+
+        JSCH (fork mantido do mwiede): SFTP. O original parou em 2018 e nao
+        negocia os algoritmos que servidor OpenSSH atual exige — conexao que
+        falha com "Algorithm negotiation fail", que nao parece problema de
+        biblioteca velha.
+
+        WEBDAV NAO TEM BIBLIOTECA: e HTTP com dois verbos a mais (PUT e MKCOL),
+        e o HttpURLConnection da plataforma faz os dois. Acrescentar dependencia
+        para isso seria peso sem retorno.
+
+        SAF tambem nao tem: DocumentFile ja esta aqui.
+    */
+    implementation 'androidx.work:work-runtime-ktx:2.9.0'
+    implementation 'commons-net:commons-net:3.10.0'
+    implementation 'com.github.mwiede:jsch:0.2.17'
 }
