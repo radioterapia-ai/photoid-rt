@@ -1747,7 +1747,16 @@ class MainActivity : BaseActivity() {
                 atualizarThumbnails()
                 atualizarStatusUI()
                 atualizarCategoriaUI()
-                if (arquivoTemporario == f) voltarParaCamera()
+                // SAIR DA REVISÃO quando o que está na tela foi o que saiu.
+                //
+                // A guarda era só `arquivoTemporario == f`, que vale para foto
+                // recém-capturada e NUNCA para foto da sessão — e a tela ficava
+                // aberta sobre um arquivo apagado. Enquanto a revisão só
+                // mostrava a foto isso era um incômodo; agora que ela edita,
+                // "Salvar" gravaria o recorte de volta no arquivo apagado,
+                // recriando-o fora da sessão: invisível para o app, visível
+                // para a sincronização, que o levaria ao servidor.
+                if (arquivoTemporario == f || fotoEmRevisao == f) voltarParaCamera()
             }.setNegativeButton(R.string.cancel, null).show()
     }
 
@@ -1934,6 +1943,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /** A foto da sessão que está aberta no editor, ou nula fora da revisão. */
+    private var fotoEmRevisao: File? = null
+
     private fun mostrarFotoNoVisor(
         arq: File, ehDaSessao: Boolean, catDaSessao: Category? = null
     ) {
@@ -1961,6 +1973,7 @@ class MainActivity : BaseActivity() {
             // aplicado sobre recorte, entao ajustar dez vezes custa o mesmo que
             // ajustar uma. Sem original (foto de versao anterior), a fonte e a
             // propria foto e so o zoom para dentro sobra.
+            fotoEmRevisao = arq
             val cat = catDaSessao ?: sessionManager.categoriaAtiva
             val fonte = sessionManager.originalDe(arq) ?: arq
             val bm = com.radioterapia.ai.util.ImagemUtils.decodificarComExif(fonte)
@@ -2036,6 +2049,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun voltarParaCamera() {
+        fotoEmRevisao = null
         btnGirarVisor.visibility = View.GONE
         bloquearTabs(false)
         ligarSeekACamera()

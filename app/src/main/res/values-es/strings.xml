@@ -945,4 +945,6 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="sync_tip_url">La dirección completa de la carpeta, con http:// o https://. Es la misma que abre el navegador. En servicios de nube propios, la contraseña suele ser una contraseña de aplicación, no la de inicio de sesión.</string>
     <string name="sync_tip_saf">Elija la carpeta con el selector del sistema, dentro de la aplicación de nube que el servicio ya usa y ya tiene conectada. Ninguna contraseña pasa por esta aplicación. Si la app de nube se reinstala o cambia la cuenta, vuelva a elegir la carpeta.</string>
     <string name="sync_tip_direct">Activado, la aplicación escribe directamente en la carpeta final sin comprobar las carpetas superiores. Resuelve el caso común en hospitales: la cuenta puede escribir en el destino pero no puede LEER las carpetas de arriba, y la comprobación fallaría en una carpeta que ni siquiera es el destino. Desactívelo solo si el servidor rechaza la escritura directa.</string>
+    <string name="tr_sync">Sincronización</string>
+    <string name="tr_sync_desc">Preferencias y destinos. La contraseña de cada destino NO va en el paquete: escríbala una vez en cada tableta.</string>
 </resources>

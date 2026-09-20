@@ -1007,4 +1007,6 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="sync_tip_url">O endereço completo da pasta, com http:// ou https://. É o mesmo endereço que o navegador abre. Em serviços de nuvem próprios, a senha costuma ser uma senha de aplicativo, e não a de login.</string>
     <string name="sync_tip_saf">Escolha a pasta pelo seletor do sistema, dentro do aplicativo de nuvem que o serviço já usa e já tem conectado. Nenhuma senha passa por este aplicativo. Se o app da nuvem for reinstalado ou a conta trocada, escolha a pasta de novo.</string>
     <string name="sync_tip_direct">Ligado, o aplicativo grava direto na pasta final sem conferir as pastas acima dela. É o que resolve o caso comum em hospital: a conta pode escrever no destino e não pode LER as pastas superiores — e a conferência falharia numa pasta que nem é o destino. Desligue só se o servidor recusar a gravação direta.</string>
+    <string name="tr_sync">Sincronização</string>
+    <string name="tr_sync_desc">Preferências e destinos. A senha de cada destino NÃO vai no pacote: digite-a uma vez em cada tablet.</string>
 </resources>

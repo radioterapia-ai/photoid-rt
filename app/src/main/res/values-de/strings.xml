@@ -875,4 +875,6 @@
     <string name="sync_tip_url">Die vollständige Ordneradresse, mit http:// oder https://. Es ist dieselbe Adresse, die der Browser öffnet. Bei selbst gehosteten Cloud-Diensten ist das Passwort meist ein App-Passwort, nicht das Anmeldepasswort.</string>
     <string name="sync_tip_saf">Wählen Sie den Ordner mit der Systemauswahl, in der Cloud-App, die Ihre Abteilung bereits nutzt und in der sie angemeldet ist. Kein Passwort geht durch diese App. Wird die Cloud-App neu installiert oder das Konto gewechselt, wählen Sie den Ordner erneut.</string>
     <string name="sync_tip_direct">Eingeschaltet schreibt die App direkt in den Zielordner, ohne die übergeordneten Ordner zu prüfen. Das löst den häufigen Fall im Krankenhaus: Das Konto darf am Ziel schreiben, aber die übergeordneten Ordner nicht LESEN — und die Prüfung würde an einem Ordner scheitern, der gar nicht das Ziel ist. Schalten Sie es nur aus, wenn der Server das direkte Schreiben ablehnt.</string>
+    <string name="tr_sync">Synchronisation</string>
+    <string name="tr_sync_desc">Einstellungen und Ziele. Das Passwort jedes Ziels reist NICHT im Paket mit: einmal auf jedem Tablet eingeben.</string>
 </resources>

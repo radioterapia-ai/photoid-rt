@@ -945,4 +945,6 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="sync_tip_url">The full folder address, with http:// or https://. It is the same address the browser opens. On self-hosted cloud services the password is usually an app password, not the login one.</string>
     <string name="sync_tip_saf">Pick the folder with the system picker, inside the cloud app your service already uses and is already signed in to. No password goes through this app. If the cloud app is reinstalled or the account changes, pick the folder again.</string>
     <string name="sync_tip_direct">When on, the app writes straight into the final folder without checking the folders above it. This solves the common hospital case: the account can write at the destination but cannot READ the folders above — and the check would fail on a folder that is not even the destination. Turn it off only if the server refuses the direct write.</string>
+    <string name="tr_sync">Synchronization</string>
+    <string name="tr_sync_desc">Preferences and destinations. Each destination\'s password does NOT travel in the package: type it once on each tablet.</string>
 </resources>

@@ -875,4 +875,6 @@
     <string name="sync_tip_url">L\'adresse complète du dossier, avec http:// ou https://. C\'est la même adresse que le navigateur ouvre. Sur les services cloud auto-hébergés, le mot de passe est en général un mot de passe d\'application, pas celui de connexion.</string>
     <string name="sync_tip_saf">Choisissez le dossier avec le sélecteur du système, dans l\'application cloud que le service utilise déjà et où il est déjà connecté. Aucun mot de passe ne passe par cette application. Si l\'application cloud est réinstallée ou le compte changé, choisissez à nouveau le dossier.</string>
     <string name="sync_tip_direct">Activé, l\'application écrit directement dans le dossier final sans vérifier les dossiers au-dessus. Cela résout le cas courant à l\'hôpital : le compte peut écrire dans la destination mais ne peut pas LIRE les dossiers supérieurs, et la vérification échouerait sur un dossier qui n\'est même pas la destination. Ne le désactivez que si le serveur refuse l\'écriture directe.</string>
+    <string name="tr_sync">Synchronisation</string>
+    <string name="tr_sync_desc">Préférences et destinations. Le mot de passe de chaque destination NE voyage PAS dans le paquet : saisissez-le une fois sur chaque tablette.</string>
 </resources>

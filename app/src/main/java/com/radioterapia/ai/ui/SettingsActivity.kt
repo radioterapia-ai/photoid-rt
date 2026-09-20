@@ -601,13 +601,23 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         }
         txtSyncEstado?.text = getString(R.string.sync_running)
         CoroutineScope(Dispatchers.Main).launch {
+            // ORÇAMENTO CURTO AQUI, e não os 8 minutos do trabalho em segundo
+            // plano: esta varredura está presa a uma tela aberta, sem botão de
+            // cancelar. O que não couber em 45 segundos continua pela fila do
+            // WorkManager, que é onde uma tarefa longa deve morar — e o número
+            // de pendentes no fim da linha diz exatamente quanto sobrou.
             val resumos = withContext(Dispatchers.IO) {
-                com.radioterapia.ai.sync.MotorSync(this@SettingsActivity).sincronizarTudo()
+                com.radioterapia.ai.sync.MotorSync(this@SettingsActivity)
+                    .sincronizarTudo(limiteMs = 45_000L)
             }
             val env = resumos.sumOf { it.enviados }
             val ja = resumos.sumOf { it.jaEstavam }
             val pend = resumos.sumOf { it.pendentes }
             txtSyncEstado?.text = getString(R.string.sync_result, env, ja, pend)
+            // O QUE SOBROU VAI PARA A FILA. Sem isto, o técnico veria
+            // "pendentes: 812" e não teria o que fazer a respeito senão tocar o
+            // botão de novo, quarenta e cinco segundos por vez.
+            if (pend > 0) com.radioterapia.ai.sync.SyncWorker.agora(this@SettingsActivity)
             desenharPerfisSync()
         }
     }

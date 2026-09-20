@@ -101,6 +101,23 @@ object PacoteConfig {
             listOf("pdf_landscape", "pdf_etiqueta_largura_mm",
                    "pdf_etiqueta_altura_mm", "pdf_margem_mm", "pdf_inclui_timeout")),
 
+        /**
+         * A sincronização própria: as preferências e os destinos.
+         *
+         * SEM SENHA, e é o ponto. As senhas dos perfis moram no
+         * [com.radioterapia.ai.security.CredentialStore], cifradas sob uma
+         * chave do Android Keystore que não sai do aparelho — este pacote viaja
+         * por e-mail e por pen-drive. Quem recebe digita a senha uma vez, em
+         * cada tablet.
+         *
+         * SEM O ÍNDICE DO QUE JÁ SUBIU, que é por aparelho: o tablet que recebe
+         * a configuração não enviou nada ainda, e herdar o índice do outro faria
+         * a primeira varredura concluir que está tudo no servidor.
+         */
+        SINCRONIZACAO("sincronizacao", com.radioterapia.ai.R.string.tr_sync,
+            com.radioterapia.ai.R.string.tr_sync_desc,
+            com.radioterapia.ai.sync.SyncConfig.CHAVES_TRANSFERIVEIS),
+
         REDE("rede", com.radioterapia.ai.R.string.tr_rede,
             com.radioterapia.ai.R.string.tr_rede_desc,
             listOf("smb_host", "smb_porta", "smb_protocolo", "smb_dominio",
@@ -191,6 +208,15 @@ object PacoteConfig {
                     val o = JSONObject()
                     outro.all.forEach { (k, v) -> if (v != null) porValor(o, k, v) }
                     outros.put(nomeArq, o)
+                }
+            }
+
+            if (Item.SINCRONIZACAO in selecao) {
+                val perfis = File(File(context.filesDir, "sync"), "perfis.json")
+                if (perfis.exists()) {
+                    gravar(zip, "sync_perfis.json", perfis); n++
+                    contagens.put(Item.SINCRONIZACAO.chave,
+                        com.radioterapia.ai.sync.PerfilStore(context).listar().size)
                 }
             }
 
@@ -391,6 +417,25 @@ object PacoteConfig {
                         val destino = File(context.filesDir, "logo_empresa.png")
                         if (modo == Modo.SOMAR && destino.exists()) pulados++
                         else { destino.outputStream().use { zip.copyTo(it) }; nArq++ }
+                    }
+
+                    nome == "sync_perfis.json" && Item.SINCRONIZACAO in selecao -> {
+                        // SEM SENHA E DESATIVADOS. O perfil chega com endereço,
+                        // usuário e caminho; a senha não viaja, e um destino
+                        // sem senha que já nascesse ativo tentaria conectar e
+                        // falharia a cada varredura, enchendo o log de erro que
+                        // não é erro — é configuração pela metade, de
+                        // propósito, esperando alguém digitar a senha.
+                        val destino = File(
+                            File(context.filesDir, "sync").apply { mkdirs() }, "perfis.json")
+                        if (modo == Modo.SOMAR && destino.exists()) pulados++
+                        else {
+                            destino.outputStream().use { zip.copyTo(it) }
+                            val store = com.radioterapia.ai.sync.PerfilStore(context)
+                            store.salvarTodos(store.listar().map { it.copy(
+                                ativo = false, ultimaSincronizacao = 0L, ultimoErro = "") })
+                            nArq++
+                        }
                     }
 
                     nome == "rubricario_blocos.json" && Item.RUBRICARIO in selecao -> {

@@ -875,4 +875,6 @@
     <string name="sync_tip_url">L\'indirizzo completo della cartella, con http:// o https://. È lo stesso indirizzo che apre il browser. Nei servizi cloud propri la password è di solito una password per applicazioni, non quella di accesso.</string>
     <string name="sync_tip_saf">Scelga la cartella con il selettore di sistema, dentro l\'app di cloud che il servizio già usa e in cui è già connesso. Nessuna password passa da questa app. Se l\'app di cloud viene reinstallata o l\'account cambiato, scelga di nuovo la cartella.</string>
     <string name="sync_tip_direct">Attivo, l\'app scrive direttamente nella cartella finale senza controllare quelle superiori. Risolve il caso comune in ospedale: l\'account può scrivere nella destinazione ma non può LEGGERE le cartelle sopra, e il controllo fallirebbe su una cartella che non è nemmeno la destinazione. Lo disattivi solo se il server rifiuta la scrittura diretta.</string>
+    <string name="tr_sync">Sincronizzazione</string>
+    <string name="tr_sync_desc">Preferenze e destinazioni. La password di ogni destinazione NON viaggia nel pacchetto: la digiti una volta su ciascun tablet.</string>
 </resources>
