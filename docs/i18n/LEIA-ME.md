@@ -2,30 +2,36 @@
 
 ## Onde esta
 
-| Idioma | strings.xml | plurals.xml | Oferecido no app |
-|---|---|---|---|
-| pt-BR (base) | 678 | 3 | sim |
-| en, es | 678 | 3 | sim |
-| **it, zh, ja, ar, bn** | **678** | **3** | **sim** |
-| de, fr, ko, pl | — | pronto, em `pendente/` | **nao** |
+**Os doze estao no app, completos.** pt-BR (base), en, es, fr, de, it, pl, zh,
+ja, ko, ar e bn — todos com o mesmo numero de chaves e os tres `plurals`, e
+todos listados em `LocaleManager.supportedLanguages`.
 
-Oito dos doze idiomas anunciados estao no app. Os quatro que faltam pararam no
-meio: a conta bateu o limite mensal de gasto com 23 dos 63 blocos por traduzir.
+`pendente/` guarda o material de trabalho dos ultimos quatro (de, fr, ko, pl),
+que ficaram para tras por um tempo e entraram depois. Ele fica por servir de
+EXEMPLO do formato: e o par entrada/saida real de uma traducao que passou pelo
+montador e pelo portao.
 
-## Por que os quatro nao estao em res/
+## A regra que mantem isso de pe
 
-`values-de/` com `plurals.xml` e sem `strings.xml` faz o lint acusar
-`MissingTranslation` nas 678 chaves, e `abortOnError` esta ligado: o build para.
-Idioma so entra em `res/` quando esta inteiro.
+Idioma so entra em `res/` quando esta INTEIRO. `values-de/` com `plurals.xml` e
+sem `strings.xml` faz o lint acusar `MissingTranslation` em todas as chaves, e
+`abortOnError` esta ligado: o build para.
 
-Pelo mesmo motivo, `LocaleManager.supportedLanguages` lista oito, e nao doze.
-Oferecer um idioma sem traducao mostraria portugues no meio da tela em coreano,
-sem aviso nenhum.
+E `LocaleManager.supportedLanguages` so lista o que existe em `res/`. Oferecer
+um idioma sem traducao mostraria portugues no meio de uma tela em coreano, sem
+aviso nenhum.
+
+Nenhuma das duas e um estorvo: sao a rede que impede um idioma pela metade de
+chegar a um serviço.
 
 ## Como retomar
 
-1. `docs/i18n/fonte/fonte_b1.json` .. `fonte_b5.json` e `fonte_juridico.json`
-   sao a fonte fatiada em blocos, no formato `{"k": chave, "pt": texto}`.
+Vale para acrescentar um DECIMO TERCEIRO idioma, que e o caminho que este
+diretorio existe para deixar aberto.
+
+1. `docs/i18n/fonte/fonte_b*.json` e `fonte_juridico.json` sao a fonte fatiada
+   em blocos, no formato `{"k": chave, "pt": texto}`. Regere-os do `values/`
+   atual antes de comecar: a base cresce a cada versao.
 2. `docs/i18n/glossario/<lang>.md` fixa a terminologia clinica do idioma. E o
    que faz blocos traduzidos separadamente sairem coerentes — usar.
 3. Traduzir cada bloco para `<lang>__<bloco>.json`, no formato
