@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">초기 설정 마법사를 다시 엽니다. 다시 저장하기 전까지 현재 설정은 삭제되지 않습니다. 계속하시겠습니까?</string>
     <string name="confirm_restore">모든 설정을 복원하시겠습니까? 이 작업은 되돌릴 수 없습니다.</string>
     <string name="about">정보</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">버전 %1$s</string>
     <string name="about_build">빌드 %1$s</string>
     <string name="about_device_id">기기 ID: %1$s</string>
     <string name="about_website">프로젝트에 대해 더 알아보기:\nradioterapia.ai</string>
     <string name="about_open_website">radioterapia.ai 열기</string>
-    <string name="about_description">방사선치료 자세의 사진 기록: 항목별 촬영, Time-Out 페이지가 포함된 자세 기록지 PDF 생성, 치료 당일 사진 조회. 파일은 태블릿에 남으며, 서버로 옮기는 것은 이 앱과 별개인 FileSync입니다.</string>
+    <string name="about_description">방사선치료 자세를 사진으로 기록합니다. 범주별 촬영, Time-Out 페이지가 포함된 PDF 자세 기록지, 치료 당일 사진 확인. 파일은 기관이 지정한 폴더에 태블릿 안에 남습니다. 서버로 옮길지는 각 기관이 결정합니다.</string>
     <string name="patient_history">환자 이력</string>
     <string name="empty_history">이 태블릿에 등록된 환자가 없습니다</string>
     <string name="patient_record">등록번호: %1$s</string>

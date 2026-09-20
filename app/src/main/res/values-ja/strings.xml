@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">初期設定ウィザードを再度開きます。もう一度保存するまで、現在の設定は消去されません。続行しますか？</string>
     <string name="confirm_restore">すべての設定を初期状態に戻しますか？この操作は取り消せません。</string>
     <string name="about">このアプリについて</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">バージョン %1$s</string>
     <string name="about_build">ビルド %1$s</string>
     <string name="about_device_id">端末ID：%1$s</string>
     <string name="about_website">プロジェクトの詳細：\nradioterapia.ai</string>
     <string name="about_open_website">radioterapia.ai を開く</string>
-    <string name="about_description">放射線治療における位置決めの写真記録。カテゴリ別の撮影、Time-Outページ付きの位置決めシート（PDF）、治療当日の写真確認。ファイルはタブレット内に残り、サーバーへ転送するのは本アプリ外部のFileSyncです。</string>
+    <string name="about_description">放射線治療の体位を写真で記録します。カテゴリ別の撮影、Time-Out ページ付きの PDF 体位記録、治療当日の写真確認。ファイルは施設が指定したフォルダーに保存され、タブレット内に残ります。サーバーへの転送は各施設の判断です。</string>
     <string name="patient_history">患者履歴</string>
     <string name="empty_history">このタブレットに登録された患者はありません</string>
     <string name="patient_record">患者ID：%1$s</string>

@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">L\'assistant de configuration initiale va se rouvrir. Vos paramètres actuels ne seront pas supprimés tant que vous ne les aurez pas enregistrés de nouveau. Continuer ?</string>
     <string name="confirm_restore">Restaurer tous les paramètres ? Cette action est irréversible.</string>
     <string name="about">À propos</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_build">Build %1$s</string>
     <string name="about_device_id">ID de l\'appareil : %1$s</string>
     <string name="about_website">En savoir plus sur le projet :\nradioterapia.ai</string>
     <string name="about_open_website">Ouvrir radioterapia.ai</string>
-    <string name="about_description">Documentation photographique du positionnement en radiothérapie : capture par catégorie, fiche de positionnement en PDF avec page de Time-Out, et consultation des photos le jour du traitement. Les fichiers restent sur la tablette ; c\'est FileSync, externe à cette application, qui les transfère vers le serveur.</string>
+    <string name="about_description">Documentation photographique du positionnement en radiothérapie : capture par catégorie, fiche de positionnement en PDF avec page de Time-Out, et consultation des photos le jour du traitement. Les fichiers restent sur la tablette, dans le dossier choisi par le service ; les transférer vers un serveur relève de chaque service.</string>
     <string name="patient_history">Historique des patients</string>
     <string name="empty_history">Aucun patient enregistré sur cette tablette</string>
     <string name="patient_record">N° de dossier : %1$s</string>

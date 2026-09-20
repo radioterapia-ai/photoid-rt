@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">这将重新打开初始设置向导。在您再次保存之前，当前设置不会被清除。是否继续？</string>
     <string name="confirm_restore">恢复全部设置？此操作无法撤销。</string>
     <string name="about">关于</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">版本 %1$s</string>
     <string name="about_build">构建 %1$s</string>
     <string name="about_device_id">设备 ID：%1$s</string>
     <string name="about_website">了解更多项目信息：\nradioterapia.ai</string>
     <string name="about_open_website">打开 radioterapia.ai</string>
-    <string name="about_description">放射治疗摆位的照片记录：按类别拍摄，生成带 Time-Out 页的 PDF 摆位记录单，并在治疗当天查阅照片。文件保存在平板上；将文件传送到服务器的是本应用之外的 FileSync。</string>
+    <string name="about_description">放射治疗摆位的照片记录：按类别拍摄、含 Time-Out 页的 PDF 摆位单，以及治疗当天的照片查阅。文件保存在平板上科室指定的文件夹中；是否传送到服务器由各科室自行决定。</string>
     <string name="patient_history">患者历史记录</string>
     <string name="empty_history">本平板上尚未登记任何患者</string>
     <string name="patient_record">病历号：%1$s</string>

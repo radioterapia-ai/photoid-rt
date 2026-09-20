@@ -11,8 +11,11 @@ package com.radioterapia.ai.branding
  * acaba deixando pedaço nosso para trás sem má intenção nenhuma.
  *
  * Então tudo o que carrega a marca e é **visível para o usuário** se resolve
- * aqui e nas strings de cada `res/values-XX` (`app_name`, `learn_more`,
- * `about_title`, `about_website`). Trocar esses dois lugares e o ícone basta.
+ * aqui e nas strings (`app_name`, `learn_more`, `about_website` em cada
+ * `res/values-XX`; `about_title` só no `values` base, com
+ * `translatable="false"`, porque nome de produto não se traduz e espalhá-lo por
+ * doze arquivos era justamente o que tornava "renomeie" impraticável). Trocar
+ * esses dois lugares e o ícone basta.
  *
  * O QUE **NÃO** ENTRA AQUI
  * O namespace `com.radioterapia.ai` fica como está, e a `TRADEMARK.md` diz

@@ -92,13 +92,12 @@
     <string name="confirm_restore">Restore all settings? This action cannot be undone.</string>
 
     <string name="about">About</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_build">Build %1$s</string>
     <string name="about_device_id">Device ID: %1$s</string>
     <string name="about_website">Learn more about the project:\nradioterapia.ai</string>
     <string name="about_open_website">Open radioterapia.ai</string>
-    <string name="about_description">Photographic documentation of radiotherapy positioning: capture by category, positioning sheet in PDF with a Time-Out page, and photo review on treatment day. Files stay on the tablet; FileSync, external to this app, is what moves them to the server.</string>
+    <string name="about_description">Photographic documentation of radiotherapy positioning: capture by category, positioning sheet in PDF with a Time-Out page, and photo review on treatment day. Files stay on the tablet, in the folder your service chooses; moving them to a server is each service\'s own decision.</string>
 
     <string name="patient_history">Patient history</string>
     <string name="empty_history">No patients registered on this tablet</string>

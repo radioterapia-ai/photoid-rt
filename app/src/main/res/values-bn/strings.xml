@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">এতে প্রাথমিক সেটআপ উইজার্ড আবার চালু হবে। আপনি আবার সংরক্ষণ না করা পর্যন্ত বর্তমান সেটিংস মুছে যাবে না। চালিয়ে যাবেন?</string>
     <string name="confirm_restore">সব সেটিংস পুনরুদ্ধার করবেন? এই কাজ আর ফেরানো যাবে না।</string>
     <string name="about">সম্পর্কে</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">সংস্করণ %1$s</string>
     <string name="about_build">বিল্ড %1$s</string>
     <string name="about_device_id">ডিভাইস আইডি: %1$s</string>
     <string name="about_website">প্রকল্প সম্পর্কে আরও জানুন:\nradioterapia.ai</string>
     <string name="about_open_website">radioterapia.ai খুলুন</string>
-    <string name="about_description">রেডিওথেরাপি পজিশনিংয়ের ফটোগ্রাফিক ডকুমেন্টেশন: ক্যাটাগরি অনুযায়ী ছবি তোলা, Time-Out পাতাসহ PDF পজিশনিং শিট তৈরি এবং চিকিৎসার দিনে ছবি দেখা। ফাইলগুলো ট্যাবলেটেই থাকে; সেগুলো সার্ভারে নিয়ে যায় FileSync, যা এই অ্যাপের বাইরের সফটওয়্যার।</string>
+    <string name="about_description">রেডিওথেরাপি পজিশনিংয়ের ফটোগ্রাফিক নথি: বিভাগ অনুযায়ী ছবি তোলা, Time-Out পৃষ্ঠাসহ PDF পজিশনিং শিট, এবং চিকিৎসার দিনে ছবি দেখা। ফাইলগুলো ট্যাবলেটেই থাকে, বিভাগের বেছে নেওয়া ফোল্ডারে; সার্ভারে নেওয়া প্রতিটি বিভাগের নিজস্ব সিদ্ধান্ত।</string>
     <string name="patient_history">রোগীর রেকর্ড তালিকা</string>
     <string name="empty_history">এই ট্যাবলেটে কোনো রোগী নিবন্ধিত নেই</string>
     <string name="patient_record">রেজিস্ট্রেশন নম্বর: %1$s</string>

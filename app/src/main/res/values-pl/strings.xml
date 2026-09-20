@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">Spowoduje to ponowne otwarcie kreatora konfiguracji początkowej. Obecne ustawienia nie zostaną usunięte, dopóki nie zapiszesz ich ponownie. Kontynuować?</string>
     <string name="confirm_restore">Przywrócić wszystkie ustawienia? Tej operacji nie można cofnąć.</string>
     <string name="about">O aplikacji</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">Wersja %1$s</string>
     <string name="about_build">Kompilacja %1$s</string>
     <string name="about_device_id">Identyfikator urządzenia: %1$s</string>
     <string name="about_website">Więcej o projekcie:\nradioterapia.ai</string>
     <string name="about_open_website">Otwórz radioterapia.ai</string>
-    <string name="about_description">Dokumentacja fotograficzna ułożenia w radioterapii: zdjęcia według kategorii, karta ułożenia w PDF ze stroną Time-Out oraz podgląd zdjęć w dniu leczenia. Pliki pozostają na tablecie; na serwer przenosi je FileSync, niezależny od tej aplikacji.</string>
+    <string name="about_description">Dokumentacja fotograficzna ułożenia pacjenta w radioterapii: zdjęcia według kategorii, karta ułożenia w PDF ze stroną Time-Out oraz podgląd zdjęć w dniu leczenia. Pliki pozostają na tablecie, w folderze wybranym przez zakład; przeniesienie ich na serwer to decyzja każdego zakładu.</string>
     <string name="patient_history">Historia pacjentów</string>
     <string name="empty_history">Na tym tablecie nie zapisano żadnego pacjenta</string>
     <string name="patient_record">Nr historii choroby: %1$s</string>

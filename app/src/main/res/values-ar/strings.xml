@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">سيؤدي هذا إلى إعادة فتح معالج الإعداد الأولي. لن تُحذف إعداداتك الحالية حتى تحفظها من جديد. هل تريد المتابعة؟</string>
     <string name="confirm_restore">استعادة جميع الإعدادات؟ لا يمكن التراجع عن هذا الإجراء.</string>
     <string name="about">حول التطبيق</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">الإصدار %1$s</string>
     <string name="about_build">Build %1$s</string>
     <string name="about_device_id">معرّف الجهاز: %1$s</string>
     <string name="about_website">تعرّف على المزيد حول المشروع:\nradioterapia.ai</string>
     <string name="about_open_website">فتح radioterapia.ai</string>
-    <string name="about_description">توثيق فوتوغرافي للوضعية في العلاج الإشعاعي: التقاط الصور حسب الفئة، وورقة الوضعية بصيغة PDF مع صفحة Time-Out، ومراجعة الصور في يوم العلاج. تبقى الملفات على الجهاز اللوحي؛ ومن ينقلها إلى الخادم هو FileSync، وهو خارج هذا التطبيق.</string>
+    <string name="about_description">توثيق فوتوغرافي لوضعية المريض في العلاج الإشعاعي: التصوير حسب الفئة، وورقة الوضعية بصيغة PDF مع صفحة Time-Out، ومراجعة الصور يوم العلاج. تبقى الملفات على الجهاز اللوحي، في المجلد الذي يختاره القسم؛ ونقلها إلى خادم قرار يخص كل قسم.</string>
     <string name="patient_history">سجل المرضى</string>
     <string name="empty_history">لا يوجد مرضى مسجلون على هذا الجهاز اللوحي</string>
     <string name="patient_record">رقم الملف الطبي: %1$s</string>

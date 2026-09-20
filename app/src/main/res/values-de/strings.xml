@@ -84,13 +84,12 @@
     <string name="redo_onboarding_confirm">Damit wird der Assistent für die Ersteinrichtung erneut geöffnet. Ihre aktuellen Einstellungen werden erst gelöscht, wenn Sie sie neu speichern. Fortfahren?</string>
     <string name="confirm_restore">Alle Einstellungen zurücksetzen? Dieser Schritt kann nicht rückgängig gemacht werden.</string>
     <string name="about">Über</string>
-    <string name="about_title">Radioterapia.AI</string>
     <string name="about_version">Version %1$s</string>
     <string name="about_build">Build %1$s</string>
     <string name="about_device_id">Geräte-ID: %1$s</string>
     <string name="about_website">Mehr über das Projekt:\nradioterapia.ai</string>
     <string name="about_open_website">radioterapia.ai öffnen</string>
-    <string name="about_description">Fotodokumentation der Lagerung in der Strahlentherapie: Aufnahme nach Kategorie, Lagerungsprotokoll als PDF mit Time-Out-Seite und Ansicht der Fotos am Bestrahlungstag. Die Dateien bleiben auf dem Tablet; auf den Server bringt sie FileSync, das nicht Teil dieser App ist.</string>
+    <string name="about_description">Fotografische Dokumentation der Lagerung in der Strahlentherapie: Aufnahme nach Kategorie, Lagerungsprotokoll als PDF mit Time-Out-Seite und Ansicht der Fotos am Behandlungstag. Die Dateien bleiben auf dem Tablet, im Ordner, den die Abteilung wählt; die Übertragung auf einen Server entscheidet jede Abteilung selbst.</string>
     <string name="patient_history">Patientenverlauf</string>
     <string name="empty_history">Kein Patient auf diesem Tablet erfasst</string>
     <string name="patient_record">Pat.-Nr.: %1$s</string>
