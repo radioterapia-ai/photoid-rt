@@ -814,4 +814,5 @@
     <string name="prot_verso_remover">Rückseite entfernen</string>
     <string name="prot_verso_remover_q">Das PDF der Rückseite wird gelöscht. Die Vorderseite bleibt im Protokoll.</string>
     <string name="prot_pagina_item_verso">Seite %1$d — %2$d Blatt + Rückseite</string>
+    <string name="cam_ajuste_encaixar">Ins Bild einpassen</string>
 </resources>

@@ -75,6 +75,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!--
+            A MOLDURA DO RECORTE, por cima do visor ao vivo.
+
+            Vem logo depois do PreviewView e antes das views de revisao, para que
+            a foto ja tirada (imgPreview / cropPreview) a cubra: durante a
+            revisao quem manda e o recorte de verdade, nao o ensaio dele.
+        -->
+        <com.radioterapia.ai.camera.MolduraRecorteView
+            android:id="@+id/molduraRecorte"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <ImageView
             android:id="@+id/imgPreview"
             android:layout_width="match_parent"
@@ -109,6 +121,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
+
+        <!--
+            O AVISO "Ajuste para encaixar", embaixo e centrado.
+
+            Embaixo e nao em cima: o que o tecnico precisa ver enquanto enquadra
+            e o rosto ou o acessorio, que ficam no meio do visor. Um aviso no
+            topo cobriria a faixa onde a etiqueta costuma aparecer.
+        -->
+        <include
+            layout="@layout/aviso_encaixar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="22dp" />
 
         <!-- ZOOM vertical funcional (esquerda). clipChildren=false deixa a
              SeekBar girada aparecer e receber toque. -->

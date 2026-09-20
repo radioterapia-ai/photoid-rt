@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    O visto do OCR, preparado para ser DESENHADO em vez de aparecer.
+
+    O `pathData` e um traco unico — desce ate o vertice e sobe — porque
+    trimPathStart/trimPathEnd percorrem UM caminho. Dois tracos separados
+    animariam em paralelo e o visto se formaria pelas duas pontas ao mesmo
+    tempo, que nao e como uma mao escreve.
+
+    `strokeLineCap=round` e `strokeLineJoin=round` deixam a ponta arredondada
+    durante o traco; com cap quadrado o inicio aparece como um retangulo solto
+    antes de virar linha.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <group android:name="grupoVisto" android:pivotX="24" android:pivotY="24">
+        <path
+            android:name="traco"
+            android:pathData="M13,25 L21,33 L35,16"
+            android:strokeColor="#FF00E676"
+            android:strokeWidth="5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:fillColor="#00000000"
+            android:trimPathStart="0"
+            android:trimPathEnd="0" />
+    </group>
+</vector>

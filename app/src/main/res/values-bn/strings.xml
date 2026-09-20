@@ -814,4 +814,5 @@
     <string name="prot_verso_remover">পিছন সরান</string>
     <string name="prot_verso_remover_q">পিছনের PDF মুছে যাবে। পাতার সামনের দিকটি প্রোটোকলে থেকে যাবে।</string>
     <string name="prot_pagina_item_verso">পৃষ্ঠা %1$d — %2$d পাতা + পিছন</string>
+    <string name="cam_ajuste_encaixar">ফ্রেমে মানিয়ে নিন</string>
 </resources>

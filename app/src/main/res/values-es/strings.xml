@@ -884,4 +884,5 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="prot_verso_remover">Quitar reverso</string>
     <string name="prot_verso_remover_q">El PDF del reverso se elimina. El anverso sigue en el protocolo.</string>
     <string name="prot_pagina_item_verso">Página %1$d — %2$d hoja(s) + reverso</string>
+    <string name="cam_ajuste_encaixar">Ajusta para encajar</string>
 </resources>

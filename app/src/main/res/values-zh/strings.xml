@@ -814,4 +814,5 @@
     <string name="prot_verso_remover">移除背面</string>
     <string name="prot_verso_remover_q">背面的 PDF 将被删除。正面仍保留在协议文件中。</string>
     <string name="prot_pagina_item_verso">第 %1$d 页 — %2$d 张 + 背面</string>
+    <string name="cam_ajuste_encaixar">调整以填满取景框</string>
 </resources>

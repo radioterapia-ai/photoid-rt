@@ -814,4 +814,5 @@
     <string name="prot_verso_remover">뒷면 제거</string>
     <string name="prot_verso_remover_q">뒷면 PDF가 삭제됩니다. 앞면은 프로토콜에 그대로 남습니다.</string>
     <string name="prot_pagina_item_verso">%1$d쪽 — %2$d장 + 뒷면</string>
+    <string name="cam_ajuste_encaixar">프레임에 맞게 조정</string>
 </resources>

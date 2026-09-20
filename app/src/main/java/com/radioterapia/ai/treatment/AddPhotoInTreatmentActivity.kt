@@ -134,6 +134,9 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         btnSalvarEnviar = findViewById(R.id.btnApSalvarEnviar)
         // Padrão unificado com o RT Sim: crop embutido + ícone girar + tabs
         apCropPreview = findViewById(R.id.apCropPreview)
+        apMolduraRecorte = findViewById(R.id.apMolduraRecorte)
+        apAvisoEncaixar = findViewById(R.id.avisoEncaixar)
+        apImgPinca = findViewById(R.id.imgPincaAviso)
         apBtnGirarVisor = findViewById(R.id.apBtnGirarVisor)
         apBtnGirarVisor.setOnClickListener { apCropPreview.girar(); seekZoom.progress = 0 }
         apCropPreview.onZoomMudou = { p -> seekZoom.progress = p }
@@ -266,6 +269,13 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                     else CameraSelector.DEFAULT_BACK_CAMERA,
                     preview, imageCapture)
                 seekZoom.progress = 0
+                // Mesma conta da tela de simulacao: a moldura segue a proporcao
+                // do QUADRO, que muda quando o tablet vira.
+                val deitado = rotacao == android.view.Surface.ROTATION_90 ||
+                              rotacao == android.view.Surface.ROTATION_270
+                apMolduraRecorte?.aspectoVisor = if (deitado) 16f / 9f else 9f / 16f
+                apMolduraRecorte?.visibility = View.VISIBLE
+                com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(apAvisoEncaixar, apImgPinca)
             } catch (e: Exception) {
                 Toast.makeText(this, getString(R.string.err_camera, e.message ?: ""), Toast.LENGTH_LONG).show()
             }
@@ -395,6 +405,9 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
     }
 
     private lateinit var apCropPreview: com.radioterapia.ai.crop.CropImageView
+    private var apMolduraRecorte: com.radioterapia.ai.camera.MolduraRecorteView? = null
+    private var apAvisoEncaixar: View? = null
+    private var apImgPinca: android.widget.ImageView? = null
     private lateinit var apBtnGirarVisor: android.widget.ImageButton
     private var categoriaAp = com.radioterapia.ai.session.SessionManager.Category.POSITIONING
 
@@ -603,6 +616,9 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
             // ETAPA ÚNICA: moldura 16:9 + regra dos terços + pinça + ⟳ girar.
             val bm = com.radioterapia.ai.util.ImagemUtils.decodificarComExif(arq)
             if (bm != null) { apCropPreview.definirBitmap(bm); apCropPreview.visibility = View.VISIBLE }
+            // Moldura sai, aviso volta: o recorte de verdade assume a tela.
+            apMolduraRecorte?.visibility = View.GONE
+            com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(apAvisoEncaixar, apImgPinca)
             imgPreview.visibility = View.GONE
             apBtnGirarVisor.visibility = View.VISIBLE
             ligarSeekAoCropAp()
@@ -619,6 +635,9 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
     private fun voltarParaCamera() {
         imgPreview.setImageBitmap(null)
         viewFinder.visibility = View.VISIBLE
+        // A moldura volta com o visor: vem outra foto, vale a licao de novo.
+        apMolduraRecorte?.visibility = View.VISIBLE
+        com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(apAvisoEncaixar, apImgPinca)
         if (config.cameraGrid) gridOverlay.visibility = View.VISIBLE
         imgPreview.visibility = View.GONE
         apCropPreview.visibility = View.GONE

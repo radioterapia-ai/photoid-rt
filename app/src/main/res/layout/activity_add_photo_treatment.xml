@@ -33,6 +33,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!-- Moldura do recorte: mesma regra da tela de simulacao. -->
+        <com.radioterapia.ai.camera.MolduraRecorteView
+            android:id="@+id/apMolduraRecorte"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <ImageView
             android:id="@+id/apImgPreview"
             android:layout_width="match_parent"
@@ -53,6 +59,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
+
+        <include
+            layout="@layout/aviso_encaixar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="22dp" />
 
         <!-- Zoom vertical sobreposto à esquerda do visor (padrão RT Sim) -->
         <LinearLayout

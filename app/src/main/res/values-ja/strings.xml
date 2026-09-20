@@ -814,4 +814,5 @@
     <string name="prot_verso_remover">裏面を外す</string>
     <string name="prot_verso_remover_q">裏面の PDF は削除されます。表面はプロトコルに残ります。</string>
     <string name="prot_pagina_item_verso">%1$d ページ — %2$d 枚 + 裏面</string>
+    <string name="cam_ajuste_encaixar">枠に収まるよう調整</string>
 </resources>

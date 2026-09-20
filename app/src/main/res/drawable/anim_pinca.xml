@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    A pinca em movimento: as duas pontas aproximam-se e afastam-se.
+
+    DOIS CICLOS, ~2,8 s. duration=700 com repeatCount=3 e repeatMode=reverse da
+    quatro trechos de 700 ms — dentro, fora, dentro, fora — e termina exatamente
+    onde comecou, sem salto no ultimo quadro. Depois disso quem some com o aviso
+    e o fade do balao, nao esta animacao.
+
+    O movimento e so translateX. Escalar o quadro junto pareceria mais rico e
+    seria pior: o quadro e a moldura, e moldura que muda de tamanho enquanto
+    ensina a encaixar na moldura contradiz a propria licao.
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_pinca">
+
+    <target android:name="dedoEsq">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt"
+            name="android:animation">
+            <objectAnimator
+                android:propertyName="translateX"
+                android:valueFrom="0"
+                android:valueTo="6.5"
+                android:valueType="floatType"
+                android:duration="700"
+                android:repeatCount="3"
+                android:repeatMode="reverse"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+
+    <target android:name="dedoDir">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt"
+            name="android:animation">
+            <objectAnimator
+                android:propertyName="translateX"
+                android:valueFrom="0"
+                android:valueTo="-6.5"
+                android:valueType="floatType"
+                android:duration="700"
+                android:repeatCount="3"
+                android:repeatMode="reverse"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+</animated-vector>

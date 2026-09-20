@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    "Ajuste para encaixar" — o aviso que ensina o enquadramento.
+
+    Aparece ao abrir a camera e de novo na revisao da foto, faz dois ciclos da
+    pinca e esmaece. NAO e clicavel e NAO consome toque: ele flutua sobre o
+    visor, e um toque nele tem de chegar na camera embaixo, senao o aviso que
+    ensina a ajustar seria o que impede de ajustar.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/avisoEncaixar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_aviso_encaixar"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp"
+    android:elevation="6dp"
+    android:clickable="false"
+    android:focusable="false"
+    android:duplicateParentState="false"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/imgPincaAviso"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:src="@drawable/anim_pinca"
+        android:contentDescription="@string/cam_ajuste_encaixar" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:text="@string/cam_ajuste_encaixar"
+        android:textColor="#FFFFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:maxWidth="230dp" />
+</LinearLayout>

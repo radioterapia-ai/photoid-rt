@@ -941,4 +941,5 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="prot_verso_remover">Tirar verso</string>
     <string name="prot_verso_remover_q">O PDF do verso é apagado. A frente da folha continua no protocolo.</string>
     <string name="prot_pagina_item_verso">Página %1$d — %2$d folha(s) + verso</string>
+    <string name="cam_ajuste_encaixar">Ajuste para encaixar</string>
 </resources>

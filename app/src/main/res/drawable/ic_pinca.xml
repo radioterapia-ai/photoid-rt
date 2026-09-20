@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Gesto de pinca, desenhado em vetor.
+
+    POR QUE VETOR E NAO TRES PNGs DE MAO: um desenho de mao em tres quadros pesa
+    no APK, nao escala entre densidades e nao acompanha o tema. Aqui o gesto e
+    reduzido ao que ele comunica — duas pontas de dedo aproximando-se de um
+    quadro — e isso le em qualquer tamanho.
+
+    Os grupos `dedoEsq` e `dedoDir` existem para o AnimatedVectorDrawable
+    (anim_pinca.xml) ter algo nomeado para mover. Sem eles, nao ha alvo.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="40dp"
+    android:height="40dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48"
+    android:tint="@android:color/white">
+
+    <!-- O quadro: o mesmo 16:9 arredondado que a moldura do visor mostra. -->
+    <path
+        android:name="quadro"
+        android:pathData="M10,17 L38,17 A3,3 0 0 1 41,20 L41,28 A3,3 0 0 1 38,31 L10,31 A3,3 0 0 1 7,28 L7,20 A3,3 0 0 1 10,17 Z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="2"
+        android:strokeAlpha="0.65"
+        android:fillColor="#00000000" />
+
+    <group android:name="dedoEsq">
+        <path
+            android:name="pontaEsq"
+            android:pathData="M10,24 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 Z"
+            android:fillColor="#FFFFFFFF" />
+    </group>
+
+    <group android:name="dedoDir">
+        <path
+            android:name="pontaDir"
+            android:pathData="M29,24 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 Z"
+            android:fillColor="#FFFFFFFF" />
+    </group>
+</vector>

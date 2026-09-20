@@ -96,6 +96,9 @@ class MainActivity : BaseActivity() {
     private lateinit var viewFinder: PreviewView
     private lateinit var imgPreview: ImageView
     private lateinit var cropPreview: com.radioterapia.ai.crop.CropImageView
+    private var molduraRecorte: com.radioterapia.ai.camera.MolduraRecorteView? = null
+    private var avisoEncaixar: View? = null
+    private var imgPincaAviso: android.widget.ImageView? = null
     private lateinit var btnCapturar: ImageButton
     private lateinit var btnSalvar: Button
     private lateinit var btnDescartar: Button
@@ -535,6 +538,23 @@ class MainActivity : BaseActivity() {
             })
     }
 
+    /**
+     * Liga a moldura do recorte e ensina o enquadramento.
+     *
+     * O AVISO SO APARECE COM A CAMERA AO VIVO. Mostra-lo durante a revisao da
+     * foto ja tirada seria pedir um ajuste que aquela tela nao faz.
+     */
+    private fun mostrarMolduraDoVisor() {
+        molduraRecorte?.visibility = View.VISIBLE
+        molduraRecorte?.molduraVisivel = true
+        com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(avisoEncaixar, imgPincaAviso)
+    }
+
+    private fun esconderMolduraDoVisor() {
+        molduraRecorte?.visibility = View.GONE
+        com.radioterapia.ai.ui.anim.Movimento.esconderAviso(avisoEncaixar)
+    }
+
     private fun bindViews() {
         viewFinder = findViewById(R.id.viewFinder)
         // WYSIWYG: mostra todo o quadro 16:9 que será capturado (faixas pretas nas
@@ -542,6 +562,9 @@ class MainActivity : BaseActivity() {
         viewFinder.scaleType = PreviewView.ScaleType.FIT_CENTER
         imgPreview = findViewById(R.id.imgPreview)
         cropPreview = findViewById(R.id.cropPreview)
+        molduraRecorte = findViewById(R.id.molduraRecorte)
+        avisoEncaixar = findViewById(R.id.avisoEncaixar)
+        imgPincaAviso = findViewById(R.id.imgPincaAviso)
         btnCapturar = findViewById(R.id.btnCapturar)
         btnSalvar = findViewById(R.id.btnSalvar)
         btnDescartar = findViewById(R.id.btnDescartar)
@@ -1739,6 +1762,21 @@ class MainActivity : BaseActivity() {
                     else CameraSelector.DEFAULT_BACK_CAMERA,
                     preview, imageCapture)
                 seekZoom.progress = 0
+
+                /*
+                    A MOLDURA PRECISA SABER A PROPORCAO DO QUADRO, nao a da tela.
+
+                    Com o tablet deitado a captura e 16:9 e o recorte quase nao
+                    tira nada. Em pe ela vira 9:16, e o recorte 16:9 descarta
+                    faixas em cima e embaixo — que e exatamente a confusao que os
+                    tecnicos relataram. Calcular isso pela proporcao da View daria
+                    a moldura errada, porque o PreviewView esta em FIT_CENTER e
+                    sobra tarja.
+                 */
+                val deitado = rotacao == android.view.Surface.ROTATION_90 ||
+                              rotacao == android.view.Surface.ROTATION_270
+                molduraRecorte?.aspectoVisor = if (deitado) 16f / 9f else 9f / 16f
+                mostrarMolduraDoVisor()
             } catch (e: Exception) {
                 Toast.makeText(this, getString(R.string.err_camera, e.message ?: ""), Toast.LENGTH_LONG).show()
             }
@@ -1886,6 +1924,7 @@ class MainActivity : BaseActivity() {
             val opt = BitmapFactory.Options().apply { inSampleSize = 2 }
             imgPreview.setImageBitmap(BitmapFactory.decodeFile(arq.absolutePath, opt))
             imgPreview.visibility = View.VISIBLE
+            esconderMolduraDoVisor()
             cropPreview.visibility = View.GONE
             btnGirarVisor.visibility = View.GONE
             bloquearTabs(true)
@@ -1899,6 +1938,7 @@ class MainActivity : BaseActivity() {
             val bm = com.radioterapia.ai.util.ImagemUtils.decodificarComExif(arq)
             imgPreview.setImageBitmap(bm)
             imgPreview.visibility = View.VISIBLE
+            esconderMolduraDoVisor()
             cropPreview.visibility = View.GONE
             btnGirarVisor.visibility = View.GONE
             bloquearTabs(true)
@@ -1917,6 +1957,12 @@ class MainActivity : BaseActivity() {
                 cropPreview.definirBitmap(bm)
                 cropPreview.visibility = View.VISIBLE
             }
+            // A MOLDURA SAI e o AVISO VOLTA. Aqui o recorte de verdade esta na
+            // tela: manter a moldura por cima dele seria desenhar duas molduras.
+            // O aviso reaparece porque este e o segundo momento em que da para
+            // ajustar — e o unico em que o ajuste ainda e reversivel.
+            esconderMolduraDoVisor()
+            com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(avisoEncaixar, imgPincaAviso)
             btnGirarVisor.visibility = View.VISIBLE
             bloquearTabs(true)
             ligarSeekAoCrop()
@@ -1938,6 +1984,9 @@ class MainActivity : BaseActivity() {
         imgPreview.visibility = View.GONE
         cropPreview.visibility = View.GONE
         viewFinder.visibility = View.VISIBLE
+        // A moldura volta junto com o visor: quem descartou a foto vai enquadrar
+        // outra, e e nesse instante que a licao vale de novo.
+        mostrarMolduraDoVisor()
         if (config.cameraGrid) gridOverlay.visibility = View.VISIBLE
         layoutControlesCamera.visibility = View.VISIBLE
         btnCapturar.visibility = View.VISIBLE

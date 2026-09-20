@@ -814,4 +814,5 @@
     <string name="prot_verso_remover">Togliere il retro</string>
     <string name="prot_verso_remover_q">Il PDF del retro viene eliminato. Il fronte resta nel protocollo.</string>
     <string name="prot_pagina_item_verso">Pagina %1$d — %2$d foglio/i + retro</string>
+    <string name="cam_ajuste_encaixar">Regola per inquadrare</string>
 </resources>

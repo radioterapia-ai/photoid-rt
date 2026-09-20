@@ -884,4 +884,5 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="prot_verso_remover">Remove back</string>
     <string name="prot_verso_remover_q">The back PDF is deleted. The front of the sheet stays in the protocol.</string>
     <string name="prot_pagina_item_verso">Page %1$d — %2$d sheet(s) + back</string>
+    <string name="cam_ajuste_encaixar">Fit inside the frame</string>
 </resources>
