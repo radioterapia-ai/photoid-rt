@@ -32,7 +32,7 @@ cada campo sugerido sao responsabilidade nossa.
 Apache License 2.0
 ------------------
   AndroidX (core-ktx, appcompat, constraintlayout, recyclerview, viewpager2,
-    exifinterface, documentfile, security-crypto, room)
+    exifinterface, documentfile, security-crypto, room, work-runtime)
     Copyright The Android Open Source Project
 
   AndroidX CameraX (camera-core, camera-camera2, camera-lifecycle, camera-view)
@@ -47,6 +47,9 @@ Apache License 2.0
   SMBJ
     Copyright Jeroen van Erp e contribuidores
 
+  Apache Commons Net
+    Copyright The Apache Software Foundation
+
   ZXing Android Embedded
     Copyright Journey Mobile e contribuidores
     Baseado no ZXing, Copyright ZXing Authors
@@ -55,6 +58,12 @@ Apache License 2.0
     Copyright Andrew Rucker Jones e contribuidores
 
   Uma copia da Apache License 2.0 esta em LICENSE, na raiz deste repositorio.
+
+Revised BSD (3-Clause)
+----------------------
+  JSch (fork mantido por Matthias Wiedemann)
+    Copyright Atsuhiko Yamanaka, ymnk e contribuidores
+    Fork em com.github.mwiede, Copyright Matthias Wiedemann e contribuidores
 
 BSD 2-Clause e Apache License 2.0
 ---------------------------------

@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">Di nostra realizzazione: il flusso di acquisizione per categoria, l\'organizzazione dei file, la scheda di posizionamento con la sua pagina di Time-Out, e le regole che interpretano il testo già riconosciuto.</string>
     <string name="creditos_sec_terceiros">Componenti di terzi</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — Termini del ML Kit (proprietaria, uso gratuito) — riconoscimento del testo 16.0.1, codice a barre 17.2.0, scanner di documenti 16.0.0-beta1. Google pubblica ML Kit come SDK di uso generale; non lo dichiara dispositivo medico né lo destina a uso clinico.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX e CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies e Google — BSD 2-Clause e Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX e CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies e Google — BSD 2-Clause e Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">Questa applicazione è distribuita sotto la Apache License 2.0. Il testo completo e le note di attribuzione accompagnano il pacchetto.</string>
     <string name="creditos_regime">Il codice pubblicato è materiale didattico e non è un dispositivo medico. Chi lo scarica, lo modifica e lo installa risponde della propria build e della validazione nel proprio servizio.</string>
     <string name="add_from_gallery">Aggiungi dalla galleria</string>

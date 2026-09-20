@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">由我们编写的部分：按类别采集照片的流程、文件的组织方式、含 Time-Out 页的摆位记录单，以及解读已识别文字的规则。</string>
     <string name="creditos_sec_terceiros">第三方组件</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — ML Kit 条款（专有，免费使用）— 文字识别 16.0.1、条形码扫描 17.2.0、文档扫描 16.0.0-beta1。Google 将 ML Kit 作为通用开发者 SDK 发布，未将其声明为医疗器械，也未将其用于临床用途。</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX 和 CameraX（Android Open Source Project）、Material Components（Google）、kotlinx-coroutines（JetBrains）、SMBJ（Jeroen van Erp）、ZXing Android Embedded（Journey Mobile）、OpenCSV（Andrew Rucker Jones）。</string>
-    <string name="creditos_glide">Glide — Bump Technologies 和 Google — BSD 2-Clause 和 Apache-2.0 — 4.16.0。</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX 和 CameraX（Android Open Source Project）、Material Components（Google）、kotlinx-coroutines（JetBrains）、SMBJ（Jeroen van Erp）、ZXing Android Embedded（Journey Mobile）、OpenCSV（Andrew Rucker Jones）、WorkManager（Android Open Source Project）、Apache Commons Net（Apache Software Foundation）。</string>
+    <string name="creditos_glide">Glide — Bump Technologies 和 Google — BSD 2-Clause 和 Apache-2.0 — 4.16.0。 JSch — Atsuhiko Yamanaka 与 Matthias Wiedemann — Revised BSD — 0.2.17。</string>
     <string name="creditos_licenca_app">本应用依据 Apache License 2.0 分发。完整文本和署名声明随安装包一并提供。</string>
     <string name="creditos_regime">公开发布的源代码为教学材料，不是医疗器械。下载、修改并部署的一方，对自己的构建版本以及在本单位内的验证负责。</string>
     <string name="add_from_gallery">从相册添加</string>

@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">Naszego autorstwa: przebieg wykonywania zdjęć według kategorii, organizacja plików, karta ułożenia ze stroną Time-Out oraz reguły interpretujące już rozpoznany tekst.</string>
     <string name="creditos_sec_terceiros">Komponenty firm trzecich</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — Warunki ML Kit (własnościowe, bezpłatne użycie) — rozpoznawanie tekstu 16.0.1, kod kreskowy 17.2.0, skaner dokumentów 16.0.0-beta1. Google publikuje ML Kit jako SDK ogólnego przeznaczenia; nie deklaruje go jako wyrobu medycznego ani nie przeznacza do zastosowań klinicznych.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX i CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies i Google — BSD 2-Clause oraz Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX i CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies i Google — BSD 2-Clause oraz Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">Ta aplikacja jest rozpowszechniana na licencji Apache License 2.0. Pełny tekst i noty o autorstwie dołączono do paczki.</string>
     <string name="creditos_regime">Opublikowany kod jest materiałem edukacyjnym i nie jest wyrobem medycznym. Kto go pobiera, modyfikuje i wdraża, odpowiada za własną kompilację i walidację we własnym ośrodku.</string>
     <string name="add_from_gallery">Dodaj z galerii</string>

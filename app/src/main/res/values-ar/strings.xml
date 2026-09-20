@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">من تأليفنا: مسار التصوير حسب الفئة، وتنظيم الملفات، وورقة الوضعية مع صفحة Time-Out، والقواعد التي تفسّر النص بعد التعرف عليه.</string>
     <string name="creditos_sec_terceiros">مكوّنات من أطراف ثالثة</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — شروط ML Kit (مملوكة، الاستخدام مجاني) — التعرف على النص 16.0.1، الرمز الشريطي 17.2.0، ماسح المستندات 16.0.0-beta1. تنشر Google حزمة ML Kit بوصفها SDK عامة الغرض؛ ولا تصفها بأنها جهاز طبي ولا تخصصها للاستخدام السريري.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX وCameraX (Android Open Source Project)، Material Components (Google)، kotlinx-coroutines (JetBrains)، SMBJ (Jeroen van Erp)، ZXing Android Embedded (Journey Mobile)، OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies وGoogle — BSD 2-Clause وApache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX وCameraX (Android Open Source Project)، Material Components (Google)، kotlinx-coroutines (JetBrains)، SMBJ (Jeroen van Erp)، ZXing Android Embedded (Journey Mobile)، OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies وGoogle — BSD 2-Clause وApache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">يُوزَّع هذا التطبيق بموجب Apache License 2.0. ويرافق الحزمةَ النصُّ الكامل وإشعارات الإسناد.</string>
     <string name="creditos_regime">الكود المنشور مادة تعليمية وليس جهازًا طبيًا. ومن ينزّله ويعدّله وينشره يتحمل مسؤولية نسخته الخاصة والتحقق منها داخل مركزه.</string>
     <string name="add_from_gallery">إضافة من معرض الصور</string>

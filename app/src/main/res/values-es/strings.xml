@@ -651,8 +651,8 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="creditos_nossa_parte">De nuestra autoría: el flujo de captura por categoría, la organización de los archivos, la ficha de posicionamiento con su página de Time-Out, y las reglas que interpretan el texto ya reconocido.</string>
     <string name="creditos_sec_terceiros">Componentes de terceros</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — Términos del ML Kit (propietaria, uso gratuito) — reconocimiento de texto 16.0.1, código de barras 17.2.0, escáner de documentos 16.0.0-beta1. Google publica ML Kit como SDK de propósito general; no lo declara dispositivo médico ni lo destina a uso clínico.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX y CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies y Google — BSD 2-Clause y Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX y CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies y Google — BSD 2-Clause y Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">Esta aplicación se distribuye bajo la Apache License 2.0. El texto completo y los avisos de atribución acompañan al paquete.</string>
     <string name="creditos_regime">El código publicado es material educativo y no es un dispositivo médico. Quien lo descarga, modifica e implanta responde por su propia compilación y por la validación en su propio servicio.</string>
 

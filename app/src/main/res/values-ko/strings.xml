@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">저희가 만든 부분: 항목별 촬영 흐름, 파일 정리 방식, Time-Out 페이지가 포함된 자세 기록지, 그리고 이미 인식된 문자를 해석하는 규칙.</string>
     <string name="creditos_sec_terceiros">제3자 구성요소</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — ML Kit 약관(독점, 무료 사용) — 문자 인식 16.0.1, 바코드 17.2.0, 문서 스캐너 16.0.0-beta1. Google은 ML Kit을 범용 SDK로 공개하며, 의료기기로 선언하거나 임상 용도로 지정하지 않습니다.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX 및 CameraX(Android Open Source Project), Material Components(Google), kotlinx-coroutines(JetBrains), SMBJ(Jeroen van Erp), ZXing Android Embedded(Journey Mobile), OpenCSV(Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies 및 Google — BSD 2-Clause 및 Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX 및 CameraX(Android Open Source Project), Material Components(Google), kotlinx-coroutines(JetBrains), SMBJ(Jeroen van Erp), ZXing Android Embedded(Journey Mobile), OpenCSV(Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies 및 Google — BSD 2-Clause 및 Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">이 앱은 Apache License 2.0에 따라 배포됩니다. 전체 본문과 저작자 표시 고지가 패키지에 동봉되어 있습니다.</string>
     <string name="creditos_regime">공개된 소스 코드는 교육 자료이며 의료기기가 아닙니다. 이를 내려받아 수정하고 배포하는 사람이 자신의 빌드와 자기 기관에서의 검증에 대해 책임집니다.</string>
     <string name="add_from_gallery">갤러리에서 추가</string>

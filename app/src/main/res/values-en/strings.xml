@@ -651,8 +651,8 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="creditos_nossa_parte">Authored by us: the capture flow by category, the file organisation, the positioning sheet with its Time-Out page, and the rules that interpret the already-recognised text.</string>
     <string name="creditos_sec_terceiros">Third-party components</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — ML Kit Terms (proprietary, free to use) — text recognition 16.0.1, barcode scanning 17.2.0, document scanner 16.0.0-beta1. Google publishes ML Kit as a general-purpose developer SDK; it does not declare it a medical device nor intend it for clinical use.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX and CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies and Google — BSD 2-Clause and Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX and CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies and Google — BSD 2-Clause and Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">This app is distributed under the Apache License 2.0. The full text and attribution notices ship with the package.</string>
     <string name="creditos_regime">The published source is educational material and is not a medical device. Whoever downloads, modifies and deploys it is responsible for their own build and for validation in their own service.</string>
 

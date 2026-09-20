@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">আমাদের নিজস্ব: ক্যাটাগরি অনুযায়ী ছবি তোলার ধাপ, ফাইলের সংগঠন, Time-Out পাতাসহ পজিশনিং শিট, এবং ইতিমধ্যে শনাক্ত হওয়া টেক্সট ব্যাখ্যা করার নিয়মগুলো।</string>
     <string name="creditos_sec_terceiros">তৃতীয় পক্ষের কম্পোনেন্ট</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — ML Kit-এর শর্তাবলি (মালিকানাধীন, বিনামূল্যে ব্যবহার) — টেক্সট শনাক্তকরণ 16.0.1, বারকোড 17.2.0, ডকুমেন্ট স্ক্যানার 16.0.0-beta1। Google ML Kit-কে সাধারণ ব্যবহারের SDK হিসেবে প্রকাশ করে; একে মেডিকেল ডিভাইস বলে ঘোষণা করে না, ক্লিনিক্যাল ব্যবহারের জন্যও নির্ধারণ করে না।</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX ও CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies ও Google — BSD 2-Clause ও Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX ও CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies ও Google — BSD 2-Clause ও Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">এই অ্যাপ Apache License 2.0-এর অধীনে বিতরণ করা হয়। সম্পূর্ণ টেক্সট এবং অ্যাট্রিবিউশন নোটিশ প্যাকেজের সঙ্গে থাকে।</string>
     <string name="creditos_regime">প্রকাশিত সোর্স কোড শিক্ষামূলক উপকরণ, মেডিকেল ডিভাইস নয়। যিনি এটি ডাউনলোড করেন, পরিবর্তন করেন ও স্থাপন করেন, নিজের বিল্ড এবং নিজের প্রতিষ্ঠানে যাচাইয়ের দায়িত্ব তাঁরই।</string>
     <string name="add_from_gallery">গ্যালারি থেকে যোগ করুন</string>

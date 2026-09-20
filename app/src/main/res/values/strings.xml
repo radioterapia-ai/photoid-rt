@@ -712,8 +712,8 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="creditos_nossa_parte">De nossa autoria: o fluxo de captura por categoria, a organização dos arquivos, a ficha de posicionamento com a página de Time-Out, e as regras que interpretam o texto já reconhecido.</string>
     <string name="creditos_sec_terceiros">Componentes de terceiros</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — Termos do ML Kit (proprietária, uso gratuito) — reconhecimento de texto 16.0.1, código de barras 17.2.0, scanner de documentos 16.0.0-beta1. O Google publica o ML Kit como SDK de propósito geral; não o declara dispositivo médico nem o destina a uso clínico.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX e CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies e Google — BSD 2-Clause e Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX e CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies e Google — BSD 2-Clause e Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">Este aplicativo é distribuído sob a Apache License 2.0. O texto completo e os avisos de atribuição acompanham o pacote.</string>
     <string name="creditos_regime">O código publicado é material educacional e não é dispositivo médico. Quem baixa, modifica e implanta responde pelo próprio build e pela validação no próprio serviço.</string>
 

@@ -601,8 +601,8 @@
     <string name="creditos_nossa_parte">De notre fait : le flux de capture par catégorie, l\'organisation des fichiers, la fiche de positionnement avec la page de Time-Out, et les règles qui interprètent le texte déjà reconnu.</string>
     <string name="creditos_sec_terceiros">Composants tiers</string>
     <string name="creditos_mlkit">Google ML Kit — Google LLC — Conditions du ML Kit (propriétaire, usage gratuit) — reconnaissance de texte 16.0.1, code-barres 17.2.0, scanner de documents 16.0.0-beta1. Google publie ML Kit comme SDK à usage général ; il ne le déclare pas dispositif médical et ne le destine pas à un usage clinique.</string>
-    <string name="creditos_apache">Apache License 2.0 — AndroidX et CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones).</string>
-    <string name="creditos_glide">Glide — Bump Technologies et Google — BSD 2-Clause et Apache-2.0 — 4.16.0.</string>
+    <string name="creditos_apache">Apache License 2.0 — AndroidX et CameraX (Android Open Source Project), Material Components (Google), kotlinx-coroutines (JetBrains), SMBJ (Jeroen van Erp), ZXing Android Embedded (Journey Mobile), OpenCSV (Andrew Rucker Jones), WorkManager (Android Open Source Project), Apache Commons Net (Apache Software Foundation).</string>
+    <string name="creditos_glide">Glide — Bump Technologies et Google — BSD 2-Clause et Apache-2.0 — 4.16.0. JSch — Atsuhiko Yamanaka e Matthias Wiedemann — Revised BSD — 0.2.17.</string>
     <string name="creditos_licenca_app">Cette application est distribuée sous la Apache License 2.0. Le texte complet et les avis d\'attribution accompagnent le paquet.</string>
     <string name="creditos_regime">Le code publié est du matériel éducatif et n\'est pas un dispositif médical. Celui qui le télécharge, le modifie et le déploie répond de sa propre compilation et de la validation dans son propre service.</string>
     <string name="add_from_gallery">Ajouter depuis la galerie</string>

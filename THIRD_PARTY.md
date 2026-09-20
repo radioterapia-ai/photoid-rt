@@ -44,7 +44,9 @@ way. We record the absence rather than attribute a position nobody wrote.
 | `androidx.room:room-runtime` | 2.6.1 | Apache-2.0 | The Android Open Source Project |
 | `androidx.security:security-crypto` | 1.1.0-alpha06 | Apache-2.0 | The Android Open Source Project |
 | `androidx.viewpager2:viewpager2` | 1.1.0 | Apache-2.0 | The Android Open Source Project |
+| `androidx.work:work-runtime-ktx`<br><sub>fila da sincronizacao, sobrevive a reinicio</sub> | 2.9.0 | Apache-2.0 | The Android Open Source Project |
 | `com.github.bumptech.glide:glide` | 4.16.0 | BSD-2-Clause e Apache-2.0 | Google Inc. e Bump Technologies Inc. |
+| `com.github.mwiede:jsch`<br><sub>SFTP. Fork mantido do JSch, que parou em 2018</sub> | 0.2.17 | Revised BSD (3-Clause) | Atsuhiko Yamanaka, ymnk e Matthias Wiedemann |
 | `com.google.android.gms:play-services-mlkit-document-scanner`<br><sub>NAO e software livre. Resolvida pelo Google Play services.</sub> | 16.0.0-beta1 | Termos das APIs do Google (proprietaria, uso gratuito) | Google LLC |
 | `com.google.android.material:material` | 1.11.0 | Apache-2.0 | Google LLC |
 | `com.google.mlkit:barcode-scanning`<br><sub>NAO e software livre. Embarcada no APK como biblioteca nativa.</sub> | 17.2.0 | Termos do ML Kit (proprietaria, uso gratuito) | Google LLC |
@@ -52,6 +54,7 @@ way. We record the absence rather than attribute a position nobody wrote.
 | `com.hierynomus:smbj`<br><sub>cliente SMB</sub> | 0.13.0 | Apache-2.0 | Jeroen van Erp |
 | `com.journeyapps:zxing-android-embedded` | 4.3.0 | Apache-2.0 | Journey Mobile, Inc. |
 | `com.opencsv:opencsv`<br><sub>leitura da base de pacientes</sub> | 5.9 | Apache-2.0 | OpenCSV contributors |
+| `commons-net:commons-net`<br><sub>FTP e FTPS na sincronizacao</sub> | 3.10.0 | Apache-2.0 | The Apache Software Foundation |
 | `org.jetbrains.kotlinx:kotlinx-coroutines-android` | 1.7.3 | Apache-2.0 | JetBrains s.r.o. |
 
 ## Test only — not distributed
