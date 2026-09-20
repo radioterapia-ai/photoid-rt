@@ -29,8 +29,39 @@ package com.radioterapia.ai.branding
  */
 object Marca {
 
-    /** O nome do produto, para uso em caminho de arquivo e nome de pasta. */
+    /**
+     * O nome do produto, para uso em caminho de arquivo e nome de pasta.
+     *
+     * COMO ELE SE ESCREVE QUANDO É LOGOTIPO: **"PhotoID" em branco e "RT" no
+     * gradiente** — a mesma construção do logotipo do ecossistema, onde
+     * "radioterapia" é branco e ".ai" recebe o gradiente. Duas palavras, um
+     * contraste, e o olho separa o produto da família sem precisar de legenda.
+     *
+     * O gradiente é o de [GRADIENTE_LOGOTIPO], que é o que `colors.xml` declara
+     * como idêntico ao logo.
+     *
+     * Aqui a constante é texto puro, porque caminho de arquivo não tem cor. A
+     * regra vale para peça gráfica — o cabeçalho do repositório a segue. A tela
+     * Sobre ainda desenha o nome chapado: mudá-la exige `SpannableString` com
+     * `LinearGradient`, e é alteração de interface que ninguém pediu.
+     */
     const val NOME = "PhotoID RT"
+
+    /**
+     * O gradiente do logotipo, espelho de `grad_start`/`grad_mid`/`grad_end` em
+     * `res/values/colors.xml`.
+     *
+     * ATENÇÃO À DIVERGÊNCIA, que ainda não foi resolvida: a identidade do
+     * ecossistema (`references/identidade-visual.md` da skill de marketing)
+     * define o acento do perfil @radioterapia.ai como `#0A2A6B → #24D3EE`,
+     * azul → ciano. O `colors.xml` declara `#42A5F5 → #7B6FE0 → #B254E8`,
+     * azul → roxo, dizendo-o idêntico ao logo — e o logotipo renderizado em
+     * `assets/marca/logotipo_9x16.png` é, de fato, azul → roxo.
+     *
+     * Um dos dois documentos envelheceu. Enquanto não se sabe qual, as peças
+     * usam este, que é o que o logotipo mostra.
+     */
+    val GRADIENTE_LOGOTIPO = listOf(0xFF42A5F5.toInt(), 0xFF7B6FE0.toInt(), 0xFFB254E8.toInt())
 
     /** O nome do ecossistema. Também é a marca registrada. */
     const val ECOSSISTEMA = "Radioterapia.AI"
