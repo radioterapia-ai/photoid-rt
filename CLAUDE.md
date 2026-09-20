@@ -38,9 +38,24 @@ em obrigatório, não adicionar confirmação onde ela pode ser inferida.
 **O app é universal.** Serve a qualquer serviço de radioterapia, não à clínica de
 origem. Nada de listas fixas, fluxos ou nomenclatura específicos de um serviço.
 
-**Sincronia não é do app.** Fotos e PDFs vão para o servidor por FileSync,
-externo. A única função de rede do app é a impressora. Não reintroduzir upload,
-fila de envio ou indicadores de sincronização.
+**Sincronia É do app desde a v4.0, e vem desligada.** Esta restrição existiu e
+foi levantada pelo Henrique em 20/09/2026; fica registrada porque a versão
+anterior dela — «não reintroduzir upload, fila de envio ou indicadores de
+sincronização» — está em commits antigos, e sem esta linha alguém a reaplicaria
+de boa-fé.
+
+O que vale agora: o app leva os arquivos ao destino que o serviço configurar
+(SMB, WebDAV, FTP, SFTP ou pasta de nuvem por SAF), e o **interruptor mestre
+nasce desligado**. Desligado, o comportamento é exatamente o de antes: nenhum
+serviço em segundo plano, nenhuma tentativa de rede, nenhum dado saindo por
+conta própria — quem já usa FolderSync não é obrigado a migrar por ter
+atualizado o app. Este é o único ponto inegociável da função, porque é o que a
+Política de Privacidade afirma na seção 12.
+
+A sincronização é de **uma via e nunca apaga**. Não é limitação a ser removida:
+é o que separa cópia de segurança de espelhamento, e espelhamento com dado de
+paciente faz uma exclusão acidental no tablet apagar o que está no servidor da
+instituição — que é a cópia boa.
 
 **Sem Bluetooth próprio.** Impressão por Bluetooth é coberta pelo serviço de
 impressão do Android, via plugins do fabricante. Implementar protocolo próprio
@@ -84,8 +99,12 @@ Tornar alcançável não é neutro: é o que transforma biblioteca disponível e
 usada na clínica. Por isso a declaração de apoio clínico e a conferência humana
 em cada campo sugerido são responsabilidade nossa, e não enfeite.
 
-**Rede confinada a quatro arquivos.** `PrinterClient`, `SmbClient`,
-`CsvSyncManager` e `TreatmentPhotoFetcher`. O ritual de validação **quebra** se
+**Rede confinada a oito arquivos.** `PrinterClient`, `SmbClient`,
+`CsvSyncManager`, `TreatmentPhotoFetcher` e os quatro adaptadores de destino da
+v4.0 — `sync/destino/DestinoSmb`, `DestinoWebDav`, `DestinoFtp` e `DestinoSftp`.
+(`DestinoSaf` **não** entra: ele fala com o provedor de documentos do próprio
+Android, não com a rede; quem sai para a internet ali é o app de nuvem que a
+clínica já instalou, com a conta dela.) O ritual de validação **quebra** se
 aparecer primitiva de rede fora deles. Acrescentar rede exige incluir o arquivo
 na lista de `primitivas_de_rede()`, o que aparece no diff e vai a revisão — o
 risco nunca foi o que o app faz, e sim uma biblioteca nova sair para a internet

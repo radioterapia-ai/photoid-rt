@@ -35,6 +35,8 @@ The flow:
    observations, planned number of fractions.
 4. **Generate the positioning sheet** in PDF, with the Time-Out page.
 5. **Print it**, over the network or through the Android print service.
+6. **Optionally, let the tablet deliver the files** to the service's own server.
+   Off by default — see [Delivering the files](#delivering-the-files).
 
 ## What is ours, and what is not
 
@@ -84,14 +86,24 @@ the model has to live on the device.
 - **Photographs of patients are personal data**, and a facial photograph tied to
   a medical record number is biometric data. The healthcare institution is the
   controller; the app is a tool it operates under its own responsibility.
-- **No cloud, no telemetry, no analytics.** Network access is confined to four
-  files — network printing, SMB, patient-list sync and treatment photo retrieval
-  — and a check in the validation ritual fails the build if a network primitive
-  appears anywhere else. There is no server of ours and no third-party API.
-- Images leave the device only by explicit user action: SMB upload to the
-  service's own server, USB drive, or network printing. Moving files to the
-  clinic's server is done by FileSync, an external application independent of
-  this one.
+- **No cloud of ours, no telemetry, no analytics.** Network access is confined to
+  eight files — network printing, SMB, patient-list sync, treatment photo
+  retrieval, and the four synchronization adapters — and a check in the
+  validation ritual fails the build if a network primitive appears anywhere
+  else. That list doubling in 4.0 is exactly the kind of decision the check
+  exists to make visible: it shows up in the diff and goes to review. There is
+  no server of ours and no third-party API.
+- Images leave the device only to somewhere the service chose: network printing,
+  a USB drive, a synchronization app it installed, or the built-in
+  synchronization it configured and enabled. Every destination is an address the
+  institution itself provides.
+- **Where that address points is the institution's decision, and it has
+  consequences.** Pointed at a server on its own network, nothing crosses a
+  border. Pointed at a cloud service, the files come to be stored where that
+  service stores them, under that service's terms. The Privacy Policy inside the
+  app says this in those words, in all twelve languages — it used to say
+  "there is no international transfer", which stopped being true the moment the
+  cloud destination existed.
 - Photographs are stored in shared storage at `PhotoID_RT/PHOTOS/`, so the
   tablet's gallery can see them. When "All files access" is not granted, the app
   falls back to its private folder — **and says so on screen**, because Android
@@ -100,6 +112,40 @@ the model has to live on the device.
   CSV, no DICOM series, no log carrying an identifier. `*.csv`, `*.xlsx`,
   `*.xlsb` and `*.dcm` are in `.gitignore` as a second barrier, not as
   permission. To test the patient-list import, use invented data.
+
+## Delivering the files
+
+The photographs and the PDF are written to the tablet's shared storage. Getting
+them to the service's server is a separate problem, and the app offers two
+answers to it.
+
+**The one that has always been there:** point any synchronization app — FolderSync
+and the like — at the `PhotoID_RT` folder. The app does nothing; the folder is
+just a folder.
+
+**The one added in 4.0:** the app delivers them itself, to destinations the
+service configures — an SMB file server, WebDAV, FTP, SFTP, or a folder in a
+cloud app already installed on the tablet (through the Android document picker,
+so no credential of that cloud ever passes through this app).
+
+It is **off by default, and that is not a formality.** With the master switch
+off there is no background service, no connection attempt, and nothing leaves
+the device — the behaviour is exactly what it was before the feature existed. A
+service that updates the app does not silently start shipping patient
+photographs somewhere.
+
+Two properties that are part of the design, not of the current implementation:
+
+- **One way, and it never deletes.** The app writes at the destination. It does
+  not remove, does not rename, and does not bring anything back. This is what
+  separates a backup from a mirror, and a mirror of patient data means an
+  accidental deletion on the tablet erases the institution's copy.
+- **Credentials never leave the device.** They live in `EncryptedSharedPreferences`
+  under an Android Keystore master key, and they are deliberately excluded from
+  the configuration transfer package — which travels by e-mail and on USB drives.
+
+There is no destination of ours anywhere in this. The app has no server, and the
+authors receive no copy.
 
 ## Languages
 
@@ -227,6 +273,11 @@ app/src/main/java/com/radioterapia/ai/
 ├── rubricario/                     signature register, in named team blocks
 ├── scan/                           label reading (OCR by ML Kit)
 ├── session/SessionManager.kt       session and draft
+├── sync/                           optional one-way delivery (off by default)
+│   ├── MotorSync.kt                incremental scan, sent-index, time budget
+│   ├── SyncWorker.kt               WorkManager: schedule and triggers
+│   ├── LogConexao.kt               the connection report, made to be pasted
+│   └── destino/                    SMB, WebDAV, FTP, SFTP, SAF
 ├── transfer/PacoteConfig.kt        export/import configuration, item by item
 ├── treatment/                      Treatment module (carousel, extra photos)
 ├── ui/                             Finish, Edit record, Edit simulation,

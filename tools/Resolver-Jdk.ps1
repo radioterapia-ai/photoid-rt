@@ -4,7 +4,7 @@
     POR QUE EXISTE
     O `gradlew` nao acha Java sozinho num terminal sem Java no PATH, e a
     documentacao passou a carregar a linha
-    `JAVA_HOME="C:/Users/henri/.jdks/jbr-21.0.11"` escrita a mao. Isso e caminho
+    `JAVA_HOME="C:/Users/<alguem>/.jdks/jbr-21.0.11"` escrita a mao. Isso e caminho
     absoluto de UMA maquina dentro de arquivo versionado: quebra no computador
     de qualquer outra pessoa, e contraria a regra do ecossistema de nao ter
     caminho absoluto no codigo.
