@@ -99,6 +99,16 @@ não mais com o certificado de debug.
 > O certificado antigo, para conferir um APK anterior à v4.0:
 > `SHA-256 10:1B:E6:0F:…:A0:C3`.
 
+O certificado em vigor, da v4.0 em diante — lido do próprio APK assinado, não
+do que a keystore diz:
+
+```
+CN=Henrique Faria Braga, OU=PhotoID RT, O=Radioterapia.AI, C=BR
+RSA 4096 · SHA384withRSA · 20/09/2026 → 2061
+SHA-256  75:89:DE:5A:DE:90:CF:47:5A:45:5B:22:34:BD:6F:4C:
+         F3:3E:D4:E5:34:EF:12:9B:CF:D6:B5:5E:B2:5F:0C:33
+```
+
 Para conferir de qual chave veio um APK qualquer, sem instalar nada:
 
 ```bash

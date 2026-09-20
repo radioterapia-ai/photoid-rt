@@ -94,13 +94,13 @@ the model has to live on the device.
 - **Photographs of patients are personal data**, and a facial photograph tied to
   a medical record number is biometric data. The healthcare institution is the
   controller; the app is a tool it operates under its own responsibility.
-- **No cloud of ours, no telemetry, no analytics.** Network access is confined to
-  eight files — network printing, SMB, patient-list sync, treatment photo
-  retrieval, and the four synchronization adapters — and a check in the
-  validation ritual fails the build if a network primitive appears anywhere
-  else. That list doubling in 4.0 is exactly the kind of decision the check
-  exists to make visible: it shows up in the diff and goes to review. There is
-  no server of ours and no third-party API.
+- **A check in the validation ritual fails the build when a network primitive
+  appears in a file that is not on the list.** The list has eight entries —
+  network printing, SMB, patient-list sync, treatment photo retrieval, and the
+  four synchronization adapters — and it doubled in 4.0, which is exactly what
+  the check is for: adding network to this app takes an explicit edit that shows
+  up in the diff and goes to review. The risk was never what the app does; it
+  was a library added tomorrow reaching the internet without anyone deciding.
 - Images leave the device only to somewhere the service chose: network printing,
   a USB drive, a synchronization app it installed, or the built-in
   synchronization it configured and enabled. Every destination is an address the
