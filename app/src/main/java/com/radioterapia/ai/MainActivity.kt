@@ -855,6 +855,9 @@ class MainActivity : BaseActivity() {
             countLabel.text = sessionManager.quantidadeCategoria(cat).toString()
         }
         txtCategoriaAtiva.text = nomeCategoria(ativa)
+        com.radioterapia.ai.ui.anim.Movimento.deslizarIndicador(
+            findViewById(R.id.indicadorAba), tabsCategoria,
+            tabIds.indexOfFirst { it.first == ativa })
     }
 
     private fun nomeCategoria(c: Category): String = when (c) {
@@ -1128,6 +1131,7 @@ class MainActivity : BaseActivity() {
                         val pront = etProt.text.toString().trim()
                         if (nome.isEmpty()) {
                             etNome.error = getString(R.string.name_required)
+                            com.radioterapia.ai.ui.anim.Movimento.sacudirErro(etNome)
                             Toast.makeText(this@MainActivity, R.string.name_required, Toast.LENGTH_SHORT).show()
                         } else if (!com.radioterapia.ai.util.DateUtils.nascimentoValido(nasc)) {
                             Toast.makeText(this@MainActivity, R.string.birth_invalid,
@@ -1450,10 +1454,7 @@ class MainActivity : BaseActivity() {
         // desfaz a confirmação (precisa validar o valor final).
         var confirmado = false
         fun pintarVisto() {
-            btnVisto.setColorFilter(androidx.core.content.ContextCompat.getColor(
-                this@MainActivity,
-                if (confirmado) R.color.confirm_green else R.color.confirm_pendente))
-            btnVisto.alpha = if (confirmado) 1f else 0.5f
+            com.radioterapia.ai.ui.anim.Movimento.vistoConfirmado(btnVisto, confirmado)
         }
         pintarVisto()
         btnVisto.setOnClickListener { confirmado = !confirmado; pintarVisto() }
@@ -1472,12 +1473,21 @@ class MainActivity : BaseActivity() {
                 setOnShowListener {
                     getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         if (!confirmado) {
+                            // O TREMOR APONTA O VISTO, que e o que falta. O toast
+                            // diz "confirme o campo" e o tecnico procura onde —
+                            // num dialogo com foto, dois campos e um botao, "onde"
+                            // nao e obvio.
+                            com.radioterapia.ai.ui.anim.Movimento.sacudirErro(btnVisto)
                             Toast.makeText(this@MainActivity,
                                 getString(R.string.confirm_field_alert, labelCampo),
                                 Toast.LENGTH_LONG).show()
                             return@setOnClickListener
                         }
+                        // Reprovou a validacao (nome vazio, data impossivel,
+                        // prontuario em branco): o tremor vai no CAMPO, porque
+                        // agora o problema e o conteudo, nao a confirmacao.
                         if (onConf(edtCmp.text.toString().trim())) dismiss()
+                        else com.radioterapia.ai.ui.anim.Movimento.sacudirErro(edtCmp)
                     }
                 }
                 show()
@@ -1524,10 +1534,7 @@ class MainActivity : BaseActivity() {
         }
         var confirmado = false
         fun pintar() {
-            btnVisto.setColorFilter(androidx.core.content.ContextCompat.getColor(
-                this@MainActivity,
-                if (confirmado) R.color.confirm_green else R.color.confirm_pendente))
-            btnVisto.alpha = if (confirmado) 1f else 0.5f
+            com.radioterapia.ai.ui.anim.Movimento.vistoConfirmado(btnVisto, confirmado)
         }
         pintar()
         btnVisto.setOnClickListener { confirmado = !confirmado; pintar() }
@@ -1546,6 +1553,7 @@ class MainActivity : BaseActivity() {
                     getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         val sexo = if (rbM.isChecked) "M" else if (rbF.isChecked) "F" else ""
                         if (sexo.isBlank() || !confirmado) {
+                            com.radioterapia.ai.ui.anim.Movimento.sacudirErro(btnVisto)
                             Toast.makeText(this@MainActivity,
                                 R.string.cad_sexo_required, Toast.LENGTH_LONG).show()
                             return@setOnClickListener

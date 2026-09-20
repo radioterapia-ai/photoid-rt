@@ -48,3 +48,8 @@ entrega/
 *.xlsx
 *.xlsb
 *.dcm
+
+# Planejamento interno do lote. Fica no disco, nao no repositorio publico:
+# decisao em rascunho e registro de erro sao materia de trabalho, nao de
+# apresentacao do projeto.
+.planning/

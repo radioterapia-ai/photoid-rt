@@ -104,11 +104,24 @@
                 android:inputType="textCapCharacters"
                 android:completionThreshold="1" />
 
+            <!--
+                OS TRES ALERTAS, com a cor que eles produzem no cabecalho do PDF.
+
+                A linha inteira ganha o fundo do alerta quando ligada — amarelo
+                para risco de queda, laranja para precaucao de contato, vermelho
+                para alergia. Sao as MESMAS cores que o PdfBuilder usa nas tarjas
+                (0xFFFFE082, 0xFFFFB74D, 0xFFEF5350), e essa correspondencia e o
+                ponto: quem liga o interruptor ve na hora a tarja que vai sair
+                impressa, em vez de descobrir depois.
+            -->
             <LinearLayout
+                android:id="@+id/linhaRisco"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
                 android:layout_marginTop="6dp">
 
                 <TextView
@@ -117,21 +130,22 @@
                     android:text="@string/timeout_risco"
                     android:textColor="@color/text_primary" android:textSize="13sp" />
 
-                <RadioGroup
-                    android:id="@+id/rgTimeoutRisco"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <RadioButton android:id="@+id/rbRiscoSim" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timeout_sim" android:textColor="@color/text_primary" android:textSize="12sp" />
-                    <RadioButton android:id="@+id/rbRiscoNao" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
-                </RadioGroup>
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/swRisco"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="42dp" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linhaPrec"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:layout_marginTop="4dp">
 
                 <TextView
                     android:layout_width="0dp" android:layout_weight="1"
@@ -139,20 +153,22 @@
                     android:text="@string/timeout_prec"
                     android:textColor="@color/text_primary" android:textSize="13sp" />
 
-                <RadioGroup
-                    android:id="@+id/rgTimeoutPrec"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <RadioButton android:id="@+id/rbPrecSim" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timeout_sim" android:textColor="@color/text_primary" android:textSize="12sp" />
-                    <RadioButton android:id="@+id/rbPrecNao" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
-                </RadioGroup>
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/swPrec"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="42dp" />
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linhaAlergia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginBottom="8dp">
 
                 <TextView
@@ -161,13 +177,11 @@
                     android:text="@string/timeout_alergia"
                     android:textColor="@color/text_primary" android:textSize="13sp" />
 
-                <RadioGroup
-                    android:id="@+id/rgTimeoutAlergia"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <RadioButton android:id="@+id/rbAlergiaSim" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/timeout_sim" android:textColor="@color/text_primary" android:textSize="12sp" />
-                    <RadioButton android:id="@+id/rbAlergiaNI" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
-                </RadioGroup>
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/swAlergia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="42dp" />
             </LinearLayout>
         </LinearLayout>
 

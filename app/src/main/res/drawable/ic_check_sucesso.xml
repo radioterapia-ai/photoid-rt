@@ -21,7 +21,7 @@
         <path
             android:name="traco"
             android:pathData="M13,25 L21,33 L35,16"
-            android:strokeColor="#FF00E676"
+            android:strokeColor="@color/confirm_green"
             android:strokeWidth="5"
             android:strokeLineCap="round"
             android:strokeLineJoin="round"

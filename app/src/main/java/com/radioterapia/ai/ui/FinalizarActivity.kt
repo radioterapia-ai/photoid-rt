@@ -602,14 +602,14 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         val equip = findViewById<android.widget.AutoCompleteTextView>(R.id.actTimeoutEquip)
             .text.toString().trim()
         val alergia =
-            if (findViewById<android.widget.RadioButton>(R.id.rbAlergiaSim).isChecked) "SIM" else ""
+            if (findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swAlergia).isChecked) "SIM" else ""
         val rosto = sessionManager.fotos
             .firstOrNull { it.categoria == Category.FACE }?.arquivo
         return com.radioterapia.ai.pdf.PdfBuilder.DadosTimeOut(
             medicoResponsavel = med,
             sitioTratamento = sit,
-            riscoQueda = findViewById<android.widget.RadioButton>(R.id.rbRiscoSim).isChecked,
-            precaucaoContato = findViewById<android.widget.RadioButton>(R.id.rbPrecSim).isChecked,
+            riscoQueda = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swRisco).isChecked,
+            precaucaoContato = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swPrec).isChecked,
             fotoRosto = rosto,
             equipamento = equip,
             alergia = alergia,
@@ -751,11 +751,11 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         linha("SÍTIO / TOPOGRAFIA", findViewById<android.widget.AutoCompleteTextView>(R.id.actTimeoutSitio)
             .text.toString().trim())
         val riscos = mutableListOf<String>()
-        if (findViewById<android.widget.RadioButton>(R.id.rbRiscoSim).isChecked) riscos.add("RISCO DE QUEDA")
-        if (findViewById<android.widget.RadioButton>(R.id.rbPrecSim).isChecked) riscos.add("PRECAUÇÃO DE CONTATO")
+        if (findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swRisco).isChecked) riscos.add("RISCO DE QUEDA")
+        if (findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swPrec).isChecked) riscos.add("PRECAUÇÃO DE CONTATO")
         linha("RISCOS", if (riscos.isEmpty()) "—" else riscos.joinToString(" • "))
         linha("ALERGIA",
-            if (findViewById<android.widget.RadioButton>(R.id.rbAlergiaSim).isChecked) "SIM"
+            if (findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swAlergia).isChecked) "SIM"
             else "NÃO / NÃO INFORMADO")
         linha("OBSERVAÇÕES", findViewById<android.widget.EditText>(R.id.edtObservacao)
             .text.toString().trim())
@@ -886,6 +886,8 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         desenharProtocolos()
         findViewById<View>(R.id.layoutEdicao).visibility = View.VISIBLE
         setDetalhesTimeOutHabilitados(true)
+        ligarCoresDosAlertas()
+        animarBlocosDaFinalizacao()
         val edt = findViewById<android.widget.EditText>(R.id.edtObservacao)
         edt.isEnabled = true
         edt.setBackgroundResource(R.drawable.bg_input_white)
@@ -893,12 +895,49 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         edt.setHintTextColor(0xFF9E9E9E.toInt())
     }
 
+    /**
+     * Acende cada linha de alerta com a cor que ela produz na ficha.
+     *
+     * Os valores sao os MESMOS do PdfBuilder (`ativos.add(Tag(...))`): mudar um
+     * lado sem o outro quebraria a correspondencia que faz a tela valer.
+     */
+    /**
+     * Faz o bloco do Time-Out crescer e encolher com altura animada.
+     *
+     * POR QUE NAO UM ACCORDION QUE FECHA. A tentacao era transformar a secao num
+     * painel dobravel com cabecalho clicavel. Medido contra o uso: esta tela e
+     * preenchida UMA vez por paciente, com ele deitado na mesa esperando — e o
+     * bloco so aparece quando o servico usa Time-Out. Fechar por padrao
+     * acrescentaria um toque obrigatorio no caminho critico, e "cliques custam"
+     * e restricao escrita deste produto.
+     *
+     * O que o accordion tem de util aqui e o MOVIMENTO: o bloco aparece e some
+     * conforme a configuracao, e o protocolo entra e sai conforme o numero de
+     * protocolos cadastrados. Sem transicao, essas mudancas sao saltos — a tela
+     * pisca e o resto do formulario pula de lugar. Com ela, o conteudo empurra
+     * o que esta embaixo, e o olho acompanha.
+     */
+    private fun animarBlocosDaFinalizacao() {
+        val M = com.radioterapia.ai.ui.anim.Movimento
+        M.animarMudancasDeLayout(findViewById(R.id.layoutTimeOutCampos))
+        M.animarMudancasDeLayout(
+            findViewById<View>(R.id.layoutTimeOutCampos)?.parent as? android.view.ViewGroup)
+    }
+
+    private fun ligarCoresDosAlertas() {
+        val M = com.radioterapia.ai.ui.anim.Movimento
+        M.toggleAlerta(findViewById(R.id.linhaRisco), findViewById(R.id.swRisco),
+                       0xFFFFE082.toInt())   // risco de queda — amarelo
+        M.toggleAlerta(findViewById(R.id.linhaPrec), findViewById(R.id.swPrec),
+                       0xFFFFB74D.toInt())   // precaucao de contato — laranja
+        M.toggleAlerta(findViewById(R.id.linhaAlergia), findViewById(R.id.swAlergia),
+                       0xFFEF5350.toInt())   // alergia — vermelho
+    }
+
     /** Habilita/trava os campos do Time-Out. */
     private fun setDetalhesTimeOutHabilitados(hab: Boolean) {
         listOf(R.id.actTimeoutMedico, R.id.actTimeoutEquip, R.id.actTimeoutSitio,
-               R.id.rbRiscoSim, R.id.rbRiscoNao,
-               R.id.rbPrecSim, R.id.rbPrecNao,
-               R.id.rbAlergiaSim, R.id.rbAlergiaNI).forEach {
+               R.id.swRisco, R.id.swPrec, R.id.swAlergia).forEach {
             findViewById<View>(it).isEnabled = hab
         }
     }
@@ -913,9 +952,9 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         val medUi = findViewById<android.widget.AutoCompleteTextView>(R.id.actTimeoutMedico).text.toString().trim()
         val sitioUi = findViewById<android.widget.AutoCompleteTextView>(R.id.actTimeoutSitio).text.toString().trim()
         val equipUi = findViewById<android.widget.AutoCompleteTextView>(R.id.actTimeoutEquip).text.toString().trim()
-        val riscoUi = findViewById<android.widget.RadioButton>(R.id.rbRiscoSim).isChecked
-        val precUi = findViewById<android.widget.RadioButton>(R.id.rbPrecSim).isChecked
-        val alergiaUi = if (findViewById<android.widget.RadioButton>(R.id.rbAlergiaSim).isChecked) "SIM" else ""
+        val riscoUi = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swRisco).isChecked
+        val precUi = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swPrec).isChecked
+        val alergiaUi = if (findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swAlergia).isChecked) "SIM" else ""
         val btn = findViewById<android.widget.Button>(R.id.btnAtualizarObs)
         btn.isEnabled = false
         CoroutineScope(Dispatchers.Main).launch {

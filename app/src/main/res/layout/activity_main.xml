@@ -281,6 +281,15 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
+            <!--
+                As abas e o indicador que desliza entre elas, no mesmo
+                FrameLayout: o indicador precisa poder se sobrepor a barra, e
+                como irmao num LinearLayout ele empurraria a altura.
+            -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
             <LinearLayout
                 android:id="@+id/tabsCategoria"
                 android:layout_width="match_parent"
@@ -293,6 +302,20 @@
                 <include layout="@layout/category_tab" android:id="@+id/tabAccessories" />
                 <include layout="@layout/category_tab" android:id="@+id/tabDocs" />
             </LinearLayout>
+
+                <!--
+                    O INDICADOR. Largura zero aqui de proposito: ela e calculada
+                    em codigo a partir do numero de abas que existirem, para o
+                    dia em que uma categoria entrar ou sair nao deixar o
+                    indicador com o tamanho errado.
+                -->
+                <View
+                    android:id="@+id/indicadorAba"
+                    android:layout_width="0dp"
+                    android:layout_height="3dp"
+                    android:layout_gravity="bottom|start"
+                    android:background="@color/brand_primary" />
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/layoutAcoesPosFoto"

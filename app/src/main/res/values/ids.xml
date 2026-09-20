@@ -12,4 +12,7 @@
 
     <!-- Onde o desaparecimento pendente do aviso da camera fica guardado. -->
     <item name="tag_aviso_saida" type="id" />
+
+    <!-- Marca que o indicador das abas ja foi posicionado uma vez. -->
+    <item name="tag_indicador_posto" type="id" />
 </resources>
