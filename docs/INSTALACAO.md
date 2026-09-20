@@ -85,44 +85,49 @@ Se aparecer **1.3**, é o build que pedia permissão de microfone; substitua.
 
 ---
 
-## Assinatura — decida isto antes de espalhar para vários tablets
+## Assinatura — a chave de release e onde ela mora
 
-Este APK é assinado com o **certificado de debug** do Android. Ele instala e
-funciona normalmente, e é o mesmo certificado de todas as entregas anteriores,
-então atualiza por cima do que já está instalado sem perder nada.
+Desde a v3.2 as entregas saem assinadas com uma **keystore de release própria**,
+não mais com o certificado de debug. O certificado do que está em campo:
 
-O que ainda não existe: uma **keystore de release** própria. O `app/build.gradle`
-não tem `signingConfig`, então `assembleRelease` produz um APK **não assinado**,
-que o Android recusa instalar.
-
-**A armadilha:** APK assinado com certificado diferente **não atualiza** por cima
-do instalado. O Android recusa com `INSTALL_FAILED_UPDATE_INCOMPATIBLE`. Para
-migrar de debug para release seria preciso **desinstalar** — e desinstalar apaga
-o `filesDir`, onde vive o **cadastro de pacientes do `PatientCache`** (nomes,
-prontuários, contagem de simulações). As fotos sobrevivem *se* a permissão de
-acesso total estiver concedida; o cadastro não sobrevive de jeito nenhum.
-
-Ou seja: **quanto mais tablets receberem o build debug, mais caro fica migrar
-depois.** Decida agora:
-
-- **Seguir com debug** — nada a fazer, é o que está entregue. Aceitável para
-  distribuição interna por sideload, sem loja. O app fica marcado `debuggable`.
-- **Criar keystore de release** — o certo para produção, e a hora de fazer é
-  antes do próximo tablet. Passos abaixo.
-
-### Se optar pela keystore de release
-
-Gere a keystore você mesmo (a senha é sua e não deve ser versionada nem passar
-por terceiros):
-
-```bash
-keytool -genkeypair -v -keystore photoid-rt-release.jks -keyalg RSA -keysize 4096 -validity 10000 -alias photoid
+```
+CN=Henrique Faria Braga, OU=PhotoID RT, O=Radioterapia.AI, C=BR
+RSA 4096 · válido até 2061 · emitido em 06/09/2026
+SHA-256  10:1B:E6:0F:1D:A1:22:16:0A:F6:34:04:82:72:67:EF:
+         CC:C1:B2:39:27:22:B6:43:06:CA:09:AB:71:52:A0:C3
 ```
 
-Guarde o arquivo `.jks` e a senha fora do repositório e **com backup**: perder a
-keystore significa nunca mais conseguir atualizar o app instalado. Depois disso,
-o `signingConfig` entra no `app/build.gradle` lendo as senhas de um
-`keystore.properties` não versionado, e a linha vira `gradlew assembleRelease`.
+Para conferir de qual chave veio um APK qualquer, sem instalar nada:
+
+```bash
+apksigner verify --print-certs PhotoID_RT_LATEST.apk
+```
+
+### Onde a chave fica, e por que não aqui
+
+O `app/build.gradle` lê o caminho de um `.properties` apontado pela variável de
+ambiente `PHOTOID_RT_KEYSTORE`. Ele fica **fora** de `C:\AI_PROJETOS` e de
+`C:\AI_DEPLOY`, que sincronizam com o Drive: chave de assinatura em nuvem
+pessoal é o pior caso deste projeto — quem a tem publica uma atualização
+maliciosa assinada como o autor, e o Android instala por cima sem perguntar.
+
+**Sem a variável o build não quebra**: cai no não-assinado, que é o que um clone
+do repositório público deve fazer. Quem clona não tem a chave e não precisa dela
+para compilar. O APK sai como `app-release-unsigned.apk`, e o empacotador
+recusa entregá-lo — release sem assinatura tem de ser visível, não silencioso.
+
+### A armadilha, que continua valendo
+
+APK assinado com certificado **diferente** não atualiza por cima do instalado: o
+Android recusa com `INSTALL_FAILED_UPDATE_INCOMPATIBLE`. Trocar de chave obriga
+a **desinstalar**, e desinstalar apaga o `filesDir`, onde vive o **cadastro de
+pacientes do `PatientCache`** (nomes, prontuários, contagem de simulações). As
+fotos sobrevivem *se* a permissão de acesso total estiver concedida; o cadastro
+não sobrevive de jeito nenhum.
+
+Por isso: **perder a keystore custa o cadastro de todo tablet em campo.** Antes
+de qualquer troca de chave, exporte a base em Configurações → Base de dados, e
+reimporte depois de reinstalar.
 
 ---
 
