@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">NR HISTORII CHOROBY</string>
     <string name="pdf_lbl_birth">DATA URODZENIA</string>
     <string name="pdf_lbl_simdate">DATA SYMULACJI:</string>
-    <string name="pdf_paste_label_here">TU WKLEJ ETYKIETĘ</string>
     <string name="pdf_title_line1">ZDJĘCIA</string>
     <string name="pdf_title_line2">UŁOŻENIA</string>
     <string name="pdf_new_sim">PONOWNA SYMULACJA</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">Wróć do aparatu</string>
     <string name="fin_observation_label">Uwaga</string>
     <string name="fin_observation_hint">Wpisz tu uwagi do symulacji (do 3 wierszy)</string>
-    <string name="pdf_use_label_space">Zostaw na karcie miejsce na etykietę</string>
-    <string name="pdf_label_size_hint">Rozmiar miejsca na wklejenie etykiety. Odznacz, jeśli nie używasz etykiety.</string>
+    <string name="pdf_label_size_hint">Rozmiar ramki identyfikacyjnej na karcie. Jeśli zakład nakleja etykietę papierową, podaj jej wymiary.</string>
     <string name="pdf_label_width_mm">Szerokość (mm)</string>
     <string name="pdf_label_height_mm">Wysokość (mm)</string>
     <string name="group_database">Baza danych</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF i etykieta</string>
     <string name="wiz_pdf_desc">Jak powstaje karta ułożenia i ile miejsca zostaje na etykietę pacjenta.</string>
     <string name="wiz_pdf_orientation">Orientacja PDF</string>
-    <string name="wiz_use_label">Zostaw miejsce na etykietę</string>
     <string name="label_width_mm">Szerokość (mm)</string>
     <string name="label_height_mm">Wysokość (mm)</string>
     <string name="wiz_pdf_hint">Wszystko to można zmienić później w Ustawieniach → PDF.</string>

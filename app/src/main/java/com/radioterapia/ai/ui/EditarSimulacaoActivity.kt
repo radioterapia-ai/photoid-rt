@@ -315,7 +315,6 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                     PdfBuilder.gerarFolhaPosicionamento(
                         this@EditarSimulacaoActivity, dados, fotos, saida,
                         rotulos = rotulos, landscape = config.pdfLandscape,
-                        usarEtiqueta = config.pdfUsarEtiqueta,
                         etiquetaLarguraMm = config.pdfEtiquetaLarguraMm,
                         etiquetaAlturaMm = config.pdfEtiquetaAlturaMm,
                         observacoes = obs,

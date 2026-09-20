@@ -164,7 +164,7 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
 
                 itens.add(com.radioterapia.ai.pdf.PdfBuilder.ItemLote(
                     dados = dados, fotos = fotos, rotulos = rotulos,
-                    landscape = cfg.pdfLandscape, usarEtiqueta = cfg.pdfUsarEtiqueta,
+                    landscape = cfg.pdfLandscape,
                     etiquetaLarguraMm = cfg.pdfEtiquetaLarguraMm,
                     etiquetaAlturaMm = cfg.pdfEtiquetaAlturaMm,
                     observacoes = obs, timeOut = timeOut,

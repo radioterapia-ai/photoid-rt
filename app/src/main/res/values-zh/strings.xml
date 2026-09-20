@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">病历号</string>
     <string name="pdf_lbl_birth">出生日期</string>
     <string name="pdf_lbl_simdate">模拟定位日期：</string>
-    <string name="pdf_paste_label_here">请将标签粘贴于此</string>
     <string name="pdf_title_line1">摆位</string>
     <string name="pdf_title_line2">照片</string>
     <string name="pdf_new_sim">再次模拟定位</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">返回相机</string>
     <string name="fin_observation_label">备注</string>
     <string name="fin_observation_hint">在此填写本次模拟定位的备注（最多 3 行）</string>
-    <string name="pdf_use_label_space">在记录单上预留标签位置</string>
-    <string name="pdf_label_size_hint">用于粘贴实体标签的区域大小。不使用标签时请取消勾选。</string>
+    <string name="pdf_label_size_hint">记录单上标识框的大小。若科室粘贴纸质标签，请填写该标签的尺寸。</string>
     <string name="pdf_label_width_mm">宽度（mm）</string>
     <string name="pdf_label_height_mm">高度（mm）</string>
     <string name="group_database">数据库</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF 与标签</string>
     <string name="wiz_pdf_desc">摆位记录单的生成方式，以及为患者实体标签预留的空间。</string>
     <string name="wiz_pdf_orientation">PDF 方向</string>
-    <string name="wiz_use_label">为实体标签预留空间</string>
     <string name="label_width_mm">宽度 (mm)</string>
     <string name="label_height_mm">高度 (mm)</string>
     <string name="wiz_pdf_hint">以上都可以稍后在设置 → PDF 中调整。</string>

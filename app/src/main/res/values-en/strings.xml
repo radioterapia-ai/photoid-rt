@@ -204,7 +204,6 @@
     <string name="pdf_lbl_record">RECORD No.</string>
     <string name="pdf_lbl_birth">DATE OF BIRTH</string>
     <string name="pdf_lbl_simdate">SIMULATION DATE:</string>
-    <string name="pdf_paste_label_here">PASTE LABEL HERE</string>
     <string name="pdf_title_line1">POSITIONING</string>
     <string name="pdf_title_line2">PHOTOS</string>
     <string name="pdf_new_sim">NEW SIMULATION</string>
@@ -285,8 +284,7 @@ Continue?</string>
     <string name="back_to_camera">Back to camera</string>
     <string name="fin_observation_label">Notes</string>
     <string name="fin_observation_hint">Write here the simulation notes (up to 3 lines)</string>
-    <string name="pdf_use_label_space">Reserve label space on the sheet</string>
-    <string name="pdf_label_size_hint">Size of the area to stick the physical label. Uncheck if you don\'t use a label.</string>
+    <string name="pdf_label_size_hint">Size of the identification box on the sheet. If your service sticks a paper label, use its measurements.</string>
     <string name="pdf_label_width_mm">Width (mm)</string>
     <string name="pdf_label_height_mm">Height (mm)</string>
     <string name="group_database">Database</string>
@@ -374,7 +372,6 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="wiz_pdf_title">PDF and label</string>
     <string name="wiz_pdf_desc">How the positioning sheet is generated and the space reserved for the patient physical label.</string>
     <string name="wiz_pdf_orientation">PDF orientation</string>
-    <string name="wiz_use_label">Reserve space for physical label</string>
     <string name="label_width_mm">Width (mm)</string>
     <string name="label_height_mm">Height (mm)</string>
     <string name="wiz_pdf_hint">All of this can be adjusted later in Settings → PDF.</string>

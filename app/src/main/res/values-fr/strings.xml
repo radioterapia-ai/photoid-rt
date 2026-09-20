@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">N° DE DOSSIER</string>
     <string name="pdf_lbl_birth">NAISSANCE</string>
     <string name="pdf_lbl_simdate">DATE DE SIMULATION :</string>
-    <string name="pdf_paste_label_here">COLLER L\'ÉTIQUETTE ICI</string>
     <string name="pdf_title_line1">PHOTOS DE</string>
     <string name="pdf_title_line2">POSITIONNEMENT</string>
     <string name="pdf_new_sim">NOUVELLE SIMULATION</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">Retour à l\'appareil photo</string>
     <string name="fin_observation_label">Observation</string>
     <string name="fin_observation_hint">Écrivez ici les observations de la simulation (3 lignes maximum)</string>
-    <string name="pdf_use_label_space">Réserver un emplacement pour l\'étiquette sur la fiche</string>
-    <string name="pdf_label_size_hint">Taille de l\'emplacement où coller l\'étiquette physique. Décochez si vous n\'utilisez pas d\'étiquette.</string>
+    <string name="pdf_label_size_hint">Taille du cadre d\'identification sur la fiche. Si le service colle une étiquette papier, utilisez ses dimensions.</string>
     <string name="pdf_label_width_mm">Largeur (mm)</string>
     <string name="pdf_label_height_mm">Hauteur (mm)</string>
     <string name="group_database">Base de données</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF et étiquette</string>
     <string name="wiz_pdf_desc">Comment la fiche de positionnement est générée et l\'espace réservé à l\'étiquette physique du patient.</string>
     <string name="wiz_pdf_orientation">Orientation du PDF</string>
-    <string name="wiz_use_label">Réserver un espace pour l\'étiquette physique</string>
     <string name="label_width_mm">Largeur (mm)</string>
     <string name="label_height_mm">Hauteur (mm)</string>
     <string name="wiz_pdf_hint">Tout cela peut être ajusté plus tard dans Paramètres → PDF.</string>

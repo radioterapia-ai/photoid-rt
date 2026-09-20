@@ -204,7 +204,6 @@
     <string name="pdf_lbl_record">N.º DE HISTORIA</string>
     <string name="pdf_lbl_birth">NACIMIENTO</string>
     <string name="pdf_lbl_simdate">FECHA DE SIMULACIÓN:</string>
-    <string name="pdf_paste_label_here">PEGUE LA ETIQUETA AQUÍ</string>
     <string name="pdf_title_line1">FOTOS DE</string>
     <string name="pdf_title_line2">POSICIONAMIENTO</string>
     <string name="pdf_new_sim">NUEVA SIMULACIÓN</string>
@@ -285,8 +284,7 @@ Para sincronizar con el servidor de la clínica, apunte FolderSync a la carpeta 
     <string name="back_to_camera">Volver a la cámara</string>
     <string name="fin_observation_label">Observación</string>
     <string name="fin_observation_hint">Escriba aquí las observaciones de la simulación (hasta 3 líneas)</string>
-    <string name="pdf_use_label_space">Reservar espacio para etiqueta en la hoja</string>
-    <string name="pdf_label_size_hint">Tamaño del área para pegar la etiqueta física. Desmarque si no usa etiqueta.</string>
+    <string name="pdf_label_size_hint">Tamaño del recuadro de identificación en la hoja. Si el servicio pega etiqueta de papel, use la medida de esta.</string>
     <string name="pdf_label_width_mm">Ancho (mm)</string>
     <string name="pdf_label_height_mm">Alto (mm)</string>
     <string name="group_database">Base de datos</string>
@@ -374,7 +372,6 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="wiz_pdf_title">PDF y etiqueta</string>
     <string name="wiz_pdf_desc">Cómo se genera la hoja de posicionamiento y el espacio reservado para la etiqueta física del paciente.</string>
     <string name="wiz_pdf_orientation">Orientación del PDF</string>
-    <string name="wiz_use_label">Reservar espacio para etiqueta física</string>
     <string name="label_width_mm">Ancho (mm)</string>
     <string name="label_height_mm">Alto (mm)</string>
     <string name="wiz_pdf_hint">Todo esto puede ajustarse después en Configuración → PDF.</string>

@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">등록번호</string>
     <string name="pdf_lbl_birth">생년월일</string>
     <string name="pdf_lbl_simdate">모의치료 일시:</string>
-    <string name="pdf_paste_label_here">여기에 라벨을 붙이십시오</string>
     <string name="pdf_title_line1">자세</string>
     <string name="pdf_title_line2">사진</string>
     <string name="pdf_new_sim">재모의치료</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">카메라로 돌아가기</string>
     <string name="fin_observation_label">특이사항</string>
     <string name="fin_observation_hint">모의치료의 특이사항을 여기에 적으십시오(최대 3줄)</string>
-    <string name="pdf_use_label_space">기록지에 라벨 공간 확보</string>
-    <string name="pdf_label_size_hint">실물 라벨을 붙일 공간의 크기입니다. 라벨을 쓰지 않으면 해제하십시오.</string>
+    <string name="pdf_label_size_hint">기록지의 식별 상자 크기입니다. 종이 라벨을 붙이는 경우 그 라벨의 치수를 입력하십시오.</string>
     <string name="pdf_label_width_mm">너비(mm)</string>
     <string name="pdf_label_height_mm">높이(mm)</string>
     <string name="group_database">데이터베이스</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF와 라벨</string>
     <string name="wiz_pdf_desc">자세 기록지가 생성되는 방식과 환자 라벨을 붙일 공간입니다.</string>
     <string name="wiz_pdf_orientation">PDF 방향</string>
-    <string name="wiz_use_label">라벨 붙일 공간 확보</string>
     <string name="label_width_mm">너비(mm)</string>
     <string name="label_height_mm">높이(mm)</string>
     <string name="wiz_pdf_hint">이 설정은 나중에 설정 → PDF에서 바꿀 수 있습니다.</string>

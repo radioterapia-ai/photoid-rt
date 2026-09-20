@@ -258,7 +258,6 @@
     <string name="pdf_lbl_record">PRONTUÁRIO</string>
     <string name="pdf_lbl_birth">NASCIMENTO</string>
     <string name="pdf_lbl_simdate">DATA DA SIMULAÇÃO:</string>
-    <string name="pdf_paste_label_here">COLE A ETIQUETA AQUI</string>
     <string name="pdf_title_line1">FOTOS DE</string>
     <string name="pdf_title_line2">POSICIONAMENTO</string>
     <string name="pdf_new_sim">NOVA SIMULAÇÃO</string>
@@ -339,8 +338,7 @@ Deseja continuar?</string>
     <string name="back_to_camera">Voltar à câmera</string>
     <string name="fin_observation_label">Observação</string>
     <string name="fin_observation_hint">Escreva aqui as observações da simulação (até 3 linhas)</string>
-    <string name="pdf_use_label_space">Reservar espaço para etiqueta na ficha</string>
-    <string name="pdf_label_size_hint">Tamanho do espaço para colar a etiqueta física. Desmarque se não usa etiqueta.</string>
+    <string name="pdf_label_size_hint">Tamanho do quadro de identificação na ficha. Se o serviço cola etiqueta de papel, use a medida dela.</string>
     <string name="pdf_label_width_mm">Largura (mm)</string>
     <string name="pdf_label_height_mm">Altura (mm)</string>
     <string name="group_database">Base de dados</string>
@@ -428,7 +426,6 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="wiz_pdf_title">PDF e etiqueta</string>
     <string name="wiz_pdf_desc">Como a folha de posicionamento será gerada e o espaço reservado para a etiqueta física do paciente.</string>
     <string name="wiz_pdf_orientation">Orientação do PDF</string>
-    <string name="wiz_use_label">Reservar espaço para etiqueta física</string>
     <string name="label_width_mm">Largura (mm)</string>
     <string name="label_height_mm">Altura (mm)</string>
     <string name="wiz_pdf_hint">Tudo isso pode ser ajustado depois em Configurações → PDF.</string>

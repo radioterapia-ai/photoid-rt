@@ -377,7 +377,6 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
             v.findViewById<android.widget.RadioButton>(R.id.rbWizPdfLand).isChecked = true
         else
             v.findViewById<android.widget.RadioButton>(R.id.rbWizPdfPort).isChecked = true
-        v.findViewById<android.widget.CheckBox>(R.id.chkWizUsarEtiqueta).isChecked = config.pdfUsarEtiqueta
         v.findViewById<EditText>(R.id.edtWizEtqLarg).setText(config.pdfEtiquetaLarguraMm.toString())
         v.findViewById<EditText>(R.id.edtWizEtqAlt).setText(config.pdfEtiquetaAlturaMm.toString())
         v.findViewById<android.widget.CheckBox>(R.id.chkWizTimeOut).isChecked = config.pdfIncluiTimeOut
@@ -401,8 +400,7 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
         }
         sb.append("Impressão: $dup\n")
         sb.append("PDF: ${getString(if (config.pdfLandscape) R.string.pdf_landscape else R.string.pdf_portrait)}")
-        if (config.pdfUsarEtiqueta)
-            sb.append(" • Etiqueta ${config.pdfEtiquetaLarguraMm}×${config.pdfEtiquetaAlturaMm} mm")
+        sb.append(" • Etiqueta ${config.pdfEtiquetaLarguraMm}×${config.pdfEtiquetaAlturaMm} mm")
         if (config.pdfIncluiTimeOut) sb.append(" • Time-Out incluído")
         resumo.text = sb.toString()
     }
@@ -500,9 +498,6 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
                 // PDF & etiqueta: persiste imediatamente
                 containerStep.findViewById<android.widget.RadioButton>(R.id.rbWizPdfLand)?.let {
                     config.pdfLandscape = it.isChecked
-                }
-                containerStep.findViewById<android.widget.CheckBox>(R.id.chkWizUsarEtiqueta)?.let {
-                    config.pdfUsarEtiqueta = it.isChecked
                 }
                 containerStep.findViewById<EditText>(R.id.edtWizEtqLarg)?.text?.toString()
                     ?.toIntOrNull()?.let { config.pdfEtiquetaLarguraMm = it }

@@ -53,7 +53,6 @@ object PdfBuilder {
     private const val MM_TO_PT = 2.83465f
 
     // Estado por geração (object singleton, como PAGE_WIDTH/textos)
-    private var usarEtiqueta = true
     private var etiqLargPt = 60f * MM_TO_PT
     private var etiqAltPt = 30f * MM_TO_PT
     private var observacoesTexto = ""
@@ -102,6 +101,17 @@ object PdfBuilder {
     private const val ROT_LINHA = 7.5f
     private const val VAL_LINHA = 9.5f
 
+    /**
+     * Altura que a LINHA DE IDENTIFICACAO reserva sob o quadro da etiqueta.
+     *
+     * A faixa de topo da ficha de Time-Out tem altura fixa e a tabela de fracoes
+     * comeca logo abaixo dela. Sem reservar este espaco, um quadro alto
+     * empurraria a linha por cima do box de equipamento — que foi exatamente o
+     * que a etiqueta de 100x50 mm fez enquanto o arranjo era decidido caso a
+     * caso.
+     */
+    private const val ALTURA_LINHA_IDS = 16f
+
     /** Define orientação da página (afeta PAGE_WIDTH/HEIGHT). */
     private fun configurarOrientacao(paisagem: Boolean) {
         landscape = paisagem
@@ -120,7 +130,6 @@ object PdfBuilder {
      *  igualar um ao outro mudaria uma folha que ninguem pediu para mexer. */
     private var txtRegistro = "REGISTRO"
     private var txtDataSim = "DATA DA SIMULAÇÃO:"
-    private var txtColeEtiqueta = "COLE A ETIQUETA AQUI"
     private var txtTitulo1 = "FOTOS DE"
     private var txtTitulo2 = "POSICIONAMENTO"
     private var txtNovaSim = "NOVA SIMULAÇÃO"
@@ -209,7 +218,6 @@ object PdfBuilder {
         txtSexo = context.getString(R.string.pdf_lbl_sex)
         txtRegistro = context.getString(R.string.pdf_lbl_registry)
         txtDataSim = context.getString(R.string.pdf_lbl_simdate)
-        txtColeEtiqueta = context.getString(R.string.pdf_paste_label_here)
         txtTitulo1 = context.getString(R.string.pdf_title_line1)
         txtTitulo2 = context.getString(R.string.pdf_title_line2)
         txtNovaSim = context.getString(R.string.pdf_new_sim)
@@ -270,7 +278,6 @@ object PdfBuilder {
         val fotos: List<File>,
         val rotulos: List<String>? = null,
         val landscape: Boolean = false,
-        val usarEtiqueta: Boolean = true,
         val etiquetaLarguraMm: Int = 60,
         val etiquetaAlturaMm: Int = 30,
         val observacoes: String = "",
@@ -295,7 +302,6 @@ object PdfBuilder {
         arquivoSaida: File,
         rotulos: List<String>? = null,
         landscape: Boolean = false,
-        usarEtiqueta: Boolean = true,
         etiquetaLarguraMm: Int = 60,
         etiquetaAlturaMm: Int = 30,
         observacoes: String = "",
@@ -341,7 +347,7 @@ object PdfBuilder {
             .filter { it.isNotBlank() }
             .associate { com.radioterapia.ai.rubricario.RubricarioStore.separarCargo(it) }
 
-        val item = ItemLote(dados, fotos, rotulos, landscape, usarEtiqueta,
+        val item = ItemLote(dados, fotos, rotulos, landscape,
             etiquetaLarguraMm, etiquetaAlturaMm, observacoes, timeOut, margemImpressaoMm,
             equipe, registros, cfgRub.rubricarioRetrato,
             protocoloId = protocoloId)
@@ -408,7 +414,6 @@ object PdfBuilder {
         carregarTextos(context)
 
         // ----- Configura etiqueta + observações DESTA simulação -----
-        this.usarEtiqueta = item.usarEtiqueta
         this.etiqLargPt = (item.etiquetaLarguraMm * MM_TO_PT)
         this.etiqAltPt = (item.etiquetaAlturaMm * MM_TO_PT)
         this.observacoesTexto = item.observacoes.trim()
@@ -452,8 +457,7 @@ object PdfBuilder {
         if (item.timeOut != null) {
             try {
                 desenharPaginaTimeOut(doc, context, dados, item.timeOut, logo,
-                    item.observacoes, item.etiquetaLarguraMm, item.etiquetaAlturaMm,
-                    item.usarEtiqueta)
+                    item.observacoes, item.etiquetaLarguraMm, item.etiquetaAlturaMm)
             } catch (_: Exception) { /* nunca bloqueia a folha de fotos */ }
         }
 
@@ -791,10 +795,9 @@ object PdfBuilder {
             // posicoes, mas sem a moldura tracejada da etiqueta e sem os
             // rotulos de cadastro. Serve para conferir como a folha vai sair e
             // para afixar no acelerador, onde nao ha paciente nenhum.
-            usarEtiqueta = false
             etiqLargPt = 60f * MM_TO_PT
             etiqAltPt = 30f * MM_TO_PT
-            val item = ItemLote(dados, emptyList(), null, false, false,
+            val item = ItemLote(dados, emptyList(), null, false,
                 60, 30, "", null, cfg.pdfMargemMm,
                 equipe, registros, cfg.rubricarioRetrato, rubricarioSemPaciente = true)
             desenharPaginaRubricario(doc, context, dados, item, logo)
@@ -880,8 +883,7 @@ object PdfBuilder {
         logo: Bitmap?,
         observacoes: String,
         etiquetaLarguraMm: Int,
-        etiquetaAlturaMm: Int,
-        usarEtiqueta: Boolean
+        etiquetaAlturaMm: Int
     ) {
         val pw = 595; val ph = 842
         val numeroPagina = doc.pages.size + 1
@@ -967,72 +969,41 @@ object PdfBuilder {
         val alturaTopo = 150f
         // Mesma régua da decisão de layout (TO_BLOCO_W): antes o limite era
         // blocoW, e caixa e decisão discordavam em etiquetas largas.
-        val etqW = (etiquetaLarguraMm.coerceIn(30, 120) * 72f / 25.4f).coerceAtMost(TO_BLOCO_W)
-        val etqH = (etiquetaAlturaMm.coerceIn(15, 70) * 72f / 25.4f).coerceAtMost(alturaTopo)
-
-        // Fonte da data: MESMO dimensionamento nas duas páginas (label 8.5 / valor 9.5).
-        val pDataLbl = Paint().apply {
-            color = Color.parseColor("#444444"); textSize = 8.5f
-            isFakeBoldText = true; isAntiAlias = true
-        }
-        val pDataVal = Paint().apply { color = Color.BLACK; textSize = 9.5f; isAntiAlias = true }
-        val fmtData = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-        var alturaIds = etqH
-        val modoIdsTo = decidirLayoutIds(etqW, etqH)
-        if (usarEtiqueta) {
-            // A linha unica ocupa da esquerda da etiqueta ate a borda direita
-            // da foto do rosto — que e mR, o fim do conteudo.
-            alturaIds = desenharEtiquetaFisicaComIds(cv, mL.toFloat(), topoConteudo, etqW, etqH,
-                dados, modoIdsTo, (mR - mL).toFloat())
-            // DATA abaixo do conjunto etiqueta+IDs — desde que ainda haja espaço
-            // dentro da faixa de topo. Se o conjunto for alto (etiquetas
-            // grandes), a data iria parar sobre o bloco de equipamento; nesse
-            // caso ela vai para a faixa da direita, sob a foto do rosto.
-            //
-            // NO MODO LINHA_UNICA ela nao e desenhada aqui: ja saiu dentro da
-            // propria linha. Era esta a segunda copia que aparecia cortada por
-            // tras da foto do rosto, porque o "caso contrario" acima a jogava
-            // justamente para debaixo dela.
-            val fimFaixa = topoConteudo + alturaTopo
-            var yd = topoConteudo + alturaIds + 12f
-            if (modoIdsTo == LayoutIds.LINHA_UNICA) {
-                // nada a desenhar
-            } else if (yd + 12f <= fimFaixa) {
-                cv.drawText(txtDataSim, mL.toFloat(), yd, pDataLbl); yd += 10f
-                cv.drawText(fmtData.format(dados.dataSimulacao), mL.toFloat(), yd, pDataVal)
-            } else {
-                val xd = col2L
-                var y2 = fimFaixa - 12f
-                cv.drawText(txtDataSim, xd, y2, pDataLbl); y2 += 10f
-                cv.drawText(fmtData.format(dados.dataSimulacao), xd, y2, pDataVal)
-            }
-        } else {
-            // ETIQUETA VIRTUAL (mesma forma nas duas fichas) + DATA fora, abaixo.
-            val rectVirt = RectF(mL, topoConteudo, mL + etqW, topoConteudo + etqH)
-            desenharEtiquetaVirtual(cv, rectVirt, dados)
-            var yd = topoConteudo + etqH + 12f
-            cv.drawText(txtDataSim, mL.toFloat(), yd, pDataLbl); yd += 10f
-            cv.drawText(fmtData.format(dados.dataSimulacao), mL.toFloat(), yd, pDataVal)
-        }
+        // O QUADRO DA ETIQUETA, UM SO em qualquer configuracao.
+        //
+        // A escolha "fisica ou virtual" saiu. O quadro agora traz SEMPRE os
+        // dados do paciente dentro: quem usa etiqueta de papel cola por cima, e
+        // e para esse caso que existe a linha logo abaixo, repetindo o que a
+        // colagem encobre.
+        //
+        // A altura e limitada ao que a faixa de topo comporta MENOS a linha, de
+        // modo que o quadro nunca mais empurre a identificacao por cima do box
+        // de equipamento.
+        val etqW = larguraCaixaEtiqueta(etiquetaLarguraMm * MM_TO_PT)
+        val etqH = alturaCaixaEtiqueta(etiquetaAlturaMm * MM_TO_PT)
+        // BASE COMUM ao quadro e a foto do rosto. A linha corre sob os dois, e
+        // ancora-la no fim da faixa — em vez de na base do quadro — e o que faz
+        // a ficha sair igual com etiqueta de 30 ou de 70 mm.
+        val baseBloco = topoConteudo + alturaTopo - ALTURA_LINHA_IDS
+        desenharEtiquetaVirtual(cv,
+            RectF(mL, topoConteudo, mL + etqW, topoConteudo + etqH), dados)
+        desenharLinhaIdentificacao(cv, mL, baseBloco + 12f, (mR - mL).toFloat(), dados)
 
         // Foto do rosto: SEM borda; esquerda alinhada ao bloco 21-40 (máximo);
         // encolhe se a etiqueta invadir; corte lateral central de até 25%.
         val rosto = try { t.fotoRosto?.let { BitmapFactory.decodeFile(it.absolutePath) } } catch (_: Exception) { null }
         if (rosto != null) {
-            // Com as IDs ABAIXO, a etiqueta ocupa a coluna esquerda inteira e a
-            // foto encosta na borda do bloco 21-40 (col2L). Com IDs ao lado, a
-            // foto começa depois do conjunto etiqueta+IDs.
-            val fotoL = if (modoIdsTo == LayoutIds.ABAIXO) col2L
-                        else maxOf(col2L, mL + etqW + 14f)
-            // BASE ALINHADA A DA ETIQUETA no modo LINHA_UNICA.
+            // A FOTO COMECA NA BORDA DO BLOCO 21-40, sempre.
             //
-            // A faixa de topo tem 150 pt e a etiqueta de 100x50 mm tem ~142: a
-            // foto sobrava alguns pontos abaixo dela, e como a linha de dados
-            // corre sob as duas, o degrau ficava visivel. Nos demais modos a
-            // etiqueta e baixa e limitar a foto a ela a encolheria sem motivo.
-            val baseFoto = if (modoIdsTo == LayoutIds.LINHA_UNICA)
-                topoConteudo + minOf(alturaTopo, etqH) else topoConteudo + alturaTopo
-            val dest = RectF(fotoL, topoConteudo, mR.toFloat(), baseFoto)
+            // Antes ela recuava quando as identificacoes ficavam ao LADO da
+            // etiqueta — o arranjo escolhido justamente com etiqueta pequena, e
+            // portanto o caso em que a foto do rosto mais encolhia sem motivo
+            // aparente. As identificacoes sairam de la: a coluna direita inteira
+            // e da foto.
+            val fotoL = col2L
+            // MESMA BASE DO QUADRO: a linha de identificacao corre sob os dois, e
+            // qualquer degrau entre eles apareceria bem em cima dela.
+            val dest = RectF(fotoL, topoConteudo, mR.toFloat(), baseBloco)
             val escH = dest.height() / rosto.height
             val wProj = rosto.width * escH
             if (wProj >= dest.width()) {
@@ -1285,16 +1256,8 @@ object PdfBuilder {
      * cabecalho e precisa da mesma conta. Duplicar a formula faria as duas
      * folhas divergirem no dia em que uma so fosse ajustada.
      */
-    private fun calcularHeaderH(): Float {
-        val etqWdec = etiqLargPt.coerceAtMost(TO_BLOCO_W)
-        val etqHdec = etiqAltPt.coerceAtMost(TO_ALTURA_TOPO)
-        return when {
-            !usarEtiqueta -> (etqHdec + 12f).coerceAtLeast(HEADER_HEIGHT)
-            decidirLayoutIds(etqWdec, etqHdec) == LayoutIds.ABAIXO ->
-                (etqHdec + 5 * 11f + 22f).coerceAtLeast(HEADER_HEIGHT)
-            else -> (etqHdec + 10f).coerceAtLeast(HEADER_HEIGHT)
-        }
-    }
+    private fun calcularHeaderH(): Float =
+        (alturaCaixaEtiqueta(etiqAltPt) + ALTURA_LINHA_IDS + 8f).coerceAtLeast(HEADER_HEIGHT)
 
     /**
      * Cabecalho de TODAS as paginas da ficha.
@@ -1319,70 +1282,27 @@ object PdfBuilder {
         val baseHeader = topo + headerHAtual
         val leftAreaW = totalW - colDirW - 8f
 
-        val paintLabel = Paint().apply {
-            color = Color.parseColor("#444444")
-            textSize = if (usarEtiqueta) 7.5f else 8.5f   // compacto com etiqueta física
-            isFakeBoldText = true; isAntiAlias = true
-        }
-        val paintValor = Paint().apply {
-            color = Color.BLACK
-            textSize = if (usarEtiqueta) 9.5f else 11f
-            isAntiAlias = true
-        }
-
         if (semPaciente) {
             // Modelo em branco: nada de paciente entra. O bloco fica vazio de
             // proposito, e o titulo a direita sozinho diz o que a folha e.
-        } else if (!usarEtiqueta) {
-            // ---- MODO 1: sem etiqueta física — ETIQUETA VIRTUAL (tracejada,
-            //      cantos arredondados) + DATA DA SIMULAÇÃO fora, à direita ----
-            val rectVirt = RectF(MARGIN, topo,
-                MARGIN + etiqLargPt.coerceAtMost(leftAreaW * 0.55f),
-                topo + etiqAltPt.coerceAtMost(headerHAtual - 4f))
-            desenharEtiquetaVirtual(canvas, rectVirt, dados)
-            val fmt = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            var yd = topo + 16f
-            val xd = rectVirt.right + 10f
-            canvas.drawText(txtDataSim, xd, yd, paintLabel); yd += 11f
-            canvas.drawText(fmt.format(dados.dataSimulacao), xd, yd, paintValor)
-            if (dados.numeroSimulacao > 1) {
-                val paintNova = Paint().apply {
-                    color = Color.parseColor("#333333"); textSize = 10f
-                    isFakeBoldText = true; isAntiAlias = true
-                }
-                canvas.drawText("⚠ $txtNovaSim ${dados.numeroSimulacao - 1}", xd, yd + 14f, paintNova)
-            }
         } else {
-            // ---- Etiqueta FÍSICA: layout IDÊNTICO ao da ficha de Time-Out ----
-            val etqWf = etiqLargPt.coerceAtMost(TO_BLOCO_W)
-            val etqHf = etiqAltPt.coerceAtMost(TO_ALTURA_TOPO).coerceAtMost(headerHAtual - 6f)
-            val modoIds = decidirLayoutIds(etqWf, etqHf)
-            val hOcup = desenharEtiquetaFisicaComIds(canvas, MARGIN, topo, etqWf, etqHf,
-                dados, modoIds, PAGE_WIDTH - 2 * MARGIN)
-            // Se as IDs foram para baixo e passaram do header calculado, empurra a
-            // linha divisória do conteúdo para depois delas (evita sobreposição
-            // com o box de simulação quando a etiqueta é alta, ex.: 30 mm).
-            if (topo + hOcup + 6f > topo + headerHAtual) headerHAtual = hOcup + 10f
-
-            // DATA DA SIMULAÇÃO: uma vez só na folha.
-            //
-            // No modo LINHA_UNICA ela já saiu na linha sob a etiqueta, com o
-            // mesmo corpo — desenhá-la também aqui punha a mesma informação em
-            // dois lugares da mesma página, e na de Time-Out a segunda cópia
-            // caía por trás da foto do rosto.
-            val xd = MARGIN + TO_BLOCO_W + 14f
-            var yd = topo + 16f
-            if (modoIds != LayoutIds.LINHA_UNICA) {
-                val fmt = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                canvas.drawText(txtDataSim, xd, yd, paintLabel); yd += 11f
-                canvas.drawText(fmt.format(dados.dataSimulacao), xd, yd, paintValor)
-            }
+            // MESMO BLOCO DA FICHA DE TIME-OUT: quadro com os dados dentro e a
+            // linha de identificacao sob ele. As duas folhas saem juntas e sao
+            // conferidas lado a lado — cada diferenca de arranjo entre elas
+            // custa uma leitura a mais de quem separa as fichas.
+            val etqW = larguraCaixaEtiqueta(etiqLargPt)
+            val etqH = alturaCaixaEtiqueta(etiqAltPt)
+            desenharEtiquetaVirtual(canvas,
+                RectF(MARGIN, topo, MARGIN + etqW, topo + etqH), dados)
+            desenharLinhaIdentificacao(canvas, MARGIN, topo + etqH + 12f,
+                PAGE_WIDTH - MARGIN * 2, dados)
             if (dados.numeroSimulacao > 1) {
                 val paintNova = Paint().apply {
                     color = Color.parseColor("#333333"); textSize = 10f
                     isFakeBoldText = true; isAntiAlias = true
                 }
-                canvas.drawText("⚠ $txtNovaSim ${dados.numeroSimulacao - 1}", xd, yd + 14f, paintNova)
+                canvas.drawText("⚠ $txtNovaSim ${dados.numeroSimulacao - 1}",
+                    MARGIN + etqW + 14f, topo + 16f, paintNova)
             }
         }
 
@@ -1444,53 +1364,6 @@ object PdfBuilder {
             canvas.drawBitmap(logo, null, RectF(bordaDir - w, topo, bordaDir, topo + h), null)
             bordaDir - w
         } catch (_: Exception) { bordaDir }
-    }
-
-    /**
-     * Caixa pontilhada "COLE A ETIQUETA AQUI", com o NOME DO PACIENTE dentro.
-     *
-     * POR QUE O NOME VAI AQUI: a etiqueta de papel é colada por cima desta
-     * caixa, e depois disso a folha não diria de quem é até que alguém leia a
-     * etiqueta colada. Antes de colar, quem separa as fichas na impressora
-     * precisa saber qual é qual — e o nome impresso no fundo da caixa resolve
-     * isso sem gastar linha nenhuma do cabeçalho, já que a etiqueta o encobre
-     * assim que é colada.
-     *
-     * Fica ACIMA do "COLE A ETIQUETA AQUI" e em corpo maior: entre os dois, o
-     * que se procura é o nome.
-     */
-    private fun desenharCaixaEtiqueta(canvas: Canvas, rect: RectF,
-                                      nomePaciente: String = "") {
-        val paintPontilhado = Paint().apply {
-            color = Color.parseColor("#999999"); style = Paint.Style.STROKE; strokeWidth = 0.8f
-            pathEffect = android.graphics.DashPathEffect(floatArrayOf(4f, 3f), 0f); isAntiAlias = true
-        }
-        canvas.drawRoundRect(rect, RAIO_CANTO, RAIO_CANTO, paintPontilhado)
-        if (rect.height() < 22f || rect.width() < 60f) return
-
-        val temNome = nomePaciente.isNotBlank()
-        val paintHintEtiq = Paint().apply {
-            color = Color.parseColor("#888888"); textSize = 8f
-            isAntiAlias = true; textAlign = Paint.Align.CENTER
-        }
-        if (!temNome) {
-            canvas.drawText(txtColeEtiqueta, rect.centerX(), rect.centerY() + 3f, paintHintEtiq)
-            return
-        }
-
-        val paintNome = Paint().apply {
-            color = Color.parseColor("#555555")
-            typeface = android.graphics.Typeface.DEFAULT_BOLD
-            textSize = 11f; isAntiAlias = true; textAlign = Paint.Align.CENTER
-        }
-        // Encolhe ate caber: cortar o nome do paciente seria pior que reduzir.
-        val larguraUtil = rect.width() - 10f
-        while (paintNome.textSize > 6.5f &&
-               paintNome.measureText(nomePaciente) > larguraUtil) {
-            paintNome.textSize -= 0.5f
-        }
-        canvas.drawText(nomePaciente, rect.centerX(), rect.centerY() - 2f, paintNome)
-        canvas.drawText(txtColeEtiqueta, rect.centerX(), rect.centerY() + 11f, paintHintEtiq)
     }
 
     /** Dados empilhados (rótulo em cima, valor embaixo) — usado ao lado da etiqueta normal. */
@@ -1559,40 +1432,100 @@ object PdfBuilder {
      *  e o que faz a folha parecer uniforme. Ver o desenho do rubricario. */
     private const val ALTURA_RUBRICA = 0.82f
 
-    private enum class LayoutIds { LADO, ABAIXO, LADO_APERTADO, LINHA_UNICA }
+    /** Largura do quadro: no maximo o bloco 1 da tabela do Time-Out, que e a
+     *  regua a que o resto do cabecalho ja obedece. */
+    private fun larguraCaixaEtiqueta(pt: Float): Float = pt.coerceAtMost(TO_BLOCO_W)
 
-    /** LADO: sobra lateral ≥ 70pt (ids empilhadas à direita).
-     *  ABAIXO: etiqueta baixa o bastante para 5 linhas "ROT: valor" sob ela.
-     *  LADO_APERTADO: etiqueta larga E alta — ids à direita, fontes mínimas. */
     /**
-     * Onde colocar as identificações em relação à etiqueta física.
+     * Altura do quadro: o que a faixa de topo comporta descontada a linha.
      *
-     * Uma etiqueta grande (ex.: 100x70 mm) consome a largura INTEIRA do bloco —
-     * a sobra lateral fica negativa. Antes, esse caso ainda caía em
-     * LADO_APERTADO e as IDs eram desenhadas sobre a foto do paciente. Agora,
-     * sem sobra utilizável (< 55 pt), o texto vai obrigatoriamente ABAIXO, que
-     * é a única região livre.
+     * O TETO E 134 pt (47 mm), e nao os 70 mm que a configuracao aceita. A faixa
+     * de topo da ficha de Time-Out tem altura fixa — a tabela de 20 fracoes
+     * comeca logo abaixo — e a linha de identificacao mora nos ultimos 16 pt
+     * dela. Etiqueta configurada acima disso sai desenhada menor; nao ha para
+     * onde crescer sem comer linha da tabela.
+     *
+     * O MESMO TETO VALE NA FICHA DE FOTOS, onde o cabecalho poderia crescer. E
+     * deliberado: as duas folhas saem juntas, e uma etiqueta de papel que
+     * coubesse numa e nao na outra seria pior que um quadro um pouco menor nas
+     * duas.
      */
-    private fun decidirLayoutIds(etqW: Float, etqH: Float): LayoutIds {
-        val sobra = TO_BLOCO_W - etqW - 10f
-        // ESPACO DE SEGURANCA: a lista empilhada abaixo da etiqueta precisa de
-        // ~52 pt (5 campos) mais a folga. Se a etiqueta nao deixa isso DENTRO da
-        // faixa de topo, empilhar invade o que vem abaixo — foi assim que a
-        // etiqueta 100x50 mm passou por cima do box de equipamento.
-        val sobraAbaixo = TO_ALTURA_TOPO - etqH - FOLGA_SEGURANCA
-        return when {
-            sobra >= 70f -> LayoutIds.LADO
-            // Sem espaco lateral E sem altura para empilhar: linha unica.
-            sobra < 55f && sobraAbaixo < 52f -> LayoutIds.LINHA_UNICA
-            sobra < 55f -> LayoutIds.ABAIXO          // sem espaço lateral real
-            etqH <= TO_ALTURA_TOPO - 61f -> LayoutIds.ABAIXO
-            else -> LayoutIds.LADO_APERTADO
+    private fun alturaCaixaEtiqueta(pt: Float): Float =
+        pt.coerceAtMost(TO_ALTURA_TOPO - ALTURA_LINHA_IDS)
+
+    /**
+     * A LINHA DE IDENTIFICACAO, sob o quadro da etiqueta.
+     *
+     * REPETE DE PROPOSITO o que ja esta impresso dentro do quadro. O quadro e
+     * onde a etiqueta de papel do servico e colada, e colada ela cobre tudo o
+     * que estiver ali — nome inclusive. Esta linha e a copia que sobrevive a
+     * colagem: e por ela que a ficha continua identificavel depois.
+     *
+     * A DATA DA SIMULACAO so aparece AQUI, e nunca dentro do quadro. E a unica
+     * informacao do conjunto que a etiqueta do servico nao traz, entao seria
+     * justamente a que a colagem faria desaparecer da folha.
+     */
+    private fun desenharLinhaIdentificacao(
+        canvas: Canvas, xEsq: Float, yBase: Float, largura: Float, dados: DadosCabecalho
+    ) {
+        val partes = mutableListOf<Pair<String, String>>()
+        if (dados.nomePaciente.isNotBlank()) partes.add(txtPaciente to dados.nomePaciente)
+        if (dados.nascimento.isNotBlank()) partes.add(txtNascimento to dados.nascimento)
+        if (dados.prontuario.isNotBlank()) partes.add(txtRegistro to dados.prontuario)
+        partes.add(txtDataSim.removeSuffix(":") to
+            SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(dados.dataSimulacao))
+
+        // NEGRITO DE VERDADE no rotulo, com typeface bold e nao isFakeBoldText:
+        // o negrito sintetico quase nao se distingue do valor neste corpo, e a
+        // linha vira um bloco unico de texto onde nao se acha o campo procurado.
+        val pRot = Paint().apply {
+            color = Color.parseColor("#444444"); textSize = ROT_LINHA
+            typeface = android.graphics.Typeface.DEFAULT_BOLD; isAntiAlias = true
+        }
+        val pVal = Paint().apply {
+            color = Color.BLACK; textSize = VAL_LINHA
+            typeface = android.graphics.Typeface.DEFAULT; isAntiAlias = true
+        }
+        val pSep = Paint().apply {
+            color = Color.parseColor("#888888"); textSize = VAL_LINHA; isAntiAlias = true
+        }
+        val sep = "  ·  "
+
+        // Encolhe proporcionalmente ate caber, com PISO: abaixo de 72% a linha
+        // deixa de ser legivel no papel, que e onde ela e lida. Se nem assim
+        // couber, o nome — o campo mais longo e o unico que tambem aparece no
+        // quadro — e truncado, e nao os demais.
+        fun medir(e: Float): Float {
+            var w = 0f
+            partes.forEachIndexed { i, (rot, valor) ->
+                pRot.textSize = ROT_LINHA * e
+                pVal.textSize = VAL_LINHA * e
+                pSep.textSize = VAL_LINHA * e
+                w += pRot.measureText("$rot: ") + pVal.measureText(valor)
+                if (i < partes.size - 1) w += pSep.measureText(sep)
+            }
+            return w
+        }
+        var escala = 1f
+        while (escala > 0.72f && medir(escala) > largura) escala -= 0.04f
+        pRot.textSize = ROT_LINHA * escala
+        pVal.textSize = VAL_LINHA * escala
+        pSep.textSize = VAL_LINHA * escala
+        while (medir(escala) > largura && partes[0].second.length > 8) {
+            partes[0] = partes[0].first to (partes[0].second.dropLast(2))
+        }
+
+        var x = xEsq
+        partes.forEachIndexed { i, (rot, valor) ->
+            val pref = "$rot: "
+            canvas.drawText(pref, x, yBase, pRot); x += pRot.measureText(pref)
+            canvas.drawText(valor, x, yBase, pVal); x += pVal.measureText(valor)
+            if (i < partes.size - 1) {
+                canvas.drawText(sep, x, yBase, pSep); x += pSep.measureText(sep)
+            }
         }
     }
 
-    /** Caixa pontilhada da etiqueta + identificações compactas FORA dela
-     *  (paciente, idade, nascimento, registro, sexo), no layout decidido.
-     *  Nunca invade a área abaixo (corta por truncamento, não por sobreposição). */
     /** Quebra um texto em várias linhas que caibam em maxW (por palavras; se uma
      *  palavra isolada não couber, quebra por caracteres). */
     private fun quebrarLinhas(texto: String, paint: Paint, maxW: Float): List<String> {
@@ -1615,172 +1548,16 @@ object PdfBuilder {
         return linhas
     }
 
-    /** Desenha a etiqueta física + IDs no layout decidido e RETORNA a altura
-     *  total ocupada (etiqueta OU etiqueta+IDs abaixo), para quem chama reservar
-     *  o espaço correto e não deixar as IDs colidirem com o que vem abaixo. */
-    private fun desenharEtiquetaFisicaComIds(
-        canvas: Canvas, xEsq: Float, topo: Float, etqW: Float, etqH: Float,
-        dados: DadosCabecalho, modo: LayoutIds,
-        /** Largura util para a linha unica: da esquerda da etiqueta ate a borda
-         *  direita da foto. So e usada no modo LINHA_UNICA. */
-        larguraLinhaIds: Float = TO_BLOCO_W
-    ): Float {
-        val rectEtiq = RectF(xEsq, topo, xEsq + etqW, topo + etqH)
-        // O nome so entra na caixa nos modos em que ele NAO aparece escrito
-        // fora dela. No modo ABAIXO existe uma linha "PACIENTE:", e repetir
-        // seria ocupar a caixa com o que ja esta impresso ao lado.
-        desenharCaixaEtiqueta(canvas, rectEtiq,
-            if (modo == LayoutIds.ABAIXO) "" else dados.nomePaciente)
-        val apertado = modo != LayoutIds.LADO
-        // NEGRITO DE VERDADE no rotulo: o negrito sintetico some no corpo
-        // pequeno impresso, e rotulo e valor viram um bloco unico de texto.
-        val pl = Paint().apply {
-            color = Color.parseColor("#444444")
-            textSize = if (apertado) 5.5f else 6.5f
-            typeface = android.graphics.Typeface.DEFAULT_BOLD; isAntiAlias = true
-        }
-        val pv = Paint().apply {
-            color = Color.BLACK
-            textSize = if (apertado) 7.5f else 8f
-            isAntiAlias = true
-        }
-        data class Campo(val rot: String, val linhas: List<String>)
-        val lineRot = if (apertado) 7f else 8.5f
-        val lineVal = if (apertado) 10.5f else 12.5f
-
-        // LINHA UNICA: etiqueta grande (ex.: 100x50 mm) nao deixa altura para a
-        // lista empilhada dentro da faixa de topo. Tudo vai para UMA linha sob a
-        // etiqueta e a foto, com "·" separando os campos, ocupando a largura
-        // inteira do conteudo. E o espaco que a reducao das observacoes de 3
-        // para 2 linhas liberou.
-        //
-        // O nome do paciente NAO entra nesta linha: ele e impresso DENTRO da
-        // caixa da etiqueta (ver desenharCaixaEtiqueta), onde a etiqueta de
-        // papel o encobre ao ser colada. Aqui custaria a linha toda.
-        if (modo == LayoutIds.LINHA_UNICA) {
-            val partes = mutableListOf<Pair<String, String>>()
-            // Rotulos vindos de strings.xml: a ficha sai nos tres idiomas, e
-            // estes quatro eram os unicos que continuavam em portugues no PDF
-            // em ingles e espanhol.
-            idadeTexto(dados.nascimento).let { if (it.isNotBlank()) partes.add(txtIdade to it) }
-            if (dados.nascimento.isNotBlank()) partes.add(txtNascimento to dados.nascimento)
-            if (dados.prontuario.isNotBlank()) partes.add(txtRegistro to dados.prontuario)
-            if (dados.sexo.isNotBlank()) partes.add(txtSexo to dados.sexo)
-            // "DATA DA SIMULACAO" por extenso, e AQUI e o unico lugar onde ela
-            // aparece nesta folha: quem desenha o cabecalho omite a do canto
-            // superior quando este modo esta ativo. Sairam duplicadas, e uma
-            // delas caia atras da foto do rosto.
-            partes.add(txtDataSim.removeSuffix(":") to
-                SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                    .format(dados.dataSimulacao))
-
-            // Mesma tipografia para TODOS os campos: rotulo em negrito pequeno,
-            // valor em normal. Antes cada campo tinha corpo proprio e a linha
-            // saia desalinhada.
-            // CORPO IGUAL AO DO CANTO SUPERIOR DA ETIQUETA (7,5 / 9,5). Estava
-            // menor (6,5 / 8) e, com o encolhimento por falta de largura, chegava
-            // a ficar ilegivel no papel — que e onde esta linha e lida.
-            //
-            // NEGRITO DE VERDADE nos rotulos, com typeface bold em vez de
-            // isFakeBoldText: o negrito sintetico quase nao se distingue do
-            // valor depois da reducao de escala, e a linha vira um bloco unico
-            // de texto onde nao se acha o campo procurado.
-            val pRot = Paint().apply {
-                color = Color.parseColor("#444444"); textSize = ROT_LINHA
-                typeface = android.graphics.Typeface.DEFAULT_BOLD; isAntiAlias = true
-            }
-            val pVal = Paint().apply {
-                color = Color.BLACK; textSize = VAL_LINHA
-                typeface = android.graphics.Typeface.DEFAULT; isAntiAlias = true
-            }
-            val pSep = Paint().apply {
-                color = Color.parseColor("#888888"); textSize = VAL_LINHA; isAntiAlias = true
-            }
-            val SEP = "  ·  "
-            val larguraTotal = larguraLinhaIds
-            // Se nao couber, encolhe proporcionalmente ate o minimo legivel.
-            var escala = 1f
-            fun medir(e: Float): Float {
-                var w = 0f
-                partes.forEachIndexed { i, (rot, valor) ->
-                    pRot.textSize = ROT_LINHA * e; pVal.textSize = VAL_LINHA * e
-                    pSep.textSize = VAL_LINHA * e
-                    w += pRot.measureText("$rot: ") + pVal.measureText(valor)
-                    if (i < partes.size - 1) w += pSep.measureText(SEP)
-                }
-                return w
-            }
-            while (escala > 0.72f && medir(escala) > larguraTotal) escala -= 0.04f
-            pRot.textSize = ROT_LINHA * escala; pVal.textSize = VAL_LINHA * escala
-            pSep.textSize = VAL_LINHA * escala
-
-            var x = xEsq
-            val yLinha = rectEtiq.bottom + 13f
-            partes.forEachIndexed { i, (rot, valor) ->
-                val pref = "$rot: "
-                canvas.drawText(pref, x, yLinha, pRot); x += pRot.measureText(pref)
-                canvas.drawText(valor, x, yLinha, pVal); x += pVal.measureText(valor)
-                if (i < partes.size - 1) {
-                    canvas.drawText(SEP, x, yLinha, pSep); x += pSep.measureText(SEP)
-                }
-            }
-            return (yLinha - topo) + FOLGA_SEGURANCA
-        }
-
-        if (modo == LayoutIds.ABAIXO) {
-            var yI = rectEtiq.bottom + 11f
-            val maxWI = TO_BLOCO_W
-            fun linhaId(rot: String, valor: String) {
-                val pref = "$rot:  "; val wRot = pl.measureText(pref)
-                for ((idx, ln) in quebrarLinhas(valor, pv, maxWI - wRot).withIndex()) {
-                    if (idx == 0) canvas.drawText(pref, xEsq, yI, pl)
-                    canvas.drawText(ln, xEsq + wRot, yI, pv); yI += 10f
-                }
-            }
-            linhaId(txtPaciente, dados.nomePaciente)
-            idadeTexto(dados.nascimento).let { if (it.isNotBlank()) linhaId(txtIdade, it) }
-            if (dados.nascimento.isNotBlank()) linhaId(txtNascimento, dados.nascimento)
-            if (dados.prontuario.isNotBlank()) linhaId(txtRegistro, dados.prontuario)
-            if (dados.sexo.isNotBlank()) linhaId(txtSexo, dados.sexo)
-            return (yI - topo)   // etiqueta + IDs abaixo
-        }
-
-        val xI = rectEtiq.right + 8f
-        val maxWI = (TO_BLOCO_W - etqW - 8f).coerceAtLeast(40f)
-        val campos = mutableListOf<Campo>()
-        campos.add(Campo("PACIENTE", quebrarLinhas(dados.nomePaciente, pv, maxWI)))
-        idadeTexto(dados.nascimento).let { if (it.isNotBlank()) campos.add(Campo("IDADE", listOf(it))) }
-        if (dados.nascimento.isNotBlank()) campos.add(Campo("NASCIMENTO", listOf(dados.nascimento)))
-        if (dados.prontuario.isNotBlank()) campos.add(Campo("REGISTRO", listOf(dados.prontuario)))
-        if (dados.sexo.isNotBlank()) campos.add(Campo("SEXO", listOf(dados.sexo)))
-        val alturaNecessaria = campos.sumOf { (lineRot + it.linhas.size * lineVal).toDouble() }.toFloat()
-
-        if (alturaNecessaria <= etqH + 2f) {
-            var yI = topo + 9f
-            for (cp in campos) {
-                canvas.drawText(cp.rot, xI, yI, pl); yI += lineRot
-                for (ln in cp.linhas) { canvas.drawText(ln, xI, yI, pv); yI += lineVal }
-            }
-            return etqH   // tudo coube ao lado, dentro da etiqueta
-        } else {
-            var yI = rectEtiq.bottom + 11f
-            val maxAbaixo = TO_BLOCO_W
-            for (cp in campos) {
-                val pref = "${cp.rot}:  "; val wRot = pl.measureText(pref)
-                val valorCompleto = cp.linhas.joinToString(" ")
-                for ((idx, ln) in quebrarLinhas(valorCompleto, pv, maxAbaixo - wRot).withIndex()) {
-                    if (idx == 0) canvas.drawText(pref, xEsq, yI, pl)
-                    canvas.drawText(ln, xEsq + wRot, yI, pv); yI += 10f
-                }
-            }
-            return (yI - topo)   // etiqueta + IDs realocadas abaixo
-        }
-    }
-
     /**
-     * ETIQUETA VIRTUAL compartilhada (fotos sem etiqueta física + Time-Out):
-     * contorno cinza TRACEJADO de cantos arredondados; nome, idade, data de
-     * nascimento, registro e sexo centralizados horizontal e verticalmente.
+     * O QUADRO DA ETIQUETA — o mesmo nas duas folhas, em qualquer configuracao.
+     *
+     * Contorno cinza TRACEJADO de cantos arredondados, com nome, idade, data de
+     * nascimento, registro e sexo dentro. O tracejado e o convite a colar a
+     * etiqueta de papel do servico por cima; o conteudo impresso e o que serve
+     * a quem nao usa etiqueta — e, para quem usa, o que identifica a folha
+     * ANTES de ela ser colada, na hora de separar as fichas na impressora.
+     *
+     * A DATA DA SIMULACAO nao entra aqui: ver desenharLinhaIdentificacao.
      */
     private fun desenharEtiquetaVirtual(canvas: Canvas, rect: RectF, dados: DadosCabecalho) {
         val dash = Paint().apply {
@@ -1794,8 +1571,9 @@ object PdfBuilder {
         val margem = 10f
         val xTexto = rect.left + margem
         val maxW = rect.width() - margem * 2f
+        val maxH = rect.height() - 8f
+        if (maxW <= 20f || maxH <= 12f) return
 
-        // Nome maior; pode quebrar em várias linhas. Demais IDs em fonte padrão.
         val pNome = Paint().apply {
             isAntiAlias = true; color = Color.BLACK
             typeface = Typeface.DEFAULT_BOLD; textSize = 12f
@@ -1806,32 +1584,70 @@ object PdfBuilder {
             typeface = Typeface.DEFAULT; textSize = 8.5f
             textAlign = Paint.Align.LEFT
         }
-        // Auto-reduz o nome só se uma única palavra estourar a largura.
-        var tamNome = 12f
-        var linhasNome = quebrarLinhas(dados.nomePaciente.uppercase(), pNome, maxW)
-        while (linhasNome.any { pNome.measureText(it) > maxW } && tamNome > 8.5f) {
-            tamNome -= 0.5f; pNome.textSize = tamNome
-            linhasNome = quebrarLinhas(dados.nomePaciente.uppercase(), pNome, maxW)
+
+        // ROTULOS TRADUZIDOS. Estavam fixos em portugues, e este quadro era a
+        // unica parte da ficha que saia assim — "Nascimento" no meio de uma
+        // folha em japones. Passava despercebido enquanto ele era a excecao;
+        // agora que e a etiqueta de TODA ficha, sairia em toda impressao.
+        val ids = mutableListOf<String>()
+        idadeTexto(dados.nascimento).let { if (it.isNotBlank()) ids.add("$txtIdade: $it") }
+        if (dados.nascimento.isNotBlank()) ids.add("$txtNascimento: ${dados.nascimento}")
+        if (dados.prontuario.isNotBlank()) ids.add("$txtRegistro: ${dados.prontuario}")
+        if (dados.sexo.isNotBlank()) ids.add("$txtSexo: ${dados.sexo}")
+
+        data class Ln(val txt: String, val paint: Paint, val h: Float)
+
+        /**
+         * Monta o conjunto num par de corpos e diz que altura ele ocupa.
+         *
+         * O nome quebra em quantas linhas precisar; as identificacoes ocupam uma
+         * cada. E a mesma conta do desenho, por isso a decisao e o traco nunca
+         * discordam.
+         */
+        fun montar(corpoNome: Float, corpoId: Float): Pair<List<Ln>, Float> {
+            pNome.textSize = corpoNome
+            pId.textSize = corpoId
+            val hNome = corpoNome + 3f
+            val hId = corpoId + 2.5f
+            val out = mutableListOf<Ln>()
+            for (ln in quebrarLinhas(dados.nomePaciente.uppercase(), pNome, maxW))
+                out.add(Ln(ln, pNome, hNome))
+            for (t in ids) out.add(Ln(t, pId, hId))
+            return out to out.sumOf { it.h.toDouble() }.toFloat()
         }
 
-        // Monta as linhas (nome em N linhas + demais ids), justificadas à esquerda.
-        data class Ln(val txt: String, val paint: Paint, val h: Float)
-        val linhas = mutableListOf<Ln>()
-        val hNome = tamNome + 3f
-        for (ln in linhasNome) linhas.add(Ln(ln, pNome, hNome))
-        val hId = 11f
-        idadeTexto(dados.nascimento).let { if (it.isNotBlank()) linhas.add(Ln("Idade: $it", pId, hId)) }
-        if (dados.nascimento.isNotBlank()) linhas.add(Ln("Nascimento: ${dados.nascimento}", pId, hId))
-        if (dados.prontuario.isNotBlank()) linhas.add(Ln("Registro: ${dados.prontuario}", pId, hId))
-        if (dados.sexo.isNotBlank()) linhas.add(Ln("Sexo: ${dados.sexo}", pId, hId))
+        // CABE OU ENCOLHE. O conjunto e reduzido ate caber na altura do quadro,
+        // com piso de legibilidade: nome a 7 pt, identificacoes a 6 pt. Abaixo
+        // disso o papel impresso nao se le, e reduzir mais so esconderia o
+        // problema — por isso, no piso, o que nao couber e CORTADO em vez de
+        // transbordar. O que se perde aqui sobrevive na linha logo abaixo do
+        // quadro, que traz nome, nascimento, registro e data.
+        var corpoNome = 12f
+        var corpoId = 8.5f
+        var (linhas, totalH) = montar(corpoNome, corpoId)
+        while (totalH > maxH && corpoNome > 7f) {
+            corpoNome -= 0.5f
+            corpoId = (corpoId - 0.35f).coerceAtLeast(6f)
+            val r = montar(corpoNome, corpoId)
+            linhas = r.first; totalH = r.second
+        }
+        if (totalH > maxH) {
+            val cabem = mutableListOf<Ln>()
+            var acum = 0f
+            for (l in linhas) {
+                if (acum + l.h > maxH) break
+                cabem.add(l); acum += l.h
+            }
+            linhas = cabem; totalH = acum
+        }
+        if (linhas.isEmpty()) return
 
-        // Centraliza verticalmente o conjunto inteiro.
-        val totalH = linhas.sumOf { it.h.toDouble() }.toFloat()
+        // Centraliza verticalmente o conjunto, que agora cabe.
         var y = rect.centerY() - totalH / 2f + linhas.first().h - 3f
         for (l in linhas) {
-            var s = l.txt
-            while (l.paint.measureText(s) > maxW && s.length > 6) s = s.dropLast(2)
-            canvas.drawText(s, xTexto, y, l.paint)
+            var t = l.txt
+            while (l.paint.measureText(t) > maxW && t.length > 6) t = t.dropLast(2)
+            canvas.drawText(t, xTexto, y, l.paint)
             y += l.h
         }
     }

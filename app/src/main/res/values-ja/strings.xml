@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">患者ID</string>
     <string name="pdf_lbl_birth">生年月日</string>
     <string name="pdf_lbl_simdate">シミュレーション日：</string>
-    <string name="pdf_paste_label_here">ここに患者ラベルを貼付</string>
     <string name="pdf_title_line1">位置決め</string>
     <string name="pdf_title_line2">写真</string>
     <string name="pdf_new_sim">新規シミュレーション</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">カメラに戻る</string>
     <string name="fin_observation_label">備考</string>
     <string name="fin_observation_hint">シミュレーションの備考をここに入力してください（3行まで）</string>
-    <string name="pdf_use_label_space">シートに患者ラベル用の余白を確保</string>
-    <string name="pdf_label_size_hint">実物の患者ラベルを貼る領域の大きさです。ラベルを使わない場合はチェックを外してください。</string>
+    <string name="pdf_label_size_hint">記録用紙の識別枠の大きさです。紙ラベルを貼る場合は、そのラベルの寸法を入力してください。</string>
     <string name="pdf_label_width_mm">幅（mm）</string>
     <string name="pdf_label_height_mm">高さ（mm）</string>
     <string name="group_database">データベース</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDFと患者ラベル</string>
     <string name="wiz_pdf_desc">位置決めシートの生成方法と、患者の実物ラベル用に確保するスペースの設定です。</string>
     <string name="wiz_pdf_orientation">PDFの向き</string>
-    <string name="wiz_use_label">実物ラベル用のスペースを確保する</string>
     <string name="label_width_mm">幅（mm）</string>
     <string name="label_height_mm">高さ（mm）</string>
     <string name="wiz_pdf_hint">これらはすべて後から 設定 → PDF で変更できます。</string>

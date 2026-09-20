@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">رقم التسجيل</string>
     <string name="pdf_lbl_birth">تاريخ الميلاد</string>
     <string name="pdf_lbl_simdate">تاريخ المحاكاة:</string>
-    <string name="pdf_paste_label_here">الصق ملصق التعريف هنا</string>
     <string name="pdf_title_line1">صور</string>
     <string name="pdf_title_line2">الوضعية</string>
     <string name="pdf_new_sim">محاكاة جديدة</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">العودة إلى الكاميرا</string>
     <string name="fin_observation_label">ملاحظة</string>
     <string name="fin_observation_hint">اكتب هنا ملاحظات المحاكاة (حتى 3 أسطر)</string>
-    <string name="pdf_use_label_space">حجز مساحة لملصق التعريف في ورقة الوضعية</string>
-    <string name="pdf_label_size_hint">حجم المساحة المخصصة للصق الملصق الورقي. ألغِ التحديد إذا كنت لا تستخدم ملصقًا.</string>
+    <string name="pdf_label_size_hint">حجم إطار التعريف في الورقة. إذا كان القسم يلصق ملصقًا ورقيًا، فاستخدم مقاسه.</string>
     <string name="pdf_label_width_mm">العرض (مم)</string>
     <string name="pdf_label_height_mm">الارتفاع (مم)</string>
     <string name="group_database">قاعدة البيانات</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF وملصق التعريف</string>
     <string name="wiz_pdf_desc">كيفية توليد ورقة الوضعية والمساحة المحجوزة لملصق التعريف الورقي للمريض.</string>
     <string name="wiz_pdf_orientation">اتجاه صفحة PDF</string>
-    <string name="wiz_use_label">حجز مساحة لملصق التعريف الورقي</string>
     <string name="label_width_mm">العرض (مم)</string>
     <string name="label_height_mm">الارتفاع (مم)</string>
     <string name="wiz_pdf_hint">يمكن تعديل كل ذلك لاحقًا في الإعدادات → PDF.</string>

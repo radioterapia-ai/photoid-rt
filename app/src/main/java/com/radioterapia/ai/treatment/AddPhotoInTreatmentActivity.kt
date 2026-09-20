@@ -1417,7 +1417,6 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         else null
         return PdfBuilder.gerarFolhaPosicionamento(this, dados, ordenadas, pdfFile,
             rotulos = rotulos, landscape = config.pdfLandscape,
-            usarEtiqueta = config.pdfUsarEtiqueta,
             etiquetaLarguraMm = config.pdfEtiquetaLarguraMm,
             etiquetaAlturaMm = config.pdfEtiquetaAlturaMm,
             observacoes = observacoes,

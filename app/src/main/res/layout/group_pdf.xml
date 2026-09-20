@@ -54,15 +54,6 @@
         android:textColor="@color/text_primary"
         android:textSize="13sp" />
 
-    <CheckBox
-        android:id="@+id/chkUsarEtiqueta"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pdf_use_label_space"
-        android:textColor="@color/text_primary"
-        android:textSize="14sp"
-        android:checked="true" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

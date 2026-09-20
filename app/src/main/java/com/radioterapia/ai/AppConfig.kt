@@ -157,23 +157,23 @@ class AppConfig(context: Context) {
         get() = prefs.getBoolean(KEY_PDF_LANDSCAPE, false)
         set(value) = prefs.edit().putBoolean(KEY_PDF_LANDSCAPE, value).apply()
 
-    /** Reservar espaço para colar a etiqueta física no cabeçalho do PDF. */
-    var pdfUsarEtiqueta: Boolean
-        get() = prefs.getBoolean(KEY_PDF_USAR_ETIQUETA, true)
-        set(value) = prefs.edit().putBoolean(KEY_PDF_USAR_ETIQUETA, value).apply()
-
-
     /** Rotina da clínica: PDF inclui a página de TIME-OUT (primeira página). */
     var pdfIncluiTimeOut: Boolean
         get() = prefs.getBoolean("pdf_inclui_timeout", true)
         set(value) = prefs.edit().putBoolean("pdf_inclui_timeout", value).apply()
 
-    /** Largura da etiqueta em mm (quando pdfUsarEtiqueta=true). */
+    /**
+     * Largura do quadro de identificação na ficha, em mm.
+     *
+     * O quadro existe em toda ficha e sempre com os dados do paciente dentro —
+     * não há mais escolha entre etiqueta física e virtual. A medida serve a quem
+     * cola etiqueta de papel por cima: é o tamanho da etiqueta do serviço.
+     */
     var pdfEtiquetaLarguraMm: Int
         get() = prefs.getInt(KEY_PDF_ETIQ_LARG, 60)
         set(value) = prefs.edit().putInt(KEY_PDF_ETIQ_LARG, value.coerceIn(10, 120)).apply()
 
-    /** Altura da etiqueta em mm (quando pdfUsarEtiqueta=true). */
+    /** Altura do quadro de identificação na ficha, em mm. Ver a largura. */
     var pdfEtiquetaAlturaMm: Int
         get() = prefs.getInt(KEY_PDF_ETIQ_ALT, 30)
         set(value) = prefs.edit().putInt(KEY_PDF_ETIQ_ALT, value.coerceIn(10, 80)).apply()
@@ -307,7 +307,6 @@ class AppConfig(context: Context) {
         private const val KEY_PRINTER_NOME = "printer_nome"
         private const val KEY_PDF_SERVIDOR = "pdf_servidor"
         private const val KEY_PDF_LANDSCAPE = "pdf_landscape"
-        private const val KEY_PDF_USAR_ETIQUETA = "pdf_usar_etiqueta"
         private const val KEY_PDF_ETIQ_LARG = "pdf_etiqueta_largura_mm"
         private const val KEY_PDF_ETIQ_ALT = "pdf_etiqueta_altura_mm"
     private const val KEY_PDF_MARGEM = "pdf_margem_mm"

@@ -98,7 +98,7 @@ object PacoteConfig {
 
         FICHA("ficha", com.radioterapia.ai.R.string.tr_ficha,
             com.radioterapia.ai.R.string.tr_ficha_desc,
-            listOf("pdf_landscape", "pdf_usar_etiqueta", "pdf_etiqueta_largura_mm",
+            listOf("pdf_landscape", "pdf_etiqueta_largura_mm",
                    "pdf_etiqueta_altura_mm", "pdf_margem_mm", "pdf_inclui_timeout")),
 
         REDE("rede", com.radioterapia.ai.R.string.tr_rede,

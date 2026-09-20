@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">PAT.-NR.</string>
     <string name="pdf_lbl_birth">GEBURTSDATUM</string>
     <string name="pdf_lbl_simdate">DATUM DES PLANUNGS-CT:</string>
-    <string name="pdf_paste_label_here">ETIKETT HIER AUFKLEBEN</string>
     <string name="pdf_title_line1">FOTOS DER</string>
     <string name="pdf_title_line2">LAGERUNG</string>
     <string name="pdf_new_sim">ERNEUTES PLANUNGS-CT</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">Zurück zur Kamera</string>
     <string name="fin_observation_label">Bemerkung</string>
     <string name="fin_observation_hint">Schreiben Sie hier die Bemerkungen zum Planungs-CT (bis zu 3 Zeilen)</string>
-    <string name="pdf_use_label_space">Platz für das Etikett auf dem Protokoll freihalten</string>
-    <string name="pdf_label_size_hint">Größe des Felds zum Aufkleben des Etiketts. Abwählen, wenn Sie kein Etikett verwenden.</string>
+    <string name="pdf_label_size_hint">Größe des Identifikationsfelds auf dem Blatt. Wenn Ihre Abteilung Papieretiketten aufklebt, verwenden Sie deren Maße.</string>
     <string name="pdf_label_width_mm">Breite (mm)</string>
     <string name="pdf_label_height_mm">Höhe (mm)</string>
     <string name="group_database">Datenbestand</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF und Etikett</string>
     <string name="wiz_pdf_desc">Wie das Lagerungsprotokoll erzeugt wird und wie viel Platz für das Patientenetikett freibleibt.</string>
     <string name="wiz_pdf_orientation">Ausrichtung des PDF</string>
-    <string name="wiz_use_label">Platz für das Etikett freihalten</string>
     <string name="label_width_mm">Breite (mm)</string>
     <string name="label_height_mm">Höhe (mm)</string>
     <string name="wiz_pdf_hint">All das lässt sich später unter Einstellungen → PDF ändern.</string>

@@ -58,16 +58,6 @@
         android:textColor="@color/text_primary"
         android:textSize="14sp" />
 
-    <CheckBox
-        android:id="@+id/chkWizUsarEtiqueta"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:checked="true"
-        android:text="@string/wiz_use_label"
-        android:textColor="@color/text_primary"
-        android:textSize="14sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -94,7 +94,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
 
     // PDF
     private var rgPdfOrientation: android.widget.RadioGroup? = null
-    private var chkUsarEtiqueta: android.widget.CheckBox? = null
     private var edtEtiquetaLargura: EditText? = null
     private var edtEtiquetaAltura: EditText? = null
     private var edtPdfMargem: EditText? = null
@@ -298,7 +297,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                     if (checked == R.id.rbPdfLandscape) R.string.pdf_margin_hint_landscape
                     else R.string.pdf_margin_hint_portrait)
             }
-            chkUsarEtiqueta = it.findViewById(R.id.chkUsarEtiqueta)
             it.findViewById<android.widget.CheckBox>(R.id.chkPdfTimeOut).apply {
                 isChecked = config.pdfIncluiTimeOut
                 setOnCheckedChangeListener { _, v -> config.pdfIncluiTimeOut = v }
@@ -308,11 +306,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             edtPdfMargem = it.findViewById(R.id.edtPdfMargem)
             txtMargemHint = it.findViewById(R.id.txtMargemHint)
             layoutEtiquetaTamanho = it.findViewById(R.id.layoutEtiquetaTamanho)
-            chkUsarEtiqueta?.setOnCheckedChangeListener { _, marcado ->
-                layoutEtiquetaTamanho?.alpha = if (marcado) 1f else 0.4f
-                edtEtiquetaLargura?.isEnabled = marcado
-                edtEtiquetaAltura?.isEnabled = marcado
-            }
         }
 
         adicionarGrupo("📑", R.string.group_protocolo, R.layout.group_protocolo) {
@@ -537,16 +530,12 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         rgPdfOrientation?.check(
             if (config.pdfLandscape) R.id.rbPdfLandscape else R.id.rbPdfPortrait
         )
-        chkUsarEtiqueta?.isChecked = config.pdfUsarEtiqueta
         edtEtiquetaLargura?.setText(config.pdfEtiquetaLarguraMm.toString())
         edtEtiquetaAltura?.setText(config.pdfEtiquetaAlturaMm.toString())
         edtPdfMargem?.setText(config.pdfMargemMm.toString())
         txtMargemHint?.setText(
             if (config.pdfLandscape) R.string.pdf_margin_hint_landscape
             else R.string.pdf_margin_hint_portrait)
-        layoutEtiquetaTamanho?.alpha = if (config.pdfUsarEtiqueta) 1f else 0.4f
-        edtEtiquetaLargura?.isEnabled = config.pdfUsarEtiqueta
-        edtEtiquetaAltura?.isEnabled = config.pdfUsarEtiqueta
 
         // Idioma
         val auto = LocaleManager.isAuto(this)
@@ -1329,7 +1318,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         // PDF
         config.pdfParaServidor = true  // sempre salvamos o PDF junto das fotos
         config.pdfLandscape = (rgPdfOrientation?.checkedRadioButtonId == R.id.rbPdfLandscape)
-        config.pdfUsarEtiqueta = chkUsarEtiqueta?.isChecked ?: true
         edtEtiquetaLargura?.text?.toString()?.toIntOrNull()?.let { config.pdfEtiquetaLarguraMm = it }
         edtPdfMargem?.text?.toString()?.toIntOrNull()?.let { config.pdfMargemMm = it }
         edtEtiquetaAltura?.text?.toString()?.toIntOrNull()?.let { config.pdfEtiquetaAlturaMm = it }

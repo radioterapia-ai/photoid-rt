@@ -310,7 +310,6 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
         else null
         com.radioterapia.ai.pdf.PdfBuilder.gerarFolhaPosicionamento(
             this, dados, fotos, saida, rotulos = rotulos, landscape = config.pdfLandscape,
-            usarEtiqueta = config.pdfUsarEtiqueta,
             etiquetaLarguraMm = config.pdfEtiquetaLarguraMm,
             etiquetaAlturaMm = config.pdfEtiquetaAlturaMm,
             observacoes = com.radioterapia.ai.util.ObsStore.ler(dir, sim.numeroSimulacao),

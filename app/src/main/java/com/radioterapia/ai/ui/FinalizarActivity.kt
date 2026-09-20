@@ -1033,7 +1033,6 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
                     com.radioterapia.ai.pdf.PdfBuilder.gerarFolhaPosicionamento(
                         this@FinalizarActivity, dados, fotos, pdf,
                         rotulos = rotulos, landscape = cfg.pdfLandscape,
-                        usarEtiqueta = cfg.pdfUsarEtiqueta,
                         etiquetaLarguraMm = cfg.pdfEtiquetaLarguraMm,
                         etiquetaAlturaMm = cfg.pdfEtiquetaAlturaMm,
                         observacoes = obs,
@@ -1134,7 +1133,6 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         )
         return PdfBuilder.gerarFolhaPosicionamento(this, dados, fotos, pdfFile,
             rotulos = sessionManager.rotulosParaPdf(), landscape = config.pdfLandscape,
-            usarEtiqueta = config.pdfUsarEtiqueta,
             etiquetaLarguraMm = config.pdfEtiquetaLarguraMm,
             etiquetaAlturaMm = config.pdfEtiquetaAlturaMm,
             observacoes = observacoesTexto,

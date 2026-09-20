@@ -176,7 +176,6 @@
     <string name="pdf_lbl_record">রেজিস্ট্রেশন</string>
     <string name="pdf_lbl_birth">জন্ম তারিখ</string>
     <string name="pdf_lbl_simdate">সিমুলেশনের তারিখ:</string>
-    <string name="pdf_paste_label_here">এখানে লেবেল লাগান</string>
     <string name="pdf_title_line1">পজিশনিং</string>
     <string name="pdf_title_line2">ছবি</string>
     <string name="pdf_new_sim">নতুন সিমুলেশন</string>
@@ -252,8 +251,7 @@
     <string name="back_to_camera">ক্যামেরায় ফিরুন</string>
     <string name="fin_observation_label">মন্তব্য</string>
     <string name="fin_observation_hint">এখানে সিমুলেশনের মন্তব্য লিখুন (সর্বোচ্চ ৩ লাইন)</string>
-    <string name="pdf_use_label_space">শিটে লেবেলের জন্য জায়গা রাখুন</string>
-    <string name="pdf_label_size_hint">কাগজের লেবেল লাগানোর জায়গার আকার। লেবেল ব্যবহার না করলে টিক তুলে দিন।</string>
+    <string name="pdf_label_size_hint">শিটে শনাক্তকরণ বাক্সের আকার। বিভাগ কাগজের লেবেল লাগালে সেই লেবেলের মাপ দিন।</string>
     <string name="pdf_label_width_mm">প্রস্থ (mm)</string>
     <string name="pdf_label_height_mm">উচ্চতা (mm)</string>
     <string name="group_database">ডেটাবেস</string>
@@ -339,7 +337,6 @@
     <string name="wiz_pdf_title">PDF ও লেবেল</string>
     <string name="wiz_pdf_desc">পজিশনিং শিট কীভাবে তৈরি হবে এবং রোগীর কাগজের লেবেলের জন্য কতটা জায়গা রাখা হবে।</string>
     <string name="wiz_pdf_orientation">PDF-এর ওরিয়েন্টেশন</string>
-    <string name="wiz_use_label">কাগজের লেবেলের জন্য জায়গা রাখুন</string>
     <string name="label_width_mm">প্রস্থ (mm)</string>
     <string name="label_height_mm">উচ্চতা (mm)</string>
     <string name="wiz_pdf_hint">এসব পরে সেটিংস → PDF থেকে বদলানো যাবে।</string>
