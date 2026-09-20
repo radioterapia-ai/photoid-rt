@@ -112,6 +112,12 @@ object PdfBuilder {
      */
     private const val ALTURA_LINHA_IDS = 16f
 
+    /** Menor escala em que a linha de identificacao ainda se le no papel.
+     *  70% de 9,5 pt da 6,65 pt no valor — o mesmo corpo das celulas da tabela
+     *  de fracoes ao lado, que e lida e preenchida a mao todo dia. */
+    private const val PISO_LINHA = 0.70f
+
+
     /** Define orientação da página (afeta PAGE_WIDTH/HEIGHT). */
     private fun configurarOrientacao(paisagem: Boolean) {
         landscape = paisagem
@@ -1468,10 +1474,28 @@ object PdfBuilder {
     private fun desenharLinhaIdentificacao(
         canvas: Canvas, xEsq: Float, yBase: Float, largura: Float, dados: DadosCabecalho
     ) {
+        // TODOS OS CAMPOS DO QUADRO, na mesma ordem dele, mais a data.
+        //
+        // Idade e sexo entraram depois: estavam so dentro do quadro, que e
+        // exatamente o que a etiqueta de papel cobre. Eram os dois campos que a
+        // colagem apagava da folha sem deixar copia em lugar nenhum.
         val partes = mutableListOf<Pair<String, String>>()
         if (dados.nomePaciente.isNotBlank()) partes.add(txtPaciente to dados.nomePaciente)
-        if (dados.nascimento.isNotBlank()) partes.add(txtNascimento to dados.nascimento)
+        // A IDADE ANDA COM A DATA DE NASCIMENTO, num campo so.
+        //
+        // Como campo separado ela custava um rotulo inteiro — "IDADE: " — mais
+        // um separador, e seis campos rotulados nao cabem nesta largura sem
+        // apertar os outros cinco. Entre parenteses ao lado da data ela nao
+        // paga rotulo nenhum, e fica onde quem le ja procura: ninguem confere
+        // idade sem olhar a data de nascimento.
+        val idade = idadeTexto(dados.nascimento)
+        when {
+            dados.nascimento.isNotBlank() -> partes.add(txtNascimento to
+                (dados.nascimento + if (idade.isNotBlank()) "  ($idade)" else ""))
+            idade.isNotBlank() -> partes.add(txtIdade to idade)
+        }
         if (dados.prontuario.isNotBlank()) partes.add(txtRegistro to dados.prontuario)
+        if (dados.sexo.isNotBlank()) partes.add(txtSexo to dados.sexo)
         partes.add(txtDataSim.removeSuffix(":") to
             SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(dados.dataSimulacao))
 
@@ -1489,12 +1513,25 @@ object PdfBuilder {
         val pSep = Paint().apply {
             color = Color.parseColor("#888888"); textSize = VAL_LINHA; isAntiAlias = true
         }
-        val sep = "  ·  "
+        // SEPARADOR CURTO. Com cinco campos, quatro separadores de cinco
+        // caracteres custavam quase 40 pt — o bastante para empurrar a linha
+        // inteira um degrau de escala para baixo.
+        val sep = " · "
 
-        // Encolhe proporcionalmente ate caber, com PISO: abaixo de 72% a linha
-        // deixa de ser legivel no papel, que e onde ela e lida. Se nem assim
-        // couber, o nome — o campo mais longo e o unico que tambem aparece no
-        // quadro — e truncado, e nao os demais.
+        // CABE EM DOIS DEGRAUS, e NENHUM CAMPO SOME.
+        //
+        // 1. Encolhe proporcionalmente, com piso em 70%. Abaixo disso o valor
+        //    cai de 9,5 para menos de 6,7 pt, e a linha deixa de se ler no
+        //    papel impresso — que e o unico lugar onde ela e lida.
+        // 2. Se nem no piso couber, o NOME e truncado. Ele e o unico campo de
+        //    comprimento imprevisivel, e o unico que ainda aparece inteiro
+        //    dentro do quadro logo acima. Os demais tem tamanho conhecido e
+        //    nao ha por que um deles pagar pelo comprimento do outro.
+        //
+        // Uma versao anterior derrubava a IDADE quando a escala caia demais.
+        // Nao e mais preciso: ela deixou de ser campo rotulado e passou a andar
+        // entre parenteses com a data de nascimento, que e o que liberou a
+        // largura de que a linha precisava.
         fun medir(e: Float): Float {
             var w = 0f
             partes.forEachIndexed { i, (rot, valor) ->
@@ -1506,8 +1543,12 @@ object PdfBuilder {
             }
             return w
         }
-        var escala = 1f
-        while (escala > 0.72f && medir(escala) > largura) escala -= 0.04f
+        fun ajustar(): Float {
+            var e = 1f
+            while (e > PISO_LINHA && medir(e) > largura) e -= 0.02f
+            return e
+        }
+        val escala = ajustar()
         pRot.textSize = ROT_LINHA * escala
         pVal.textSize = VAL_LINHA * escala
         pSep.textSize = VAL_LINHA * escala
@@ -1622,13 +1663,33 @@ object PdfBuilder {
         // problema — por isso, no piso, o que nao couber e CORTADO em vez de
         // transbordar. O que se perde aqui sobrevive na linha logo abaixo do
         // quadro, que traz nome, nascimento, registro e data.
-        var corpoNome = 12f
-        var corpoId = 8.5f
+        // O CORPO SAI DA ALTURA DO QUADRO, e nao de um numero fixo.
+        //
+        // Com 12 pt para todo tamanho, a etiqueta de 100x50 mm tinha quatro
+        // vezes a area da de 60x30 e a mesma letra — o espaco que o servico
+        // configurou ficava sobrando em volta de um nome pequeno.
+        //
+        // O PISO E 12 pt de proposito: e o corpo que a etiqueta padrao ja usa, e
+        // quadro pequeno nao deve sair com nome MENOR do que saia antes. Quem
+        // reduz abaixo disso e o laco de caber, e so quando nao ha alternativa.
+        var corpoNome = (rect.height() * 0.13f).coerceIn(12f, 20f)
+        var corpoId = (corpoNome * 0.62f).coerceIn(8.5f, 12f)
         var (linhas, totalH) = montar(corpoNome, corpoId)
         while (totalH > maxH && corpoNome > 7f) {
             corpoNome -= 0.5f
             corpoId = (corpoId - 0.35f).coerceAtLeast(6f)
             val r = montar(corpoNome, corpoId)
+            linhas = r.first; totalH = r.second
+        }
+        // SOBROU ALTURA: cresce de volta, ate o teto do quadro. Sem isto, quadro
+        // alto e estreito — em que o nome quebra em tres linhas e o laco acima
+        // reduziu o corpo — ficaria com letra pequena e um palmo de vazio
+        // embaixo, que e o oposto do que o tamanho configurado pediu.
+        while (corpoNome < 20f) {
+            val r = montar(corpoNome + 0.5f, (corpoId + 0.31f).coerceAtMost(12f))
+            if (r.second > maxH) break
+            corpoNome += 0.5f
+            corpoId = (corpoId + 0.31f).coerceAtMost(12f)
             linhas = r.first; totalH = r.second
         }
         if (totalH > maxH) {
