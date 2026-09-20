@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        Paleta extraída do logo Radioterapia.AI (rodada UI v3 + v4).
+        Fundo principal: #00030E (preto-azulado profundo).
+        Tons azul-roxo do logo: usados em destaques e gradientes.
+    -->
+
+    <!-- Marca -->
+    <color name="brand_primary">#42A5F5</color>
+    <color name="brand_primary_dark">#1565C0</color>
+    <color name="brand_accent">#69A7DB</color>
+
+    <!-- Gradiente "PhotoID RT": azul -> roxo (idêntico ao logo) -->
+    <color name="grad_start">#42A5F5</color>
+    <color name="grad_mid">#7B6FE0</color>
+    <color name="grad_end">#B254E8</color>
+
+    <!-- Ações: sem laranja -->
+    <color name="action_primary">#1565C0</color>
+    <color name="action_save">#2E7D32</color>
+    <color name="action_discard">#C62828</color>
+    <color name="action_neutral">#455A64</color>
+    <color name="action_warning">#5C5BBF</color>
+    <color name="action_purple">#7B1FA2</color>
+
+    <!-- Status (rotacionados para tons baixos-saturação, sem laranja) -->
+    <color name="status_ok">#1B3A2A</color>
+    <color name="status_error">#5A1F1F</color>
+    <color name="status_pending">#2A2545</color>
+    <color name="status_info">#1A2545</color>
+    <color name="status_warning">#2A2545</color>
+
+    <!-- Texto -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B8C5D6</color>
+    <color name="text_tertiary">#8896AC</color>
+    <color name="text_on_dark">#FFFFFF</color>
+
+    <!-- Fundos -->
+    <color name="bg_main">#00030E</color>
+    <color name="bg_card">#0B132C</color>
+    <color name="bg_elevated">#0E1839</color>
+    <color name="bg_input">#1A2545</color>
+    <color name="divider">#1E2D52</color>
+
+    <!-- Indicadores -->
+    <color name="badge_red">#C62828</color>
+    <color name="overlay_dark">#CC000000</color>
+    <color name="watermark_bg">#CC000000</color>
+    <color name="success_green">#2E7D32</color>
+
+    <!--
+        VERDE DO VISTO CONFIRMADO, nos dialogos de conferencia do OCR.
+
+        Nao usa success_green (#2E7D32), e a diferenca nao e gosto: aquele verde
+        foi escolhido para ser FUNDO de botao preenchido, com texto branco por
+        cima. Aqui a cor e o PROPRIO icone, sobre bg_main (#00030E) — uso
+        invertido, e verde escuro sobre fundo quase preto praticamente some.
+
+        #00E676 e verde de primeiro plano: contra bg_main da ~12,6:1, contra o
+        cinza do estado nao confirmado (#90A4AE a 50% de opacidade) a diferenca
+        deixa de ser so de matiz e passa a ser de BRILHO — o que mantem o estado
+        legivel para quem nao distingue vermelho e verde.
+    -->
+    <color name="confirm_green">#00E676</color>
+
+    <!-- Estado NAO confirmado do mesmo visto. Cinza-azulado, aplicado com 50%
+         de opacidade pela View: apagado de proposito, para o confirmado ter
+         para onde subir. -->
+    <color name="confirm_pendente">#90A4AE</color>
+    <color name="error_red">#C62828</color>
+</resources>

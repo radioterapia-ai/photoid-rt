@@ -34,7 +34,7 @@ import com.radioterapia.ai.i18n.LocaleManager
  *     idioma que ele realmente entende.
  *  2) Título "Termos e Privacidade" + texto introdutório (consent_intro).
  *  3) Dois botões "Abrir Termos" e "Abrir Privacidade" que abrem AlertDialogs com o
- *     texto completo (terms_body / privacy_body, traduzidos em pt/en/es).
+ *     texto completo (terms_body / privacy_body, nos doze idiomas do app).
  *  4) Checkbox + botão "Aceitar e continuar" (desabilitado até marcar o checkbox).
  *
  * Toda a UI é construída programaticamente para não depender de XML/inflate em meio
@@ -72,8 +72,16 @@ class ConsentActivity : AppCompatActivity() {
          *     terceiro do reconhecimento; a Política deixou de afirmar "100%
          *     offline", que não era exato, e passou a descrever o uso real de
          *     rede.
+         * 3 → 20/09/2026. O Aplicativo passou a ENVIAR arquivo de paciente por
+         *     conta própria, em vez de depender de um aplicativo externo. É a
+         *     mudança material da v4.0, e é exatamente o caso para o qual este
+         *     número existe: a Política afirmava, na seção de transferência
+         *     internacional, que "não há" — e com o destino apontado para um
+         *     serviço de nuvem passa a haver. Entrou uma seção descrevendo a
+         *     função nos dois textos, e a lista do que o app faz na rede
+         *     ganhou o terceiro item.
          */
-        const val VERSAO_TERMOS = 2
+        const val VERSAO_TERMOS = 3
 
         /**
          * O consentimento vigente cobre a versão ATUAL dos Termos?
