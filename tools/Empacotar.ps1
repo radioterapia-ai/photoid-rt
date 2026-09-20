@@ -173,9 +173,21 @@ $apk = Join-Path $raizProjeto 'app\build\outputs\apk\release\app-release.apk'
 if (-not (Test-Path $apk)) {
     $semAssinar = Join-Path $raizProjeto 'app\build\outputs\apk\release\app-release-unsigned.apk'
     if (Test-Path $semAssinar) {
-        Falhar ("O release saiu SEM ASSINATURA. A variavel de ambiente" + [Environment]::NewLine +
-                "       PHOTOID_RT_KEYSTORE precisa apontar o keystore.properties da chave." + [Environment]::NewLine +
-                "       Valor atual: '" + $env:PHOTOID_RT_KEYSTORE + "'")
+        $prop = Join-Path $HOME '.gradle\gradle.properties'
+        $linha = if (Test-Path $prop) {
+            (Select-String -Path $prop -Pattern '^photoidKeystore=' |
+             Select-Object -First 1).Line
+        } else { '(sem ~/.gradle/gradle.properties)' }
+        Falhar ("O release saiu SEM ASSINATURA." + [Environment]::NewLine +
+                "       O build procura a chave em DOIS lugares, nesta ordem:" + [Environment]::NewLine +
+                "       1. a propriedade photoidKeystore do Gradle — e a que vale," + [Environment]::NewLine +
+                "          porque chega ao daemon mesmo que ele ja esteja rodando;" + [Environment]::NewLine +
+                "       2. a variavel de ambiente PHOTOID_RT_KEYSTORE, para CI." + [Environment]::NewLine +
+                [Environment]::NewLine +
+                "       Propriedade: " + $linha + [Environment]::NewLine +
+                "       Variavel:    '" + $env:PHOTOID_RT_KEYSTORE + "'" + [Environment]::NewLine +
+                [Environment]::NewLine +
+                "       O arquivo apontado precisa existir E o .jks dentro dele tambem.")
     }
     Falhar "APK nao encontrado em $apk. Rode sem -PularPortao."
 }

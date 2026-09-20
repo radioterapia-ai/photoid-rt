@@ -88,14 +88,16 @@ Se aparecer **1.3**, é o build que pedia permissão de microfone; substitua.
 ## Assinatura — a chave de release e onde ela mora
 
 Desde a v3.2 as entregas saem assinadas com uma **keystore de release própria**,
-não mais com o certificado de debug. O certificado do que está em campo:
+não mais com o certificado de debug.
 
-```
-CN=Henrique Faria Braga, OU=PhotoID RT, O=Radioterapia.AI, C=BR
-RSA 4096 · válido até 2061 · emitido em 06/09/2026
-SHA-256  10:1B:E6:0F:1D:A1:22:16:0A:F6:34:04:82:72:67:EF:
-         CC:C1:B2:39:27:22:B6:43:06:CA:09:AB:71:52:A0:C3
-```
+> **A chave mudou na v4.0.** A keystore original, emitida em 06/09/2026, foi
+> perdida — não estava em nenhuma máquina nem em backup. Perder a keystore
+> significa não conseguir mais atualizar o que está instalado: o Android recusa
+> um APK assinado por certificado diferente. Os dois tablets em campo tiveram de
+> desinstalar e reinstalar, e o cadastro de pacientes foi exportado antes.
+>
+> O certificado antigo, para conferir um APK anterior à v4.0:
+> `SHA-256 10:1B:E6:0F:…:A0:C3`.
 
 Para conferir de qual chave veio um APK qualquer, sem instalar nada:
 
@@ -105,8 +107,19 @@ apksigner verify --print-certs PhotoID_RT_LATEST.apk
 
 ### Onde a chave fica, e por que não aqui
 
-O `app/build.gradle` lê o caminho de um `.properties` apontado pela variável de
-ambiente `PHOTOID_RT_KEYSTORE`. Ele fica **fora** de `C:\AI_PROJETOS` e de
+O `app/build.gradle` lê o caminho de um `.properties`, e procura em **dois
+lugares, nesta ordem**:
+
+1. a propriedade `photoidKeystore` do Gradle, em `~/.gradle/gradle.properties`
+   — **é esta que vale na máquina de desenvolvimento**;
+2. a variável de ambiente `PHOTOID_RT_KEYSTORE`, para CI e outras máquinas.
+
+A ordem não é arbitrária: `System.getenv()` dentro do build lê o ambiente do
+**daemon** do Gradle, que já está em execução e não herda variável criada depois
+dele subir. Um release já saiu sem assinatura por causa disso, e o build não
+reclamou. Propriedade do Gradle chega ao daemon sempre.
+
+O arquivo fica em `C:\AI_OFFLINE\_CHAVES\`, **fora** de `C:\AI_PROJETOS` e de
 `C:\AI_DEPLOY`, que sincronizam com o Drive: chave de assinatura em nuvem
 pessoal é o pior caso deste projeto — quem a tem publica uma atualização
 maliciosa assinada como o autor, e o Android instala por cima sem perguntar.
