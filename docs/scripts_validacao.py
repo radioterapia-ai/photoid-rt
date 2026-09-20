@@ -485,6 +485,24 @@ def primitivas_de_rede():
         "smb/SmbClient.kt",                # servidor de arquivos da clínica
         "csv/CsvSyncManager.kt",           # lê a base de pacientes via SmbClient
         "treatment/TreatmentPhotoFetcher.kt",  # lê fotos da pasta do servidor
+
+        # MOTOR DE SINCRONIZAÇÃO (v4.0), um adaptador por protocolo.
+        #
+        # A lista dobrou de tamanho, e essa é exatamente a decisão que esta
+        # verificação existe para tornar visível. O app passou a LEVAR arquivo
+        # de paciente ao servidor por conta própria, em vez de depender de um
+        # aplicativo externo — é a mudança material desta versão, e é por isso
+        # que os termos sobem de versão e pedem novo aceite.
+        #
+        # Os cinco só rodam com o interruptor mestre LIGADO, que nasce
+        # desligado. Com ele desligado nenhum destes arquivos é instanciado.
+        "sync/destino/DestinoSmb.kt",      # smbj: servidor de arquivos do hospital
+        "sync/destino/DestinoWebDav.kt",   # HttpURLConnection: PUT e MKCOL
+        "sync/destino/DestinoFtp.kt",      # commons-net: serviço que só tem FTP
+        "sync/destino/DestinoSftp.kt",     # jsch: SSH
+        # DestinoSaf.kt NÃO entra: ele fala com o provedor de documentos do
+        # próprio Android, não com a rede. Quem sai para a internet ali é o app
+        # da nuvem que a clínica já instalou, com a conta dela.
     }
     padrao = re.compile(
         r"\b(Socket\s*\(|ServerSocket|HttpURLConnection|HttpsURLConnection"
