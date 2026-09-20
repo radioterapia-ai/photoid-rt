@@ -498,6 +498,7 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="ok_exported">Exported: %1$s</string>
     <string name="ok_record_read">Record read: %1$s</string>
     <string name="ok_photo_added">✓ Photo added (%1$d)</string>
+    <string name="foto_recorte_ajustado">✓ Crop adjusted</string>
     <string name="n_entries">%1$d entr(y/ies)</string>
     <string name="viewer_summary">Summary</string>
     <string name="resumo_medico">Physician</string>
@@ -670,7 +671,7 @@ The patient leaves the treatment list and stays in history.</string>
     <!-- ===== Carousel menu: clearer names ===== -->
     <string name="popup_editar_cadastro_longo">Edit patient record</string>
     <string name="popup_editar_simulacao_longo">Edit this simulation details</string>
-    <string name="popup_fotos_longo">Add / Edit photos of this simulation</string>
+    <string name="popup_fotos_longo">Adjust crop, add or edit photos of this simulation</string>
 
     <!-- ===== Simulation selector ===== -->
     <string name="sim_selector_label">Simulation</string>
@@ -885,4 +886,6 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="prot_verso_remover_q">The back PDF is deleted. The front of the sheet stays in the protocol.</string>
     <string name="prot_pagina_item_verso">Page %1$d — %2$d sheet(s) + back</string>
     <string name="cam_ajuste_encaixar">Fit inside the frame</string>
+    <string name="prot_girar_miniatura">Rotate</string>
+    <string name="prot_sem_miniatura">Choose a thumbnail first.</string>
 </resources>

@@ -552,6 +552,7 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="ok_exported">Exportado: %1$s</string>
     <string name="ok_record_read">Prontuário lido: %1$s</string>
     <string name="ok_photo_added">✓ Foto adicionada (%1$d)</string>
+    <string name="foto_recorte_ajustado">✓ Recorte ajustado</string>
     <string name="n_entries">%1$d entrada(s)</string>
     <string name="viewer_summary">Resumo</string>
     <string name="resumo_medico">Médico</string>
@@ -726,7 +727,7 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <!-- ===== Menu do carrossel: nomes mais explicitos ===== -->
     <string name="popup_editar_cadastro_longo">Editar cadastro do paciente</string>
     <string name="popup_editar_simulacao_longo">Editar as informações desta simulação</string>
-    <string name="popup_fotos_longo">Adicionar / Editar fotos desta simulação</string>
+    <string name="popup_fotos_longo">Ajustar recorte, adicionar ou editar fotos desta simulação</string>
 
     <!-- ===== Seletor de simulacao ===== -->
     <string name="sim_selector_label">Simulação</string>
@@ -942,4 +943,6 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="prot_verso_remover_q">O PDF do verso é apagado. A frente da folha continua no protocolo.</string>
     <string name="prot_pagina_item_verso">Página %1$d — %2$d folha(s) + verso</string>
     <string name="cam_ajuste_encaixar">Ajuste para encaixar</string>
+    <string name="prot_girar_miniatura">Girar</string>
+    <string name="prot_sem_miniatura">Escolha uma miniatura primeiro.</string>
 </resources>

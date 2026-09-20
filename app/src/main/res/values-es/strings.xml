@@ -498,6 +498,7 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="ok_exported">Exportado: %1$s</string>
     <string name="ok_record_read">Registro leído: %1$s</string>
     <string name="ok_photo_added">✓ Foto añadida (%1$d)</string>
+    <string name="foto_recorte_ajustado">✓ Recorte ajustado</string>
     <string name="n_entries">%1$d entrada(s)</string>
     <string name="viewer_summary">Resumen</string>
     <string name="resumo_medico">Médico</string>
@@ -670,7 +671,7 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <!-- ===== Menu del carrusel: nombres mas explicitos ===== -->
     <string name="popup_editar_cadastro_longo">Editar el registro del paciente</string>
     <string name="popup_editar_simulacao_longo">Editar la información de esta simulación</string>
-    <string name="popup_fotos_longo">Agregar / Editar fotos de esta simulación</string>
+    <string name="popup_fotos_longo">Ajustar recorte, añadir o editar fotos de esta simulación</string>
 
     <!-- ===== Selector de simulacion ===== -->
     <string name="sim_selector_label">Simulación</string>
@@ -885,4 +886,6 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="prot_verso_remover_q">El PDF del reverso se elimina. El anverso sigue en el protocolo.</string>
     <string name="prot_pagina_item_verso">Página %1$d — %2$d hoja(s) + reverso</string>
     <string name="cam_ajuste_encaixar">Ajusta para encajar</string>
+    <string name="prot_girar_miniatura">Girar</string>
+    <string name="prot_sem_miniatura">Elige primero una miniatura.</string>
 </resources>

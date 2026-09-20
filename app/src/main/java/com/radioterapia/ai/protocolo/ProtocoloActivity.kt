@@ -72,6 +72,15 @@ class ProtocoloActivity : BaseActivity() {
                 Toast.makeText(this, R.string.gallery_fail, Toast.LENGTH_SHORT).show()
             }
         }
+        findViewById<Button>(R.id.btnProtGirarMini).setOnClickListener {
+            if (atual.miniatura.isBlank()) {
+                Toast.makeText(this, R.string.prot_sem_miniatura, Toast.LENGTH_SHORT).show()
+            } else if (store.girarMiniatura(atual)) {
+                desenharMiniatura()
+            } else {
+                Toast.makeText(this, R.string.gallery_fail, Toast.LENGTH_SHORT).show()
+            }
+        }
         findViewById<Button>(R.id.btnProtAddPagina).setOnClickListener {
             try { escolherPdf.launch(arrayOf("application/pdf")) }
             catch (_: Exception) {
@@ -158,9 +167,10 @@ class ProtocoloActivity : BaseActivity() {
     private fun desenharMiniatura() {
         val arq = store.arquivoMiniatura(atual)
         if (arq == null) { imgMini.setImageResource(R.drawable.bg_sem_foto); return }
+        // Mesma razao do ProtocoloStore.bitmapMiniatura: decodeFile ignora a
+        // orientacao do EXIF e devolve deitada a foto tirada em pe.
         val bmp = try {
-            val op = BitmapFactory.Options().apply { inSampleSize = 2 }
-            BitmapFactory.decodeFile(arq.absolutePath, op)
+            com.radioterapia.ai.util.ImagemUtils.decodificarComExif(arq, 640)
         } catch (_: Throwable) { null }
         // decodeFile devolve null para arquivo corrompido SEM lançar nada: sem
         // esta checagem a miniatura ficaria em branco e pareceria não escolhida.

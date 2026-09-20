@@ -140,6 +140,19 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         title = getString(R.string.fin_confirm_title)
         findViewById<TextView>(R.id.txtFinTitulo).setText(R.string.fin_confirm_title)
         construirResumo()
+        /*
+            A FAIXA DE PROTOCOLOS TEM DE SER DESENHADA AQUI, na primeira passagem.
+
+            Ela estava sendo montada num lugar so — dentro de entrarModoEdicao(),
+            que e o botao "Editar dados". Resultado: quem preenchia e salvava
+            nunca via a escolha; ela so aparecia depois, quando a tela voltava
+            para o modo de edicao, e de fora isso parecia a tela "voltando
+            sozinha e so entao mostrando os protocolos".
+
+            Pior que nao aparecer: protocoloEscolhido ficava "" e a ficha saia
+            SEM as paginas do servico, sem ninguem ter decidido isso.
+         */
+        desenharProtocolos()
         // ===== TIME-OUT: rotina da clínica (config). Sítio é OPCIONAL. =====
         findViewById<View>(R.id.layoutTimeOutCampos).visibility =
             if (config.pdfIncluiTimeOut) View.VISIBLE else View.GONE

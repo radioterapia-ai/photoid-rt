@@ -463,6 +463,7 @@
     <string name="ok_exported">Exportiert: %1$s</string>
     <string name="ok_record_read">Pat.-Nr. gelesen: %1$s</string>
     <string name="ok_photo_added">✓ Foto hinzugefügt (%1$d)</string>
+    <string name="foto_recorte_ajustado">✓ Zuschnitt angepasst</string>
     <string name="n_entries">%1$d Eintrag/Einträge</string>
     <string name="viewer_summary">Zusammenfassung</string>
     <string name="resumo_medico">Arzt</string>
@@ -616,7 +617,7 @@
     <string name="gallery_need_category">Wählen Sie zuerst die Kategorie des Fotos.</string>
     <string name="popup_editar_cadastro_longo">Stammdaten des Patienten bearbeiten</string>
     <string name="popup_editar_simulacao_longo">Angaben dieses Planungs-CT bearbeiten</string>
-    <string name="popup_fotos_longo">Fotos dieses Planungs-CT hinzufügen / bearbeiten</string>
+    <string name="popup_fotos_longo">Zuschnitt anpassen, Fotos dieses Planungs-CT hinzufügen oder bearbeiten</string>
     <string name="sim_selector_label">Planungs-CT</string>
     <string name="sim_selector_recent">%1$s (neuestes)</string>
     <string name="photo_existing_title">Fotos dieses Planungs-CT</string>
@@ -815,4 +816,6 @@
     <string name="prot_verso_remover_q">Das PDF der Rückseite wird gelöscht. Die Vorderseite bleibt im Protokoll.</string>
     <string name="prot_pagina_item_verso">Seite %1$d — %2$d Blatt + Rückseite</string>
     <string name="cam_ajuste_encaixar">Ins Bild einpassen</string>
+    <string name="prot_girar_miniatura">Drehen</string>
+    <string name="prot_sem_miniatura">Wählen Sie zuerst ein Vorschaubild.</string>
 </resources>

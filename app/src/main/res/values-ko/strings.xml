@@ -463,6 +463,7 @@
     <string name="ok_exported">내보냄: %1$s</string>
     <string name="ok_record_read">등록번호를 읽었습니다: %1$s</string>
     <string name="ok_photo_added">✓ 사진 추가됨(%1$d)</string>
+    <string name="foto_recorte_ajustado">✓ 자르기를 조정했습니다</string>
     <string name="n_entries">항목 %1$d개</string>
     <string name="viewer_summary">요약</string>
     <string name="resumo_medico">의사</string>
@@ -616,7 +617,7 @@
     <string name="gallery_need_category">먼저 사진의 항목을 선택하십시오.</string>
     <string name="popup_editar_cadastro_longo">환자 등록 정보 수정</string>
     <string name="popup_editar_simulacao_longo">이 모의치료의 정보 수정</string>
-    <string name="popup_fotos_longo">이 모의치료의 사진 추가 / 수정</string>
+    <string name="popup_fotos_longo">자르기 조정, 이 모의치료 사진 추가 또는 편집</string>
     <string name="sim_selector_label">모의치료</string>
     <string name="sim_selector_recent">%1$s (최근)</string>
     <string name="photo_existing_title">이 모의치료의 사진</string>
@@ -815,4 +816,6 @@
     <string name="prot_verso_remover_q">뒷면 PDF가 삭제됩니다. 앞면은 프로토콜에 그대로 남습니다.</string>
     <string name="prot_pagina_item_verso">%1$d쪽 — %2$d장 + 뒷면</string>
     <string name="cam_ajuste_encaixar">프레임에 맞게 조정</string>
+    <string name="prot_girar_miniatura">회전</string>
+    <string name="prot_sem_miniatura">먼저 썸네일을 선택하세요.</string>
 </resources>

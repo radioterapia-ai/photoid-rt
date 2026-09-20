@@ -463,6 +463,7 @@
     <string name="ok_exported">エクスポート完了：%1$s</string>
     <string name="ok_record_read">患者IDを読み取りました：%1$s</string>
     <string name="ok_photo_added">✓ 写真を追加しました（%1$d）</string>
+    <string name="foto_recorte_ajustado">✓ トリミングを調整しました</string>
     <string name="n_entries">%1$d 件</string>
     <string name="viewer_summary">概要</string>
     <string name="resumo_medico">医師</string>
@@ -616,7 +617,7 @@
     <string name="gallery_need_category">先に写真のカテゴリを選択してください。</string>
     <string name="popup_editar_cadastro_longo">患者登録を編集</string>
     <string name="popup_editar_simulacao_longo">このシミュレーションの情報を編集</string>
-    <string name="popup_fotos_longo">このシミュレーションの写真を追加／編集</string>
+    <string name="popup_fotos_longo">トリミングの調整、この位置決めの写真の追加・編集</string>
     <string name="sim_selector_label">シミュレーション</string>
     <string name="sim_selector_recent">%1$s（最新）</string>
     <string name="photo_existing_title">このシミュレーションの写真</string>
@@ -815,4 +816,6 @@
     <string name="prot_verso_remover_q">裏面の PDF は削除されます。表面はプロトコルに残ります。</string>
     <string name="prot_pagina_item_verso">%1$d ページ — %2$d 枚 + 裏面</string>
     <string name="cam_ajuste_encaixar">枠に収まるよう調整</string>
+    <string name="prot_girar_miniatura">回転</string>
+    <string name="prot_sem_miniatura">先にサムネイルを選んでください。</string>
 </resources>

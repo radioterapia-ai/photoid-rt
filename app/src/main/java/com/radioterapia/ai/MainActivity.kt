@@ -534,15 +534,31 @@ class MainActivity : BaseActivity() {
     private fun registrarVoltar() {
         onBackPressedDispatcher.addCallback(this,
             object : androidx.activity.OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() { voltarParaLanding() }
+                override fun handleOnBackPressed() {
+                    // VOLTAR NA REVISAO fecha a revisao, nao a tela.
+                    //
+                    // Com o painel pos-foto aberto, sair levava junto a foto
+                    // pendente e ainda mostrava o dialogo de rascunho — resposta
+                    // errada para quem so queria fechar o que estava olhando. Com
+                    // foto recem-capturada, voltar E descartar (o mesmo que o
+                    // botao ao lado); com foto ja salva, e so fechar.
+                    val revisando = this@MainActivity::layoutAcoesPosFoto.isInitialized &&
+                        layoutAcoesPosFoto.visibility == View.VISIBLE
+                    when {
+                        revisando && arquivoTemporario != null -> descartarFoto()
+                        revisando -> voltarParaCamera()
+                        else -> voltarParaLanding()
+                    }
+                }
             })
     }
 
     /**
      * Liga a moldura do recorte e ensina o enquadramento.
      *
-     * O AVISO SO APARECE COM A CAMERA AO VIVO. Mostra-lo durante a revisao da
-     * foto ja tirada seria pedir um ajuste que aquela tela nao faz.
+     * O AVISO APARECE ONDE HA O QUE AJUSTAR: camera ao vivo, foto recem
+     * capturada e revisao de foto ja salva — os tres momentos em que a pinca
+     * muda o enquadramento. Fora deles ele pediria um ajuste que a tela nao faz.
      */
     private fun mostrarMolduraDoVisor() {
         molduraRecorte?.visibility = View.VISIBLE
@@ -1709,7 +1725,9 @@ class MainActivity : BaseActivity() {
     private fun configurarRecyclerThumbs() {
         thumbAdapter = ThumbAdapter(
             sessionManager.fotos.toMutableList(),
-            onClick = { f -> mostrarFotoNoVisor(f.arquivo, ehDaSessao = true) },
+            onClick = { f ->
+                mostrarFotoNoVisor(f.arquivo, ehDaSessao = true, catDaSessao = f.categoria)
+            },
             onRemover = { f -> confirmarRemoverDaSessao(f.arquivo) }
         )
         recyclerThumbs.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -1916,7 +1934,9 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun mostrarFotoNoVisor(arq: File, ehDaSessao: Boolean) {
+    private fun mostrarFotoNoVisor(
+        arq: File, ehDaSessao: Boolean, catDaSessao: Category? = null
+    ) {
         viewFinder.visibility = View.GONE
         gridOverlay.visibility = View.GONE
         layoutControlesCamera.visibility = View.GONE
@@ -1928,18 +1948,50 @@ class MainActivity : BaseActivity() {
         btnCapturar.alpha = 1.0f
 
         if (ehDaSessao) {
-            // Revisão de foto já salva: apenas visualizar (sem recorte).
-            val opt = BitmapFactory.Options().apply { inSampleSize = 2 }
-            imgPreview.setImageBitmap(BitmapFactory.decodeFile(arq.absolutePath, opt))
-            imgPreview.visibility = View.VISIBLE
-            esconderMolduraDoVisor()
-            cropPreview.visibility = View.GONE
-            btnGirarVisor.visibility = View.GONE
+            // AJUSTAR, e nao apenas olhar.
+            //
+            // Esta tela abria a foto salva em modo leitura: sem recorte, sem
+            // girar, sem zoom. Era a queixa numero um do uso em sala — quem
+            // errasse o enquadramento do rosto so tinha a saida de remover a
+            // foto e fotografar outra, com o paciente ja posicionado na mesa.
+            //
+            // O ajuste parte do "_ORIGINAL" quando ele existe — o quadro cheio
+            // guardado antes do primeiro recorte. Duas consequencias: da para
+            // ABRIR o enquadramento e nao so fecha-lo, e recorte nunca e
+            // aplicado sobre recorte, entao ajustar dez vezes custa o mesmo que
+            // ajustar uma. Sem original (foto de versao anterior), a fonte e a
+            // propria foto e so o zoom para dentro sobra.
+            val cat = catDaSessao ?: sessionManager.categoriaAtiva
+            val fonte = sessionManager.originalDe(arq) ?: arq
+            val bm = com.radioterapia.ai.util.ImagemUtils.decodificarComExif(fonte)
             bloquearTabs(true)
-            btnSalvar.text = getString(R.string.back)
             btnDescartar.text = getString(R.string.remove)
-            btnSalvar.setOnClickListener { voltarParaCamera() }
             btnDescartar.setOnClickListener { confirmarRemoverDaSessao(arq) }
+            if (cat != Category.DOCUMENTS && bm != null) {
+                imgPreview.setImageBitmap(null)
+                imgPreview.visibility = View.GONE
+                cropPreview.definirBitmap(bm)
+                cropPreview.visibility = View.VISIBLE
+                esconderMolduraDoVisor()
+                com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(avisoEncaixar, imgPincaAviso)
+                btnGirarVisor.visibility = View.VISIBLE
+                ligarSeekAoCrop()
+                seekZoom.progress = 0
+                btnSalvar.text = getString(R.string.save)
+                btnSalvar.setOnClickListener { regravarFotoDaSessao(arq, cat) }
+            } else {
+                // IMPRESSO continua so para ver. A moldura 16:9 pertence ao fluxo
+                // de foto; documento e retrato ou paisagem conforme a folha, e o
+                // corte fixo comeria justamente o texto.
+                val opt = BitmapFactory.Options().apply { inSampleSize = 2 }
+                imgPreview.setImageBitmap(BitmapFactory.decodeFile(arq.absolutePath, opt))
+                imgPreview.visibility = View.VISIBLE
+                esconderMolduraDoVisor()
+                cropPreview.visibility = View.GONE
+                btnGirarVisor.visibility = View.GONE
+                btnSalvar.text = getString(R.string.back)
+                btnSalvar.setOnClickListener { voltarParaCamera() }
+            }
         } else if (sessionManager.categoriaAtiva == Category.DOCUMENTS) {
             // Impresso via câmera comum (fallback do scanner): sem moldura fixa,
             // documentos podem ser retrato ou paisagem.
@@ -2015,6 +2067,55 @@ class MainActivity : BaseActivity() {
         voltarParaCamera()
     }
 
+    /**
+     * Regrava o recorte de uma foto QUE JA ESTA NA SESSAO.
+     *
+     * Escreve no MESMO arquivo, de proposito: a ficha, o carrossel e a pasta do
+     * paciente apontam para aquele caminho, e gravar outro faria a foto ajustada
+     * aparecer AO LADO da antiga em vez de no lugar dela. Pela mesma razao nao
+     * passa por SessionManager.adicionarFoto — aquele caminho arquiva a anterior
+     * e carimba um timestamp novo, que aqui seria uma segunda foto inventada.
+     *
+     * O "_ORIGINAL" fica intacto: e a fonte do proximo ajuste.
+     */
+    private fun regravarFotoDaSessao(arq: File, cat: Category) {
+        val recorte = cropPreview.recortar()
+        if (recorte == null) { voltarParaCamera(); return }
+        val gravou = try {
+            java.io.FileOutputStream(arq).use { out ->
+                recorte.compress(Bitmap.CompressFormat.JPEG, 92, out)
+            }
+            true
+        } catch (_: Exception) { false }
+        if (!gravou) {
+            Toast.makeText(this, getString(R.string.err_generic, ""), Toast.LENGTH_LONG).show()
+            voltarParaCamera()
+            return
+        }
+        // O recorte e recomprimido do zero e leva o EXIF embora. Sem reescrever,
+        // a foto ajustada seria a unica da pasta sem identificacao.
+        aplicarExifNaFoto(arq, cat)
+        voltarParaCamera()
+        atualizarThumbnails()
+        Toast.makeText(this, R.string.foto_recorte_ajustado, Toast.LENGTH_SHORT).show()
+    }
+
+    /** Paciente, simulacao e categoria nos metadados da foto. */
+    private fun aplicarExifNaFoto(arq: File, cat: Category) {
+        val descCategoria = when (cat) {
+            Category.FACE -> "ROSTO"
+            Category.LABEL -> "ETIQUETA"
+            Category.POSITIONING -> "POSICIONAMENTO"
+            Category.ACCESSORIES -> "ACESSORIOS"
+            Category.DOCUMENTS -> "IMPRESSO"
+        }
+        val numSim = patientCache.obterContagemSimulacoes(
+            sessionManager.nomePaciente, sessionManager.prontuario) + 1
+        val sufixo = if (numSim > 1) " - NOVA SIMULACAO ${numSim - 1}" else ""
+        ExifWatermark.aplicar(this, arq, sessionManager.nomePaciente, sessionManager.idSimulacao,
+            "$descCategoria$sufixo")
+    }
+
     private fun salvarParaSessao() {
         val arq = arquivoTemporario ?: return
         val cat = sessionManager.categoriaAtiva
@@ -2049,18 +2150,7 @@ class MainActivity : BaseActivity() {
         // }
 
         // EXIF (todas as categorias)
-        val descCategoria = when (cat) {
-            Category.FACE -> "ROSTO"
-            Category.LABEL -> "ETIQUETA"
-            Category.POSITIONING -> "POSICIONAMENTO"
-            Category.ACCESSORIES -> "ACESSORIOS"
-            Category.DOCUMENTS -> "IMPRESSO"
-        }
-        val numSim = patientCache.obterContagemSimulacoes(
-            sessionManager.nomePaciente, sessionManager.prontuario) + 1
-        val sufixo = if (numSim > 1) " - NOVA SIMULACAO ${numSim - 1}" else ""
-        ExifWatermark.aplicar(this, arq, sessionManager.nomePaciente, sessionManager.idSimulacao,
-            "$descCategoria$sufixo")
+        aplicarExifNaFoto(arq, cat)
 
         val destino = sessionManager.adicionarFoto(arq, cat)
         original?.let { sessionManager.guardarOriginal(it, destino) }

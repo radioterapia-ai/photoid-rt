@@ -148,12 +148,47 @@ class ProtocoloStore(private val context: Context) {
     fun arquivoMiniatura(p: Protocolo): File? =
         File(pastaDe(p.id), p.miniatura).takeIf { p.miniatura.isNotBlank() && it.exists() }
 
+    /**
+     * A miniatura, JÁ NA ORIENTAÇÃO CERTA.
+     *
+     * `BitmapFactory.decodeFile` ignora a etiqueta de orientação do EXIF: a foto
+     * tirada com o tablet em pé volta deitada, e era isso que fazia as
+     * miniaturas dos protocolos aparecerem giradas. O app já resolve isso em
+     * quatro lugares (`ImagemUtils`, `ExifWatermark`, `PdfBuilder`,
+     * `VisibleWatermark`) — a miniatura foi a que ficou de fora.
+     */
     fun bitmapMiniatura(p: Protocolo): Bitmap? = try {
         arquivoMiniatura(p)?.let {
-            val op = BitmapFactory.Options().apply { inSampleSize = 2 }
-            BitmapFactory.decodeFile(it.absolutePath, op)
+            com.radioterapia.ai.util.ImagemUtils.decodificarComExif(it, 640)
         }
     } catch (_: Throwable) { null }
+
+    /**
+     * Gira a miniatura 90° à direita e grava já girada.
+     *
+     * GRAVA EM VEZ DE GUARDAR O ÂNGULO. Um campo de rotação obrigaria todo mundo
+     * que lê a miniatura a lembrar de aplicá-lo — e quem esquecesse mostraria a
+     * imagem torta de novo, que é o defeito que isto conserta. Gravada girada,
+     * não há o que lembrar.
+     *
+     * A perda de qualidade é aceitável: é uma miniatura de identificação, não a
+     * página que vai impressa.
+     */
+    fun girarMiniatura(p: Protocolo): Boolean = try {
+        val arq = arquivoMiniatura(p)
+        val bm = arq?.let { com.radioterapia.ai.util.ImagemUtils.decodificarComExif(it, 1280) }
+        if (arq == null || bm == null) false
+        else {
+            val m = android.graphics.Matrix().apply { postRotate(90f) }
+            val girado = Bitmap.createBitmap(bm, 0, 0, bm.width, bm.height, m, true)
+            arq.outputStream().use {
+                girado.compress(Bitmap.CompressFormat.PNG, 100, it)
+            }
+            if (girado != bm) bm.recycle()
+            girado.recycle()
+            true
+        }
+    } catch (_: Throwable) { false }
 
     /** PDF de uma página, se ainda existir em disco. */
     fun arquivoPagina(p: Protocolo, pag: Pagina): File? =

@@ -463,6 +463,7 @@
     <string name="ok_exported">Exporté : %1$s</string>
     <string name="ok_record_read">N° de dossier lu : %1$s</string>
     <string name="ok_photo_added">✓ Photo ajoutée (%1$d)</string>
+    <string name="foto_recorte_ajustado">✓ Cadrage ajusté</string>
     <string name="n_entries">%1$d entrée(s)</string>
     <string name="viewer_summary">Résumé</string>
     <string name="resumo_medico">Médecin</string>
@@ -616,7 +617,7 @@
     <string name="gallery_need_category">Choisissez d\'abord la catégorie de la photo.</string>
     <string name="popup_editar_cadastro_longo">Modifier la fiche du patient</string>
     <string name="popup_editar_simulacao_longo">Modifier les informations de cette simulation</string>
-    <string name="popup_fotos_longo">Ajouter / Modifier les photos de cette simulation</string>
+    <string name="popup_fotos_longo">Ajuster le cadrage, ajouter ou modifier les photos de cette simulation</string>
     <string name="sim_selector_label">Simulation</string>
     <string name="sim_selector_recent">%1$s (la plus récente)</string>
     <string name="photo_existing_title">Photos de cette simulation</string>
@@ -815,4 +816,6 @@
     <string name="prot_verso_remover_q">Le PDF du verso est supprimé. Le recto reste dans le protocole.</string>
     <string name="prot_pagina_item_verso">Page %1$d — %2$d feuille(s) + verso</string>
     <string name="cam_ajuste_encaixar">Ajustez pour cadrer</string>
+    <string name="prot_girar_miniatura">Pivoter</string>
+    <string name="prot_sem_miniatura">Choisissez d\'abord une miniature.</string>
 </resources>

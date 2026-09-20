@@ -87,14 +87,35 @@
             android:background="#22FFFFFF"
             android:contentDescription="@string/prot_miniatura" />
 
-        <Button
-            android:id="@+id/btnProtMiniatura"
-            android:layout_width="wrap_content"
-            android:layout_height="48dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/prot_escolher_miniatura"
-            android:textColor="@color/text_on_dark"
-            android:backgroundTint="@color/action_neutral" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btnProtMiniatura"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="@string/prot_escolher_miniatura"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_neutral" />
+
+            <!--
+                GIRAR. A leitura do EXIF conserta a foto que traz a etiqueta de
+                orientacao; nem toda traz — imagem vinda de captura de tela, de
+                recorte por outro app ou de scanner costuma vir sem. Para essas,
+                o unico conserto possivel e a mao.
+            -->
+            <Button
+                android:id="@+id/btnProtGirarMini"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:text="@string/prot_girar_miniatura"
+                android:textColor="@color/text_on_dark"
+                android:backgroundTint="@color/action_neutral" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"

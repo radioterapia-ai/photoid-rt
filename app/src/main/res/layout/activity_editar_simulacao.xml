@@ -85,74 +85,119 @@
             android:textColor="#212121"
             android:textSize="14sp" />
 
-        <!-- Risco de queda -->
-        <TextView
-            android:layout_width="wrap_content"
+        <!--
+            OS TRES ALERTAS, iguais aos da tela de confirmacao — mesmo controle e
+            mesmas cores. Duas telas que editam o mesmo campo com controles
+            diferentes ensinam duas rotinas para o mesmo ato.
+        -->
+        <LinearLayout
+            android:id="@+id/esLinhaRisco"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:layout_marginTop="14dp">
+
+            <TextView
+                android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/timeout_risco"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swEsRisco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="42dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/esLinhaPrec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/timeout_prec"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swEsPrec"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="42dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/esLinhaAlergia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/timeout_alergia"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swEsAlergia"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="42dp" />
+        </LinearLayout>
+
+        <!--
+            PROTOCOLO. Era a ausencia mais sentida: a ficha ja guarda qual
+            protocolo saiu, mas esta tela nao deixava troca-lo — quem errasse a
+            escolha na finalizacao tinha de refazer a simulacao inteira.
+
+            So aparece com mais de um protocolo cadastrado, pela mesma razao da
+            outra tela: com um so nao ha escolha a fazer.
+        -->
+        <LinearLayout
+            android:id="@+id/esLayoutProtocolos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginTop="14dp"
-            android:text="@string/timeout_risco"
-            android:textSize="12sp"
-            android:textColor="@color/text_primary" />
+            android:visibility="gone">
 
-        <RadioGroup
-            android:id="@+id/rgEsRisco"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton android:id="@+id/rbEsRiscoSim"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="@string/yes" android:textColor="@color/text_primary" android:textSize="12sp" />
-            <RadioButton android:id="@+id/rbEsRiscoNao"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_marginStart="20dp" android:checked="true"
-                android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
-        </RadioGroup>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/prot_escolher_titulo"
+                android:textSize="12sp"
+                android:textColor="@color/text_primary" />
 
-        <!-- Precaução de contato -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/timeout_prec"
-            android:textSize="12sp"
-            android:textColor="@color/text_primary" />
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:scrollbars="none">
 
-        <RadioGroup
-            android:id="@+id/rgEsPrec"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton android:id="@+id/rbEsPrecSim"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="@string/yes" android:textColor="@color/text_primary" android:textSize="12sp" />
-            <RadioButton android:id="@+id/rbEsPrecNao"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_marginStart="20dp" android:checked="true"
-                android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
-        </RadioGroup>
-
-        <!-- Alergia -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/timeout_alergia"
-            android:textSize="12sp"
-            android:textColor="@color/text_primary" />
-
-        <RadioGroup
-            android:id="@+id/rgEsAlergia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <RadioButton android:id="@+id/rbEsAlergiaSim"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:text="@string/yes" android:textColor="@color/text_primary" android:textSize="12sp" />
-            <RadioButton android:id="@+id/rbEsAlergiaNao"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_marginStart="20dp" android:checked="true"
-                android:text="@string/timeout_nao" android:textColor="@color/text_primary" android:textSize="12sp" />
-        </RadioGroup>
+                <LinearLayout
+                    android:id="@+id/esFaixaProtocolos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+        </LinearLayout>
 
         <!-- Observações -->
         <TextView

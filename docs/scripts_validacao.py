@@ -22,6 +22,11 @@ import os
 import re
 import sys
 import xml.dom.minidom as minidom
+
+# O terminal do Windows e cp1252 e o relatorio usa ✓ e ✗. Sem esta linha o
+# proprio validador morre com UnicodeEncodeError na primeira verificacao que
+# PASSA — a falha aparece onde nao ha defeito nenhum.
+sys.stdout.reconfigure(encoding="utf-8")
 from collections import Counter
 
 ERROS = 0

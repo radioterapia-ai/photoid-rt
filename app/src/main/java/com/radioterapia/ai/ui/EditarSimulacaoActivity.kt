@@ -132,15 +132,89 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                 if (reg.medico.isNotBlank()) actMed.setText(reg.medico, false)
                 if (reg.equipamento.isNotBlank()) actEq.setText(reg.equipamento, false)
                 if (reg.sitio.isNotBlank()) actSit.setText(reg.sitio, false)
-                findViewById<RadioButton>(
-                    if (reg.riscoQueda) R.id.rbEsRiscoSim else R.id.rbEsRiscoNao).isChecked = true
-                findViewById<RadioButton>(
-                    if (reg.precaucaoContato) R.id.rbEsPrecSim else R.id.rbEsPrecNao).isChecked = true
-                findViewById<RadioButton>(
-                    if (reg.alergia == "SIM") R.id.rbEsAlergiaSim else R.id.rbEsAlergiaNao).isChecked = true
+                findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swEsRisco).isChecked = reg.riscoQueda
+                findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swEsPrec).isChecked = reg.precaucaoContato
+                findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swEsAlergia).isChecked = reg.alergia == "SIM"
+                // O protocolo GRAVADO vem pre-marcado, ao contrario da tela de
+                // confirmacao, onde nada vem marcado. A diferenca e proposital:
+                // la nao ha escolha anterior, aqui ha — e nao mostra-la faria
+                // parecer que a ficha nao tem protocolo nenhum.
+                protocoloEscolhido = reg.protocoloId.orEmpty()
             }
+            desenharProtocolos()
+            ligarCoresDosAlertas()
             findViewById<EditText>(R.id.edtEsObs).setText(obs)
         }
+    }
+
+    private var protocoloEscolhido: String = ""
+
+    /**
+     * A faixa de protocolos, igual a da tela de confirmacao.
+     *
+     * Com um protocolo so o bloco nao aparece: nao ha escolha a fazer, e mostrar
+     * uma opcao unica seria pedir um toque para confirmar o obvio.
+     */
+    private fun desenharProtocolos() {
+        val bloco = findViewById<View>(R.id.esLayoutProtocolos) ?: return
+        val faixa = findViewById<android.widget.LinearLayout>(R.id.esFaixaProtocolos) ?: return
+        val store = com.radioterapia.ai.protocolo.ProtocoloStore(this)
+        val todos = store.listar()
+        if (todos.size <= 1) { bloco.visibility = View.GONE; return }
+
+        bloco.visibility = View.VISIBLE
+        faixa.removeAllViews()
+        val d = resources.displayMetrics.density
+        val lado = (110 * d).toInt()
+        val marcas = mutableListOf<Pair<String, android.widget.CheckBox>>()
+
+        todos.forEach { p ->
+            val col = android.widget.LinearLayout(this).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                gravity = android.view.Gravity.CENTER_HORIZONTAL
+                setPadding((6 * d).toInt(), 0, (6 * d).toInt(), 0)
+            }
+            val marca = android.widget.CheckBox(this).apply {
+                text = p.nome
+                setTextColor(androidx.core.content.ContextCompat.getColor(
+                    this@EditarSimulacaoActivity, R.color.text_primary))
+                textSize = 11f
+                isChecked = p.id == protocoloEscolhido
+            }
+            marcas.add(p.id to marca)
+            marca.setOnCheckedChangeListener { _, marcado ->
+                // Escolha unica: marcar um desmarca os outros. CheckBox e nao
+                // RadioButton porque aqui DESMARCAR e uma acao valida — a ficha
+                // pode sair sem paginas acrescentadas.
+                if (marcado) {
+                    protocoloEscolhido = p.id
+                    marcas.forEach { (id, cb) -> if (id != p.id) cb.isChecked = false }
+                } else if (protocoloEscolhido == p.id) {
+                    protocoloEscolhido = ""
+                }
+            }
+            val img = android.widget.ImageView(this).apply {
+                layoutParams = android.widget.LinearLayout.LayoutParams(lado, (lado * 0.72f).toInt())
+                scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
+                setImageBitmap(store.bitmapMiniatura(p))
+                if (drawable == null) setImageResource(R.drawable.bg_sem_foto)
+                setOnClickListener { marca.isChecked = true }
+            }
+            col.addView(marca)
+            col.addView(img)
+            faixa.addView(col)
+        }
+    }
+
+    /** As mesmas cores de alerta da tela de confirmacao. */
+    private fun ligarCoresDosAlertas() {
+        val M = com.radioterapia.ai.ui.anim.Movimento
+        M.toggleAlerta(findViewById(R.id.esLinhaRisco), findViewById(R.id.swEsRisco),
+                       0xFFFFE082.toInt())
+        M.toggleAlerta(findViewById(R.id.esLinhaPrec), findViewById(R.id.swEsPrec),
+                       0xFFFFB74D.toInt())
+        M.toggleAlerta(findViewById(R.id.esLinhaAlergia), findViewById(R.id.swEsAlergia),
+                       0xFFEF5350.toInt())
     }
 
     private fun salvarERegerar() {
@@ -148,9 +222,10 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
         val med = findViewById<AutoCompleteTextView>(R.id.actEsMedico).text.toString().trim()
         val equip = findViewById<AutoCompleteTextView>(R.id.actEsEquip).text.toString().trim()
         val sitio = findViewById<AutoCompleteTextView>(R.id.actEsSitio).text.toString().trim()
-        val risco = findViewById<RadioButton>(R.id.rbEsRiscoSim).isChecked
-        val prec = findViewById<RadioButton>(R.id.rbEsPrecSim).isChecked
-        val alergia = if (findViewById<RadioButton>(R.id.rbEsAlergiaSim).isChecked) "SIM" else ""
+        val risco = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swEsRisco).isChecked
+        val prec = findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swEsPrec).isChecked
+        val alergia = if (findViewById<com.google.android.material.switchmaterial.SwitchMaterial>(R.id.swEsAlergia).isChecked) "SIM" else ""
+        val protocoloUi = protocoloEscolhido
         val obs = findViewById<EditText>(R.id.edtEsObs).text.toString().trim()
         val prog = findViewById<TextView>(R.id.txtEsProgresso)
         val btn = findViewById<Button>(R.id.btnEsSalvar)
@@ -214,7 +289,11 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                         com.radioterapia.ai.util.TimeOutStore.ler(pasta, numeroSimulacao)
                     } catch (_: Exception) { null }
                     val fracoesGravadas = regGravado?.fracoesMax ?: 0
-                    val protocoloGravado = regGravado?.protocoloId.orEmpty()
+                    // O QUE ESTA NA TELA MANDA. Antes so o valor gravado era
+                    // reaproveitado, porque nao havia como muda-lo; agora que ha,
+                    // reaproveita-lo ignoraria a escolha que o usuario acabou de
+                    // fazer — e ele nao teria como saber que foi ignorada.
+                    val protocoloGravado = protocoloUi
                     val timeOut = if (config.pdfIncluiTimeOut)
                         PdfBuilder.DadosTimeOut(med, sitio, risco, prec,
                             sim.rosto?.arquivoLocal, equip, alergia,
