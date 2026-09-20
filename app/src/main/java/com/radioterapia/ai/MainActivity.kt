@@ -2095,6 +2095,7 @@ class MainActivity : BaseActivity() {
         // O recorte e recomprimido do zero e leva o EXIF embora. Sem reescrever,
         // a foto ajustada seria a unica da pasta sem identificacao.
         aplicarExifNaFoto(arq, cat)
+        com.radioterapia.ai.sync.SyncWorker.aoSalvarFoto(this)
         voltarParaCamera()
         atualizarThumbnails()
         Toast.makeText(this, R.string.foto_recorte_ajustado, Toast.LENGTH_SHORT).show()
@@ -2154,6 +2155,7 @@ class MainActivity : BaseActivity() {
 
         val destino = sessionManager.adicionarFoto(arq, cat)
         original?.let { sessionManager.guardarOriginal(it, destino) }
+        com.radioterapia.ai.sync.SyncWorker.aoSalvarFoto(this)
         arquivoTemporario = null
         Toast.makeText(this, getString(R.string.ok_photo_added, sessionManager.quantidade()), Toast.LENGTH_SHORT).show()
         voltarParaCamera()

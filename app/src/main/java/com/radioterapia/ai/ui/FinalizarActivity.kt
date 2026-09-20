@@ -435,6 +435,11 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         // e limpar sessão IMEDIATAMENTE quando a finalização processa. As ações nos
         // 4 botões abaixo são OPCIONAIS - simulação já foi salva.
         pdfGeradoAtual = pdfFolha
+        // GATILHO DE FINALIZACAO. E o instante em que a ficha existe: fotos
+        // gravadas, PDF montado, pasta do paciente completa. Esperar o periodo
+        // configurado deixaria a simulacao inteira so no tablet justamente no
+        // intervalo em que ela ainda nao foi conferida por ninguem.
+        com.radioterapia.ai.sync.SyncWorker.aoFinalizar(this)
         nomePacienteFinalizado = nomePaciente
         numSimFinalizado = numSim
         mostrarFaseResultado()

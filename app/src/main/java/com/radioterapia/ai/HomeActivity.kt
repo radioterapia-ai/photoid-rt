@@ -54,6 +54,12 @@ class HomeActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         avisarEspacoBaixo()
+        // GATILHO DE ABERTURA. O tablet da sala passa a noite desligado; sem
+        // isto, a primeira varredura do dia esperaria o periodo configurado.
+        // `aoAbrir` tambem reprograma o trabalho periodico, que e o que faz uma
+        // mudanca de intervalo nas Configuracoes valer sem reinstalar o app.
+        // Com o interruptor mestre desligado, nao faz absolutamente nada.
+        com.radioterapia.ai.sync.SyncWorker.aoAbrir(this)
 
         findViewById<Button>(R.id.btnSimulation).setOnClickListener {
             startActivity(Intent(this, SimulationHomeActivity::class.java))

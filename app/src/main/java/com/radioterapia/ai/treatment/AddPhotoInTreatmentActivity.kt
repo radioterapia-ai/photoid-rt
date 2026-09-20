@@ -1493,6 +1493,11 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                 val pastaPac = acharOuCriarPastaPacienteFile()
                 foto.copyTo(File(pastaPac, nomeArquivo), overwrite = true)
             }
+            // GATILHO: foto de tratamento tambem e documentacao de
+            // posicionamento, e chega dias depois da simulacao — se so a
+            // simulacao disparasse o envio, o que se acrescenta durante o
+            // tratamento esperaria o periodo configurado para sair do tablet.
+            com.radioterapia.ai.sync.SyncWorker.aoSalvarFoto(this)
         } catch (_: Exception) {}
 
         // Cópia no rolo (Pictures/PhotoID_RT) — o rolo não aceita PDF, só fotos.
