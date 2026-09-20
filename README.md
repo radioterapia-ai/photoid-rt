@@ -223,8 +223,17 @@ tools\empacotar.cmd
 
 ### Signing
 
-Release signing reads a properties file pointed at by the `PHOTOID_RT_KEYSTORE`
-environment variable:
+Release signing reads a properties file whose path comes from one of two places,
+in this order:
+
+1. the Gradle property `photoidKeystore`, in `~/.gradle/gradle.properties`;
+2. the environment variable `PHOTOID_RT_KEYSTORE`, for CI.
+
+The order is not arbitrary. `System.getenv()` inside the build reads the
+environment of the Gradle **daemon**, which is already running and does not
+inherit a variable created after it started — a release once came out unsigned
+because of that, and nothing looked wrong. A Gradle property always reaches the
+daemon.
 
 ```
 storeFile=/path/to/your.jks
@@ -233,9 +242,14 @@ keyAlias=…
 keyPassword=…
 ```
 
-**Without that variable the build does not break** — it falls back to debug
-signing, which is what a clone should do. You do not need our key to compile, and
-it does not travel with the repository.
+Use forward slashes in `storeFile`, even on Windows: in a `.properties` file the
+backslash is an escape character.
+
+**Without a key the build does not break.** `assembleRelease` produces
+`app-release-unsigned.apk` — visible in the name, and it does not install. That
+is deliberate: falling back to debug signing would hand you a different binary
+under the usual name. You do not need our key to compile, and it does not travel
+with this repository.
 
 If you publish your own build, generate your own keystore. Note that Android
 compares certificates on update: a build signed with a different key will not

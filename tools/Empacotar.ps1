@@ -224,8 +224,21 @@ if ($aapt) {
 
     Por isso a impressao digital vai conferida aqui, contra o valor esperado.
     Ela e informacao publica: esta dentro de todo APK que sai.
+
+    TROCADA UMA VEZ, em 20/09/2026, e o registro fica porque a proxima pessoa
+    que pensar em troca-la precisa saber o que isso custou.
+
+    A keystore original (SHA-256 101BE60F...) foi PERDIDA: nao estava em maquina
+    nenhuma nem em backup. Sem ela nao ha como atualizar o que esta instalado,
+    entao os dois tablets em campo desinstalaram e reinstalaram — e o cadastro
+    do PatientCache so sobreviveu porque foi exportado antes.
+
+    Esta trava recusou o primeiro pacote da chave nova, que e o comportamento
+    certo: trocar o valor abaixo E a decisao, e ela aparece no diff. Se este
+    numero mudar de novo sem um paragrafo aqui explicando, alguma coisa deu
+    errado.
 #>
-$IMPRESSAO_ESPERADA = '101BE60F1DA122160AF63404827267EFCCC1B2392722B64306CA09AB7152A0C3'
+$IMPRESSAO_ESPERADA = '7589DE5ADE90CF475A455B2234BD6F4CF33ED4E534EF129BCFD6B55EB25F0C33'
 
 Etapa 4 'Conferindo a assinatura do APK'
 $apksigner = Get-ChildItem (Join-Path $env:LOCALAPPDATA 'Android\Sdk\build-tools') -Directory -EA SilentlyContinue |
