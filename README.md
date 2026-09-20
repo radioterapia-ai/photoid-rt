@@ -32,6 +32,10 @@ consulted day by day to check the patient's setup.
 
 The flow:
 
+<p align="center">
+  <img src="docs/img/fluxo.png" alt="The flow in six steps: identify, photograph, simulation data, sheet, print, and an optional delivery that is off by default" width="100%">
+</p>
+
 1. **Identify the patient** — type it, or read the ID label with on-device OCR
    and barcode scanning.
 2. **Photograph**, by category.
