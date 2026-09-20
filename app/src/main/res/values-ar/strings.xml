@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">اضبط ليملأ الإطار</string>
     <string name="prot_girar_miniatura">تدوير</string>
     <string name="prot_sem_miniatura">اختر صورة مصغرة أولًا.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">مزامنة السجلات</string>
+    <string name="sync_master">تفعيل المزامنة المدمجة</string>
+    <string name="sync_master_hint">عند الإيقاف، لا يستخدم التطبيق الشبكة من تلقاء نفسه: تبقى الملفات على الجهاز اللوحي، وينقلها إلى الخادم التطبيق الذي يستخدمه القسم بالفعل.</string>
+    <string name="sync_interval">التحقق كل (دقائق)</string>
+    <string name="sync_trigger_photo">الإرسال عند حفظ كل صورة</string>
+    <string name="sync_trigger_finish">الإرسال عند إنهاء المحاكاة</string>
+    <string name="sync_trigger_open">الإرسال عند فتح التطبيق</string>
+    <string name="sync_wifi_only">على الشبكات غير محدودة الاستهلاك فقط</string>
+    <string name="sync_origin">المصدر (ثابت): %1$s</string>
+    <string name="sync_profiles">الوجهات</string>
+    <string name="sync_add_profile">إضافة وجهة</string>
+    <string name="sync_no_profiles">لا توجد وجهة مُعدّة.</string>
+    <string name="sync_last">آخر تحقق: %1$s</string>
+    <string name="sync_never">لم يتم التحقق بعد</string>
+    <string name="sync_running">جارٍ التحقق…</string>
+    <string name="sync_result">%1$d مُرسلة · %2$d موجودة · %3$d معلّقة</string>
+    <string name="sync_profile_last">الأخيرة: %1$s</string>
+    <string name="sync_profile_error">خطأ: %1$s</string>
+    <string name="sync_profile_never">لم تتم المزامنة مطلقًا</string>
+    <string name="sync_profile_inactive">معطّل</string>
+    <string name="sync_profile_title">وجهة المزامنة</string>
+    <string name="sync_profile_name">اسم هذه الوجهة</string>
+    <string name="sync_profile_type">النوع</string>
+    <string name="sync_profile_active">الوجهة مفعّلة</string>
+    <string name="sync_new_name">وجهة جديدة</string>
+    <string name="sync_f_host">الخادم (الاسم أو IP)</string>
+    <string name="sync_f_port">المنفذ</string>
+    <string name="sync_f_protocol">البروتوكول</string>
+    <string name="sync_f_share">المشاركة (مجلد مشترك)</string>
+    <string name="sync_f_path">المجلد البعيد</string>
+    <string name="sync_f_user">اسم المستخدم</string>
+    <string name="sync_f_password">كلمة المرور</string>
+    <string name="sync_f_domain">النطاق</string>
+    <string name="sync_f_url">رابط المجلد</string>
+    <string name="sync_f_folder">المجلد المختار</string>
+    <string name="sync_f_choose_folder">اختيار مجلد…</string>
+    <string name="sync_no_folder">(لم يُختَر مجلد)</string>
+    <string name="sync_f_direct">الكتابة مباشرة دون فحص المجلدات الأعلى</string>
+    <string name="sync_pass_note">تُحفظ كلمة المرور مشفّرة على الجهاز ولا تدخل في حزمة نقل الإعدادات.</string>
+    <string name="sync_port_default">0 = القيمة الافتراضية للبروتوكول</string>
+    <string name="sync_test">اختبار الاتصال</string>
+    <string name="sync_testing">جارٍ الاختبار…</string>
+    <string name="sync_test_ok">تم تأكيد الاتصال والكتابة.</string>
+    <string name="sync_test_fail">تعذّرت الكتابة في الوجهة.</string>
+    <string name="sync_copy_log">نسخ التقرير</string>
+    <string name="sync_log_copied">تم نسخ التقرير.</string>
+    <string name="sync_save">حفظ الوجهة</string>
+    <string name="sync_saved">تم حفظ الوجهة.</string>
+    <string name="sync_delete">إزالة الوجهة</string>
+    <string name="sync_delete_q">إزالة هذه الوجهة؟ سيُنسى أيضًا سجل ما أُرسل من قبل؛ وما هو موجود على الخادم لن يُحذف.</string>
+    <string name="sync_tip_host">اسم الخادم أو عنوان IP فقط — بدون شرطات وبدون المجلد. في "\\\\SRV-FILE\\rt\\photos" الخادم هو SRV-FILE. إذا لم يُترجم الاسم في شبكة الجهاز اللوحي، استخدم IP.</string>
+    <string name="sync_tip_share">المشاركة هي أول مجلد في مسار الشبكة، وهو ما ينشره الخادم. في "\\\\SRV\\rt\\photos\\2026" تكون المشاركة "rt" ويوضع الباقي في المجلد البعيد. تُقبل المشاركات الإدارية المنتهية بـ "$".</string>
+    <string name="sync_tip_user">اكتب اسم المستخدم فقط دون النطاق. لا تكتب "DOMAIN\\user" ولا "user@domain" — للنطاق حقل خاص بالأسفل، والتطبيق يتولى تركيب المصادقة.</string>
+    <string name="sync_tip_domain">نطاق Active Directory عندما يكون الحساب تابعًا لنطاق. عادةً هو الجزء السابق للشرطة المائلة العكسية في تسجيل دخول Windows. اتركه فارغًا على خادم بلا نطاق.</string>
+    <string name="sync_tip_path">المجلد داخل الوجهة حيث تُستنسخ بنية الجهاز اللوحي. اتركه فارغًا للكتابة في الجذر. تُنشأ مجلدات المرضى داخله بالأسماء نفسها الموجودة على الجهاز.</string>
+    <string name="sync_tip_url">العنوان الكامل للمجلد، مع http:// أو https://. هو العنوان نفسه الذي يفتحه المتصفح. في خدمات السحابة الذاتية تكون كلمة المرور عادةً كلمة مرور للتطبيقات وليست كلمة مرور الدخول.</string>
+    <string name="sync_tip_saf">اختر المجلد من خلال أداة اختيار النظام، داخل تطبيق السحابة الذي يستخدمه القسم بالفعل وسجّل الدخول إليه. لا تمر أي كلمة مرور عبر هذا التطبيق. إذا أُعيد تثبيت تطبيق السحابة أو تغيّر الحساب، فاختر المجلد من جديد.</string>
+    <string name="sync_tip_direct">عند التفعيل، يكتب التطبيق مباشرةً في المجلد النهائي دون فحص المجلدات الأعلى. هذا يعالج الحالة الشائعة في المستشفيات: قد يستطيع الحساب الكتابة في الوجهة دون أن يستطيع قراءة المجلدات الأعلى، فيفشل الفحص عند مجلد ليس هو الوجهة أصلًا. لا تُعطّله إلا إذا رفض الخادم الكتابة المباشرة.</string>
 </resources>

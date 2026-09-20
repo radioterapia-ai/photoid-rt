@@ -112,6 +112,14 @@
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
 
         <activity
+            android:name=".ui.SyncPerfilActivity"
+            android:exported="false"
+            android:label="@string/sync_profile_title"
+            android:parentActivityName=".ui.SettingsActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="keyboardHidden" />
+
+        <activity
             android:name=".rubricario.RubricarioPessoaActivity"
             android:exported="false"
             android:label="@string/group_rubricario"

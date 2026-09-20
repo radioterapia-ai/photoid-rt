@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">ফ্রেমে মানিয়ে নিন</string>
     <string name="prot_girar_miniatura">ঘোরান</string>
     <string name="prot_sem_miniatura">আগে একটি থাম্বনেইল বেছে নিন।</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">রেকর্ড সিঙ্ক্রোনাইজেশন</string>
+    <string name="sync_master">অন্তর্নির্মিত সিঙ্ক চালু করুন</string>
+    <string name="sync_master_hint">বন্ধ থাকলে অ্যাপ নিজে থেকে নেটওয়ার্ক ব্যবহার করে না: ফাইল ট্যাবলেটে থাকে, আর বিভাগ যে অ্যাপ ইতিমধ্যে ব্যবহার করে সেটিই সার্ভারে নিয়ে যায়।</string>
+    <string name="sync_interval">প্রতি (মিনিট) পরপর দেখুন</string>
+    <string name="sync_trigger_photo">প্রতিটি ছবি সংরক্ষণের সময় পাঠান</string>
+    <string name="sync_trigger_finish">সিমুলেশন শেষ হলে পাঠান</string>
+    <string name="sync_trigger_open">অ্যাপ খোলার সময় পাঠান</string>
+    <string name="sync_wifi_only">শুধু ডেটা-সীমাহীন নেটওয়ার্কে</string>
+    <string name="sync_origin">উৎস (স্থির): %1$s</string>
+    <string name="sync_profiles">গন্তব্য</string>
+    <string name="sync_add_profile">গন্তব্য যোগ করুন</string>
+    <string name="sync_no_profiles">কোনো গন্তব্য সেট করা নেই।</string>
+    <string name="sync_last">শেষ পরীক্ষা: %1$s</string>
+    <string name="sync_never">এখনো পরীক্ষা করা হয়নি</string>
+    <string name="sync_running">পরীক্ষা করা হচ্ছে…</string>
+    <string name="sync_result">%1$d পাঠানো · %2$d আগেই ছিল · %3$d বাকি</string>
+    <string name="sync_profile_last">সর্বশেষ: %1$s</string>
+    <string name="sync_profile_error">ত্রুটি: %1$s</string>
+    <string name="sync_profile_never">কখনো সিঙ্ক হয়নি</string>
+    <string name="sync_profile_inactive">নিষ্ক্রিয়</string>
+    <string name="sync_profile_title">সিঙ্ক গন্তব্য</string>
+    <string name="sync_profile_name">এই গন্তব্যের নাম</string>
+    <string name="sync_profile_type">ধরন</string>
+    <string name="sync_profile_active">গন্তব্য সক্রিয়</string>
+    <string name="sync_new_name">নতুন গন্তব্য</string>
+    <string name="sync_f_host">সার্ভার (নাম বা IP)</string>
+    <string name="sync_f_port">পোর্ট</string>
+    <string name="sync_f_protocol">প্রোটোকল</string>
+    <string name="sync_f_share">শেয়ার (শেয়ার করা ফোল্ডার)</string>
+    <string name="sync_f_path">দূরবর্তী ফোল্ডার</string>
+    <string name="sync_f_user">ব্যবহারকারী</string>
+    <string name="sync_f_password">পাসওয়ার্ড</string>
+    <string name="sync_f_domain">ডোমেইন</string>
+    <string name="sync_f_url">ফোল্ডারের URL</string>
+    <string name="sync_f_folder">নির্বাচিত ফোল্ডার</string>
+    <string name="sync_f_choose_folder">ফোল্ডার বেছে নিন…</string>
+    <string name="sync_no_folder">(কোনো ফোল্ডার বাছাই করা হয়নি)</string>
+    <string name="sync_f_direct">উপরের ফোল্ডার যাচাই না করে সরাসরি লিখুন</string>
+    <string name="sync_pass_note">পাসওয়ার্ড ডিভাইসে এনক্রিপ্ট করা থাকে এবং কনফিগারেশন ট্রান্সফার প্যাকেজে যায় না।</string>
+    <string name="sync_port_default">0 = প্রোটোকলের ডিফল্ট</string>
+    <string name="sync_test">সংযোগ পরীক্ষা করুন</string>
+    <string name="sync_testing">পরীক্ষা চলছে…</string>
+    <string name="sync_test_ok">সংযোগ ও লেখা নিশ্চিত হয়েছে।</string>
+    <string name="sync_test_fail">গন্তব্যে লেখা যায়নি।</string>
+    <string name="sync_copy_log">প্রতিবেদন কপি করুন</string>
+    <string name="sync_log_copied">প্রতিবেদন কপি হয়েছে।</string>
+    <string name="sync_save">গন্তব্য সংরক্ষণ করুন</string>
+    <string name="sync_saved">গন্তব্য সংরক্ষিত হয়েছে।</string>
+    <string name="sync_delete">গন্তব্য সরান</string>
+    <string name="sync_delete_q">এই গন্তব্য সরাবেন? যা আগে পাঠানো হয়েছে তার রেকর্ডও মুছে যাবে — সার্ভারে যা আছে তা মোছা হয় না।</string>
+    <string name="sync_tip_host">শুধু সার্ভারের নাম বা IP — স্ল্যাশ বা ফোল্ডার নয়। "\\\\SRV-FILE\\rt\\photos"-এ সার্ভার হলো SRV-FILE। ট্যাবলেটের নেটওয়ার্কে নাম কাজ না করলে IP দিন।</string>
+    <string name="sync_tip_share">শেয়ার হলো নেটওয়ার্ক পাথের প্রথম ফোল্ডার, যেটি সার্ভার প্রকাশ করে। "\\\\SRV\\rt\\photos\\2026"-এ শেয়ার হলো "rt", বাকিটা দূরবর্তী ফোল্ডারে যায়। "$" দিয়ে শেষ হওয়া প্রশাসনিক শেয়ারও চলে।</string>
+    <string name="sync_tip_user">শুধু লগইন বা আইডি, ডোমেইন ছাড়া। "DOMAIN\\user" বা "user@domain" লিখবেন না — ডোমেইনের নিজস্ব ঘর নিচেই আছে, অ্যাপই প্রমাণীকরণ গড়ে নেয়।</string>
+    <string name="sync_tip_domain">অ্যাকাউন্ট ডোমেইনের হলে Active Directory ডোমেইন। সাধারণত Windows লগইনে ব্যাকস্ল্যাশের আগের অংশ। ডোমেইনবিহীন সার্ভারে খালি রাখুন।</string>
+    <string name="sync_tip_path">গন্তব্যের ভিতরে যে ফোল্ডারে ট্যাবলেটের কাঠামো তৈরি হবে। রুটে লিখতে খালি রাখুন। রোগীভিত্তিক ফোল্ডারগুলো এর ভিতরে, ট্যাবলেটের মতো একই নামে তৈরি হয়।</string>
+    <string name="sync_tip_url">ফোল্ডারের সম্পূর্ণ ঠিকানা, http:// বা https:// সহ। ব্রাউজার যে ঠিকানা খোলে সেটিই। নিজস্ব ক্লাউড সেবায় পাসওয়ার্ড সাধারণত অ্যাপ পাসওয়ার্ড, লগইনের নয়।</string>
+    <string name="sync_tip_saf">বিভাগ যে ক্লাউড অ্যাপ ইতিমধ্যে ব্যবহার করে ও লগইন করা আছে, তার ভিতরে সিস্টেমের সিলেক্টর দিয়ে ফোল্ডার বাছুন। এই অ্যাপের ভিতর দিয়ে কোনো পাসওয়ার্ড যায় না। ক্লাউড অ্যাপ পুনরায় ইনস্টল হলে বা অ্যাকাউন্ট বদলালে আবার ফোল্ডার বাছুন।</string>
+    <string name="sync_tip_direct">চালু থাকলে অ্যাপ উপরের ফোল্ডার যাচাই না করে সরাসরি চূড়ান্ত ফোল্ডারে লেখে। হাসপাতালের সাধারণ পরিস্থিতির সমাধান: অ্যাকাউন্ট গন্তব্যে লিখতে পারলেও উপরের ফোল্ডার পড়তে না-ও পারে — তখন যাচাই এমন ফোল্ডারে ব্যর্থ হয় যা গন্তব্যই নয়। সার্ভার সরাসরি লেখা অস্বীকার করলেই কেবল বন্ধ করুন।</string>
 </resources>

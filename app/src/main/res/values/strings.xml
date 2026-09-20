@@ -946,4 +946,65 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="cam_ajuste_encaixar">Ajuste para encaixar</string>
     <string name="prot_girar_miniatura">Girar</string>
     <string name="prot_sem_miniatura">Escolha uma miniatura primeiro.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">Sincronização de prontuários</string>
+    <string name="sync_master">Ativar sincronização própria</string>
+    <string name="sync_master_hint">Desligada, o app não usa a rede por conta própria: os arquivos ficam no tablet e quem os leva ao servidor é o aplicativo que o serviço já usa.</string>
+    <string name="sync_interval">Verificar a cada (minutos)</string>
+    <string name="sync_trigger_photo">Enviar ao salvar cada foto</string>
+    <string name="sync_trigger_finish">Enviar ao finalizar a simulação</string>
+    <string name="sync_trigger_open">Enviar ao abrir o aplicativo</string>
+    <string name="sync_wifi_only">Somente em rede sem franquia</string>
+    <string name="sync_origin">Origem (fixa): %1$s</string>
+    <string name="sync_profiles">Destinos</string>
+    <string name="sync_add_profile">Adicionar destino</string>
+    <string name="sync_no_profiles">Nenhum destino configurado.</string>
+    <string name="sync_last">Última verificação: %1$s</string>
+    <string name="sync_never">Ainda não verificou</string>
+    <string name="sync_running">Verificando…</string>
+    <string name="sync_result">%1$d enviados · %2$d já estavam lá · %3$d pendentes</string>
+    <string name="sync_profile_last">Última: %1$s</string>
+    <string name="sync_profile_error">Erro: %1$s</string>
+    <string name="sync_profile_never">Nunca sincronizou</string>
+    <string name="sync_profile_inactive">Desativado</string>
+    <string name="sync_profile_title">Destino de sincronização</string>
+    <string name="sync_profile_name">Nome deste destino</string>
+    <string name="sync_profile_type">Tipo</string>
+    <string name="sync_profile_active">Destino ativo</string>
+    <string name="sync_new_name">Novo destino</string>
+    <string name="sync_f_host">Servidor (nome ou IP)</string>
+    <string name="sync_f_port">Porta</string>
+    <string name="sync_f_protocol">Protocolo</string>
+    <string name="sync_f_share">Share (pasta compartilhada)</string>
+    <string name="sync_f_path">Pasta remota</string>
+    <string name="sync_f_user">Usuário</string>
+    <string name="sync_f_password">Senha</string>
+    <string name="sync_f_domain">Domínio</string>
+    <string name="sync_f_url">URL da pasta</string>
+    <string name="sync_f_folder">Pasta escolhida</string>
+    <string name="sync_f_choose_folder">Escolher pasta…</string>
+    <string name="sync_no_folder">(nenhuma pasta escolhida)</string>
+    <string name="sync_f_direct">Gravar direto, sem conferir as pastas acima</string>
+    <string name="sync_pass_note">A senha fica cifrada no aparelho e não entra no pacote de transferência de configuração.</string>
+    <string name="sync_port_default">0 = padrão do protocolo</string>
+    <string name="sync_test">Testar conexão</string>
+    <string name="sync_testing">Testando…</string>
+    <string name="sync_test_ok">Conexão e gravação confirmadas.</string>
+    <string name="sync_test_fail">Não foi possível gravar no destino.</string>
+    <string name="sync_copy_log">Copiar relatório</string>
+    <string name="sync_log_copied">Relatório copiado.</string>
+    <string name="sync_save">Salvar destino</string>
+    <string name="sync_saved">Destino salvo.</string>
+    <string name="sync_delete">Remover destino</string>
+    <string name="sync_delete_q">Remover este destino? O registro do que já foi enviado também é esquecido — o que já está no servidor não é apagado.</string>
+    <string name="sync_tip_host">O nome ou o IP do servidor, só isso — sem barras e sem a pasta. Em "\\\\SRV-ARQ\\rt\\fotos", o servidor é SRV-ARQ. Se o nome não resolver na rede do tablet, use o IP.</string>
+    <string name="sync_tip_share">O share é a PRIMEIRA pasta do caminho de rede, a que é publicada pelo servidor. Em "\\\\SRV\\rt\\fotos\\2026", o share é "rt" e o resto vai na pasta remota. Share administrativo com "$" no fim é aceito.</string>
+    <string name="sync_tip_user">Só a matrícula ou o login, sem o domínio junto. Não escreva "DOMINIO\\usuario" nem "usuario@dominio" — o domínio tem campo próprio logo abaixo, e o aplicativo monta a autenticação.</string>
+    <string name="sync_tip_domain">O domínio do Active Directory, quando a conta é de domínio. Em geral é a parte antes da barra invertida no login do Windows. Em servidor sem domínio, deixe vazio.</string>
+    <string name="sync_tip_path">A pasta dentro do destino onde a estrutura do tablet é reproduzida. Deixe vazio para gravar na raiz. As pastas por paciente são criadas dentro dela, com os mesmos nomes que têm no tablet.</string>
+    <string name="sync_tip_url">O endereço completo da pasta, com http:// ou https://. É o mesmo endereço que o navegador abre. Em serviços de nuvem próprios, a senha costuma ser uma senha de aplicativo, e não a de login.</string>
+    <string name="sync_tip_saf">Escolha a pasta pelo seletor do sistema, dentro do aplicativo de nuvem que o serviço já usa e já tem conectado. Nenhuma senha passa por este aplicativo. Se o app da nuvem for reinstalado ou a conta trocada, escolha a pasta de novo.</string>
+    <string name="sync_tip_direct">Ligado, o aplicativo grava direto na pasta final sem conferir as pastas acima dela. É o que resolve o caso comum em hospital: a conta pode escrever no destino e não pode LER as pastas superiores — e a conferência falharia numa pasta que nem é o destino. Desligue só se o servidor recusar a gravação direta.</string>
 </resources>

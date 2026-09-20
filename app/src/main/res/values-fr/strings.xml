@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">Ajustez pour cadrer</string>
     <string name="prot_girar_miniatura">Pivoter</string>
     <string name="prot_sem_miniatura">Choisissez d\'abord une miniature.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">Synchronisation des dossiers</string>
+    <string name="sync_master">Activer la synchronisation intégrée</string>
+    <string name="sync_master_hint">Désactivée, l\'application n\'utilise pas le réseau d\'elle-même : les fichiers restent sur la tablette et c\'est l\'application que le service utilise déjà qui les porte au serveur.</string>
+    <string name="sync_interval">Vérifier toutes les (minutes)</string>
+    <string name="sync_trigger_photo">Envoyer à l\'enregistrement de chaque photo</string>
+    <string name="sync_trigger_finish">Envoyer à la fin de la simulation</string>
+    <string name="sync_trigger_open">Envoyer à l\'ouverture de l\'application</string>
+    <string name="sync_wifi_only">Uniquement sur réseau non facturé</string>
+    <string name="sync_origin">Source (fixe) : %1$s</string>
+    <string name="sync_profiles">Destinations</string>
+    <string name="sync_add_profile">Ajouter une destination</string>
+    <string name="sync_no_profiles">Aucune destination configurée.</string>
+    <string name="sync_last">Dernière vérification : %1$s</string>
+    <string name="sync_never">Pas encore vérifié</string>
+    <string name="sync_running">Vérification…</string>
+    <string name="sync_result">%1$d envoyés · %2$d déjà présents · %3$d en attente</string>
+    <string name="sync_profile_last">Dernière : %1$s</string>
+    <string name="sync_profile_error">Erreur : %1$s</string>
+    <string name="sync_profile_never">Jamais synchronisé</string>
+    <string name="sync_profile_inactive">Désactivé</string>
+    <string name="sync_profile_title">Destination de synchronisation</string>
+    <string name="sync_profile_name">Nom de cette destination</string>
+    <string name="sync_profile_type">Type</string>
+    <string name="sync_profile_active">Destination active</string>
+    <string name="sync_new_name">Nouvelle destination</string>
+    <string name="sync_f_host">Serveur (nom ou IP)</string>
+    <string name="sync_f_port">Port</string>
+    <string name="sync_f_protocol">Protocole</string>
+    <string name="sync_f_share">Partage (dossier partagé)</string>
+    <string name="sync_f_path">Dossier distant</string>
+    <string name="sync_f_user">Utilisateur</string>
+    <string name="sync_f_password">Mot de passe</string>
+    <string name="sync_f_domain">Domaine</string>
+    <string name="sync_f_url">URL du dossier</string>
+    <string name="sync_f_folder">Dossier choisi</string>
+    <string name="sync_f_choose_folder">Choisir un dossier…</string>
+    <string name="sync_no_folder">(aucun dossier choisi)</string>
+    <string name="sync_f_direct">Écrire directement, sans vérifier les dossiers au-dessus</string>
+    <string name="sync_pass_note">Le mot de passe est chiffré sur l\'appareil et n\'entre pas dans le paquet de transfert de configuration.</string>
+    <string name="sync_port_default">0 = valeur par défaut du protocole</string>
+    <string name="sync_test">Tester la connexion</string>
+    <string name="sync_testing">Test en cours…</string>
+    <string name="sync_test_ok">Connexion et écriture confirmées.</string>
+    <string name="sync_test_fail">Impossible d\'écrire dans la destination.</string>
+    <string name="sync_copy_log">Copier le rapport</string>
+    <string name="sync_log_copied">Rapport copié.</string>
+    <string name="sync_save">Enregistrer la destination</string>
+    <string name="sync_saved">Destination enregistrée.</string>
+    <string name="sync_delete">Supprimer la destination</string>
+    <string name="sync_delete_q">Supprimer cette destination ? Le relevé de ce qui a déjà été envoyé est également oublié ; ce qui est déjà sur le serveur n\'est pas supprimé.</string>
+    <string name="sync_tip_host">Le nom ou l\'IP du serveur, rien d\'autre : sans barres obliques et sans le dossier. Dans "\\\\SRV-FIC\\rt\\photos", le serveur est SRV-FIC. Si le nom ne se résout pas sur le réseau de la tablette, utilisez l\'IP.</string>
+    <string name="sync_tip_share">Le partage est le PREMIER dossier du chemin réseau, celui que le serveur publie. Dans "\\\\SRV\\rt\\photos\\2026", le partage est "rt" et le reste va dans le dossier distant. Les partages administratifs finissant par "$" sont acceptés.</string>
+    <string name="sync_tip_user">Uniquement l\'identifiant, sans le domaine. N\'écrivez pas "DOMAINE\\utilisateur" ni "utilisateur@domaine" : le domaine a son propre champ juste en dessous et l\'application compose l\'authentification.</string>
+    <string name="sync_tip_domain">Le domaine Active Directory, lorsque le compte est un compte de domaine. C\'est en général la partie avant la barre oblique inverse dans la connexion Windows. Sur un serveur sans domaine, laissez vide.</string>
+    <string name="sync_tip_path">Le dossier dans la destination où la structure de la tablette est reproduite. Laissez vide pour écrire à la racine. Les dossiers par patient y sont créés, avec les mêmes noms que sur la tablette.</string>
+    <string name="sync_tip_url">L\'adresse complète du dossier, avec http:// ou https://. C\'est la même adresse que le navigateur ouvre. Sur les services cloud auto-hébergés, le mot de passe est en général un mot de passe d\'application, pas celui de connexion.</string>
+    <string name="sync_tip_saf">Choisissez le dossier avec le sélecteur du système, dans l\'application cloud que le service utilise déjà et où il est déjà connecté. Aucun mot de passe ne passe par cette application. Si l\'application cloud est réinstallée ou le compte changé, choisissez à nouveau le dossier.</string>
+    <string name="sync_tip_direct">Activé, l\'application écrit directement dans le dossier final sans vérifier les dossiers au-dessus. Cela résout le cas courant à l\'hôpital : le compte peut écrire dans la destination mais ne peut pas LIRE les dossiers supérieurs, et la vérification échouerait sur un dossier qui n\'est même pas la destination. Ne le désactivez que si le serveur refuse l\'écriture directe.</string>
 </resources>

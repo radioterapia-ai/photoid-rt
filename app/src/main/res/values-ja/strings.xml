@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">枠に収まるよう調整</string>
     <string name="prot_girar_miniatura">回転</string>
     <string name="prot_sem_miniatura">先にサムネイルを選んでください。</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">記録の同期</string>
+    <string name="sync_master">内蔵同期を有効にする</string>
+    <string name="sync_master_hint">オフのとき、アプリは自分からネットワークを使いません。ファイルはタブレットに残り、施設がすでに使っているアプリがサーバーへ運びます。</string>
+    <string name="sync_interval">確認の間隔（分）</string>
+    <string name="sync_trigger_photo">写真を保存するたびに送信</string>
+    <string name="sync_trigger_finish">シミュレーション終了時に送信</string>
+    <string name="sync_trigger_open">アプリを開いたときに送信</string>
+    <string name="sync_wifi_only">従量制でないネットワークのみ</string>
+    <string name="sync_origin">取得元（固定）: %1$s</string>
+    <string name="sync_profiles">送信先</string>
+    <string name="sync_add_profile">送信先を追加</string>
+    <string name="sync_no_profiles">送信先が未設定です。</string>
+    <string name="sync_last">最後の確認: %1$s</string>
+    <string name="sync_never">まだ確認していません</string>
+    <string name="sync_running">確認中…</string>
+    <string name="sync_result">送信 %1$d · 既存 %2$d · 残り %3$d</string>
+    <string name="sync_profile_last">直近: %1$s</string>
+    <string name="sync_profile_error">エラー: %1$s</string>
+    <string name="sync_profile_never">未同期</string>
+    <string name="sync_profile_inactive">無効</string>
+    <string name="sync_profile_title">同期の送信先</string>
+    <string name="sync_profile_name">この送信先の名前</string>
+    <string name="sync_profile_type">種類</string>
+    <string name="sync_profile_active">この送信先を使う</string>
+    <string name="sync_new_name">新しい送信先</string>
+    <string name="sync_f_host">サーバー（名前または IP）</string>
+    <string name="sync_f_port">ポート</string>
+    <string name="sync_f_protocol">プロトコル</string>
+    <string name="sync_f_share">共有名（共有フォルダー）</string>
+    <string name="sync_f_path">リモートのフォルダー</string>
+    <string name="sync_f_user">ユーザー名</string>
+    <string name="sync_f_password">パスワード</string>
+    <string name="sync_f_domain">ドメイン</string>
+    <string name="sync_f_url">フォルダーの URL</string>
+    <string name="sync_f_folder">選んだフォルダー</string>
+    <string name="sync_f_choose_folder">フォルダーを選ぶ…</string>
+    <string name="sync_no_folder">（フォルダー未選択）</string>
+    <string name="sync_f_direct">上位フォルダーを確認せず直接書き込む</string>
+    <string name="sync_pass_note">パスワードは端末内で暗号化され、設定の転送パッケージには入りません。</string>
+    <string name="sync_port_default">0 = プロトコルの既定値</string>
+    <string name="sync_test">接続をテスト</string>
+    <string name="sync_testing">テスト中…</string>
+    <string name="sync_test_ok">接続と書き込みを確認しました。</string>
+    <string name="sync_test_fail">送信先に書き込めませんでした。</string>
+    <string name="sync_copy_log">レポートをコピー</string>
+    <string name="sync_log_copied">レポートをコピーしました。</string>
+    <string name="sync_save">送信先を保存</string>
+    <string name="sync_saved">送信先を保存しました。</string>
+    <string name="sync_delete">送信先を削除</string>
+    <string name="sync_delete_q">この送信先を削除しますか。送信済みの記録も失われます。サーバー上にあるものは削除されません。</string>
+    <string name="sync_tip_host">サーバーの名前または IP だけを入力します。スラッシュもフォルダーも不要です。"\\\\SRV-FILE\\rt\\photos" ならサーバーは SRV-FILE です。タブレットのネットワークで名前が解決しない場合は IP を使ってください。</string>
+    <string name="sync_tip_share">共有名はネットワークパスの最初のフォルダー、つまりサーバーが公開している部分です。"\\\\SRV\\rt\\photos\\2026" なら共有名は "rt" で、残りはリモートのフォルダーに入れます。末尾が "$" の管理共有も使えます。</string>
+    <string name="sync_tip_user">ID またはログイン名だけを入力します。"DOMAIN\\user" や "user@domain" とは書かないでください。ドメインはすぐ下に専用の欄があり、アプリが認証を組み立てます。</string>
+    <string name="sync_tip_domain">アカウントがドメインの場合の Active Directory ドメインです。通常は Windows のログイン名で円記号（バックスラッシュ）の前にある部分です。ドメインのないサーバーでは空欄にします。</string>
+    <string name="sync_tip_path">タブレットの構成を再現する、送信先内のフォルダーです。空欄にするとルートに書き込みます。患者ごとのフォルダーはこの中に、タブレットと同じ名前で作られます。</string>
+    <string name="sync_tip_url">フォルダーの完全なアドレスです。http:// または https:// を含めます。ブラウザーで開くアドレスと同じです。自前のクラウドサービスでは、パスワードはログイン用ではなくアプリ用パスワードであることが多いです。</string>
+    <string name="sync_tip_saf">施設がすでに使用し、ログイン済みのクラウドアプリ内で、システムの選択画面からフォルダーを選びます。このアプリをパスワードが通ることはありません。クラウドアプリを再インストールしたり、アカウントを変えた場合は、もう一度フォルダーを選んでください。</string>
+    <string name="sync_tip_direct">オンのとき、アプリは上位フォルダーを確認せず、最終フォルダーへ直接書き込みます。病院でよくある事情に対応するためです。アカウントは送信先に書き込めても、上位フォルダーを読めないことがあり、確認は送信先ですらないフォルダーで失敗します。サーバーが直接書き込みを拒否する場合だけオフにしてください。</string>
 </resources>

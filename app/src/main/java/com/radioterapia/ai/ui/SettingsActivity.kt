@@ -290,6 +290,44 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             it.findViewById<Button>(R.id.btnTestPrinter).setOnClickListener { testarImpressora() }
         }
 
+        adicionarGrupo("🔄", R.string.group_sync, R.layout.group_sync) {
+            swSyncMestre = it.findViewById(R.id.swSyncMestre)
+            blocoSyncDetalhe = it.findViewById(R.id.blocoSyncDetalhe)
+            edtSyncIntervalo = it.findViewById(R.id.edtSyncIntervalo)
+            chkSyncGatFoto = it.findViewById(R.id.chkSyncGatFoto)
+            chkSyncGatFim = it.findViewById(R.id.chkSyncGatFim)
+            chkSyncGatAbrir = it.findViewById(R.id.chkSyncGatAbrir)
+            chkSyncSoWifi = it.findViewById(R.id.chkSyncSoWifi)
+            listaSyncPerfis = it.findViewById(R.id.listaSyncPerfis)
+            txtSyncEstado = it.findViewById(R.id.txtSyncEstado)
+            txtSyncOrigem = it.findViewById(R.id.txtSyncOrigem)
+
+            val cfg = com.radioterapia.ai.sync.SyncConfig(this)
+            swSyncMestre?.isChecked = cfg.ativo
+            edtSyncIntervalo?.setText(cfg.intervaloMinutos.toString())
+            chkSyncGatFoto?.isChecked = cfg.gatilhoAoSalvarFoto
+            chkSyncGatFim?.isChecked = cfg.gatilhoAoFinalizar
+            chkSyncGatAbrir?.isChecked = cfg.gatilhoAoAbrir
+            chkSyncSoWifi?.isChecked = cfg.somenteRedeNaoTarifada
+
+            swSyncMestre?.setOnCheckedChangeListener { _, ligado ->
+                // GRAVA NA HORA, e não no salvarTudo. Ligar a sincronização é o
+                // ato que faz o app começar a usar a rede por conta própria;
+                // deixar isso pendurado até alguém sair da tela criaria um
+                // intervalo em que a tela diz uma coisa e o app faz outra.
+                com.radioterapia.ai.sync.SyncConfig(this).ativo = ligado
+                com.radioterapia.ai.sync.SyncWorker.reprogramar(this)
+                atualizarEstadoSync()
+            }
+            it.findViewById<Button>(R.id.btnSyncAdicionar).setOnClickListener {
+                startActivity(Intent(this, SyncPerfilActivity::class.java))
+            }
+            it.findViewById<Button>(R.id.btnSyncAgora).setOnClickListener { sincronizarAgora() }
+
+            desenharPerfisSync()
+            atualizarEstadoSync()
+        }
+
         adicionarGrupo("📄", R.string.group_pdf, R.layout.group_pdf) {
             rgPdfOrientation = it.findViewById(R.id.rgPdfOrientation)
             rgPdfOrientation?.setOnCheckedChangeListener { _, checked ->
@@ -443,6 +481,136 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
      */
     /** Pares (conteúdo, seta) de todos os grupos, para o acordeão exclusivo. */
     private val gruposAcordeao = mutableListOf<Pair<LinearLayout, TextView>>()
+
+    // ---- Sincronização de prontuários (v4.0)
+    private var swSyncMestre: com.google.android.material.switchmaterial.SwitchMaterial? = null
+    private var blocoSyncDetalhe: View? = null
+    private var edtSyncIntervalo: EditText? = null
+    private var chkSyncGatFoto: CheckBox? = null
+    private var chkSyncGatFim: CheckBox? = null
+    private var chkSyncGatAbrir: CheckBox? = null
+    private var chkSyncSoWifi: CheckBox? = null
+    private var listaSyncPerfis: LinearLayout? = null
+    private var txtSyncEstado: TextView? = null
+    private var txtSyncOrigem: TextView? = null
+
+    /**
+     * Desenha um cartão por destino.
+     *
+     * Redesenhado no `onResume` porque a edição acontece em outra tela: sem
+     * isso, voltar de lá mostraria o nome antigo e o erro antigo — e a pessoa
+     * concluiria que a alteração não foi salva.
+     */
+    private fun desenharPerfisSync() {
+        val lista = listaSyncPerfis ?: return
+        lista.removeAllViews()
+        val perfis = com.radioterapia.ai.sync.PerfilStore(this).listar()
+        if (perfis.isEmpty()) {
+            lista.addView(TextView(this).apply {
+                text = getString(R.string.sync_no_profiles)
+                textSize = 13f
+                setTextColor(androidx.core.content.ContextCompat.getColor(
+                    this@SettingsActivity, R.color.text_secondary))
+                setPadding(0, 8, 0, 8)
+            })
+            return
+        }
+        val fmt = java.text.SimpleDateFormat("dd/MM HH:mm", java.util.Locale.getDefault())
+        val d = resources.displayMetrics.density
+        perfis.forEach { p ->
+            val cartao = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding((10 * d).toInt(), (8 * d).toInt(), (10 * d).toInt(), (8 * d).toInt())
+                setBackgroundColor(0x11000000)
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { bottomMargin = (6 * d).toInt() }
+                isClickable = true
+                setOnClickListener {
+                    startActivity(Intent(this@SettingsActivity, SyncPerfilActivity::class.java)
+                        .putExtra(SyncPerfilActivity.EXTRA_ID, p.id))
+                }
+            }
+            cartao.addView(TextView(this).apply {
+                text = "${p.nome}  ·  ${p.tipo.name}"
+                textSize = 14f
+                setTypeface(null, android.graphics.Typeface.BOLD)
+                setTextColor(androidx.core.content.ContextCompat.getColor(
+                    this@SettingsActivity, R.color.text_primary))
+            })
+            // ORIGEM À ESQUERDA, DESTINO À DIREITA, na mesma linha: é o desenho
+            // que responde "de onde para onde" sem obrigar a ler duas linhas.
+            cartao.addView(TextView(this).apply {
+                text = destinoLegivel(p)
+                textSize = 12f
+                setTextColor(androidx.core.content.ContextCompat.getColor(
+                    this@SettingsActivity, R.color.text_secondary))
+            })
+            cartao.addView(TextView(this).apply {
+                text = when {
+                    !p.ativo -> getString(R.string.sync_profile_inactive)
+                    p.ultimoErro.isNotBlank() -> getString(R.string.sync_profile_error, p.ultimoErro)
+                    p.ultimaSincronizacao > 0 -> getString(R.string.sync_profile_last,
+                        fmt.format(java.util.Date(p.ultimaSincronizacao)))
+                    else -> getString(R.string.sync_profile_never)
+                }
+                textSize = 11f
+                setTextColor(
+                    if (p.ultimoErro.isNotBlank() && p.ativo) 0xFFC62828.toInt()
+                    else androidx.core.content.ContextCompat.getColor(
+                        this@SettingsActivity, R.color.text_secondary))
+            })
+            lista.addView(cartao)
+        }
+    }
+
+    /** O destino em uma linha, no formato que a pessoa digitou. */
+    private fun destinoLegivel(p: com.radioterapia.ai.sync.PerfilSync): String = when (p.tipo) {
+        com.radioterapia.ai.sync.PerfilSync.Tipo.SMB ->
+            "\\\\${p.host}\\${p.share}\\${p.caminhoRemoto}"
+        com.radioterapia.ai.sync.PerfilSync.Tipo.WEBDAV ->
+            listOf(p.urlBase.trimEnd('/'), p.caminhoRemoto).filter { it.isNotBlank() }.joinToString("/")
+        com.radioterapia.ai.sync.PerfilSync.Tipo.FTP,
+        com.radioterapia.ai.sync.PerfilSync.Tipo.SFTP ->
+            "${p.tipo.name.lowercase()}://${p.host}/${p.caminhoRemoto}"
+        com.radioterapia.ai.sync.PerfilSync.Tipo.SAF ->
+            (try { com.radioterapia.ai.util.StorageLocal.treeUriParaCaminho(
+                android.net.Uri.parse(p.safUri)) } catch (_: Exception) { null }) ?: p.safUri
+    }
+
+    private fun atualizarEstadoSync() {
+        val cfg = com.radioterapia.ai.sync.SyncConfig(this)
+        blocoSyncDetalhe?.alpha = if (cfg.ativo) 1f else 0.4f
+        txtSyncOrigem?.text = getString(R.string.sync_origin,
+            com.radioterapia.ai.util.StorageLocal.caminhoLegivel(this))
+        txtSyncEstado?.text =
+            if (cfg.ultimaVarredura > 0)
+                getString(R.string.sync_last, java.text.SimpleDateFormat(
+                    "dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+                    .format(java.util.Date(cfg.ultimaVarredura)))
+            else getString(R.string.sync_never)
+    }
+
+    /** Varre agora, na mão, e conta o que aconteceu. */
+    private fun sincronizarAgora() {
+        salvarTudo()
+        val cfg = com.radioterapia.ai.sync.SyncConfig(this)
+        if (!cfg.ativo) {
+            Toast.makeText(this, R.string.sync_master_hint, Toast.LENGTH_LONG).show(); return
+        }
+        txtSyncEstado?.text = getString(R.string.sync_running)
+        CoroutineScope(Dispatchers.Main).launch {
+            val resumos = withContext(Dispatchers.IO) {
+                com.radioterapia.ai.sync.MotorSync(this@SettingsActivity).sincronizarTudo()
+            }
+            val env = resumos.sumOf { it.enviados }
+            val ja = resumos.sumOf { it.jaEstavam }
+            val pend = resumos.sumOf { it.pendentes }
+            txtSyncEstado?.text = getString(R.string.sync_result, env, ja, pend)
+            desenharPerfisSync()
+        }
+    }
 
     private fun adicionarGrupo(
         icone: String,
@@ -1315,6 +1483,16 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         config.impressoraIp = edtPrinterIp?.text?.toString()?.trim() ?: ""
         config.impressoraNome = edtPrinterName?.text?.toString()?.trim() ?: ""
 
+        // Sincronização (o interruptor mestre já foi gravado no próprio toque)
+        com.radioterapia.ai.sync.SyncConfig(this).apply {
+            edtSyncIntervalo?.text?.toString()?.toIntOrNull()?.let { intervaloMinutos = it }
+            chkSyncGatFoto?.let { gatilhoAoSalvarFoto = it.isChecked }
+            chkSyncGatFim?.let { gatilhoAoFinalizar = it.isChecked }
+            chkSyncGatAbrir?.let { gatilhoAoAbrir = it.isChecked }
+            chkSyncSoWifi?.let { somenteRedeNaoTarifada = it.isChecked }
+        }
+        if (swSyncMestre != null) com.radioterapia.ai.sync.SyncWorker.reprogramar(this)
+
         // PDF
         config.pdfParaServidor = true  // sempre salvamos o PDF junto das fotos
         config.pdfLandscape = (rgPdfOrientation?.checkedRadioButtonId == R.id.rbPdfLandscape)
@@ -1533,6 +1711,10 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         super.onResume()
         // Ao voltar da tela de permissão do sistema, reflete a pasta/status atuais.
         if (txtBackupFolder != null) { atualizarLabelArmazenamento(); atualizarStatusBase() }
+        // A edição de um destino acontece em outra tela: sem redesenhar, voltar
+        // de lá mostraria o nome e o erro antigos, e a pessoa concluiria que a
+        // alteração não foi salva.
+        if (listaSyncPerfis != null) { desenharPerfisSync(); atualizarEstadoSync() }
     }
 
     /** Mostra a pasta de armazenamento (raiz PhotoID_RT) automaticamente. */

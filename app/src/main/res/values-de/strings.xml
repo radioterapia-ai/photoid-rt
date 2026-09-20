@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">Ins Bild einpassen</string>
     <string name="prot_girar_miniatura">Drehen</string>
     <string name="prot_sem_miniatura">Wählen Sie zuerst ein Vorschaubild.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">Datensynchronisation</string>
+    <string name="sync_master">Eigene Synchronisation aktivieren</string>
+    <string name="sync_master_hint">Ausgeschaltet nutzt die App das Netzwerk nicht von sich aus: Die Dateien bleiben auf dem Tablet, und die App, die Ihre Abteilung bereits verwendet, bringt sie zum Server.</string>
+    <string name="sync_interval">Prüfen alle (Minuten)</string>
+    <string name="sync_trigger_photo">Senden, wenn ein Foto gespeichert wird</string>
+    <string name="sync_trigger_finish">Senden, wenn die Simulation beendet wird</string>
+    <string name="sync_trigger_open">Senden beim Öffnen der App</string>
+    <string name="sync_wifi_only">Nur in nicht getakteten Netzen</string>
+    <string name="sync_origin">Quelle (fest): %1$s</string>
+    <string name="sync_profiles">Ziele</string>
+    <string name="sync_add_profile">Ziel hinzufügen</string>
+    <string name="sync_no_profiles">Kein Ziel konfiguriert.</string>
+    <string name="sync_last">Letzte Prüfung: %1$s</string>
+    <string name="sync_never">Noch nicht geprüft</string>
+    <string name="sync_running">Wird geprüft…</string>
+    <string name="sync_result">%1$d gesendet · %2$d schon vorhanden · %3$d offen</string>
+    <string name="sync_profile_last">Zuletzt: %1$s</string>
+    <string name="sync_profile_error">Fehler: %1$s</string>
+    <string name="sync_profile_never">Nie synchronisiert</string>
+    <string name="sync_profile_inactive">Deaktiviert</string>
+    <string name="sync_profile_title">Synchronisationsziel</string>
+    <string name="sync_profile_name">Name dieses Ziels</string>
+    <string name="sync_profile_type">Typ</string>
+    <string name="sync_profile_active">Ziel aktiv</string>
+    <string name="sync_new_name">Neues Ziel</string>
+    <string name="sync_f_host">Server (Name oder IP)</string>
+    <string name="sync_f_port">Port</string>
+    <string name="sync_f_protocol">Protokoll</string>
+    <string name="sync_f_share">Freigabe (freigegebener Ordner)</string>
+    <string name="sync_f_path">Zielordner</string>
+    <string name="sync_f_user">Benutzer</string>
+    <string name="sync_f_password">Passwort</string>
+    <string name="sync_f_domain">Domäne</string>
+    <string name="sync_f_url">Ordner-URL</string>
+    <string name="sync_f_folder">Gewählter Ordner</string>
+    <string name="sync_f_choose_folder">Ordner wählen…</string>
+    <string name="sync_no_folder">(kein Ordner gewählt)</string>
+    <string name="sync_f_direct">Direkt schreiben, ohne die übergeordneten Ordner zu prüfen</string>
+    <string name="sync_pass_note">Das Passwort wird auf dem Gerät verschlüsselt gespeichert und ist nicht im Konfigurationspaket enthalten.</string>
+    <string name="sync_port_default">0 = Standard des Protokolls</string>
+    <string name="sync_test">Verbindung testen</string>
+    <string name="sync_testing">Test läuft…</string>
+    <string name="sync_test_ok">Verbindung und Schreibzugriff bestätigt.</string>
+    <string name="sync_test_fail">Schreiben am Ziel nicht möglich.</string>
+    <string name="sync_copy_log">Bericht kopieren</string>
+    <string name="sync_log_copied">Bericht kopiert.</string>
+    <string name="sync_save">Ziel speichern</string>
+    <string name="sync_saved">Ziel gespeichert.</string>
+    <string name="sync_delete">Ziel entfernen</string>
+    <string name="sync_delete_q">Dieses Ziel entfernen? Die Aufzeichnung des bereits Gesendeten geht ebenfalls verloren — was schon auf dem Server liegt, wird nicht gelöscht.</string>
+    <string name="sync_tip_host">Nur der Servername oder die IP — ohne Schrägstriche und ohne Ordner. In "\\\\SRV-DAT\\rt\\fotos" ist der Server SRV-DAT. Löst der Name im Netz des Tablets nicht auf, verwenden Sie die IP.</string>
+    <string name="sync_tip_share">Die Freigabe ist der ERSTE Ordner des Netzwerkpfads, den der Server veröffentlicht. In "\\\\SRV\\rt\\fotos\\2026" ist die Freigabe "rt", der Rest gehört in den Zielordner. Administrative Freigaben mit "$" am Ende werden akzeptiert.</string>
+    <string name="sync_tip_user">Nur die Kennung, ohne Domäne. Schreiben Sie nicht "DOMAENE\\benutzer" oder "benutzer@domaene" — die Domäne hat ein eigenes Feld darunter, und die App setzt die Anmeldung zusammen.</string>
+    <string name="sync_tip_domain">Die Active-Directory-Domäne, wenn es ein Domänenkonto ist. Meist der Teil vor dem Backslash bei der Windows-Anmeldung. Bei einem Server ohne Domäne leer lassen.</string>
+    <string name="sync_tip_path">Der Ordner im Ziel, in dem die Struktur des Tablets nachgebildet wird. Leer lassen, um in der Wurzel zu schreiben. Die Patientenordner werden darin angelegt, mit denselben Namen wie auf dem Tablet.</string>
+    <string name="sync_tip_url">Die vollständige Ordneradresse, mit http:// oder https://. Es ist dieselbe Adresse, die der Browser öffnet. Bei selbst gehosteten Cloud-Diensten ist das Passwort meist ein App-Passwort, nicht das Anmeldepasswort.</string>
+    <string name="sync_tip_saf">Wählen Sie den Ordner mit der Systemauswahl, in der Cloud-App, die Ihre Abteilung bereits nutzt und in der sie angemeldet ist. Kein Passwort geht durch diese App. Wird die Cloud-App neu installiert oder das Konto gewechselt, wählen Sie den Ordner erneut.</string>
+    <string name="sync_tip_direct">Eingeschaltet schreibt die App direkt in den Zielordner, ohne die übergeordneten Ordner zu prüfen. Das löst den häufigen Fall im Krankenhaus: Das Konto darf am Ziel schreiben, aber die übergeordneten Ordner nicht LESEN — und die Prüfung würde an einem Ordner scheitern, der gar nicht das Ziel ist. Schalten Sie es nur aus, wenn der Server das direkte Schreiben ablehnt.</string>
 </resources>

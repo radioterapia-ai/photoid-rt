@@ -884,4 +884,65 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="cam_ajuste_encaixar">Fit inside the frame</string>
     <string name="prot_girar_miniatura">Rotate</string>
     <string name="prot_sem_miniatura">Choose a thumbnail first.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">Record synchronization</string>
+    <string name="sync_master">Enable built-in synchronization</string>
+    <string name="sync_master_hint">When off, the app does not use the network on its own: files stay on the tablet and whatever app your service already uses takes them to the server.</string>
+    <string name="sync_interval">Check every (minutes)</string>
+    <string name="sync_trigger_photo">Send when each photo is saved</string>
+    <string name="sync_trigger_finish">Send when the simulation is finished</string>
+    <string name="sync_trigger_open">Send when the app is opened</string>
+    <string name="sync_wifi_only">Only on unmetered networks</string>
+    <string name="sync_origin">Source (fixed): %1$s</string>
+    <string name="sync_profiles">Destinations</string>
+    <string name="sync_add_profile">Add destination</string>
+    <string name="sync_no_profiles">No destination configured.</string>
+    <string name="sync_last">Last check: %1$s</string>
+    <string name="sync_never">Not checked yet</string>
+    <string name="sync_running">Checking…</string>
+    <string name="sync_result">%1$d sent · %2$d already there · %3$d pending</string>
+    <string name="sync_profile_last">Last: %1$s</string>
+    <string name="sync_profile_error">Error: %1$s</string>
+    <string name="sync_profile_never">Never synchronized</string>
+    <string name="sync_profile_inactive">Disabled</string>
+    <string name="sync_profile_title">Synchronization destination</string>
+    <string name="sync_profile_name">Name of this destination</string>
+    <string name="sync_profile_type">Type</string>
+    <string name="sync_profile_active">Destination enabled</string>
+    <string name="sync_new_name">New destination</string>
+    <string name="sync_f_host">Server (name or IP)</string>
+    <string name="sync_f_port">Port</string>
+    <string name="sync_f_protocol">Protocol</string>
+    <string name="sync_f_share">Share (shared folder)</string>
+    <string name="sync_f_path">Remote folder</string>
+    <string name="sync_f_user">Username</string>
+    <string name="sync_f_password">Password</string>
+    <string name="sync_f_domain">Domain</string>
+    <string name="sync_f_url">Folder URL</string>
+    <string name="sync_f_folder">Chosen folder</string>
+    <string name="sync_f_choose_folder">Choose folder…</string>
+    <string name="sync_no_folder">(no folder chosen)</string>
+    <string name="sync_f_direct">Write straight in, without checking the folders above</string>
+    <string name="sync_pass_note">The password is encrypted on the device and is not included in the configuration transfer package.</string>
+    <string name="sync_port_default">0 = protocol default</string>
+    <string name="sync_test">Test connection</string>
+    <string name="sync_testing">Testing…</string>
+    <string name="sync_test_ok">Connection and write confirmed.</string>
+    <string name="sync_test_fail">Could not write to the destination.</string>
+    <string name="sync_copy_log">Copy report</string>
+    <string name="sync_log_copied">Report copied.</string>
+    <string name="sync_save">Save destination</string>
+    <string name="sync_saved">Destination saved.</string>
+    <string name="sync_delete">Remove destination</string>
+    <string name="sync_delete_q">Remove this destination? The record of what was already sent is forgotten too — what is already on the server is not deleted.</string>
+    <string name="sync_tip_host">The server name or IP, nothing else — no slashes and no folder. In "\\\\SRV-FILES\\rt\\photos" the server is SRV-FILES. If the name does not resolve on the tablet\'s network, use the IP.</string>
+    <string name="sync_tip_share">The share is the FIRST folder of the network path, the one the server publishes. In "\\\\SRV\\rt\\photos\\2026" the share is "rt" and the rest goes in the remote folder. Administrative shares ending in "$" are accepted.</string>
+    <string name="sync_tip_user">Just the login or ID, without the domain attached. Do not write "DOMAIN\\user" or "user@domain" — the domain has its own field just below, and the app assembles the authentication.</string>
+    <string name="sync_tip_domain">The Active Directory domain, when the account is a domain account. It is usually the part before the backslash in the Windows login. Leave empty on a server without a domain.</string>
+    <string name="sync_tip_path">The folder inside the destination where the tablet\'s structure is reproduced. Leave empty to write at the root. The per-patient folders are created inside it, with the same names they have on the tablet.</string>
+    <string name="sync_tip_url">The full folder address, with http:// or https://. It is the same address the browser opens. On self-hosted cloud services the password is usually an app password, not the login one.</string>
+    <string name="sync_tip_saf">Pick the folder with the system picker, inside the cloud app your service already uses and is already signed in to. No password goes through this app. If the cloud app is reinstalled or the account changes, pick the folder again.</string>
+    <string name="sync_tip_direct">When on, the app writes straight into the final folder without checking the folders above it. This solves the common hospital case: the account can write at the destination but cannot READ the folders above — and the check would fail on a folder that is not even the destination. Turn it off only if the server refuses the direct write.</string>
 </resources>

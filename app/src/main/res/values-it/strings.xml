@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">Regola per inquadrare</string>
     <string name="prot_girar_miniatura">Ruota</string>
     <string name="prot_sem_miniatura">Scegli prima una miniatura.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">Sincronizzazione delle cartelle</string>
+    <string name="sync_master">Attiva la sincronizzazione integrata</string>
+    <string name="sync_master_hint">Disattivata, l\'app non usa la rete di propria iniziativa: i file restano sul tablet e a portarli sul server è l\'applicazione che il servizio già usa.</string>
+    <string name="sync_interval">Controlla ogni (minuti)</string>
+    <string name="sync_trigger_photo">Invia al salvataggio di ogni foto</string>
+    <string name="sync_trigger_finish">Invia al termine della simulazione</string>
+    <string name="sync_trigger_open">Invia all\'apertura dell\'app</string>
+    <string name="sync_wifi_only">Solo su reti senza consumo a consumo</string>
+    <string name="sync_origin">Origine (fissa): %1$s</string>
+    <string name="sync_profiles">Destinazioni</string>
+    <string name="sync_add_profile">Aggiungi destinazione</string>
+    <string name="sync_no_profiles">Nessuna destinazione configurata.</string>
+    <string name="sync_last">Ultimo controllo: %1$s</string>
+    <string name="sync_never">Non ancora controllato</string>
+    <string name="sync_running">Controllo in corso…</string>
+    <string name="sync_result">%1$d inviati · %2$d già presenti · %3$d in sospeso</string>
+    <string name="sync_profile_last">Ultima: %1$s</string>
+    <string name="sync_profile_error">Errore: %1$s</string>
+    <string name="sync_profile_never">Mai sincronizzato</string>
+    <string name="sync_profile_inactive">Disattivato</string>
+    <string name="sync_profile_title">Destinazione di sincronizzazione</string>
+    <string name="sync_profile_name">Nome di questa destinazione</string>
+    <string name="sync_profile_type">Tipo</string>
+    <string name="sync_profile_active">Destinazione attiva</string>
+    <string name="sync_new_name">Nuova destinazione</string>
+    <string name="sync_f_host">Server (nome o IP)</string>
+    <string name="sync_f_port">Porta</string>
+    <string name="sync_f_protocol">Protocollo</string>
+    <string name="sync_f_share">Condivisione (cartella condivisa)</string>
+    <string name="sync_f_path">Cartella remota</string>
+    <string name="sync_f_user">Utente</string>
+    <string name="sync_f_password">Password</string>
+    <string name="sync_f_domain">Dominio</string>
+    <string name="sync_f_url">URL della cartella</string>
+    <string name="sync_f_folder">Cartella scelta</string>
+    <string name="sync_f_choose_folder">Scegli cartella…</string>
+    <string name="sync_no_folder">(nessuna cartella scelta)</string>
+    <string name="sync_f_direct">Scrivi direttamente, senza controllare le cartelle superiori</string>
+    <string name="sync_pass_note">La password è cifrata sul dispositivo e non entra nel pacchetto di trasferimento della configurazione.</string>
+    <string name="sync_port_default">0 = valore predefinito del protocollo</string>
+    <string name="sync_test">Prova connessione</string>
+    <string name="sync_testing">Prova in corso…</string>
+    <string name="sync_test_ok">Connessione e scrittura confermate.</string>
+    <string name="sync_test_fail">Non è stato possibile scrivere nella destinazione.</string>
+    <string name="sync_copy_log">Copia il rapporto</string>
+    <string name="sync_log_copied">Rapporto copiato.</string>
+    <string name="sync_save">Salva destinazione</string>
+    <string name="sync_saved">Destinazione salvata.</string>
+    <string name="sync_delete">Rimuovi destinazione</string>
+    <string name="sync_delete_q">Rimuovere questa destinazione? Anche il registro di ciò che è già stato inviato viene dimenticato; quello che è già sul server non viene cancellato.</string>
+    <string name="sync_tip_host">Il nome o l\'IP del server, nient\'altro: senza barre e senza la cartella. In "\\\\SRV-FILE\\rt\\foto" il server è SRV-FILE. Se il nome non si risolve nella rete del tablet, usi l\'IP.</string>
+    <string name="sync_tip_share">La condivisione è la PRIMA cartella del percorso di rete, quella pubblicata dal server. In "\\\\SRV\\rt\\foto\\2026" la condivisione è "rt" e il resto va nella cartella remota. Le condivisioni amministrative che finiscono con "$" sono accettate.</string>
+    <string name="sync_tip_user">Solo la matricola o il login, senza il dominio. Non scriva "DOMINIO\\utente" né "utente@dominio": il dominio ha un campo proprio qui sotto e l\'app compone l\'autenticazione.</string>
+    <string name="sync_tip_domain">Il dominio di Active Directory, quando l\'account è di dominio. Di solito è la parte prima della barra rovesciata nel login di Windows. Su un server senza dominio, lasci vuoto.</string>
+    <string name="sync_tip_path">La cartella nella destinazione dove viene riprodotta la struttura del tablet. La lasci vuota per scrivere nella radice. Le cartelle per paziente sono create al suo interno, con gli stessi nomi che hanno sul tablet.</string>
+    <string name="sync_tip_url">L\'indirizzo completo della cartella, con http:// o https://. È lo stesso indirizzo che apre il browser. Nei servizi cloud propri la password è di solito una password per applicazioni, non quella di accesso.</string>
+    <string name="sync_tip_saf">Scelga la cartella con il selettore di sistema, dentro l\'app di cloud che il servizio già usa e in cui è già connesso. Nessuna password passa da questa app. Se l\'app di cloud viene reinstallata o l\'account cambiato, scelga di nuovo la cartella.</string>
+    <string name="sync_tip_direct">Attivo, l\'app scrive direttamente nella cartella finale senza controllare quelle superiori. Risolve il caso comune in ospedale: l\'account può scrivere nella destinazione ma non può LEGGERE le cartelle sopra, e il controllo fallirebbe su una cartella che non è nemmeno la destinazione. Lo disattivi solo se il server rifiuta la scrittura diretta.</string>
 </resources>

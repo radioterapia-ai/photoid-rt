@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">프레임에 맞게 조정</string>
     <string name="prot_girar_miniatura">회전</string>
     <string name="prot_sem_miniatura">먼저 썸네일을 선택하세요.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">기록 동기화</string>
+    <string name="sync_master">내장 동기화 사용</string>
+    <string name="sync_master_hint">꺼져 있으면 앱이 스스로 네트워크를 쓰지 않습니다. 파일은 태블릿에 남고, 기관이 이미 쓰는 앱이 서버로 옮깁니다.</string>
+    <string name="sync_interval">확인 주기(분)</string>
+    <string name="sync_trigger_photo">사진을 저장할 때마다 전송</string>
+    <string name="sync_trigger_finish">모의치료 완료 시 전송</string>
+    <string name="sync_trigger_open">앱을 열 때 전송</string>
+    <string name="sync_wifi_only">데이터 요금이 없는 네트워크에서만</string>
+    <string name="sync_origin">원본(고정): %1$s</string>
+    <string name="sync_profiles">대상</string>
+    <string name="sync_add_profile">대상 추가</string>
+    <string name="sync_no_profiles">설정된 대상이 없습니다.</string>
+    <string name="sync_last">마지막 확인: %1$s</string>
+    <string name="sync_never">아직 확인하지 않음</string>
+    <string name="sync_running">확인 중…</string>
+    <string name="sync_result">전송 %1$d · 이미 있음 %2$d · 대기 %3$d</string>
+    <string name="sync_profile_last">최근: %1$s</string>
+    <string name="sync_profile_error">오류: %1$s</string>
+    <string name="sync_profile_never">동기화한 적 없음</string>
+    <string name="sync_profile_inactive">사용 안 함</string>
+    <string name="sync_profile_title">동기화 대상</string>
+    <string name="sync_profile_name">이 대상의 이름</string>
+    <string name="sync_profile_type">종류</string>
+    <string name="sync_profile_active">이 대상 사용</string>
+    <string name="sync_new_name">새 대상</string>
+    <string name="sync_f_host">서버(이름 또는 IP)</string>
+    <string name="sync_f_port">포트</string>
+    <string name="sync_f_protocol">프로토콜</string>
+    <string name="sync_f_share">공유 이름(공유 폴더)</string>
+    <string name="sync_f_path">원격 폴더</string>
+    <string name="sync_f_user">사용자</string>
+    <string name="sync_f_password">비밀번호</string>
+    <string name="sync_f_domain">도메인</string>
+    <string name="sync_f_url">폴더 URL</string>
+    <string name="sync_f_folder">선택한 폴더</string>
+    <string name="sync_f_choose_folder">폴더 선택…</string>
+    <string name="sync_no_folder">(선택한 폴더 없음)</string>
+    <string name="sync_f_direct">상위 폴더를 확인하지 않고 바로 기록</string>
+    <string name="sync_pass_note">비밀번호는 기기에서 암호화되어 저장되며 설정 이전 패키지에 포함되지 않습니다.</string>
+    <string name="sync_port_default">0 = 프로토콜 기본값</string>
+    <string name="sync_test">연결 테스트</string>
+    <string name="sync_testing">테스트 중…</string>
+    <string name="sync_test_ok">연결과 기록이 확인되었습니다.</string>
+    <string name="sync_test_fail">대상에 기록하지 못했습니다.</string>
+    <string name="sync_copy_log">보고서 복사</string>
+    <string name="sync_log_copied">보고서를 복사했습니다.</string>
+    <string name="sync_save">대상 저장</string>
+    <string name="sync_saved">대상을 저장했습니다.</string>
+    <string name="sync_delete">대상 삭제</string>
+    <string name="sync_delete_q">이 대상을 삭제할까요? 이미 보낸 기록도 함께 사라집니다. 서버에 있는 파일은 지워지지 않습니다.</string>
+    <string name="sync_tip_host">서버 이름이나 IP만 적습니다. 슬래시도 폴더도 넣지 마십시오. "\\\\SRV-FILE\\rt\\photos"에서 서버는 SRV-FILE입니다. 태블릿 네트워크에서 이름이 해석되지 않으면 IP를 쓰십시오.</string>
+    <string name="sync_tip_share">공유 이름은 네트워크 경로의 첫 번째 폴더, 즉 서버가 공개하는 부분입니다. "\\\\SRV\\rt\\photos\\2026"에서는 "rt"가 공유 이름이고 나머지는 원격 폴더에 넣습니다. "$"로 끝나는 관리 공유도 됩니다.</string>
+    <string name="sync_tip_user">사번이나 로그인 이름만 적습니다. "DOMAIN\\user"나 "user@domain"으로 쓰지 마십시오. 도메인은 바로 아래 전용 칸이 있고, 앱이 인증을 구성합니다.</string>
+    <string name="sync_tip_domain">계정이 도메인 계정일 때의 Active Directory 도메인입니다. 보통 Windows 로그인에서 역슬래시 앞부분입니다. 도메인이 없는 서버라면 비워 두십시오.</string>
+    <string name="sync_tip_path">태블릿의 구조를 그대로 옮길 대상 내부의 폴더입니다. 비워 두면 최상위에 기록합니다. 환자별 폴더는 그 안에, 태블릿과 같은 이름으로 만들어집니다.</string>
+    <string name="sync_tip_url">폴더의 전체 주소입니다. http:// 또는 https://를 포함합니다. 브라우저에서 여는 주소와 같습니다. 자체 구축 클라우드에서는 로그인 비밀번호가 아니라 앱 비밀번호인 경우가 많습니다.</string>
+    <string name="sync_tip_saf">기관이 이미 사용하고 로그인해 둔 클라우드 앱 안에서, 시스템 선택기로 폴더를 고릅니다. 이 앱을 거치는 비밀번호는 없습니다. 클라우드 앱을 다시 설치했거나 계정이 바뀌었다면 폴더를 다시 고르십시오.</string>
+    <string name="sync_tip_direct">켜면 앱이 상위 폴더를 확인하지 않고 최종 폴더에 바로 기록합니다. 병원에서 흔한 상황을 해결합니다. 계정이 대상에는 쓸 수 있어도 상위 폴더를 읽지 못할 수 있고, 그러면 확인은 대상도 아닌 폴더에서 실패합니다. 서버가 직접 기록을 거부할 때만 끄십시오.</string>
 </resources>

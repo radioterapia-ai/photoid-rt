@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    UM DESTINO DE SINCRONIZAÇÃO, por inteiro.
+
+    Tela própria, e não um bloco dentro das Configurações: o formulário tem
+    campo de protocolo, de share, de domínio e um relatório de teste que pode
+    ter cinquenta linhas. Enfiado no acordeão, ele empurraria todos os demais
+    grupos para fora da tela.
+
+    Os blocos por tipo (SMB, WebDAV, FTP/SFTP, SAF) ficam TODOS no layout e
+    aparecem conforme o tipo escolhido. Inflar dinamicamente faria o que já foi
+    digitado sumir a cada troca no seletor — e trocar de SMB para WebDAV para
+    ver a diferença é a primeira coisa que alguém faz.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView style="@style/FieldLabel" android:text="@string/sync_profile_name" />
+        <EditText android:id="@+id/edtSyncNome" style="@style/InputField"
+            android:inputType="textCapSentences" android:maxLines="1" />
+
+        <TextView style="@style/FieldLabel" android:layout_marginTop="10dp"
+            android:text="@string/sync_profile_type" />
+        <Spinner android:id="@+id/spSyncTipo"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:minHeight="44dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+            <TextView
+                android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/sync_profile_active"
+                android:textSize="14sp" android:textColor="@color/text_primary" />
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/swSyncAtivo"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:minHeight="44dp" />
+        </LinearLayout>
+
+        <View style="@style/SeparadorFino" />
+
+        <!-- ================= SERVIDOR: SMB, FTP e SFTP ================= -->
+        <LinearLayout android:id="@+id/blocoServidor"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView style="@style/FieldLabel"
+                    android:layout_width="wrap_content"
+                    android:text="@string/sync_f_host" />
+                <TextView android:id="@+id/tipHost" style="@style/DicaBotao" />
+            </LinearLayout>
+            <EditText android:id="@+id/edtSyncHost" style="@style/InputField"
+                android:inputType="textUri" android:maxLines="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:layout_marginTop="8dp">
+                <LinearLayout
+                    android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:orientation="vertical">
+                    <TextView style="@style/FieldLabel" android:text="@string/sync_f_port" />
+                    <EditText android:id="@+id/edtSyncPorta" style="@style/InputField"
+                        android:inputType="number" android:maxLines="1" />
+                    <TextView style="@style/SectionDesc" android:text="@string/sync_port_default" />
+                </LinearLayout>
+                <LinearLayout android:id="@+id/blocoProtocolo"
+                    android:layout_width="0dp" android:layout_weight="1"
+                    android:layout_height="wrap_content" android:orientation="vertical"
+                    android:layout_marginStart="10dp">
+                    <TextView style="@style/FieldLabel" android:text="@string/sync_f_protocol" />
+                    <Spinner android:id="@+id/spSyncProtocolo"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:minHeight="44dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/blocoShare"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:layout_marginTop="8dp">
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView style="@style/FieldLabel"
+                        android:layout_width="wrap_content"
+                        android:text="@string/sync_f_share" />
+                    <TextView android:id="@+id/tipShare" style="@style/DicaBotao" />
+                </LinearLayout>
+                <EditText android:id="@+id/edtSyncShare" style="@style/InputField"
+                    android:inputType="text" android:maxLines="1" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- ================= WEBDAV ================= -->
+        <LinearLayout android:id="@+id/blocoWebdav"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView style="@style/FieldLabel"
+                    android:layout_width="wrap_content"
+                    android:text="@string/sync_f_url" />
+                <TextView android:id="@+id/tipUrl" style="@style/DicaBotao" />
+            </LinearLayout>
+            <EditText android:id="@+id/edtSyncUrl" style="@style/InputField"
+                android:inputType="textUri" android:maxLines="1" />
+        </LinearLayout>
+
+        <!-- ================= SAF ================= -->
+        <LinearLayout android:id="@+id/blocoSaf"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:visibility="gone">
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView style="@style/FieldLabel"
+                    android:layout_width="wrap_content"
+                    android:text="@string/sync_f_folder" />
+                <TextView android:id="@+id/tipSaf" style="@style/DicaBotao" />
+            </LinearLayout>
+            <TextView android:id="@+id/txtSyncPastaSaf"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textSize="13sp" android:textColor="@color/text_secondary"
+                android:paddingVertical="6dp" />
+            <Button android:id="@+id/btnSyncEscolherPasta" style="@style/ButtonSecondary"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/sync_f_choose_folder" />
+        </LinearLayout>
+
+        <!-- ================= CREDENCIAIS ================= -->
+        <LinearLayout android:id="@+id/blocoCredenciais"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:layout_marginTop="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView style="@style/FieldLabel"
+                    android:layout_width="wrap_content"
+                    android:text="@string/sync_f_user" />
+                <TextView android:id="@+id/tipUser" style="@style/DicaBotao" />
+            </LinearLayout>
+            <EditText android:id="@+id/edtSyncUsuario" style="@style/InputField"
+                android:inputType="text" android:maxLines="1" />
+
+            <LinearLayout android:id="@+id/blocoDominio"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical" android:layout_marginTop="8dp">
+                <LinearLayout
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView style="@style/FieldLabel"
+                        android:layout_width="wrap_content"
+                        android:text="@string/sync_f_domain" />
+                    <TextView android:id="@+id/tipDomain" style="@style/DicaBotao" />
+                </LinearLayout>
+                <EditText android:id="@+id/edtSyncDominio" style="@style/InputField"
+                    android:inputType="text" android:maxLines="1" />
+            </LinearLayout>
+
+            <TextView style="@style/FieldLabel" android:layout_marginTop="8dp"
+                android:text="@string/sync_f_password" />
+            <EditText android:id="@+id/edtSyncSenha" style="@style/InputField"
+                android:inputType="textPassword" android:maxLines="1" />
+            <TextView style="@style/SectionDesc" android:text="@string/sync_pass_note" />
+        </LinearLayout>
+
+        <!-- ================= PASTA REMOTA ================= -->
+        <LinearLayout android:id="@+id/blocoCaminho"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:layout_marginTop="8dp">
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="horizontal" android:gravity="center_vertical">
+                <TextView style="@style/FieldLabel"
+                    android:layout_width="wrap_content"
+                    android:text="@string/sync_f_path" />
+                <TextView android:id="@+id/tipPath" style="@style/DicaBotao" />
+            </LinearLayout>
+            <EditText android:id="@+id/edtSyncCaminho" style="@style/InputField"
+                android:inputType="textUri" android:maxLines="1" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/blocoDireta"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+            <CheckBox android:id="@+id/chkSyncDireta"
+                android:layout_width="0dp" android:layout_weight="1"
+                android:layout_height="wrap_content" android:minHeight="44dp"
+                android:text="@string/sync_f_direct"
+                android:textSize="13sp" android:textColor="@color/text_primary" />
+            <TextView android:id="@+id/tipDirect" style="@style/DicaBotao" />
+        </LinearLayout>
+
+        <View style="@style/SeparadorFino" />
+
+        <!-- ================= TESTE ================= -->
+        <Button android:id="@+id/btnSyncTestar" style="@style/ButtonPrimary"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/sync_test" />
+
+        <TextView android:id="@+id/txtSyncTesteResumo"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:padding="10dp" android:layout_marginTop="8dp"
+            android:textSize="13sp" android:textColor="@color/text_primary"
+            android:visibility="gone" />
+
+        <TextView android:id="@+id/txtSyncLog"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:padding="8dp" android:layout_marginTop="4dp"
+            android:background="#11000000"
+            android:fontFamily="monospace"
+            android:textIsSelectable="true"
+            android:textSize="10sp" android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+
+        <Button android:id="@+id/btnSyncCopiarLog" style="@style/ButtonSecondary"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/sync_copy_log"
+            android:visibility="gone" />
+
+        <View style="@style/SeparadorFino" />
+
+        <Button android:id="@+id/btnSyncSalvar" style="@style/ButtonPrimary"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/sync_save" />
+
+        <Button android:id="@+id/btnSyncRemover" style="@style/ButtonSecondary"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/sync_delete" />
+    </LinearLayout>
+</ScrollView>

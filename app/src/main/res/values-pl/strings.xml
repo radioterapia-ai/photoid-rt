@@ -814,4 +814,65 @@
     <string name="cam_ajuste_encaixar">Dopasuj do ramki</string>
     <string name="prot_girar_miniatura">Obróć</string>
     <string name="prot_sem_miniatura">Najpierw wybierz miniaturę.</string>
+
+
+    <!-- Sincronização de prontuários (v4.0) -->
+    <string name="group_sync">Synchronizacja dokumentacji</string>
+    <string name="sync_master">Włącz własną synchronizację</string>
+    <string name="sync_master_hint">Wyłączona — aplikacja nie korzysta z sieci samodzielnie: pliki zostają na tablecie, a na serwer przenosi je program, którego zakład już używa.</string>
+    <string name="sync_interval">Sprawdzaj co (minut)</string>
+    <string name="sync_trigger_photo">Wysyłaj po zapisaniu każdego zdjęcia</string>
+    <string name="sync_trigger_finish">Wysyłaj po zakończeniu symulacji</string>
+    <string name="sync_trigger_open">Wysyłaj po otwarciu aplikacji</string>
+    <string name="sync_wifi_only">Tylko w sieci bez limitu danych</string>
+    <string name="sync_origin">Źródło (stałe): %1$s</string>
+    <string name="sync_profiles">Cele</string>
+    <string name="sync_add_profile">Dodaj cel</string>
+    <string name="sync_no_profiles">Nie skonfigurowano celu.</string>
+    <string name="sync_last">Ostatnie sprawdzenie: %1$s</string>
+    <string name="sync_never">Jeszcze nie sprawdzano</string>
+    <string name="sync_running">Sprawdzanie…</string>
+    <string name="sync_result">%1$d wysłano · %2$d już było · %3$d oczekuje</string>
+    <string name="sync_profile_last">Ostatnia: %1$s</string>
+    <string name="sync_profile_error">Błąd: %1$s</string>
+    <string name="sync_profile_never">Nigdy nie synchronizowano</string>
+    <string name="sync_profile_inactive">Wyłączony</string>
+    <string name="sync_profile_title">Cel synchronizacji</string>
+    <string name="sync_profile_name">Nazwa tego celu</string>
+    <string name="sync_profile_type">Typ</string>
+    <string name="sync_profile_active">Cel aktywny</string>
+    <string name="sync_new_name">Nowy cel</string>
+    <string name="sync_f_host">Serwer (nazwa lub IP)</string>
+    <string name="sync_f_port">Port</string>
+    <string name="sync_f_protocol">Protokół</string>
+    <string name="sync_f_share">Udział (folder udostępniony)</string>
+    <string name="sync_f_path">Folder zdalny</string>
+    <string name="sync_f_user">Użytkownik</string>
+    <string name="sync_f_password">Hasło</string>
+    <string name="sync_f_domain">Domena</string>
+    <string name="sync_f_url">Adres URL folderu</string>
+    <string name="sync_f_folder">Wybrany folder</string>
+    <string name="sync_f_choose_folder">Wybierz folder…</string>
+    <string name="sync_no_folder">(nie wybrano folderu)</string>
+    <string name="sync_f_direct">Zapisuj bezpośrednio, bez sprawdzania folderów nadrzędnych</string>
+    <string name="sync_pass_note">Hasło jest szyfrowane na urządzeniu i nie trafia do pakietu przenoszenia konfiguracji.</string>
+    <string name="sync_port_default">0 = domyślny port protokołu</string>
+    <string name="sync_test">Testuj połączenie</string>
+    <string name="sync_testing">Testowanie…</string>
+    <string name="sync_test_ok">Połączenie i zapis potwierdzone.</string>
+    <string name="sync_test_fail">Nie udało się zapisać w celu.</string>
+    <string name="sync_copy_log">Kopiuj raport</string>
+    <string name="sync_log_copied">Skopiowano raport.</string>
+    <string name="sync_save">Zapisz cel</string>
+    <string name="sync_saved">Zapisano cel.</string>
+    <string name="sync_delete">Usuń cel</string>
+    <string name="sync_delete_q">Usunąć ten cel? Zapis tego, co już wysłano, również zostanie zapomniany — to, co jest już na serwerze, nie zostaje usunięte.</string>
+    <string name="sync_tip_host">Sama nazwa lub adres IP serwera — bez ukośników i bez folderu. W "\\\\SRV-PLIKI\\rt\\zdjecia" serwerem jest SRV-PLIKI. Jeśli nazwa nie rozwiązuje się w sieci tabletu, podaj IP.</string>
+    <string name="sync_tip_share">Udział to PIERWSZY folder ścieżki sieciowej, ten publikowany przez serwer. W "\\\\SRV\\rt\\zdjecia\\2026" udziałem jest "rt", a reszta trafia do folderu zdalnego. Udziały administracyjne z "$" na końcu są akceptowane.</string>
+    <string name="sync_tip_user">Tylko login lub numer, bez domeny. Nie wpisuj "DOMENA\\uzytkownik" ani "uzytkownik@domena" — domena ma własne pole poniżej, a aplikacja sama złoży uwierzytelnienie.</string>
+    <string name="sync_tip_domain">Domena Active Directory, gdy konto jest domenowe. Zwykle jest to część przed odwrotnym ukośnikiem w logowaniu Windows. Na serwerze bez domeny zostaw puste.</string>
+    <string name="sync_tip_path">Folder w celu, w którym odtwarzana jest struktura z tabletu. Zostaw puste, aby zapisywać w katalogu głównym. Foldery pacjentów powstają w nim, z tymi samymi nazwami co na tablecie.</string>
+    <string name="sync_tip_url">Pełny adres folderu, z http:// lub https://. To ten sam adres, który otwiera przeglądarka. We własnych usługach chmurowych hasło to zwykle hasło aplikacji, a nie hasło logowania.</string>
+    <string name="sync_tip_saf">Wybierz folder selektorem systemowym, w aplikacji chmurowej, której zakład już używa i do której jest zalogowany. Żadne hasło nie przechodzi przez tę aplikację. Po ponownej instalacji aplikacji chmurowej lub zmianie konta wybierz folder ponownie.</string>
+    <string name="sync_tip_direct">Włączone — aplikacja zapisuje wprost w folderze docelowym, bez sprawdzania folderów nadrzędnych. Rozwiązuje to typowy przypadek szpitalny: konto może zapisywać w celu, ale nie może CZYTAĆ folderów wyżej, a sprawdzenie nie powiodłoby się w folderze, który nie jest celem. Wyłącz tylko wtedy, gdy serwer odmawia zapisu bezpośredniego.</string>
 </resources>
