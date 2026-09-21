@@ -877,4 +877,25 @@
     <string name="sync_tip_direct">オンのとき、アプリは上位フォルダーを確認せず、最終フォルダーへ直接書き込みます。病院でよくある事情に対応するためです。アカウントは送信先に書き込めても、上位フォルダーを読めないことがあり、確認は送信先ですらないフォルダーで失敗します。サーバーが直接書き込みを拒否する場合だけオフにしてください。</string>
     <string name="tr_sync">同期</string>
     <string name="tr_sync_desc">設定と送信先。各送信先のパスワードはパッケージに入りません。タブレットごとに一度入力してください。</string>
+    <string name="pront_em_uso">カルテ番号 %1$s はすでに %2$s に登録されています。\n\n続ける前に同じ患者かどうか確認してください。</string>
+    <string name="gate_identidade">次の患者のシミュレーションを終了します:\n%1$s</string>
+    <string name="fin_ok_salva">シミュレーションを保存しました。</string>
+    <string name="banner_nova_sim">新規シム %1$d</string>
+    <string name="confirm_etiqueta_title">ラベルの情報を確認</string>
+    <string name="gallery_open_fail">ギャラリーを開けませんでした。</string>
+    <string name="sync_falta_senha">パスワード待ち — タップして入力してください。</string>
+    <string name="sync_importados_sem_senha">同期先はパスワードなしでインポートされました。パスワードは各端末内で暗号化され、メールやUSBで渡るパッケージには含まれません。
+
+各同期先を開き、このタブレットで一度パスワードを入力してください。その後は自動で有効になります。</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(未設定)</string>
+    <string name="wiz_r_idioma">言語</string>
+    <string name="wiz_r_clinica">施設</string>
+    <string name="wiz_r_pasta">写真フォルダ</string>
+    <string name="wiz_r_impressora">プリンター</string>
+    <string name="wiz_r_impressao">印刷</string>
+    <string name="wiz_r_etiqueta">ラベル %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">タイムアウトを含む</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">患者: %1$s</string>
 </resources>

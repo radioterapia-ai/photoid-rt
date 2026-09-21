@@ -877,4 +877,25 @@
     <string name="sync_tip_direct">চালু থাকলে অ্যাপ উপরের ফোল্ডার যাচাই না করে সরাসরি চূড়ান্ত ফোল্ডারে লেখে। হাসপাতালের সাধারণ পরিস্থিতির সমাধান: অ্যাকাউন্ট গন্তব্যে লিখতে পারলেও উপরের ফোল্ডার পড়তে না-ও পারে — তখন যাচাই এমন ফোল্ডারে ব্যর্থ হয় যা গন্তব্যই নয়। সার্ভার সরাসরি লেখা অস্বীকার করলেই কেবল বন্ধ করুন।</string>
     <string name="tr_sync">সিঙ্ক্রোনাইজেশন</string>
     <string name="tr_sync_desc">পছন্দ ও গন্তব্য। প্রতিটি গন্তব্যের পাসওয়ার্ড প্যাকেজে যায় না: প্রতিটি ট্যাবলেটে একবার করে লিখুন।</string>
+    <string name="pront_em_uso">%1$s নম্বরটি ইতিমধ্যে %2$s-এর নামে নিবন্ধিত।\n\nএগিয়ে যাওয়ার আগে একই রোগী কিনা যাচাই করুন।</string>
+    <string name="gate_identidade">আপনি এই রোগীর সিমুলেশন শেষ করছেন:\n%1$s</string>
+    <string name="fin_ok_salva">সিমুলেশন সংরক্ষিত হয়েছে।</string>
+    <string name="banner_nova_sim">নতুন সিম %1$d</string>
+    <string name="confirm_etiqueta_title">লেবেলের তথ্য যাচাই করুন</string>
+    <string name="gallery_open_fail">গ্যালারি খোলা যায়নি।</string>
+    <string name="sync_falta_senha">পাসওয়ার্ডের অপেক্ষায় — লিখতে ট্যাপ করুন।</string>
+    <string name="sync_importados_sem_senha">সিঙ্ক গন্তব্যগুলি পাসওয়ার্ড ছাড়াই আমদানি হয়েছে: পাসওয়ার্ড প্রতিটি ডিভাইসে এনক্রিপ্ট করা থাকে এবং ই-মেইল ও পেনড্রাইভে যাওয়া প্যাকেজে যায় না।
+
+প্রতিটি গন্তব্য খুলে এই ট্যাবলেটে একবার পাসওয়ার্ড লিখুন। তারপর সেগুলি নিজেই চালু হবে।</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(নির্ধারিত নয়)</string>
+    <string name="wiz_r_idioma">ভাষা</string>
+    <string name="wiz_r_clinica">প্রতিষ্ঠান</string>
+    <string name="wiz_r_pasta">ছবির ফোল্ডার</string>
+    <string name="wiz_r_impressora">প্রিন্টার</string>
+    <string name="wiz_r_impressao">মুদ্রণ</string>
+    <string name="wiz_r_etiqueta">লেবেল %1$d×%2$d মিমি</string>
+    <string name="wiz_r_timeout">টাইম-আউট অন্তর্ভুক্ত</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">রোগী: %1$s</string>
 </resources>

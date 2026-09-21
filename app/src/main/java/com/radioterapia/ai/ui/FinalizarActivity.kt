@@ -153,6 +153,33 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
             SEM as paginas do servico, sem ninguem ter decidido isso.
          */
         desenharProtocolos()
+
+        /*
+            OS DOIS IRMÃOS QUE FICARAM PARA TRÁS.
+
+            desenharProtocolos() foi movido para cá pelo motivo escrito logo
+            acima, e estes dois, que sofriam do mesmo defeito e moravam três
+            linhas abaixo dele em entrarModoEdicao(), não vieram junto.
+
+            configurarFracoes() tinha um chamador só. Sem ele aqui, o Spinner
+            de frações ficava SEM ADAPTER na Fase 1: o técnico via o rótulo
+            "Número máximo de visitas / frações" ao lado de uma caixa que não
+            abria nada, e fracoesSelecionadas() devolvia 0 — "não informado",
+            sem erro. O realce da última fração na grade da ficha, que tem dez
+            linhas de justificativa no PdfBuilder, era impossível de ligar pelo
+            caminho normal.
+
+            ligarCoresDosAlertas() tinha um chamador só. Sem ele aqui, acionar
+            risco de queda, precaução de contato ou alergia na Fase 1 — que é o
+            único momento em que o técnico os liga, com o paciente na mesa —
+            não pintava coisa nenhuma. O espelho tela/papel só acendia depois
+            de a ficha já ter sido impressa, que é quando ele não serve mais.
+            O comentário do layout já afirmava o contrário: "quem liga o
+            interruptor vê na hora a tarja que vai sair impressa".
+         */
+        configurarFracoes()
+        ligarCoresDosAlertas()
+
         // ===== TIME-OUT: rotina da clínica (config). Sítio é OPCIONAL. =====
         findViewById<View>(R.id.layoutTimeOutCampos).visibility =
             if (config.pdfIncluiTimeOut) View.VISIBLE else View.GONE
@@ -462,9 +489,28 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
         title = getString(R.string.fin_done_title)
         findViewById<TextView>(R.id.txtFinTitulo).setText(R.string.fin_done_title)
         atualizarResumoFinal()
-        txtResultado.text = if (errosLocais.isEmpty())
-            getString(R.string.fin_ok_short)
-        else getString(R.string.fin_fail_short) + "\n" + errosLocais.joinToString("\n")
+        /*
+            NÃO DIZER "ENVIADA" QUANDO NADA FOI ENVIADO.
+
+            fin_ok_short afirma "Simulação salva E ENVIADA com sucesso", e era
+            exibida sem condição — enquanto resultadosEnvio é lista vazia por
+            construção e o interruptor mestre da sincronia NASCE DESLIGADO. Com
+            o padrão de fábrica, a tela afirmava um envio que não houve, nos
+            doze idiomas (em japonês o verbo escolhido é 送信, transmitir).
+
+            Isso colide de frente com o princípio "nada sai do aparelho sem o
+            serviço ter decidido" e com o que a Política de Privacidade afirma
+            na seção 12. E quando a sincronia ESTÁ ligada, a informação de que
+            o arquivo saiu tem valor real e não existia em lugar nenhum.
+         */
+        val syncLigada = try {
+            com.radioterapia.ai.sync.SyncConfig(this).ativo
+        } catch (_: Exception) { false }
+
+        txtResultado.text = if (errosLocais.isEmpty()) {
+            if (syncLigada) getString(R.string.fin_ok_short)
+            else getString(R.string.fin_ok_salva)
+        } else getString(R.string.fin_fail_short) + "\n" + errosLocais.joinToString("\n")
         layoutResultado.visibility = View.VISIBLE
 
         // ===== Botão 1: Visualizar PDF =====
@@ -984,6 +1030,12 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
                         ?: sims.maxByOrNull { it.timestampPrincipal } ?: return@withContext false
                     val fotos = mutableListOf<File>()
                     val rotulos = mutableListOf<String>()
+                    // VOCABULARIO CANONICO EM PORTUGUES, DE PROPOSITO — nao e literal esquecido.
+                    // O PdfBuilder recebe estes rotulos em PT e os traduz no ponto de
+                    // desenho, em traduzirRotulo(), com pdf_lbl_face/label/positioning/
+                    // accessory. Trocar por getString aqui QUEBRA o mapa: "Rosto" deixa
+                    // de casar e o rotulo sai sem traducao. Tambem quebra ehEtiqueta(),
+                    // que compara a base contra "Etiqueta".
                     sim.rosto?.let { fotos.add(it.arquivoLocal); rotulos.add("Rosto") }
                     sim.etiqueta?.let { fotos.add(it.arquivoLocal); rotulos.add("Etiqueta") }
                     sim.posicionamentos.forEachIndexed { i, f ->

@@ -66,6 +66,21 @@ def _defs_por_arquivo(base, padrao):
     return d
 
 
+def sem_comentarios(txt):
+    """
+    O codigo sem `//` e sem `/* */`.
+
+    Existe porque o diff de funcoes e o de campos procuram o USO de um nome, e
+    um comentario que EXPLICA a remocao nomeia o que foi removido — virava
+    falso positivo, e punia justamente quem documentou a mudanca.
+
+    Nao tenta ser um parser: strings ficam como estao. Nome de campo dentro de
+    string e raro, e quando aparece costuma merecer o alerta mesmo.
+    """
+    txt = re.sub(r"/\*.*?\*/", " ", txt, flags=re.S)
+    return re.sub(r"//[^\n]*", " ", txt)
+
+
 def diff_funcoes(antes):
     """Função removida de um arquivo mas ainda chamada NELE = engolida por corte."""
     secao("Funções órfãs (por arquivo)")
@@ -77,7 +92,7 @@ def diff_funcoes(antes):
             falha(f"arquivo sumiu: {rel}")
             achou = True
             continue
-        txt = open(rel, encoding="utf-8").read()
+        txt = sem_comentarios(open(rel, encoding="utf-8").read())
         for nome in sorted(antigas - n.get(rel, set())):
             if re.search(r"\b%s\s*\(" % re.escape(nome), txt):
                 falha(f"{rel}: '{nome}' removida mas ainda chamada no arquivo")
@@ -96,7 +111,7 @@ def diff_campos(antes):
     for rel, antigos in sorted(v.items()):
         if not os.path.exists(rel):
             continue
-        txt = open(rel, encoding="utf-8").read()
+        txt = sem_comentarios(open(rel, encoding="utf-8").read())
         for nome in sorted(antigos - n.get(rel, set())):
             # Ainda declarado como PARÂMETRO de função? Não é órfão.
             # Sem isto, remover uma função com `val caminho` local acusa

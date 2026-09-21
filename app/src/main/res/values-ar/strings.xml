@@ -877,4 +877,25 @@
     <string name="sync_tip_direct">عند التفعيل، يكتب التطبيق مباشرةً في المجلد النهائي دون فحص المجلدات الأعلى. هذا يعالج الحالة الشائعة في المستشفيات: قد يستطيع الحساب الكتابة في الوجهة دون أن يستطيع قراءة المجلدات الأعلى، فيفشل الفحص عند مجلد ليس هو الوجهة أصلًا. لا تُعطّله إلا إذا رفض الخادم الكتابة المباشرة.</string>
     <string name="tr_sync">المزامنة</string>
     <string name="tr_sync_desc">الإعدادات والوجهات. كلمة مرور كل وجهة لا تنتقل ضمن الحزمة: أدخلها مرة واحدة على كل جهاز لوحي.</string>
+    <string name="pront_em_uso">رقم الملف %1$s مسجل بالفعل باسم %2$s.\n\nتأكد من أنه المريض نفسه قبل المتابعة.</string>
+    <string name="gate_identidade">أنت تُنهي محاكاة:\n%1$s</string>
+    <string name="fin_ok_salva">تم حفظ المحاكاة.</string>
+    <string name="banner_nova_sim">محاكاة جديدة %1$d</string>
+    <string name="confirm_etiqueta_title">تحقق من بيانات الملصق</string>
+    <string name="gallery_open_fail">تعذر فتح معرض الصور.</string>
+    <string name="sync_falta_senha">في انتظار كلمة المرور — اضغط لإدخالها.</string>
+    <string name="sync_importados_sem_senha">تم استيراد وجهات المزامنة دون كلمة المرور: فهي تبقى مشفرة على كل جهاز ولا تنتقل ضمن الحزمة التي تُرسل بالبريد وعلى وحدات USB.
+
+افتح كل وجهة وأدخل كلمة المرور مرة واحدة على هذا الجهاز اللوحي. بعد ذلك تعمل من تلقاء نفسها.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(غير محدد)</string>
+    <string name="wiz_r_idioma">اللغة</string>
+    <string name="wiz_r_clinica">المنشأة</string>
+    <string name="wiz_r_pasta">مجلد الصور</string>
+    <string name="wiz_r_impressora">الطابعة</string>
+    <string name="wiz_r_impressao">الطباعة</string>
+    <string name="wiz_r_etiqueta">الملصق %1$d×%2$d مم</string>
+    <string name="wiz_r_timeout">يتضمن صفحة Time-Out</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">المريض: %1$s</string>
 </resources>

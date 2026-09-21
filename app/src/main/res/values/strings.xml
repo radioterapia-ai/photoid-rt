@@ -173,6 +173,9 @@
 
     <!-- Validações -->
     <string name="suspicious_name">⚠ Verifique o nome</string>
+    <!-- Portao de finalizar: a identidade aparece DENTRO do aviso que ja existe. -->
+    <string name="gate_identidade">Você está fechando a simulação de:
+%1$s</string>
     <string name="proceed_anyway">Sim, está correto</string>
     <string name="edit_name">Editar</string>
 
@@ -460,6 +463,8 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="timeout_equip_label">Equipamento</string>
     <string name="timeout_equip_hint">Selecione o equipamento</string>
     <string name="timeout_alergia">Alergia</string>
+    <!-- Sem mencao a envio: e o que se mostra com a sincronia desligada, que e o padrao. -->
+    <string name="fin_ok_salva">Simulação salva.</string>
     <string name="fin_ok_short">✅ Simulação salva e enviada com sucesso.</string>
     <string name="fin_fail_short">❌ Houve problemas ao salvar:</string>
     <string name="wiz_medicos_label">Médicos responsáveis (um por linha)</string>
@@ -675,6 +680,8 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="pdf_page">Página %1$d</string>
 
     <!-- ===== Dialogos de identificacao (antes fixos em PT no Kotlin) ===== -->
+    <!-- Titulo da conferencia da etiqueta, agora numa tela so. -->
+    <string name="confirm_etiqueta_title">Confira os dados da etiqueta</string>
     <string name="confirm_name_title">Confirme nome</string>
     <string name="lbl_patient_name">Nome do paciente:</string>
     <string name="hint_prefilled">Sugestão pré-preenchida. Edite se necessário.</string>
@@ -688,6 +695,10 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="csv_found_confirm">É este paciente?</string>
     <string name="divergence_which">Para esta simulação, qual usar?</string>
     <string name="divergence_note">ℹ Histórico local não é atualizado automaticamente. Considere atualizar a base de dados.</string>
+    <!-- Alerta de prontuario ja usado por OUTRO paciente. Avisa, nao obriga. -->
+    <string name="pront_em_uso">O prontuário %1$s já está cadastrado para %2$s.
+
+Confira se é o mesmo paciente antes de continuar.</string>
     <string name="resim_existing">Este paciente já tem %1$d simulação(ões) registrada(s) neste tablet.</string>
     <string name="resim_will_be">Esta será a NOVA SIMULAÇÃO %1$d.</string>
     <string name="resim_confirm">Confirma que é o mesmo paciente?</string>
@@ -695,6 +706,8 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="photo_dark">⚠ Foto escura</string>
     <string name="photo_bright">⚠ Foto muito clara</string>
     <string name="sim_original">Simulação original (%1$s)</string>
+    <!-- Rotulo curto da faixa de identidade, na reirradiacao. -->
+    <string name="banner_nova_sim">Nova sim. %1$d</string>
     <string name="sim_new">Nova simulação %1$d (%2$s)</string>
     <string name="share_failed">Não foi possível compartilhar: %1$s</string>
     <string name="select_patient">Selecione o paciente</string>
@@ -721,6 +734,9 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="add_from_gallery">Adicionar da galeria</string>
     <string name="gallery_none_picked">Nenhuma foto escolhida.</string>
     <string name="gallery_added">%1$d foto(s) adicionada(s) da galeria.</string>
+    <!-- Falha ao ABRIR o seletor da galeria. Diferente de gallery_fail,
+         que conta quantas fotos nao puderam ser importadas. -->
+    <string name="gallery_open_fail">Não foi possível abrir a galeria.</string>
     <string name="gallery_fail">Não foi possível importar %1$d foto(s).</string>
     <string name="gallery_pick_title">Escolha as fotos</string>
     <string name="gallery_need_category">Escolha primeiro a categoria da foto.</string>
@@ -1009,4 +1025,19 @@ O paciente sai da lista de tratamento e permanece no histórico.</string>
     <string name="sync_tip_direct">Ligado, o aplicativo grava direto na pasta final sem conferir as pastas acima dela. É o que resolve o caso comum em hospital: a conta pode escrever no destino e não pode LER as pastas superiores — e a conferência falharia numa pasta que nem é o destino. Desligue só se o servidor recusar a gravação direta.</string>
     <string name="tr_sync">Sincronização</string>
     <string name="tr_sync_desc">Preferências e destinos. A senha de cada destino NÃO vai no pacote: digite-a uma vez em cada tablet.</string>
+    <string name="sync_falta_senha">Aguardando a senha — toque para preencher.</string>
+    <string name="sync_importados_sem_senha">Os destinos de sincronização foram importados SEM a senha: ela fica cifrada neste aparelho e não viaja no pacote, que segue por e-mail e pen-drive.
+
+Abra cada destino e digite a senha uma vez neste tablet. Eles ligam sozinhos depois disso.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(não definido)</string>
+    <string name="wiz_r_idioma">Idioma</string>
+    <string name="wiz_r_clinica">Clínica</string>
+    <string name="wiz_r_pasta">Pasta de fotos</string>
+    <string name="wiz_r_impressora">Impressora</string>
+    <string name="wiz_r_impressao">Impressão</string>
+    <string name="wiz_r_etiqueta">Etiqueta %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">Time-Out incluído</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">Paciente: %1$s</string>
 </resources>

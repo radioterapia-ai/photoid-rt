@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="0dp"
     android:layout_height="@dimen/cam_tab_height"
     android:layout_weight="1"
-    android:background="#263238"
+    android:background="@color/bg_abas_flutuante"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
@@ -15,13 +16,13 @@
         android:layout_gravity="center"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:textColor="#B0BEC5"
+        android:textColor="@color/text_secondary"
         android:text="ROSTO"
             android:maxLines="1"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="8sp"
-            android:autoSizeMaxTextSize="13sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeMaxTextSize="13sp"
+            app:autoSizeStepGranularity="1sp" />
 
     <View
         android:id="@+id/tabDot"

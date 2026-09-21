@@ -877,4 +877,25 @@
     <string name="sync_tip_direct">Eingeschaltet schreibt die App direkt in den Zielordner, ohne die übergeordneten Ordner zu prüfen. Das löst den häufigen Fall im Krankenhaus: Das Konto darf am Ziel schreiben, aber die übergeordneten Ordner nicht LESEN — und die Prüfung würde an einem Ordner scheitern, der gar nicht das Ziel ist. Schalten Sie es nur aus, wenn der Server das direkte Schreiben ablehnt.</string>
     <string name="tr_sync">Synchronisation</string>
     <string name="tr_sync_desc">Einstellungen und Ziele. Das Passwort jedes Ziels reist NICHT im Paket mit: einmal auf jedem Tablet eingeben.</string>
+    <string name="pront_em_uso">Die Aktennummer %1$s ist bereits für %2$s registriert.\n\nPrüfen Sie vor dem Fortfahren, ob es sich um denselben Patienten handelt.</string>
+    <string name="gate_identidade">Sie schließen die Simulation ab von:\n%1$s</string>
+    <string name="fin_ok_salva">Simulation gespeichert.</string>
+    <string name="banner_nova_sim">Neue Sim. %1$d</string>
+    <string name="confirm_etiqueta_title">Etikettendaten prüfen</string>
+    <string name="gallery_open_fail">Galerie konnte nicht geöffnet werden.</string>
+    <string name="sync_falta_senha">Wartet auf das Passwort — zum Eingeben tippen.</string>
+    <string name="sync_importados_sem_senha">Die Synchronisationsziele wurden OHNE Passwort importiert: es bleibt auf jedem Gerät verschlüsselt und reist nicht im Paket mit, das per E-Mail und USB-Stick verschickt wird.
+
+Öffnen Sie jedes Ziel und geben Sie das Passwort einmal auf diesem Tablet ein. Danach schalten sie sich von selbst ein.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(nicht festgelegt)</string>
+    <string name="wiz_r_idioma">Sprache</string>
+    <string name="wiz_r_clinica">Einrichtung</string>
+    <string name="wiz_r_pasta">Fotoordner</string>
+    <string name="wiz_r_impressora">Drucker</string>
+    <string name="wiz_r_impressao">Druck</string>
+    <string name="wiz_r_etiqueta">Etikett %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">Time-Out enthalten</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">Patient: %1$s</string>
 </resources>

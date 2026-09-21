@@ -23,7 +23,7 @@
             android:id="@+id/rbPdfPortrait"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="40dp"
+            android:minHeight="48dp"
             android:text="@string/pdf_portrait"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />
@@ -32,7 +32,7 @@
             android:id="@+id/rbPdfLandscape"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="40dp"
+            android:minHeight="48dp"
             android:text="@string/pdf_landscape"
             android:textColor="@color/text_primary"
             android:textSize="14sp" />

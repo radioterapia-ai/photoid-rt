@@ -19,12 +19,12 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.radioterapia.ai.AppConfig
 import com.radioterapia.ai.DestinoSmb
 import com.radioterapia.ai.R
 import com.radioterapia.ai.branding.LogoManager
-import com.radioterapia.ai.csv.CsvMapping
 import com.radioterapia.ai.i18n.LocaleManager
 import com.radioterapia.ai.patient.PatientCache
 import com.radioterapia.ai.print.PrinterClient
@@ -55,7 +55,8 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var patientCache: PatientCache
     private lateinit var logoManager: LogoManager
-    private lateinit var csvMapping: CsvMapping
+    // csvMapping saiu com o bind dos extra: esta tela não configura mais o CSV.
+    // CsvMapping segue vivo e é lido por CsvSyncManager. Ver salvarTudo().
 
     private lateinit var groupsContainer: LinearLayout
 
@@ -64,26 +65,15 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     private var imgLogoPreview: ImageView? = null
     private var edtCompanyName: EditText? = null
 
-    // SMB
-    private var spinnerSmbProtocol: Spinner? = null
-    private var edtSmbDomain: EditText? = null
-    private var edtSmbUsername: EditText? = null
-    private var edtSmbPassword: EditText? = null
-    private var edtSmbHost: EditText? = null
-    private var edtSmbPort: EditText? = null
-    private var edtSmbUnc: EditText? = null
+    // SMB: os sete campos do grupo de rede foram removidos junto com o bind.
+    // Ver a nota em salvarTudo().
     private var txtSmbTestResult: TextView? = null
 
     // Backups
     private val backupBindings = mutableListOf<BackupBinding>()
 
-    // CSV
-    private var edtExtra1Titulo: EditText? = null
-    private var edtExtra1Col: EditText? = null
-    private var edtExtra2Titulo: EditText? = null
-    private var edtExtra2Col: EditText? = null
-    private var edtExtra3Titulo: EditText? = null
-    private var edtExtra3Col: EditText? = null
+    // CSV: os seis campos dos identificadores extra saíram junto com o bind.
+    // Ver a nota em salvarTudo().
     private var txtCsvSyncStatus: TextView? = null
     private var txtCsvLastSync: TextView? = null
 
@@ -104,15 +94,13 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     private var chkLangAuto: CheckBox? = null
     private var spinnerLanguage: Spinner? = null
 
-    // Pasta local
-    private var edtLocalFolder: EditText? = null
+    // Pasta local (edtLocalFolder saiu junto com o bind; ver salvarTudo())
     private var txtPastaFotos: TextView? = null
     private var txtPastaCsv: TextView? = null
     private var btnEscolherPastaFotos: Button? = null
     private var btnEscolherPastaCsv: Button? = null
 
-    // Câmera
-    private var chkShowGrid: CheckBox? = null
+    // Câmera (chkShowGrid saiu junto com o bind; ver salvarTudo())
 
     // Status conexão
     private var txtConnWifi: TextView? = null
@@ -132,7 +120,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     private var rubBlocoAtual: String = com.radioterapia.ai.rubricario.RubricarioStore.ID_PADRAO
     private var protLista: android.widget.LinearLayout? = null
 
-    private val protocolosSmb = listOf("SMB2", "SMB3", "SMB3.1.1")
     private val idiomasMap = com.radioterapia.ai.i18n.LocaleManager.supportedLanguages
         .map { it to com.radioterapia.ai.i18n.LocaleManager.nomeDoIdioma(it) }
 
@@ -157,7 +144,6 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         sessionManager = SessionManager(this)
         patientCache = PatientCache(this)
         logoManager = LogoManager(this)
-        csvMapping = CsvMapping(this)
 
         groupsContainer = findViewById(R.id.groupsContainer)
 
@@ -501,6 +487,17 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
      * isso, voltar de lá mostraria o nome antigo e o erro antigo — e a pessoa
      * concluiria que a alteração não foi salva.
      */
+    /**
+     * O destino chegou pelo pacote de configuracao e ainda nao tem senha.
+     *
+     * SAF nao entra: aquele destino fala com o provedor de documentos do
+     * Android, com a conta que a clinica ja autorizou no aparelho, e nao tem
+     * senha propria para faltar.
+     */
+    private fun precisaSenha(p: com.radioterapia.ai.sync.PerfilSync): Boolean =
+        p.tipo != com.radioterapia.ai.sync.PerfilSync.Tipo.SAF &&
+        com.radioterapia.ai.sync.PerfilStore(this).senha(p.id).isBlank()
+
     private fun desenharPerfisSync() {
         val lista = listaSyncPerfis ?: return
         lista.removeAllViews()
@@ -549,6 +546,13 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             })
             cartao.addView(TextView(this).apply {
                 text = when {
+                    // AGUARDANDO SENHA vem ANTES de "inativo", porque explica o
+                    // porque dele. O pacote de configuracao leva o destino —
+                    // endereco, usuario, caminho — e NAO leva a senha, que fica
+                    // cifrada no Keystore e nao viaja por e-mail nem pen-drive.
+                    // O destino chega desligado de proposito; sem esta linha,
+                    // quem importa conclui que nada foi importado.
+                    precisaSenha(p) -> getString(R.string.sync_falta_senha)
                     !p.ativo -> getString(R.string.sync_profile_inactive)
                     p.ultimoErro.isNotBlank() -> getString(R.string.sync_profile_error, p.ultimoErro)
                     p.ultimaSincronizacao > 0 -> getString(R.string.sync_profile_last,
@@ -557,7 +561,9 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                 }
                 textSize = 11f
                 setTextColor(
-                    if (p.ultimoErro.isNotBlank() && p.ativo) 0xFFC62828.toInt()
+                    if (precisaSenha(p)) ContextCompat.getColor(
+                        this@SettingsActivity, R.color.error_red_fg)
+                    else if (p.ultimoErro.isNotBlank() && p.ativo) 0xFFC62828.toInt()
                     else androidx.core.content.ContextCompat.getColor(
                         this@SettingsActivity, R.color.text_secondary))
             })
@@ -666,15 +672,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         // Identidade
         edtCompanyName?.setText(config.nomeClinica)
 
-        // SMB
-        spinnerSmbProtocol?.setSelection(protocolosSmb.indexOf(config.smbProtocolo).coerceAtLeast(0))
-        edtSmbDomain?.setText(config.smbDominio)
-        edtSmbUsername?.setText(config.smbUsuario)
-        edtSmbPassword?.setText(credentials.obterSenha())
-        val primario = config.obterDestino(0)
-        edtSmbHost?.setText(primario.host)
-        edtSmbPort?.setText(primario.porta.toString())
-        edtSmbUnc?.setText(primario.caminhoUNC)
+        // SMB: bind removido. Ver a nota em salvarTudo().
 
         // Backups (grupo pode não estar presente — guardar contra lista vazia)
         if (backupBindings.size >= 4) for (i in 1..4) {
@@ -687,16 +685,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             b.grupo.visibility = if (d.ativo) View.VISIBLE else View.GONE
         }
 
-        // CSV: bind removido. Ver a nota em salvarTudo().
-        val ex1 = csvMapping.obterExtra(1)
-        edtExtra1Titulo?.setText(ex1.titulo)
-        if (ex1.coluna > 0) edtExtra1Col?.setText(ex1.coluna.toString())
-        val ex2 = csvMapping.obterExtra(2)
-        edtExtra2Titulo?.setText(ex2.titulo)
-        if (ex2.coluna > 0) edtExtra2Col?.setText(ex2.coluna.toString())
-        val ex3 = csvMapping.obterExtra(3)
-        edtExtra3Titulo?.setText(ex3.titulo)
-        if (ex3.coluna > 0) edtExtra3Col?.setText(ex3.coluna.toString())
+        // CSV: bind removido, incluindo os três extra. Ver a nota em salvarTudo().
 
         atualizarStatusCsv()
 
@@ -723,11 +712,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         val idx = idiomasMap.indexOfFirst { it.first == langAtual }
         if (idx >= 0) spinnerLanguage?.setSelection(idx)
 
-        // Pasta local
-        edtLocalFolder?.setText(config.pastaBaseLocal)
-
-        // Câmera
-        chkShowGrid?.isChecked = config.cameraGrid
+        // Pasta local e grade da câmera: bind removido. Ver a nota em salvarTudo().
 
         // Status conexão
         atualizarStatusConexao()
@@ -1191,6 +1176,27 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             Toast.makeText(this@SettingsActivity,
                 getString(R.string.tr_importado, r.prefs, r.arquivos, r.pulados),
                 Toast.LENGTH_LONG).show()
+
+            /*
+                DESTINO SEM SENHA MERECE UMA FRASE, nao silencio.
+
+                O pacote leva os destinos de sincronizacao, mas nao a senha —
+                ela fica cifrada sob o Keystore e este .zip viaja por e-mail e
+                pen-drive. O destino chega desligado, de proposito. Sem dizer
+                isso, quem importa abre a lista, ve tudo apagado e conclui que
+                a exportacao nao levou nada.
+             */
+            val semSenha = try {
+                com.radioterapia.ai.sync.PerfilStore(this@SettingsActivity)
+                    .listar().count { precisaSenha(it) }
+            } catch (_: Exception) { 0 }
+            if (semSenha > 0) {
+                AlertDialog.Builder(this@SettingsActivity)
+                    .setTitle(R.string.sync_profile_title)
+                    .setMessage(R.string.sync_importados_sem_senha)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
+            }
             // recreate() para os campos da tela mostrarem o que acabou de entrar.
             recreate()
         }
@@ -1434,18 +1440,30 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         // Identidade
         config.nomeClinica = edtCompanyName?.text?.toString()?.trim() ?: ""
 
-        // SMB
-        config.smbProtocolo = spinnerSmbProtocol?.selectedItem?.toString() ?: "SMB2"
-        config.smbDominio = edtSmbDomain?.text?.toString()?.trim() ?: ""
-        config.smbUsuario = edtSmbUsername?.text?.toString()?.trim() ?: ""
-        credentials.salvarSenha(edtSmbPassword?.text?.toString() ?: "")
-
-        config.salvarDestino(0, DestinoSmb(
-            ativo = true,
-            host = edtSmbHost?.text?.toString()?.trim() ?: "",
-            porta = edtSmbPort?.text?.toString()?.toIntOrNull() ?: 445,
-            caminhoUNC = edtSmbUnc?.text?.toString()?.trim() ?: ""
-        ))
+        // SMB: bind REMOVIDO, pela MESMA razão que o CSV logo abaixo — era
+        // destrutivo, e de um jeito pior, porque apagava credencial.
+        //
+        // spinnerSmbProtocol, edtSmbDomain, edtSmbUsername, edtSmbPassword,
+        // edtSmbHost, edtSmbPort e edtSmbUnc eram declarados e NUNCA
+        // atribuídos: viviam no grupo de rede das Configurações, que deixou de
+        // existir. Nenhum deles tem `@+id` em layout nenhum, e nunca houve um
+        // `findViewById` para eles em commit nenhum deste repositório. Com
+        // todos em null, este bloco rodava como
+        //
+        //     credentials.salvarSenha(null?.text?.toString() ?: "")
+        //     config.salvarDestino(0, DestinoSmb(ativo = true, host = "", …))
+        //
+        // ou seja: APAGAVA a senha cifrada e gravava no destino 0 um servidor
+        // ATIVO e vazio, toda vez que alguém salvasse. E não era só o botão
+        // Salvar — `testarImpressora()` e `sincronizarAgora()` chamam
+        // salvarTudo(), então TESTAR A IMPRESSORA apagava a configuração de
+        // rede. A correção de 16/08 tratou o bloco do CSV e parou antes deste.
+        //
+        // O que sobra: config.smbUsuario, smbProtocolo, smbDominio e
+        // credentials.obterSenha() continuam vivos e são lidos por
+        // CsvSyncManager e AddPhotoInTreatmentActivity. Quem os grava hoje é a
+        // importação de pacote (PacoteConfig.Item.REDE). Não há tela; está em
+        // docs/PENDENCIAS.md, junto com o lado CSV.
 
         // Backups (grupo pode não estar presente)
         if (backupBindings.size >= 4) for (i in 1..4) {
@@ -1476,18 +1494,12 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         // HOJE NÃO HÁ TELA que permita configurá-los. Enquanto não houver, a
         // importação da base de pacientes não roda: HomeActivity sai cedo
         // quando csvPastaUnc está vazio. Está registrado em docs/PENDENCIAS.md.
-        csvMapping.salvarExtra(1, CsvMapping.IdExtra(
-            titulo = edtExtra1Titulo?.text?.toString()?.trim() ?: "",
-            coluna = edtExtra1Col?.text?.toString()?.toIntOrNull() ?: 0
-        ))
-        csvMapping.salvarExtra(2, CsvMapping.IdExtra(
-            titulo = edtExtra2Titulo?.text?.toString()?.trim() ?: "",
-            coluna = edtExtra2Col?.text?.toString()?.toIntOrNull() ?: 0
-        ))
-        csvMapping.salvarExtra(3, CsvMapping.IdExtra(
-            titulo = edtExtra3Titulo?.text?.toString()?.trim() ?: "",
-            coluna = edtExtra3Col?.text?.toString()?.toIntOrNull() ?: 0
-        ))
+        // Os TRÊS IDENTIFICADORES EXTRA do CSV ficaram de fora daquela correção,
+        // e estavam aqui embaixo do comentário que a explica: edtExtraNTitulo e
+        // edtExtraNCol são órfãos como os demais, e as chamadas zeravam
+        // csvMapping.salvarExtra(N, IdExtra("", 0)) a cada salvamento. Removidas
+        // pela mesma razão. CsvMapping segue vivo e lido; só não há quem o
+        // configure enquanto a tela não voltar.
 
         // Impressora
         config.impressoraIp = edtPrinterIp?.text?.toString()?.trim() ?: ""
@@ -1520,12 +1532,16 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             idiomaMudou = true
         }
 
-        // Pasta local
-        config.pastaBaseLocal = edtLocalFolder?.text?.toString()?.trim()
-            ?.ifEmpty { "Pictures" } ?: "Pictures"
-
-        // Câmera
-        config.cameraGrid = chkShowGrid?.isChecked ?: true
+        // Pasta local e grade da câmera: bind REMOVIDO, mesma família.
+        //
+        // edtLocalFolder e chkShowGrid também são órfãos, e também gravavam o
+        // default por cima do valor real: pastaBaseLocal voltava para
+        // "Pictures" e cameraGrid para `true` a cada salvamento. Ao contrário
+        // do SMB, estes dois NÃO viajam no pacote de configuração — a perda era
+        // local ao aparelho. config.pastaBaseLocal é lido por
+        // TreatmentPhotoFetcher, e config.cameraGrid por MainActivity e
+        // AddPhotoInTreatmentActivity; ambos seguem vivos com o valor que já
+        // tinham.
     }
 
     // ============= AÇÕES =============
@@ -1895,7 +1911,18 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         }
         txtPrinterTestResult?.visibility = View.VISIBLE
         txtPrinterTestResult?.text = getString(R.string.testing)
-        txtPrinterTestResult?.setBackgroundColor(0xFFFFFDE7.toInt())
+        /*
+            RESULTADO DO TESTE: fundo da escada tonal, texto de primeiro plano.
+
+            Antes o fundo era pastel (#FFFDE7 / #C8E6C9 / #FFCDD2) e o texto
+            herdava text_primary (#FFFFFF): 1,07:1 no amarelo, 1,34:1 no verde,
+            1,41:1 no vermelho. Nao era contraste baixo — era texto invisivel, e
+            justamente a frase que o KDoc desta tela chama de centro dela. De
+            quebra, amarelo e vermelho pastel como estado de sistema e o que a
+            Regra do Alerta Clinico proibe.
+         */
+        txtPrinterTestResult?.setBackgroundColor(ContextCompat.getColor(this@SettingsActivity, R.color.bg_elevated))
+        txtPrinterTestResult?.setTextColor(ContextCompat.getColor(this@SettingsActivity, R.color.text_secondary))
 
         CoroutineScope(Dispatchers.Main).launch {
             val resultado = withContext(Dispatchers.IO) {
@@ -1903,10 +1930,12 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             }
             if (resultado.sucesso) {
                 txtPrinterTestResult?.text = getString(R.string.printer_ok, resultado.protocoloUsado)
-                txtPrinterTestResult?.setBackgroundColor(0xFFC8E6C9.toInt())
+                txtPrinterTestResult?.setBackgroundColor(ContextCompat.getColor(this@SettingsActivity, R.color.bg_elevated))
+                txtPrinterTestResult?.setTextColor(ContextCompat.getColor(this@SettingsActivity, R.color.confirm_green))
             } else {
                 txtPrinterTestResult?.text = getString(R.string.printer_fail, resultado.mensagem)
-                txtPrinterTestResult?.setBackgroundColor(0xFFFFCDD2.toInt())
+                txtPrinterTestResult?.setBackgroundColor(ContextCompat.getColor(this@SettingsActivity, R.color.bg_elevated))
+                txtPrinterTestResult?.setTextColor(ContextCompat.getColor(this@SettingsActivity, R.color.error_red_fg))
             }
         }
     }

@@ -947,4 +947,28 @@ The patient leaves the treatment list and stays in history.</string>
     <string name="sync_tip_direct">When on, the app writes straight into the final folder without checking the folders above it. This solves the common hospital case: the account can write at the destination but cannot READ the folders above — and the check would fail on a folder that is not even the destination. Turn it off only if the server refuses the direct write.</string>
     <string name="tr_sync">Synchronization</string>
     <string name="tr_sync_desc">Preferences and destinations. Each destination\'s password does NOT travel in the package: type it once on each tablet.</string>
+    <string name="pront_em_uso">Record number %1$s is already registered to %2$s.
+
+Check that this is the same patient before continuing.</string>
+    <string name="gate_identidade">You are closing the simulation for:
+%1$s</string>
+    <string name="fin_ok_salva">Simulation saved.</string>
+    <string name="banner_nova_sim">New sim. %1$d</string>
+    <string name="confirm_etiqueta_title">Check the label details</string>
+    <string name="gallery_open_fail">Could not open the gallery.</string>
+    <string name="sync_falta_senha">Waiting for the password — tap to fill it in.</string>
+    <string name="sync_importados_sem_senha">The sync destinations were imported WITHOUT their passwords: passwords stay encrypted on each device and never travel in the package, which goes by e-mail and USB drive.
+
+Open each destination and type the password once on this tablet. They switch on by themselves afterwards.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(not set)</string>
+    <string name="wiz_r_idioma">Language</string>
+    <string name="wiz_r_clinica">Facility</string>
+    <string name="wiz_r_pasta">Photo folder</string>
+    <string name="wiz_r_impressora">Printer</string>
+    <string name="wiz_r_impressao">Printing</string>
+    <string name="wiz_r_etiqueta">Label %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">Time-Out included</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">Patient: %1$s</string>
 </resources>

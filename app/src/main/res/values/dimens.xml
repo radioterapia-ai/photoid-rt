@@ -17,9 +17,9 @@
     <dimen name="secondary_btn_height">54dp</dimen>
 
     <!-- Câmera -->
-    <dimen name="cam_tab_height">46dp</dimen>
+    <dimen name="cam_tab_height">48dp</dimen>
     <dimen name="cam_action_height">52dp</dimen>
-    <dimen name="cam_bottom_height">46dp</dimen>
+    <dimen name="cam_bottom_height">48dp</dimen>
     <dimen name="hist_thumb_size">82dp</dimen>
     <dimen name="hist_nome_text">17sp</dimen>
     <dimen name="hist_sub_text">13sp</dimen>

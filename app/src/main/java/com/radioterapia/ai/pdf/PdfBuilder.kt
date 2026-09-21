@@ -2009,6 +2009,10 @@ object PdfBuilder {
 
     private fun rotuloPara(indice: Int): String {
         // Por convenção: índice 0 = rosto, 1 = etiqueta, 2+ = posicionamentos
+        // EM PORTUGUES, DE PROPOSITO: o que sai daqui passa por traduzirRotulo()
+        // no ponto de desenho (desenharCelula), que mapeia "Rosto"/"Etiqueta"/
+        // "Posicionamento" para pdf_lbl_*. Traduzir aqui faria o mapa nao casar
+        // e o rotulo sairia no idioma errado — ou sem traducao nenhuma.
         return when (indice) {
             0 -> "Rosto"
             1 -> "Etiqueta"

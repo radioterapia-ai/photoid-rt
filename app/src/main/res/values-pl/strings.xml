@@ -877,4 +877,25 @@
     <string name="sync_tip_direct">Włączone — aplikacja zapisuje wprost w folderze docelowym, bez sprawdzania folderów nadrzędnych. Rozwiązuje to typowy przypadek szpitalny: konto może zapisywać w celu, ale nie może CZYTAĆ folderów wyżej, a sprawdzenie nie powiodłoby się w folderze, który nie jest celem. Wyłącz tylko wtedy, gdy serwer odmawia zapisu bezpośredniego.</string>
     <string name="tr_sync">Synchronizacja</string>
     <string name="tr_sync_desc">Ustawienia i cele. Hasło każdego celu NIE podróżuje w pakiecie: wpisz je raz na każdym tablecie.</string>
+    <string name="pront_em_uso">Numer kartoteki %1$s jest już przypisany do: %2$s.\n\nSprawdź, czy to ten sam pacjent, zanim przejdziesz dalej.</string>
+    <string name="gate_identidade">Zamykasz symulację pacjenta:\n%1$s</string>
+    <string name="fin_ok_salva">Symulacja zapisana.</string>
+    <string name="banner_nova_sim">Nowa sym. %1$d</string>
+    <string name="confirm_etiqueta_title">Sprawdź dane z etykiety</string>
+    <string name="gallery_open_fail">Nie można otworzyć galerii.</string>
+    <string name="sync_falta_senha">Oczekiwanie na hasło — dotknij, aby je wpisać.</string>
+    <string name="sync_importados_sem_senha">Miejsca docelowe synchronizacji zaimportowano BEZ hasła: pozostaje ono zaszyfrowane na każdym urządzeniu i nie podróżuje w pakiecie, który krąży pocztą i na pendrivie.
+
+Otwórz każde miejsce docelowe i wpisz hasło raz na tym tablecie. Potem włączą się same.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(nie ustawiono)</string>
+    <string name="wiz_r_idioma">Język</string>
+    <string name="wiz_r_clinica">Placówka</string>
+    <string name="wiz_r_pasta">Folder zdjęć</string>
+    <string name="wiz_r_impressora">Drukarka</string>
+    <string name="wiz_r_impressao">Drukowanie</string>
+    <string name="wiz_r_etiqueta">Etykieta %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">Time-Out dołączony</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">Pacjent: %1$s</string>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:layout_width="wrap_content"
@@ -32,20 +33,20 @@
             android:text="@string/pdf_landscape"
             android:textColor="@color/text_primary"
             android:textSize="13sp" android:maxLines="1"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="9sp"
-            android:autoSizeMaxTextSize="13sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeMaxTextSize="13sp"
+            app:autoSizeStepGranularity="1sp" />
         <RadioButton android:id="@+id/rbWizPdfPort"
             android:layout_width="0dp" android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/pdf_portrait"
             android:textColor="@color/text_primary"
             android:textSize="13sp" android:maxLines="1"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="9sp"
-            android:autoSizeMaxTextSize="13sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeMaxTextSize="13sp"
+            app:autoSizeStepGranularity="1sp" />
     </RadioGroup>
 
     <CheckBox

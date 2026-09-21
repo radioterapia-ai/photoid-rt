@@ -10,5 +10,5 @@
         android:layout_height="48dp"
         android:text="@string/about"
         android:textColor="@color/text_on_dark"
-        android:backgroundTint="@color/brand_primary" />
+        android:backgroundTint="@color/brand_primary_dark" />
 </LinearLayout>

@@ -54,3 +54,36 @@ diretorio existe para deixar aberto.
 sozinho gerou 144 apostrofos; deixar isso com o modelo seria depender de ele
 acertar seiscentas vezes em nove idiomas, e apostrofo sem escape e o footgun n.6
 do projeto.
+
+---
+
+## ATENCAO: o pipeline esta DEFASADO em relacao a `res/` (21/09/2026)
+
+**NAO rode `i18n_montar.py --gravar` sem ressincronizar antes.** Ele apagaria
+traducao boa.
+
+Medido em 21/09/2026:
+
+| | strings |
+|---|---|
+| `app/src/main/res/values-XX/strings.xml` | **864** |
+| `docs/i18n/pendente/traducoes/` | **779** |
+
+O pipeline esta **85 strings atras**, e ainda carrega **5 chaves que ja foram
+removidas** do `res/` (`about_title`, `pdf_paste_label_here`,
+`pdf_use_label_space`, `wiz_use_label`, `pdf_to_col_site3`). Rodar `--gravar`
+hoje remove as 85 e ressuscita as 5.
+
+A causa e simples e nao tem culpado: depois da primeira rodada, as strings novas
+passaram a entrar direto no `res/`, que e o que o lint confere. O pipeline
+continuou correto para o que ja estava nele, e parou de crescer junto.
+
+**O bloco `b10` existe e esta completo** — fonte mais os nove idiomas, gravados
+em 21/09/2026 com as strings da rodada de correcoes. Ele fica aqui como registro
+duravel e ja estara certo no dia em que alguem ressincronizar. As mesmas seis
+strings foram gravadas **direto nos XML**, com o escape feito por codigo (3
+apostrofos em frances, 1 em italiano), porque o montador nao podia rodar.
+
+**Para ressincronizar**, um dia: extrair de cada `values-XX/strings.xml` as
+chaves que faltam nos JSON, gerar um bloco novo com elas, e so entao o
+`--gravar` volta a ser seguro.

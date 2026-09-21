@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "ja": "カルテ番号 %1$s はすでに %2$s に登録されています。\\n\\n続ける前に同じ患者かどうか確認してください。"
+ },
+ {
+  "k": "gate_identidade",
+  "ja": "次の患者のシミュレーションを終了します:\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "ja": "シミュレーションを保存しました。"
+ },
+ {
+  "k": "banner_nova_sim",
+  "ja": "新規シム %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "ja": "ラベルの情報を確認"
+ },
+ {
+  "k": "gallery_open_fail",
+  "ja": "ギャラリーを開けませんでした。"
+ },
+ {
+  "k": "sync_falta_senha",
+  "ja": "パスワード待ち — タップして入力してください。"
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "ja": "同期先はパスワードなしでインポートされました。パスワードは各端末内で暗号化され、メールやUSBで渡るパッケージには含まれません。\n\n各同期先を開き、このタブレットで一度パスワードを入力してください。その後は自動で有効になります。"
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "ja": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "ja": "(未設定)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "ja": "言語"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "ja": "施設"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "ja": "写真フォルダ"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "ja": "プリンター"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "ja": "印刷"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "ja": "ラベル %1$d×%2$d mm"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "ja": "タイムアウトを含む"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "ja": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "ja": "患者: %1$s"
+ }
+]

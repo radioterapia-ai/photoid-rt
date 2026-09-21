@@ -346,9 +346,44 @@ abstract class BaseActivity : AppCompatActivity() {
             getString(R.string.print_mode_ip),
             getString(R.string.print_mode_pendrive),
             getString(R.string.print_mode_folder))
+        /*
+            QUEM DECIDE O CLIQUE E O ADAPTER, NAO A VIEW DA LINHA.
+
+            Antes, a opcao de impressora offline era esmaecida com
+            `dlg.listView?.getChildAt(0)?.let { it.isEnabled = false; it.alpha = 0.4f }`.
+            Duas coisas erradas ali, e nenhuma delas aparece como erro:
+
+            1. `AbsListView` despacha o clique pelo `adapter.isEnabled(position)`.
+               O `isEnabled` da View filha nao participa da decisao, entao a
+               linha ficava cinza E CONTINUAVA disparando imprimirPorIp. E o
+               retorno exato do defeito que a JORNADA registra como resolvido:
+               "o app mostrava barra de progresso e 'imprimia' mesmo com a
+               impressora offline".
+            2. `getChildAt(0)` e posicao VISUAL, nao posicao do adapter — e o
+               ping de 3s podia voltar depois de o dialogo ter sido fechado,
+               mexendo numa lista que nao esta mais na tela.
+
+            Com um adapter proprio, `isEnabled(0)` gaveta o clique de verdade, o
+            esmaecimento sai do mesmo lugar que a decisao (nao ha como um mudar
+            sem o outro), e `isShowing` fecha a corrida.
+         */
+        val ipIndisponivel = java.util.concurrent.atomic.AtomicBoolean(!cfg.temImpressora())
+        val adaptador = object : android.widget.ArrayAdapter<String>(
+            this, android.R.layout.simple_list_item_1, opcoes) {
+            override fun areAllItemsEnabled() = false
+            override fun isEnabled(position: Int) =
+                position != 0 || !ipIndisponivel.get()
+            override fun getView(position: Int, convertView: View?,
+                                 parent: android.view.ViewGroup): View {
+                val v = super.getView(position, convertView, parent)
+                v.alpha = if (isEnabled(position)) 1f else 0.4f
+                return v
+            }
+        }
+
         val dlg = AlertDialog.Builder(this)
             .setTitle(R.string.print_mode_title)
-            .setItems(opcoes) { _, i ->
+            .setAdapter(adaptador) { _, i ->
                 when (i) {
                     0 -> imprimirPorIp(pdf, cfg)
                     1 -> abrirDialogoPenDrive(listOf(pdf))
@@ -358,10 +393,8 @@ abstract class BaseActivity : AppCompatActivity() {
             .setNegativeButton(R.string.cancel, null)
             .create()
         dlg.show()
-        // Testa a impressora de rede em background e esmaece a opção se offline.
-        if (!cfg.temImpressora()) {
-            dlg.listView?.getChildAt(0)?.let { it.isEnabled = false; it.alpha = 0.4f }
-        } else {
+
+        if (cfg.temImpressora()) {
             CoroutineScope(Dispatchers.Main).launch {
                 val ok = withContext(Dispatchers.IO) {
                     try {
@@ -369,7 +402,10 @@ abstract class BaseActivity : AppCompatActivity() {
                             .testarConexao(3_000).sucesso
                     } catch (_: Exception) { false }
                 }
-                if (!ok) dlg.listView?.getChildAt(0)?.let { it.isEnabled = false; it.alpha = 0.4f }
+                if (!ok && dlg.isShowing) {
+                    ipIndisponivel.set(true)
+                    adaptador.notifyDataSetChanged()
+                }
             }
         }
     }

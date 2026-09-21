@@ -11,6 +11,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.radioterapia.ai.BaseActivity
 import com.radioterapia.ai.R
@@ -213,7 +214,12 @@ class SyncPerfilActivity : BaseActivity() {
                 finish()
             }
             .setNegativeButton(R.string.cancel, null)
-        mostrarDialogPintado(b, destrutivo = 1)
+        // BUTTON_POSITIVE é -1, não 1. Com o literal, pintarBotoesDialog chamava
+        // getButton(1), que devolve null, e pintarBotao é nulo-seguro — então o
+        // botão que apaga um destino inteiro saía cinza, igual ao "Cancelar",
+        // sem erro e sem log. Era o único dos cinco pontos de chamada do app que
+        // passava número cru em vez da constante.
+        mostrarDialogPintado(b, destrutivo = android.content.DialogInterface.BUTTON_POSITIVE)
     }
 
     private fun testar() {
@@ -225,8 +231,19 @@ class SyncPerfilActivity : BaseActivity() {
         val btnCopiar = findViewById<Button>(R.id.btnSyncCopiarLog)
 
         resumo.visibility = View.VISIBLE
+        /*
+            RESULTADO DO TESTE: fundo da escada tonal, texto de primeiro plano.
+
+            Antes o fundo era pastel (#FFFDE7 / #C8E6C9 / #FFCDD2) e o texto
+            herdava text_primary (#FFFFFF): 1,07:1 no amarelo, 1,34:1 no verde,
+            1,41:1 no vermelho. Nao era contraste baixo — era texto invisivel, e
+            justamente a frase que o KDoc desta tela chama de centro dela. De
+            quebra, amarelo e vermelho pastel como estado de sistema e o que a
+            Regra do Alerta Clinico proibe.
+         */
         resumo.text = getString(R.string.sync_testing)
-        resumo.setBackgroundColor(0xFFFFFDE7.toInt())
+        resumo.setBackgroundColor(ContextCompat.getColor(this@SyncPerfilActivity, R.color.bg_elevated))
+        resumo.setTextColor(ContextCompat.getColor(this@SyncPerfilActivity, R.color.text_secondary))
         logView.visibility = View.GONE
         btnCopiar.visibility = View.GONE
 
@@ -238,7 +255,9 @@ class SyncPerfilActivity : BaseActivity() {
             }
             ultimoLog = log.texto()
             resumo.text = getString(if (ok) R.string.sync_test_ok else R.string.sync_test_fail)
-            resumo.setBackgroundColor(if (ok) 0xFFC8E6C9.toInt() else 0xFFFFCDD2.toInt())
+            resumo.setBackgroundColor(ContextCompat.getColor(this@SyncPerfilActivity, R.color.bg_elevated))
+            resumo.setTextColor(ContextCompat.getColor(this@SyncPerfilActivity,
+                if (ok) R.color.confirm_green else R.color.error_red_fg))
             // O RELATÓRIO SÓ APARECE NA FALHA. No sucesso ele seria cinquenta
             // linhas de texto técnico embaixo de um "deu certo" — ruído que
             // treina a pessoa a ignorar a área onde, um dia, vai estar a

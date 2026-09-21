@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "pl": "Numer kartoteki %1$s jest już przypisany do: %2$s.\\n\\nSprawdź, czy to ten sam pacjent, zanim przejdziesz dalej."
+ },
+ {
+  "k": "gate_identidade",
+  "pl": "Zamykasz symulację pacjenta:\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "pl": "Symulacja zapisana."
+ },
+ {
+  "k": "banner_nova_sim",
+  "pl": "Nowa sym. %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "pl": "Sprawdź dane z etykiety"
+ },
+ {
+  "k": "gallery_open_fail",
+  "pl": "Nie można otworzyć galerii."
+ },
+ {
+  "k": "sync_falta_senha",
+  "pl": "Oczekiwanie na hasło — dotknij, aby je wpisać."
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "pl": "Miejsca docelowe synchronizacji zaimportowano BEZ hasła: pozostaje ono zaszyfrowane na każdym urządzeniu i nie podróżuje w pakiecie, który krąży pocztą i na pendrivie.\n\nOtwórz każde miejsce docelowe i wpisz hasło raz na tym tablecie. Potem włączą się same."
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "pl": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "pl": "(nie ustawiono)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "pl": "Język"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "pl": "Placówka"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "pl": "Folder zdjęć"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "pl": "Drukarka"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "pl": "Drukowanie"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "pl": "Etykieta %1$d×%2$d mm"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "pl": "Time-Out dołączony"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "pl": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "pl": "Pacjent: %1$s"
+ }
+]

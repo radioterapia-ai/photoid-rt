@@ -13,6 +13,7 @@
         4. Adicionar mais fotos (volta pra MainActivity)
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_main">
@@ -58,13 +59,14 @@
             <AutoCompleteTextView
                 android:id="@+id/actTimeoutMedico"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:hint="@string/timeout_medico_hint"
                 android:textSize="14sp"
                 android:textColor="#212121"
                 android:textColorHint="#9E9E9E"
                 android:background="@drawable/bg_input_white"
-                android:paddingHorizontal="12dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:inputType="textCapWords"
                 android:completionThreshold="1" />
 
@@ -75,13 +77,14 @@
             <AutoCompleteTextView
                 android:id="@+id/actTimeoutEquip"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:hint="@string/timeout_equip_hint"
                 android:textSize="14sp"
                 android:textColor="#212121"
                 android:textColorHint="#9E9E9E"
                 android:background="@drawable/bg_input_white"
-                android:paddingHorizontal="12dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:focusable="false"
                 android:clickable="true"
                 android:drawableEnd="@drawable/ic_dropdown_arrow"
@@ -94,13 +97,14 @@
             <AutoCompleteTextView
                 android:id="@+id/actTimeoutSitio"
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:hint="@string/sitio_topografia_hint"
                 android:textSize="14sp"
                 android:textColor="#212121"
                 android:textColorHint="#9E9E9E"
                 android:background="@drawable/bg_input_white"
-                android:paddingHorizontal="12dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
                 android:inputType="textCapCharacters"
                 android:completionThreshold="1" />
 
@@ -120,8 +124,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:layout_marginTop="6dp">
 
                 <TextView
@@ -134,7 +140,7 @@
                     android:id="@+id/swRisco"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="42dp" />
+                    android:minHeight="48dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -143,8 +149,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:layout_marginTop="4dp">
 
                 <TextView
@@ -157,7 +165,7 @@
                     android:id="@+id/swPrec"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="42dp" />
+                    android:minHeight="48dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -166,8 +174,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginBottom="8dp">
 
@@ -181,7 +191,7 @@
                     android:id="@+id/swAlergia"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minHeight="42dp" />
+                    android:minHeight="48dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -274,7 +284,8 @@
                 android:layout_height="match_parent"
                 android:minHeight="56dp"
                 android:gravity="center"
-                android:paddingHorizontal="14dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
                 android:text="@string/fin_observation_label"
                 android:textColor="@color/text_primary"
                 android:textStyle="bold"
@@ -320,10 +331,10 @@
                 android:textColor="@color/text_on_dark"
                 android:backgroundTint="@color/action_neutral"
                 android:maxLines="2"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="10sp"
-                android:autoSizeMaxTextSize="15sp"
-                android:autoSizeStepGranularity="1sp" />
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeMaxTextSize="15sp"
+                app:autoSizeStepGranularity="1sp" />
 
             <Button
                 android:id="@+id/btnConfirmar"
@@ -339,10 +350,10 @@
                 android:textColor="@color/text_on_dark"
                 android:backgroundTint="@color/action_save"
                 android:maxLines="2"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="10sp"
-                android:autoSizeMaxTextSize="15sp"
-                android:autoSizeStepGranularity="1sp" />
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeMaxTextSize="15sp"
+                app:autoSizeStepGranularity="1sp" />
         </LinearLayout>
 
         <!-- ===== FASE 1-b (Editar dados, pós-finalização): salvar + atalhos ===== -->
@@ -364,10 +375,10 @@
                 android:textColor="@color/text_on_dark"
                 android:backgroundTint="@color/action_save"
                 android:maxLines="2"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="10sp"
-                android:autoSizeMaxTextSize="16sp"
-                android:autoSizeStepGranularity="1sp" />
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="10sp"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeStepGranularity="1sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -385,10 +396,10 @@
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:maxLines="2"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="10sp"
-                    android:autoSizeMaxTextSize="14sp"
-                    android:autoSizeStepGranularity="1sp" />
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -448,10 +459,10 @@
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:maxLines="2"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="13sp"
-                    android:autoSizeMaxTextSize="18sp"
-                    android:autoSizeStepGranularity="1sp" />
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="13sp"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:autoSizeStepGranularity="1sp" />
 
                 <Button
                     style="@style/ButtonOutlineCyan"
@@ -469,10 +480,10 @@
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:maxLines="2"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="13sp"
-                    android:autoSizeMaxTextSize="18sp"
-                    android:autoSizeStepGranularity="1sp" />
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="13sp"
+                    app:autoSizeMaxTextSize="18sp"
+                    app:autoSizeStepGranularity="1sp" />
             </LinearLayout>
 
             <!-- Linha 2: Compartilhar | Editar dados -->
@@ -499,10 +510,10 @@
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:maxLines="2"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="10sp"
-                    android:autoSizeMaxTextSize="14sp"
-                    android:autoSizeStepGranularity="1sp" />
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp" />
 
                 <Button
                     style="@style/ButtonOutlineCyan"
@@ -519,10 +530,10 @@
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:maxLines="2"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="10sp"
-                    android:autoSizeMaxTextSize="14sp"
-                    android:autoSizeStepGranularity="1sp" />
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="10sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp" />
             </LinearLayout>
 
             <TextView
@@ -550,10 +561,10 @@
                 android:textColor="@color/text_on_dark"
                 android:backgroundTint="@color/action_save"
                 android:maxLines="1"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="11sp"
-                android:autoSizeMaxTextSize="16sp"
-                android:autoSizeStepGranularity="1sp" />
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="11sp"
+                app:autoSizeMaxTextSize="16sp"
+                app:autoSizeStepGranularity="1sp" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

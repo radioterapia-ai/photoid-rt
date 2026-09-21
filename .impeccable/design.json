@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-20T23:50:44.527916+00:00",
+  "title": "Design System: PhotoID RT",
+  "extensions": {
+    "colorMeta": {
+      "brand-primary": {
+        "role": "primary",
+        "displayName": "Azul de Marca",
+        "canonical": "#42A5F5",
+        "tonalRamp": [
+          "#042A49",
+          "#074A80",
+          "#0A6AB7",
+          "#0D8AEF",
+          "#41A4F5",
+          "#78BFF8",
+          "#AFD9FB",
+          "#E7F3FE"
+        ]
+      },
+      "brand-primary-dark": {
+        "role": "primary",
+        "displayName": "Azul de Acao",
+        "canonical": "#1565C0",
+        "tonalRamp": [
+          "#082445",
+          "#0D4079",
+          "#135CAE",
+          "#1977E3",
+          "#4A96EB",
+          "#7FB4F1",
+          "#B3D3F7",
+          "#E8F2FC"
+        ]
+      },
+      "brand-accent": {
+        "role": "primary",
+        "displayName": "Azul Sereno",
+        "canonical": "#69A7DB",
+        "tonalRamp": [
+          "#0F283E",
+          "#1A476D",
+          "#25669C",
+          "#3184CB",
+          "#5DA0D8",
+          "#8CBCE4",
+          "#BBD7EF",
+          "#EAF3FA"
+        ]
+      },
+      "grad-start": {
+        "role": "secondary",
+        "displayName": "Gradiente - inicio",
+        "canonical": "#42A5F5",
+        "tonalRamp": [
+          "#042A49",
+          "#074A80",
+          "#0A6AB7",
+          "#0D8AEF",
+          "#41A4F5",
+          "#78BFF8",
+          "#AFD9FB",
+          "#E7F3FE"
+        ]
+      },
+      "grad-mid": {
+        "role": "secondary",
+        "displayName": "Gradiente - meio",
+        "canonical": "#7B6FE0",
+        "tonalRamp": [
+          "#130E3F",
+          "#21186F",
+          "#2F229F",
+          "#3E2DCF",
+          "#685ADC",
+          "#948AE6",
+          "#C0BAF0",
+          "#ECEAFA"
+        ]
+      },
+      "grad-end": {
+        "role": "secondary",
+        "displayName": "Gradiente - fim",
+        "canonical": "#B254E8",
+        "tonalRamp": [
+          "#2E0943",
+          "#511077",
+          "#7417AA",
+          "#981EDE",
+          "#AF4EE7",
+          "#C782EE",
+          "#DEB5F5",
+          "#F5E9FC"
+        ]
+      },
+      "bg-main": {
+        "role": "neutral",
+        "displayName": "Fundo",
+        "canonical": "#00030E",
+        "tonalRamp": [
+          "#00104C",
+          "#001D87",
+          "#0029C1",
+          "#0036FB",
+          "#3762FF",
+          "#718FFF",
+          "#ABBDFF",
+          "#E5EBFF"
+        ]
+      },
+      "bg-card": {
+        "role": "neutral",
+        "displayName": "Cartao",
+        "canonical": "#0B132C",
+        "tonalRamp": [
+          "#0F1A3D",
+          "#1B2F6C",
+          "#27439A",
+          "#3257C9",
+          "#5F7CD7",
+          "#8DA2E3",
+          "#BCC8EE",
+          "#EBEEFA"
+        ]
+      },
+      "bg-elevated": {
+        "role": "neutral",
+        "displayName": "Elevado",
+        "canonical": "#0E1839",
+        "tonalRamp": [
+          "#0F1A3D",
+          "#1B2E6C",
+          "#26419B",
+          "#3255CA",
+          "#5E7AD7",
+          "#8DA1E3",
+          "#BCC8EE",
+          "#EBEEFA"
+        ]
+      },
+      "bg-input": {
+        "role": "neutral",
+        "displayName": "Campo",
+        "canonical": "#1A2545",
+        "tonalRamp": [
+          "#151E38",
+          "#253462",
+          "#354B8C",
+          "#4562B7",
+          "#6D85C8",
+          "#98A8D8",
+          "#C2CCE8",
+          "#ECEFF8"
+        ]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Divisor",
+        "canonical": "#1E2D52",
+        "tonalRamp": [
+          "#141F38",
+          "#243663",
+          "#344E8D",
+          "#4365B8",
+          "#6C87C9",
+          "#97AAD9",
+          "#C2CDE9",
+          "#ECF0F8"
+        ]
+      },
+      "text-primary": {
+        "role": "neutral",
+        "displayName": "Texto Primario",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#262626",
+          "#434343",
+          "#616161",
+          "#7E7E7E",
+          "#9B9B9B",
+          "#B8B8B8",
+          "#D5D5D5",
+          "#F2F2F2"
+        ]
+      },
+      "text-secondary": {
+        "role": "neutral",
+        "displayName": "Texto Secundario",
+        "canonical": "#B8C5D6",
+        "tonalRamp": [
+          "#1C2530",
+          "#314155",
+          "#475D7A",
+          "#5C799F",
+          "#8097B6",
+          "#A5B5CB",
+          "#CAD4E0",
+          "#EFF2F6"
+        ]
+      },
+      "text-tertiary": {
+        "role": "neutral",
+        "displayName": "Texto Terciario",
+        "canonical": "#8896AC",
+        "tonalRamp": [
+          "#1F252D",
+          "#37414F",
+          "#4F5D72",
+          "#677994",
+          "#8997AD",
+          "#ABB5C5",
+          "#CED3DD",
+          "#F0F2F5"
+        ]
+      },
+      "action-save": {
+        "role": "tertiary",
+        "displayName": "Salvar",
+        "canonical": "#2E7D32",
+        "tonalRamp": [
+          "#153816",
+          "#246327",
+          "#348D38",
+          "#44B849",
+          "#6DC971",
+          "#97D99A",
+          "#C2E8C4",
+          "#ECF8ED"
+        ]
+      },
+      "action-discard": {
+        "role": "tertiary",
+        "displayName": "Descartar",
+        "canonical": "#C62828",
+        "tonalRamp": [
+          "#400D0D",
+          "#701717",
+          "#A12020",
+          "#D12A2A",
+          "#DD5858",
+          "#E78989",
+          "#F1B9B9",
+          "#FBEAEA"
+        ]
+      },
+      "action-neutral": {
+        "role": "tertiary",
+        "displayName": "Neutro",
+        "canonical": "#455A64",
+        "tonalRamp": [
+          "#1F292D",
+          "#374850",
+          "#4F6772",
+          "#678695",
+          "#88A1AD",
+          "#ABBDC5",
+          "#CDD8DD",
+          "#F0F3F5"
+        ]
+      },
+      "confirm-green": {
+        "role": "tertiary",
+        "displayName": "Verde de Confirmacao",
+        "canonical": "#00E676",
+        "tonalRamp": [
+          "#004C27",
+          "#008745",
+          "#00C163",
+          "#00FB81",
+          "#37FF9D",
+          "#71FFBA",
+          "#ABFFD6",
+          "#E5FFF3"
+        ]
+      },
+      "confirm-pendente": {
+        "role": "tertiary",
+        "displayName": "Cinza Pendente",
+        "canonical": "#90A4AE",
+        "tonalRamp": [
+          "#20282C",
+          "#39474E",
+          "#516670",
+          "#6A8491",
+          "#8BA0AA",
+          "#ADBCC3",
+          "#CFD7DC",
+          "#F0F3F4"
+        ]
+      },
+      "alerta-contato": {
+        "role": "tertiary",
+        "displayName": "Alerta: precaucao de contato",
+        "canonical": "#F57C00",
+        "tonalRamp": [
+          "#4C2700",
+          "#874400",
+          "#C16200",
+          "#FB7F00",
+          "#FF9C37",
+          "#FFB971",
+          "#FFD6AB",
+          "#FFF2E5"
+        ]
+      },
+      "alerta-alergia": {
+        "role": "tertiary",
+        "displayName": "Alerta: alergia",
+        "canonical": "#C62828",
+        "tonalRamp": [
+          "#400D0D",
+          "#701717",
+          "#A12020",
+          "#D12A2A",
+          "#DD5858",
+          "#E78989",
+          "#F1B9B9",
+          "#FBEAEA"
+        ]
+      },
+      "alerta-queda": {
+        "role": "tertiary",
+        "displayName": "Alerta: risco de queda",
+        "canonical": "#FFC107",
+        "tonalRamp": [
+          "#4C3900",
+          "#876500",
+          "#C19100",
+          "#FBBD00",
+          "#FFCD37",
+          "#FFDB71",
+          "#FFEAAB",
+          "#FFF9E5"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "So o PhotoIdHeaderView da tela de entrada."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "O mesmo cabecalho nos modulos: RT Sim, RT Check."
+      },
+      "title": {
+        "displayName": "Titulo de Secao",
+        "purpose": "Cabecalho de grupo dentro de uma tela."
+      },
+      "body": {
+        "displayName": "Corpo",
+        "purpose": "Campo de entrada, item de popup, conteudo."
+      },
+      "label": {
+        "displayName": "Rotulo",
+        "purpose": "Rotulo acima do campo, em cor secundaria."
+      },
+      "overline": {
+        "displayName": "Sobrelinha",
+        "purpose": "Unico uso de caixa alta com tracking: secao do popup de acoes."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "respeita-escala-do-sistema",
+        "value": "Settings.Global.ANIMATOR_DURATION_SCALE",
+        "purpose": "Toda animacao do app checa a escala do sistema e se anula quando ela e 0. Nao e opcional."
+      },
+      {
+        "name": "material-2-padrao",
+        "value": "FastOutSlowInInterpolator",
+        "purpose": "Interpolador padrao dos componentes Material 2 ja no projeto. Nao introduzir curva propria sem motivo."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compacto",
+        "value": "< 600dp (celular; values/dimens.xml)"
+      },
+      {
+        "name": "sw600dp",
+        "value": ">= 600dp (tablet; values-sw600dp/dimens.xml)"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botao Primario",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "A acao principal da tela. 68dp de altura por causa da luva.",
+      "html": "<button class=\"ds-btn-primary\">GERAR FICHA</button>",
+      "css": ".ds-btn-primary { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; background:#1565C0; color:#FFFFFF; font-weight:700; font-size:16px; min-height:68px; padding:0 28px; border:none; border-radius:4px; cursor:pointer; transition:background .15s, transform .1s; } .ds-btn-primary:hover { background:#1a72d6; } .ds-btn-primary:active { transform:scale(.985); } .ds-btn-primary:focus-visible { outline:2px solid #42A5F5; outline-offset:2px; }"
+    },
+    {
+      "name": "Botao Secundario",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Acao alternativa. Contorno de 2dp, sem preenchimento.",
+      "html": "<button class=\"ds-btn-secondary\">CANCELAR</button>",
+      "css": ".ds-btn-secondary { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; background:transparent; color:#FFFFFF; font-weight:700; font-size:16px; min-height:68px; padding:0 28px; border:2px solid #69A7DB; border-radius:14px; cursor:pointer; transition:background .15s; } .ds-btn-secondary:hover { background:rgba(105,167,219,.12); } .ds-btn-secondary:focus-visible { outline:2px solid #42A5F5; outline-offset:2px; }"
+    },
+    {
+      "name": "Campo de Entrada",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Sem borda: o degrau de tom e a borda.",
+      "html": "<label class=\"ds-field-label\">Prontuario</label><input class=\"ds-input\" placeholder=\"Digite ou leia a etiqueta\">",
+      "css": ".ds-field-label { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; display:block; color:#B8C5D6; font-weight:700; font-size:15px; margin:14px 0 6px; } .ds-input { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; display:block; width:100%; box-sizing:border-box; background:#1A2545; color:#FFFFFF; font-size:17px; padding:14px; border:none; border-radius:0; } .ds-input::placeholder { color:#8896AC; } .ds-input:focus { outline:2px solid #42A5F5; outline-offset:0; }"
+    },
+    {
+      "name": "Grupo de Configuracoes",
+      "kind": "card",
+      "refersTo": "settings-group",
+      "description": "O agrupamento do app. Nao ha CardView em lugar nenhum.",
+      "html": "<div class=\"ds-group\"><div class=\"ds-group-title\">Sincronizacao</div><div class=\"ds-group-desc\">Desligada. Nenhum dado sai do aparelho.</div></div>",
+      "css": ".ds-group { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; background:#0B132C; border:1px solid #1E2D52; border-radius:8px; padding:14px 20px; } .ds-group-title { color:#FFFFFF; font-weight:700; font-size:17px; } .ds-group-desc { color:#B8C5D6; font-size:14px; margin-top:4px; }"
+    },
+    {
+      "name": "Item de Popup",
+      "kind": "nav",
+      "refersTo": "popup-item",
+      "description": "Altura 52dp. Cabecalho de secao em caixa alta com tracking.",
+      "html": "<div class=\"ds-popup\"><div class=\"ds-popup-sec\">ACOES</div><div class=\"ds-popup-item\">Imprimir ficha</div><div class=\"ds-popup-div\"></div><div class=\"ds-popup-item\">Exportar para pen-drive</div></div>",
+      "css": ".ds-popup { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; background:#0E1839; border-radius:8px; overflow:hidden; min-width:260px; } .ds-popup-sec { color:#8896AC; font-size:11px; letter-spacing:.13em; text-transform:uppercase; padding:14px 20px 6px; } .ds-popup-item { color:#FFFFFF; font-size:17px; height:52px; display:flex; align-items:center; padding:0 20px; cursor:pointer; } .ds-popup-item:hover { background:rgba(66,165,245,.12); } .ds-popup-div { height:1px; background:#1E2D52; margin-top:8px; }"
+    },
+    {
+      "name": "Pilula de Alerta Clinico",
+      "kind": "chip",
+      "refersTo": "alert-pill",
+      "description": "Espelha as cores da ficha de Time-Out impressa. Fora do risco clinico, essas cores nao existem no app.",
+      "html": "<span class=\"ds-pill ds-pill-contato\">PRECAUCAO DE CONTATO</span><span class=\"ds-pill ds-pill-alergia\">ALERGIA</span><span class=\"ds-pill ds-pill-queda\">RISCO DE QUEDA</span>",
+      "css": ".ds-pill { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; display:inline-block; border-radius:16px; padding:8px 16px; font-weight:700; font-size:13px; margin:0 6px 6px 0; } .ds-pill-contato { background:linear-gradient(180deg,#FFB74D,#F57C00); color:#FFFFFF; } .ds-pill-alergia { background:linear-gradient(180deg,#EF5350,#C62828); color:#FFFFFF; } .ds-pill-queda { background:linear-gradient(180deg,#FFE082,#FFC107); color:#1A1A1A; }"
+    },
+    {
+      "name": "Visto de Conferencia",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Confirmado x pendente. A diferenca e de BRILHO, nao so de matiz, para quem nao distingue vermelho e verde.",
+      "html": "<span class=\"ds-check ds-check-on\">✓ Nome</span><span class=\"ds-check ds-check-off\">✓ Nascimento</span>",
+      "css": ".ds-check { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; display:inline-flex; align-items:center; gap:8px; font-size:17px; margin-right:20px; } .ds-check-on { color:#00E676; } .ds-check-off { color:#90A4AE; opacity:.5; }"
+    },
+    {
+      "name": "PhotoIdHeaderView",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "O componente-assinatura. Prefixo branco, sufixo no gradiente. O tamanho separa a Home dos modulos.",
+      "html": "<div class=\"ds-photoid\"><span class=\"ds-photoid-pre\">PhotoID </span><span class=\"ds-photoid-suf\">RT</span></div>",
+      "css": ".ds-photoid { font-family: Roboto, 'Segoe UI', system-ui, sans-serif; font-weight:700; font-size:56px; line-height:1.1; } .ds-photoid-pre { color:#FFFFFF; } .ds-photoid-suf { background:linear-gradient(90deg,#42A5F5,#7B6FE0,#B254E8); -webkit-background-clip:text; background-clip:text; color:transparent; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Prancheta do Tecnico",
+    "overview": "O registro de posicionamento que antes era celular pessoal e papel preenchido depois, agora feito direito. A prancheta e o modelo mental: um objeto que se segura em pe, ao lado da mesa, que nao se perde, e cuja saida e um documento impresso que pertence ao servico. A tela nao e destino - e o caminho ate a ficha.\n\nO humor e minimalismo e \"idiot-proof\", nas palavras do autor, e as duas metades puxam para o mesmo lado. Minimalismo aqui nao e pouco conteudo: e pouca decisao por tela. \"Idiot-proof\" e o corretivo que impede o minimalismo de virar austeridade perigosa - alvo grande demais para errar, estado visivel sem interpretacao. Sob luva, com luz baixa e o paciente esperando na mesa, uma interface elegante que exige precisao e uma interface quebrada.\n\nO mundo e escuro por necessidade, nao por moda. O fundo #00030E existe para que a fotografia carregue toda a luz da tela.",
+    "keyCharacteristics": [
+      "Fundo quase preto azulado; a fotografia e a fonte de luz da tela.",
+      "Profundidade por camada tonal e traco de 1dp, nunca por sombra.",
+      "Alvo primario de 68dp - acima do minimo do Material, por causa da luva.",
+      "Face do sistema, sem fonte propria; hierarquia por tamanho e peso.",
+      "Gradiente azul->roxo reservado ao logotipo e a um fio de regua.",
+      "Laranja, vermelho e amarelo sao territorio exclusivo do alerta clinico."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Alerta Clinico",
+        "body": "Laranja (#F57C00), vermelho (#C62828) e amarelo (#FFC107) sao territorio exclusivo do risco do paciente, e espelham as cores da ficha de Time-Out impressa. A correspondencia com o papel E a funcao. Nunca em cromo, acao, marca ou estado de sistema.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Brilho, nao do Matiz",
+        "body": "Estado confirmado e nao confirmado se distinguem por luminosidade, nao so por cor. Quem nao distingue vermelho e verde continua lendo o estado.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Gradiente Raro",
+        "body": "O gradiente azul->roxo aparece no logotipo e em um fio de regua. Em nenhum outro lugar. A raridade e o que o faz significar marca.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do sp",
+        "body": "Todo tamanho de texto em sp, nunca dp nem px, para que o texto siga a configuracao de tamanho de fonte do sistema.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra dos Dois Aparelhos",
+        "body": "Tamanho de texto e altura de elemento vao para dimens.xml com o par celular/tablet, nunca direto no layout.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Plano",
+        "body": "Superficie se distingue por tom e traco de 1dp, nunca por sombra. Nao acrescentar elevation, CardView nem sombra desenhada.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra do Canto Contido",
+        "body": "Raio maximo de 16dp em elemento retangular; capsula so em pilula flutuante. Canto muito redondo e a assinatura do app de consumo, que e anti-referencia confirmada.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do dar 68dp de altura a acao primaria da tela; o resto segue os 48dp minimos do Material.",
+      "Do separar superficies subindo um degrau na escada tonal (#00030E -> #0B132C -> #0E1839 -> #1A2545) ou com traco de 1dp em #1E2D52.",
+      "Do escrever todo tamanho de texto em sp e todo par celular/tablet em dimens.xml + values-sw600dp/dimens.xml.",
+      "Do distinguir estados por brilho alem de matiz, como #00E676 contra #90A4AE a 50%.",
+      "Do usar os componentes do Material 2 que ja estao no projeto.",
+      "Do dar alvo de toque de pelo menos 44dp a qualquer elemento acionavel."
+    ],
+    "donts": [
+      "Don't acrescentar sombra, elevation ou CardView. O sistema e plano por doutrina.",
+      "Don't usar laranja, vermelho ou amarelo fora do alerta clinico.",
+      "Don't espalhar o gradiente. Logotipo e um fio de regua; nada alem disso.",
+      "Don't usar android:tooltipText para explicar coisa alguma - em tablet ele so aparece em toque longo e ninguem o descobre.",
+      "Don't arredondar canto alem de 16dp em elemento retangular.",
+      "Don't introduzir cinza institucional, tabela densa sem hierarquia ou formulario longo.",
+      "Don't misturar Material 3 com o Material 2 que esta no projeto.",
+      "Don't escrever tamanho de texto ou altura de elemento direto no layout."
+    ]
+  }
+}

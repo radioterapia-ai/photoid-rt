@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "de": "Die Aktennummer %1$s ist bereits für %2$s registriert.\\n\\nPrüfen Sie vor dem Fortfahren, ob es sich um denselben Patienten handelt."
+ },
+ {
+  "k": "gate_identidade",
+  "de": "Sie schließen die Simulation ab von:\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "de": "Simulation gespeichert."
+ },
+ {
+  "k": "banner_nova_sim",
+  "de": "Neue Sim. %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "de": "Etikettendaten prüfen"
+ },
+ {
+  "k": "gallery_open_fail",
+  "de": "Galerie konnte nicht geöffnet werden."
+ },
+ {
+  "k": "sync_falta_senha",
+  "de": "Wartet auf das Passwort — zum Eingeben tippen."
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "de": "Die Synchronisationsziele wurden OHNE Passwort importiert: es bleibt auf jedem Gerät verschlüsselt und reist nicht im Paket mit, das per E-Mail und USB-Stick verschickt wird.\n\nÖffnen Sie jedes Ziel und geben Sie das Passwort einmal auf diesem Tablet ein. Danach schalten sie sich von selbst ein."
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "de": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "de": "(nicht festgelegt)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "de": "Sprache"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "de": "Einrichtung"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "de": "Fotoordner"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "de": "Drucker"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "de": "Druck"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "de": "Etikett %1$d×%2$d mm"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "de": "Time-Out enthalten"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "de": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "de": "Patient: %1$s"
+ }
+]

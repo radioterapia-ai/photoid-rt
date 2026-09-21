@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "it": "La cartella %1$s è già registrata per %2$s.\\n\\nVerifica che sia lo stesso paziente prima di continuare."
+ },
+ {
+  "k": "gate_identidade",
+  "it": "Stai chiudendo la simulazione di:\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "it": "Simulazione salvata."
+ },
+ {
+  "k": "banner_nova_sim",
+  "it": "Nuova sim. %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "it": "Verifica i dati dell'etichetta"
+ },
+ {
+  "k": "gallery_open_fail",
+  "it": "Impossibile aprire la galleria."
+ },
+ {
+  "k": "sync_falta_senha",
+  "it": "In attesa della password — tocca per inserirla."
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "it": "Le destinazioni di sincronizzazione sono state importate SENZA password: resta cifrata su ogni dispositivo e non viaggia nel pacchetto, che circola via e-mail e chiavetta USB.\n\nApri ogni destinazione e digita la password una volta su questo tablet. Dopo si attiveranno da sole."
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "it": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "it": "(non definito)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "it": "Lingua"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "it": "Struttura"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "it": "Cartella foto"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "it": "Stampante"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "it": "Stampa"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "it": "Etichetta %1$d×%2$d mm"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "it": "Time-Out incluso"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "it": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "it": "Paziente: %1$s"
+ }
+]

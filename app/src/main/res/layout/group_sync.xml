@@ -24,7 +24,7 @@
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/swSyncMestre"
             android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:minHeight="44dp" />
+            android:minHeight="48dp" />
     </LinearLayout>
 
     <TextView style="@style/SectionDesc" android:text="@string/sync_master_hint" />
@@ -38,7 +38,8 @@
         <TextView android:id="@+id/txtSyncOrigem"
             android:layout_width="match_parent" android:layout_height="wrap_content"
             android:textSize="12sp" android:textColor="@color/text_secondary"
-            android:paddingVertical="4dp" />
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
 
         <TextView style="@style/FieldLabel" android:layout_marginTop="8dp"
             android:text="@string/sync_interval" />
@@ -47,19 +48,19 @@
 
         <CheckBox android:id="@+id/chkSyncGatFoto"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:minHeight="42dp" android:text="@string/sync_trigger_photo"
+            android:minHeight="48dp" android:text="@string/sync_trigger_photo"
             android:textSize="13sp" android:textColor="@color/text_primary" />
         <CheckBox android:id="@+id/chkSyncGatFim"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:minHeight="42dp" android:text="@string/sync_trigger_finish"
+            android:minHeight="48dp" android:text="@string/sync_trigger_finish"
             android:textSize="13sp" android:textColor="@color/text_primary" />
         <CheckBox android:id="@+id/chkSyncGatAbrir"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:minHeight="42dp" android:text="@string/sync_trigger_open"
+            android:minHeight="48dp" android:text="@string/sync_trigger_open"
             android:textSize="13sp" android:textColor="@color/text_primary" />
         <CheckBox android:id="@+id/chkSyncSoWifi"
             android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:minHeight="42dp" android:text="@string/sync_wifi_only"
+            android:minHeight="48dp" android:text="@string/sync_wifi_only"
             android:textSize="13sp" android:textColor="@color/text_primary" />
 
         <View style="@style/SeparadorFino" />

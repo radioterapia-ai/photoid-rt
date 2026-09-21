@@ -12,12 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="12dp">
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
 
         <TextView
             style="@style/PopupSecao"
-            android:paddingHorizontal="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
             android:text="@string/filtro_ordenar_por" />
 
         <RadioGroup
@@ -63,7 +66,8 @@
 
         <TextView
             style="@style/PopupSecao"
-            android:paddingHorizontal="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
             android:text="@string/filtro_ordem" />
 
         <RadioGroup
@@ -100,7 +104,8 @@
 
         <TextView
             style="@style/PopupSecao"
-            android:paddingHorizontal="0dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
             android:text="@string/filtro_periodo" />
 
         <TextView

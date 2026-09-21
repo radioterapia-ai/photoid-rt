@@ -35,9 +35,12 @@ class CarrosselAdapter(
         }
         // Tag flutuante (Posicionamento.N / Acessório.N)
         val rotulo = rotulos?.getOrNull(position) ?: when (foto.tipo) {
-            TreatmentPhotoFetcher.TipoFoto.ACESSORIOS -> "Acessório"
-            TreatmentPhotoFetcher.TipoFoto.POSICIONAMENTO -> "Posicionamento"
-            TreatmentPhotoFetcher.TipoFoto.DOCUMENTO -> "Impresso"
+            TreatmentPhotoFetcher.TipoFoto.ACESSORIOS ->
+                holder.itemView.context.getString(com.radioterapia.ai.R.string.cat_accessories)
+            TreatmentPhotoFetcher.TipoFoto.POSICIONAMENTO ->
+                holder.itemView.context.getString(com.radioterapia.ai.R.string.cat_positioning)
+            TreatmentPhotoFetcher.TipoFoto.DOCUMENTO ->
+                holder.itemView.context.getString(com.radioterapia.ai.R.string.docs_viewer_label)
             else -> ""
         }
         if (rotulo.isBlank()) holder.tag.visibility = View.GONE

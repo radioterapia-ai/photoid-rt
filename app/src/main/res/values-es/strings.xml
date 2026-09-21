@@ -947,4 +947,28 @@ El paciente sale de la lista de tratamiento y permanece en el historial.</string
     <string name="sync_tip_direct">Activado, la aplicación escribe directamente en la carpeta final sin comprobar las carpetas superiores. Resuelve el caso común en hospitales: la cuenta puede escribir en el destino pero no puede LEER las carpetas de arriba, y la comprobación fallaría en una carpeta que ni siquiera es el destino. Desactívelo solo si el servidor rechaza la escritura directa.</string>
     <string name="tr_sync">Sincronización</string>
     <string name="tr_sync_desc">Preferencias y destinos. La contraseña de cada destino NO va en el paquete: escríbala una vez en cada tableta.</string>
+    <string name="pront_em_uso">El número de historia %1$s ya está registrado para %2$s.
+
+Compruebe que sea el mismo paciente antes de continuar.</string>
+    <string name="gate_identidade">Está cerrando la simulación de:
+%1$s</string>
+    <string name="fin_ok_salva">Simulación guardada.</string>
+    <string name="banner_nova_sim">Nueva sim. %1$d</string>
+    <string name="confirm_etiqueta_title">Compruebe los datos de la etiqueta</string>
+    <string name="gallery_open_fail">No se pudo abrir la galería.</string>
+    <string name="sync_falta_senha">Esperando la contraseña — toque para introducirla.</string>
+    <string name="sync_importados_sem_senha">Los destinos de sincronización se importaron SIN la contraseña: queda cifrada en cada equipo y no viaja en el paquete, que se envía por correo y memoria USB.
+
+Abra cada destino e introduzca la contraseña una vez en esta tableta. Se activarán solos después.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(sin definir)</string>
+    <string name="wiz_r_idioma">Idioma</string>
+    <string name="wiz_r_clinica">Centro</string>
+    <string name="wiz_r_pasta">Carpeta de fotos</string>
+    <string name="wiz_r_impressora">Impresora</string>
+    <string name="wiz_r_impressao">Impresión</string>
+    <string name="wiz_r_etiqueta">Etiqueta %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">Time-Out incluido</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">Paciente: %1$s</string>
 </resources>

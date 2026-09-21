@@ -292,6 +292,10 @@ class SessionManager(context: Context) {
      *  "Posicionamento.1..N", "Acessório.1..N". */
     fun rotulosParaPdf(): List<String> {
         val rotulos = mutableListOf<String>()
+        // VOCABULARIO CANONICO EM PORTUGUES, DE PROPOSITO — nao e literal
+        // esquecido. O PdfBuilder recebe estes rotulos em PT e os traduz no
+        // ponto de desenho, em traduzirRotulo(). Trocar por getString aqui
+        // QUEBRA o mapa: "Rosto" deixa de casar e o rotulo sai sem traducao.
         _fotos.firstOrNull { it.categoria == Category.FACE }?.let { rotulos.add("Rosto") }
         _fotos.firstOrNull { it.categoria == Category.LABEL }?.let { rotulos.add("Etiqueta") }
         _fotos.filter { it.categoria == Category.POSITIONING }.sortedBy { it.timestampMs }

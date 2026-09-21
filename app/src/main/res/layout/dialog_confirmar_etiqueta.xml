@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    CONFERENCIA DA ETIQUETA EM UMA TELA SO.
+
+    Antes eram tres dialogos em serie — nome, nascimento, prontuario —, cada um
+    mostrando UM campo e repetindo a mesma miniatura. Tres consequencias, todas
+    relatadas:
+
+      1. O tecnico nunca via nome + nascimento + prontuario JUNTOS, que e
+         exatamente a comparacao que ele precisa fazer contra a etiqueta.
+      2. Cada dialogo destruia o anterior: um erro percebido no terceiro
+         custava a identificacao inteira, porque "Voltar" reiniciava tudo.
+      3. Onze toques no caso comum, contra dois do caminho digitado — o
+         caminho "rapido" era o caro, o que inverte o primeiro principio do
+         produto.
+
+    O VISTO POR CAMPO CONTINUA, e continua sendo um por campo: sao quatro
+    afirmacoes clinicas distintas, e colapsa-las num "confirmo tudo" trocaria
+    quatro decisoes por uma. O que sai e o custo dos tres modais, nao a
+    conferencia.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!--
+            A ETIQUETA VEM PRIMEIRO E GRANDE. Ela e a fonte contra a qual se
+            confere; nos dialogos antigos aparecia em 140dp, embaixo de tudo, e
+            se repetia tres vezes.
+        -->
+        <ImageView
+            android:id="@+id/imgEtiquetaCapturada"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="fitCenter"
+            android:background="@color/bg_card"
+            android:visibility="gone"
+            android:contentDescription="@string/detected_text" />
+
+        <!-- ============ NOME ============ -->
+        <TextView
+            android:id="@+id/txtLabelNome"
+            style="@style/FieldLabel" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/edtNome"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:textSize="16sp"
+                android:textColor="#212121"
+                android:textColorHint="#757575"
+                android:background="@drawable/bg_input_white"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:inputType="textCapWords" />
+
+            <ImageButton
+                android:id="@+id/btnVistoNome"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_check_confirm"
+                android:background="@drawable/bg_icon_visor"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/confirm" />
+        </LinearLayout>
+
+        <!-- ============ NASCIMENTO ============ -->
+        <TextView
+            android:id="@+id/txtLabelNasc"
+            style="@style/FieldLabel" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/edtNasc"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:textSize="16sp"
+                android:textColor="#212121"
+                android:textColorHint="#757575"
+                android:background="@drawable/bg_input_white"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp" />
+
+            <ImageButton
+                android:id="@+id/btnVistoNasc"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_check_confirm"
+                android:background="@drawable/bg_icon_visor"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/confirm" />
+        </LinearLayout>
+
+        <!-- ============ PRONTUARIO ============ -->
+        <TextView
+            android:id="@+id/txtLabelPront"
+            style="@style/FieldLabel" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <EditText
+                android:id="@+id/edtPront"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="48dp"
+                android:textSize="16sp"
+                android:textColor="#212121"
+                android:textColorHint="#757575"
+                android:background="@drawable/bg_input_white"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp" />
+
+            <ImageButton
+                android:id="@+id/btnVistoPront"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_check_confirm"
+                android:background="@drawable/bg_icon_visor"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/confirm" />
+        </LinearLayout>
+
+        <!--
+            O TEXTO BRUTO, por ultimo e como referencia.
+
+            Subiu de 10sp para 13sp: era o menor corpo do produto inteiro, e e
+            justamente a evidencia contra a qual o tecnico confere a sugestao.
+        -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/detected_text"
+            android:textSize="12sp"
+            android:textColor="@color/text_secondary"
+            android:layout_marginTop="16dp" />
+
+        <EditText
+            android:id="@+id/edtTextoDetectado"
+            android:layout_width="match_parent"
+            android:layout_height="84dp"
+            android:textSize="13sp"
+            android:fontFamily="monospace"
+            android:padding="8dp"
+            android:background="@color/bg_card"
+            android:textColor="@color/text_secondary"
+            android:gravity="top|start"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+</ScrollView>

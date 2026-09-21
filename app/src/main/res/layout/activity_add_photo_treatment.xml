@@ -16,8 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#1565C0"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
         android:textColor="#FFFFFF"
         android:textSize="12sp"
         android:maxLines="1"
@@ -119,7 +121,7 @@
             <ImageButton
                 android:id="@+id/apBtnSwitchCam"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_switch_camera"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/switch_cam_label" />
@@ -138,7 +140,7 @@
             <ImageButton
                 android:id="@+id/apBtnFlash"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_flash_off"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/flash_label" />
@@ -154,7 +156,7 @@
             <ImageButton
                 android:id="@+id/apBtnMute"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_sound_on"
                 android:background="@android:color/transparent"
                 android:layout_marginTop="6dp"
@@ -173,7 +175,7 @@
         <ImageButton
             android:id="@+id/apBtnGirarVisor"
             android:layout_width="46dp"
-            android:layout_height="46dp"
+            android:layout_height="48dp"
             android:layout_gravity="top|end"
             android:layout_margin="10dp"
             android:src="@android:drawable/ic_menu_rotate"
@@ -232,7 +234,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingHorizontal="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 android:paddingTop="4dp"
                 android:visibility="gone">
 
@@ -306,7 +309,7 @@
                     android:id="@+id/btnApGaleria"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="46dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="4dp"
                     android:text="@string/add_from_gallery"
                     android:maxLines="2"
@@ -318,7 +321,7 @@
                     android:id="@+id/btnApDescartarRolo"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="46dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="4dp"
                     android:text="@string/ap_discard_roll"
                     android:maxLines="1"
@@ -330,7 +333,7 @@
                     android:id="@+id/btnApSalvarRolo"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="46dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="4dp"
                     android:text="@string/ap_save_roll_zero"
                     android:maxLines="1"

@@ -388,20 +388,45 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
         val v = layoutInflater.inflate(R.layout.wizard_step_7, containerStep, true)
         val resumo = v.findViewById<TextView>(R.id.txtWizResumo)
         val padrao = getString(R.string.suggested_default_short)
+        /*
+            O RESUMO INTEIRO DE RECURSO.
+
+            Os rotulos eram literais em portugues — "Idioma:", "Clinica:",
+            "Impressora:", "Time-Out incluido" — e esta e a ULTIMA tela de toda
+            primeira instalacao, a confirmacao do que foi configurado. Um
+            servico polones, japones ou arabe percorria sete passos traduzidos e
+            recebia o resumo em portugues.
+
+            O lint nao pegava: MissingTranslation esta satisfeito porque nenhum
+            recurso falta; o texto simplesmente nao era recurso.
+         */
+        val naoDef = getString(R.string.nao_definido)
+        fun linha(rotulo: Int, valor: String) =
+            getString(R.string.wiz_resumo_linha, getString(rotulo), valor)
+
         val sb = StringBuilder()
-        sb.append("Idioma: ${com.radioterapia.ai.i18n.LocaleManager.nomeDoIdioma(idiomaSelecionado)}\n")
-        sb.append("Clínica: ${nomeClinicaTemp.ifBlank { config.nomeClinica.ifBlank { "(não definido)" } }}\n")
-        sb.append("Pasta fotos: ${if (config.pastaFotosUri.isBlank()) padrao else nomeLegivelPasta(config.pastaFotosUri)}\n")
-        sb.append("Impressora: ${config.impressoraIp.ifBlank { "(não definida)" }}\n")
+        sb.append(linha(R.string.wiz_r_idioma,
+            com.radioterapia.ai.i18n.LocaleManager.nomeDoIdioma(idiomaSelecionado))).append("\n")
+        sb.append(linha(R.string.wiz_r_clinica,
+            nomeClinicaTemp.ifBlank { config.nomeClinica.ifBlank { naoDef } })).append("\n")
+        sb.append(linha(R.string.wiz_r_pasta,
+            if (config.pastaFotosUri.isBlank()) padrao
+            else nomeLegivelPasta(config.pastaFotosUri))).append("\n")
+        sb.append(linha(R.string.wiz_r_impressora,
+            config.impressoraIp.ifBlank { naoDef })).append("\n")
         val dup = when (config.printerDuplexMode) {
             "long" -> getString(R.string.duplex_long)
             "short" -> getString(R.string.duplex_short)
             else -> getString(R.string.duplex_off)
         }
-        sb.append("Impressão: $dup\n")
-        sb.append("PDF: ${getString(if (config.pdfLandscape) R.string.pdf_landscape else R.string.pdf_portrait)}")
-        sb.append(" • Etiqueta ${config.pdfEtiquetaLarguraMm}×${config.pdfEtiquetaAlturaMm} mm")
-        if (config.pdfIncluiTimeOut) sb.append(" • Time-Out incluído")
+        sb.append(linha(R.string.wiz_r_impressao, dup)).append("\n")
+        sb.append(linha(R.string.wiz_r_pdf, getString(
+            if (config.pdfLandscape) R.string.pdf_landscape else R.string.pdf_portrait)))
+        sb.append("  •  ").append(getString(R.string.wiz_r_etiqueta,
+            config.pdfEtiquetaLarguraMm, config.pdfEtiquetaAlturaMm))
+        if (config.pdfIncluiTimeOut) {
+            sb.append("  •  ").append(getString(R.string.wiz_r_timeout))
+        }
         resumo.text = sb.toString()
     }
 

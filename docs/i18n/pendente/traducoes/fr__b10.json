@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "fr": "Le dossier %1$s est déjà enregistré pour %2$s.\\n\\nVérifiez qu'il s'agit bien du même patient avant de continuer."
+ },
+ {
+  "k": "gate_identidade",
+  "fr": "Vous finalisez la simulation de :\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "fr": "Simulation enregistrée."
+ },
+ {
+  "k": "banner_nova_sim",
+  "fr": "Nouv. sim. %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "fr": "Vérifiez les données de l'étiquette"
+ },
+ {
+  "k": "gallery_open_fail",
+  "fr": "Impossible d'ouvrir la galerie."
+ },
+ {
+  "k": "sync_falta_senha",
+  "fr": "En attente du mot de passe — appuyez pour le saisir."
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "fr": "Les destinations de synchronisation ont été importées SANS mot de passe : il reste chiffré sur chaque appareil et ne voyage pas dans le paquet, qui circule par e-mail et clé USB.\n\nOuvrez chaque destination et saisissez le mot de passe une fois sur cette tablette. Elles s'activeront ensuite d'elles-mêmes."
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "fr": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "fr": "(non défini)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "fr": "Langue"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "fr": "Établissement"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "fr": "Dossier des photos"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "fr": "Imprimante"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "fr": "Impression"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "fr": "Étiquette %1$d×%2$d mm"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "fr": "Time-Out inclus"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "fr": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "fr": "Patient : %1$s"
+ }
+]

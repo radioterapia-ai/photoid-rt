@@ -324,7 +324,7 @@ class MainActivity : BaseActivity() {
         try {
             escolherDaGaleria.launch(arrayOf(com.radioterapia.ai.gallery.GaleriaImport.MIME))
         } catch (_: Exception) {
-            Toast.makeText(this, R.string.gallery_fail, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.gallery_open_fail, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -613,8 +613,8 @@ class MainActivity : BaseActivity() {
         val btnSwitch = findViewById<android.widget.ImageButton>(R.id.btnSwitchCam)
         val txtSwitch = findViewById<TextView>(R.id.txtSwitchCamLabel)
         fun pintarSwitch() {
-            btnSwitch.setColorFilter(if (usarCameraFrontal) 0xFFFFD54F.toInt() else 0xFF9E9E9E.toInt())
-            txtSwitch.setTextColor(if (usarCameraFrontal) 0xFFFFD54F.toInt() else 0xFFCCCCCC.toInt())
+            btnSwitch.setColorFilter(if (usarCameraFrontal) ContextCompat.getColor(this, R.color.brand_primary) else 0xFF9E9E9E.toInt())
+            txtSwitch.setTextColor(if (usarCameraFrontal) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
         }
         pintarSwitch()
         btnSwitch.setOnClickListener {
@@ -977,12 +977,12 @@ class MainActivity : BaseActivity() {
     private fun atualizarIconeFlash() {
         val ligado = flashMode == ImageCapture.FLASH_MODE_ON
         btnFlash.setImageResource(if (ligado) R.drawable.ic_flash_on else R.drawable.ic_flash_off)
-        btnFlash.setColorFilter(if (ligado) 0xFFFFD54F.toInt() else 0xFF9E9E9E.toInt())
+        btnFlash.setColorFilter(if (ligado) ContextCompat.getColor(this, R.color.brand_primary) else 0xFF9E9E9E.toInt())
         btnFlash.alpha = 1.0f
         val label = if (ligado) getString(R.string.flash_on) else getString(R.string.flash_off)
         btnFlash.contentDescription = label
         txtFlashLabel.text = label
-        txtFlashLabel.setTextColor(if (ligado) 0xFFFFD54F.toInt() else 0xFFCCCCCC.toInt())
+        txtFlashLabel.setTextColor(if (ligado) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
     }
 
     // ===== MUDO DO CLIQUE DA CÂMERA (item 9) =====
@@ -999,10 +999,10 @@ class MainActivity : BaseActivity() {
         // cliqueMudo = true → som DESLIGADO (silencioso). false → som LIGADO.
         val somLigado = !cliqueMudo
         btnMute.setImageResource(if (somLigado) R.drawable.ic_sound_on else R.drawable.ic_sound_off)
-        btnMute.setColorFilter(if (somLigado) 0xFFFFD54F.toInt() else 0xFF9E9E9E.toInt())
+        btnMute.setColorFilter(if (somLigado) ContextCompat.getColor(this, R.color.brand_primary) else 0xFF9E9E9E.toInt())
         btnMute.alpha = 1.0f
         txtMuteLabel.text = if (somLigado) getString(R.string.mute_on) else getString(R.string.mute_off)
-        txtMuteLabel.setTextColor(if (somLigado) 0xFFFFD54F.toInt() else 0xFFCCCCCC.toInt())
+        txtMuteLabel.setTextColor(if (somLigado) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
     }
 
     private fun configurarGrid() {
@@ -1038,6 +1038,13 @@ class MainActivity : BaseActivity() {
     }
 
     private fun abrirDialogIdentificarPaciente() {
+        // DESCARTA a etiqueta pendente. Este é o ponto por onde os três
+        // caminhos de abandono voltam, e também por onde se começa do zero —
+        // nos dois casos, uma etiqueta lida antes não pertence ao que vem
+        // agora. Só solta a referência: o arquivo ficou onde o scanner o pôs e
+        // nunca chegou à pasta do paciente. Ver etiquetaPendente.
+        etiquetaPendente = null
+
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_modo_paciente, null)
         val dialog = AlertDialog.Builder(this).setView(view).setCancelable(true).create()
 
@@ -1178,11 +1185,32 @@ class MainActivity : BaseActivity() {
             }
     }
 
+    /**
+     * A etiqueta lida, ESPERANDO o paciente ser confirmado.
+     *
+     * Antes, `processarOcr` e `processarCodigoBarras` gravavam a foto na sessão
+     * na hora. Só que a etiqueta em cima da mesa é, com frequência, a do
+     * paciente ANTERIOR: quem escaneia a errada, percebe e corrige o paciente
+     * passava por um dos três caminhos de abandono — "Voltar" no diálogo de
+     * conferência, "Cancelar e verificar" na divergência, ou "Não é o mesmo
+     * paciente" na resimulação —, e os três limpavam nome, prontuário e
+     * nascimento SEM tocar nas fotos. A etiqueta do paciente A ficava na pasta
+     * do paciente B, entrava no PDF e ia para o servidor da instituição. Pior:
+     * `temRascunho()` passava a devolver true com a etiqueta órfã dentro, e o
+     * app oferecia "continuar rascunho" com ela.
+     *
+     * Agora ela só entra na sessão em [finalizarIdentificacao], e é descartada
+     * em [abrirDialogIdentificarPaciente] — que é por onde os três caminhos de
+     * abandono voltam, e também por onde se começa de novo. Custo: zero
+     * cliques.
+     */
+    private var etiquetaPendente: File? = null
+
     private fun processarOcr(textoOcr: String, imagemPath: String) {
-        // A foto da etiqueta capturada pelo ScanPaciente vira a foto da categoria ETIQUETA
+        // A etiqueta fica PENDENTE até haver paciente confirmado. Ver etiquetaPendente.
         if (imagemPath.isNotEmpty()) {
             val arq = File(imagemPath)
-            if (arq.exists()) sessionManager.adicionarFoto(arq, Category.LABEL)
+            if (arq.exists()) etiquetaPendente = arq
         }
         sessionManager.textoEtiquetaOcr = textoOcr
 
@@ -1222,42 +1250,127 @@ class MainActivity : BaseActivity() {
         val nascSugerida = EtiquetaParser.extrairDataNascimento(textoOcr)
         val prontSugerido = EtiquetaParser.extrairProntuario(textoOcr)
 
-        mostrarDialogConfirmacao(getString(R.string.confirm_name_title),
-            getString(R.string.lbl_patient_name), nomeSugerido,
-            textoOcr, imagemPath, getString(R.string.hint_prefilled)) { nomeConf ->
-            if (nomeConf.isBlank()) {
-                Toast.makeText(this, getString(R.string.hc_name_empty), Toast.LENGTH_SHORT).show()
-                return@mostrarDialogConfirmacao false
-            }
-            confirmarSeNomeSuspeito(nomeConf) { c ->
-                mostrarDialogConfirmacao(getString(R.string.confirm_birth_title),
-                    getString(R.string.lbl_birth_date), nascSugerida,
-                    textoOcr, imagemPath, getString(R.string.confirm_birth_hint), ehData = true) { nasc ->
-                    if (!com.radioterapia.ai.util.DateUtils.nascimentoValido(nasc)) {
-                        Toast.makeText(this, R.string.birth_invalid, Toast.LENGTH_LONG).show()
-                        return@mostrarDialogConfirmacao false
-                    }
-                    mostrarDialogConfirmacao(getString(R.string.confirm_record_title),
-                        getString(R.string.lbl_record), prontSugerido,
-                        textoOcr, imagemPath, getString(R.string.confirm_pront_hint)) { pront ->
-                        if (pront.isBlank()) {
-                            Toast.makeText(this, R.string.pront_required, Toast.LENGTH_LONG).show()
-                            return@mostrarDialogConfirmacao false
-                        }
-                        coletarExtrasEConcluir(c, pront, nasc, textoOcr, imagemPath); true
-                    }
-                    true
-                }
-            }
-            true
+        val view = LayoutInflater.from(this).inflate(R.layout.dialog_confirmar_etiqueta, null)
+
+        val img = view.findViewById<ImageView>(R.id.imgEtiquetaCapturada)
+        if (imagemPath.isNotEmpty()) {
+            val opt = BitmapFactory.Options().apply { inSampleSize = 2 }
+            img.setImageBitmap(BitmapFactory.decodeFile(imagemPath, opt))
+            img.visibility = View.VISIBLE
         }
+        view.findViewById<EditText>(R.id.edtTextoDetectado).apply {
+            setText(textoOcr); setKeyListener(null)
+        }
+
+        val edtNome = view.findViewById<EditText>(R.id.edtNome)
+        val edtNasc = view.findViewById<EditText>(R.id.edtNasc)
+        val edtPront = view.findViewById<EditText>(R.id.edtPront)
+        val vistoNome = view.findViewById<android.widget.ImageButton>(R.id.btnVistoNome)
+        val vistoNasc = view.findViewById<android.widget.ImageButton>(R.id.btnVistoNasc)
+        val vistoPront = view.findViewById<android.widget.ImageButton>(R.id.btnVistoPront)
+
+        view.findViewById<TextView>(R.id.txtLabelNome).text = getString(R.string.lbl_patient_name)
+        view.findViewById<TextView>(R.id.txtLabelNasc).text = getString(R.string.lbl_birth_date)
+        view.findViewById<TextView>(R.id.txtLabelPront).text = getString(R.string.lbl_record)
+
+        edtNome.setText(nomeSugerido)
+        edtNasc.setText(nascSugerida)
+        edtPront.setText(prontSugerido)
+
+        edtNasc.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+        edtNasc.keyListener = android.text.method.DigitsKeyListener.getInstance("0123456789/")
+        com.radioterapia.ai.util.UiText.aplicarMascaraData(edtNasc)
+
+        /*
+            UM VISTO POR CAMPO, e editar o campo desfaz o visto dele.
+
+            Mesma semântica de antes, só que os três convivem na mesma tela.
+            Editar um campo não mexe no visto dos outros: cada um é uma
+            afirmação clínica independente.
+         */
+        val confirmados = booleanArrayOf(false, false, false)
+        val vistos = arrayOf(vistoNome, vistoNasc, vistoPront)
+        val campos = arrayOf(edtNome, edtNasc, edtPront)
+        val M = com.radioterapia.ai.ui.anim.Movimento
+
+        for (i in 0..2) {
+            M.vistoConfirmado(vistos[i], false)
+            vistos[i].setOnClickListener {
+                confirmados[i] = !confirmados[i]
+                M.vistoConfirmado(vistos[i], confirmados[i])
+            }
+            campos[i].addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+                override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    if (confirmados[i]) {
+                        confirmados[i] = false
+                        M.vistoConfirmado(vistos[i], false)
+                    }
+                }
+            })
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(R.string.confirm_etiqueta_title)
+            .setView(view)
+            .setCancelable(false)
+            .setPositiveButton(R.string.confirm, null)
+            .setNegativeButton(R.string.back) { _, _ -> abrirDialogIdentificarPaciente() }
+            .create().apply {
+                setOnShowListener {
+                    getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                        val nome = edtNome.text.toString().trim()
+                        val nasc = edtNasc.text.toString().trim()
+                        val pront = edtPront.text.toString().trim()
+
+                        /*
+                            O TREMOR APONTA O CAMPO QUE FALTA. Num diálogo com
+                            três campos, "confirme o campo" sem apontar qual é
+                            uma pergunta nova, não uma resposta.
+                         */
+                        val rotulos = arrayOf(getString(R.string.lbl_patient_name),
+                                              getString(R.string.lbl_birth_date),
+                                              getString(R.string.lbl_record))
+                        for (i in 0..2) if (!confirmados[i]) {
+                            M.sacudirErro(vistos[i])
+                            campos[i].requestFocus()
+                            Toast.makeText(this@MainActivity,
+                                getString(R.string.confirm_field_alert, rotulos[i]),
+                                Toast.LENGTH_LONG).show()
+                            return@setOnClickListener
+                        }
+
+                        if (nome.isBlank()) {
+                            Toast.makeText(this@MainActivity,
+                                getString(R.string.hc_name_empty), Toast.LENGTH_SHORT).show()
+                            edtNome.requestFocus(); return@setOnClickListener
+                        }
+                        if (!com.radioterapia.ai.util.DateUtils.nascimentoValido(nasc)) {
+                            Toast.makeText(this@MainActivity,
+                                getString(R.string.birth_invalid), Toast.LENGTH_LONG).show()
+                            edtNasc.requestFocus(); return@setOnClickListener
+                        }
+                        if (pront.isBlank()) {
+                            Toast.makeText(this@MainActivity,
+                                getString(R.string.pront_required), Toast.LENGTH_LONG).show()
+                            edtPront.requestFocus(); return@setOnClickListener
+                        }
+
+                        dismiss()
+                        confirmarSeNomeSuspeito(nome) { c ->
+                            coletarExtrasEConcluir(c, pront, nasc, textoOcr, imagemPath)
+                        }
+                    }
+                }
+            }.show()
     }
 
     private fun processarCodigoBarras(codigo: String, imagemPath: String) {
-        // A foto da etiqueta capturada vira foto da categoria ETIQUETA
+        // A etiqueta fica PENDENTE até haver paciente confirmado. Ver etiquetaPendente.
         if (imagemPath.isNotEmpty()) {
             val arq = File(imagemPath)
-            if (arq.exists()) sessionManager.adicionarFoto(arq, Category.LABEL)
+            if (arq.exists()) etiquetaPendente = arq
         }
         Toast.makeText(this, getString(R.string.ok_record_read, codigo), Toast.LENGTH_SHORT).show()
 
@@ -1443,72 +1556,17 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    private fun mostrarDialogConfirmacao(
-        titulo: String, labelCampo: String, valor: String, ocr: String, imgPath: String,
-        dica: String, ehData: Boolean = false, onConf: (String) -> Boolean
-    ) {
-        val view = LayoutInflater.from(this).inflate(R.layout.dialog_confirmar_campo, null)
-        val img = view.findViewById<ImageView>(R.id.imgEtiquetaCapturada)
-        val edtTxt = view.findViewById<EditText>(R.id.edtTextoDetectado)
-        val edtCmp = view.findViewById<EditText>(R.id.edtCampoConfirmacao)
-        val btnVisto = view.findViewById<android.widget.ImageButton>(R.id.btnVistoCampo)
-        view.findViewById<TextView>(R.id.txtLabelCampo).text = labelCampo
-        view.findViewById<TextView>(R.id.txtDicaCampo).text = dica
-        if (imgPath.isNotEmpty()) {
-            val opt = BitmapFactory.Options().apply { inSampleSize = 2 }
-            img.setImageBitmap(BitmapFactory.decodeFile(imgPath, opt))
-            img.visibility = View.VISIBLE
-        }
-        edtTxt.setText(ocr); edtTxt.setKeyListener(null); edtCmp.setText(valor)
-        if (ehData) {
-            edtCmp.inputType = android.text.InputType.TYPE_CLASS_NUMBER
-            edtCmp.keyListener = android.text.method.DigitsKeyListener.getInstance("0123456789/")
-            com.radioterapia.ai.util.UiText.aplicarMascaraData(edtCmp)
-        }
+    /*
+        mostrarDialogConfirmacao REMOVIDA, junto com o layout
+        dialog_confirmar_campo.xml.
 
-        // Visto de confirmação: apagado até o usuário tocar; editar o texto
-        // desfaz a confirmação (precisa validar o valor final).
-        var confirmado = false
-        fun pintarVisto() {
-            com.radioterapia.ai.ui.anim.Movimento.vistoConfirmado(btnVisto, confirmado)
-        }
-        pintarVisto()
-        btnVisto.setOnClickListener { confirmado = !confirmado; pintarVisto() }
-        edtCmp.addTextChangedListener(object : android.text.TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c2: Int) {}
-            override fun onTextChanged(s: CharSequence?, a: Int, b: Int, c2: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
-                if (confirmado) { confirmado = false; pintarVisto() }
-            }
-        })
+        Ela desenhava UM campo por vez, e confirmarOcrManual a chamava tres
+        vezes aninhadas. A conferencia da etiqueta agora acontece numa tela so
+        (dialog_confirmar_etiqueta.xml), com os tres campos a vista e um visto
+        para cada um. Ficou orfa pela mudanca e saiu junto; nao era codigo morto
+        de antes.
+     */
 
-        AlertDialog.Builder(this).setTitle(titulo).setView(view).setCancelable(false)
-            .setPositiveButton(R.string.confirm, null)
-            .setNegativeButton(R.string.back) { _, _ -> abrirDialogIdentificarPaciente() }
-            .create().apply {
-                setOnShowListener {
-                    getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                        if (!confirmado) {
-                            // O TREMOR APONTA O VISTO, que e o que falta. O toast
-                            // diz "confirme o campo" e o tecnico procura onde —
-                            // num dialogo com foto, dois campos e um botao, "onde"
-                            // nao e obvio.
-                            com.radioterapia.ai.ui.anim.Movimento.sacudirErro(btnVisto)
-                            Toast.makeText(this@MainActivity,
-                                getString(R.string.confirm_field_alert, labelCampo),
-                                Toast.LENGTH_LONG).show()
-                            return@setOnClickListener
-                        }
-                        // Reprovou a validacao (nome vazio, data impossivel,
-                        // prontuario em branco): o tremor vai no CAMPO, porque
-                        // agora o problema e o conteudo, nao a confirmacao.
-                        if (onConf(edtCmp.text.toString().trim())) dismiss()
-                        else com.radioterapia.ai.ui.anim.Movimento.sacudirErro(edtCmp)
-                    }
-                }
-                show()
-            }
-    }
 
     /** Pós-etiqueta: SEXO (obrigatório, com visto) e MÉDICO (opcional, mesma
      *  interface da confirmação do nome) — tudo confirmado no ✓ verde. */
@@ -1664,11 +1722,56 @@ class MainActivity : BaseActivity() {
             }
     }
 
+    /**
+     * Porta de entrada da identificação: checa o prontuário e só então aplica.
+     *
+     * O ALERTA DE PRONTUÁRIO JÁ USADO não existia. A chave composta
+     * "NOME | PRONTUARIO" resolveu os homônimos do lado do cadastro, e o lado
+     * da entrada ficou sem aviso nenhum: nome diferente com o mesmo prontuário
+     * fazia obterContagemSimulacoes devolver 0 e passava em silêncio. O efeito
+     * clínico é o que a JORNADA já registrou uma vez — etiqueta e cabeçalho do
+     * PDF saindo com o dado da paciente errada.
+     *
+     * AVISA, NÃO OBRIGA. O técnico está com o paciente na mesa e pode ter
+     * razão: prontuário reaproveitado, nome grafado diferente, cadastro antigo.
+     * A resposta acordada neste projeto para campo em branco foi instrução e
+     * treinamento, não obrigatoriedade — vale igual aqui.
+     */
     private fun finalizarIdentificacao(nome: String, prontuario: String, nascimento: String) {
+        val outroDono = if (prontuario.isNotBlank()) {
+            try { patientCache.outroPacienteComProntuario(prontuario, nome) }
+            catch (_: Exception) { null }
+        } else null
+
+        if (outroDono != null) {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setMessage(getString(R.string.pront_em_uso, prontuario, outroDono))
+                .setPositiveButton(R.string.proceed_anyway) { _, _ ->
+                    aplicarIdentificacao(nome, prontuario, nascimento)
+                }
+                .setNegativeButton(R.string.back) { _, _ ->
+                    abrirDialogIdentificarPaciente()
+                }
+                .setCancelable(false)
+                .show()
+            return
+        }
+        aplicarIdentificacao(nome, prontuario, nascimento)
+    }
+
+    private fun aplicarIdentificacao(nome: String, prontuario: String, nascimento: String) {
         sessionManager.nomePaciente = nome
         if (prontuario.isNotBlank()) sessionManager.prontuario = prontuario
         if (nascimento.isNotBlank()) sessionManager.dataNascimento = nascimento
         sessionManager.marcarInicio()
+
+        // AGORA a etiqueta entra na sessão: há paciente, e ele foi confirmado
+        // campo a campo. Ver etiquetaPendente.
+        etiquetaPendente?.let { arq ->
+            if (arq.exists()) sessionManager.adicionarFoto(arq, Category.LABEL)
+            etiquetaPendente = null
+        }
 
         val ant = patientCache.obterContagemSimulacoes(nome, sessionManager.prontuario)
         val numAtual = ant + 1
@@ -1702,9 +1805,27 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    /**
+     * A faixa de identidade do topo: nome E PRONTUÁRIO, o tempo todo.
+     *
+     * O prontuário sumia no instante em que a captura começava — e ele é o
+     * único par que distingue homônimos, é a chave da pasta em disco, e é o que
+     * o técnico precisa reconferir sem sair da câmera. O único caminho para
+     * revê-lo era um botão rotulado "Voltar", que não volta.
+     *
+     * O "Nova sim. N" era literal em português, visível em TODA reirradiação,
+     * em qualquer idioma. Agora vem de recurso.
+     */
     private fun atualizarBannerPaciente(nome: String, num: Int) {
-        val msg = if (num == 1) nome
-                  else "$nome • Nova sim. ${num - 1}"
+        val msg = buildString {
+            append(nome)
+            sessionManager.prontuario.takeIf { it.isNotBlank() }?.let {
+                append(" · ").append(it)
+            }
+            if (num > 1) {
+                append(" · ").append(getString(R.string.banner_nova_sim, num - 1))
+            }
+        }
         txtPacienteAtivo.text = msg
         txtPacienteAtivo.visibility = View.VISIBLE
     }
@@ -1772,6 +1893,52 @@ class MainActivity : BaseActivity() {
         atualizarThumbnails()
     }
 
+    /**
+     * Diz à moldura a proporção do quadro que a câmera está entregando.
+     *
+     * A ORIENTAÇÃO VEM DA CONFIGURAÇÃO, NÃO DA ROTAÇÃO DO DISPLAY. Antes era
+     *
+     *     val deitado = rotacao == ROTATION_90 || rotacao == ROTATION_270
+     *
+     * e o comentário ao lado explicava a premissa: "landscape fixo →
+     * ROTATION_90 ou ROTATION_270". Essa premissa vale em CELULAR, cuja
+     * orientação natural é retrato. **No tablet a orientação natural é
+     * paisagem**: o Galaxy Tab S6 deitado reporta ROTATION_0, e a conta
+     * concluía "em pé". Os dois casos saíam invertidos —
+     *
+     *   - em pé, aspectoVisor virava 16/9 e a moldura pegava a largura inteira
+     *     (parecia certo, e acertava por acidente);
+     *   - deitado, virava 9/16 e a moldura encolhia para uma faixa estreita no
+     *     centro do visor, que é o defeito relatado.
+     *
+     * `Configuration.ORIENTATION_LANDSCAPE` descreve o LAYOUT, e é verdadeiro
+     * em qualquer aparelho, com qualquer orientação natural.
+     *
+     * A rotação do display continua sendo a fonte certa para `targetRotation`,
+     * que é sobre o EXIF da foto e não sobre o formato do quadro — por isso ela
+     * não sai de startCamera().
+     */
+    private fun aplicarProporcaoDaMoldura() {
+        val deitado = resources.configuration.orientation ==
+            android.content.res.Configuration.ORIENTATION_LANDSCAPE
+        molduraRecorte?.aspectoVisor = if (deitado) 16f / 9f else 9f / 16f
+        mostrarMolduraDoVisor()
+    }
+
+    /**
+     * O manifesto declara `configChanges="orientation|screenSize|…"`, então
+     * girar o tablet NÃO recria a Activity — e nada reavaliava a moldura. Ela
+     * ficava congelada na proporção de quando a câmera foi ligada, o que somava
+     * com o defeito acima: abrir em pé e girar para deitado mantinha a moldura
+     * de pé. Rebindar a câmera inteira seria caro e faria o visor piscar;
+     * recalcular a proporção e reapontar o EXIF basta.
+     */
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        aplicarProporcaoDaMoldura()
+        imageCapture?.targetRotation = rotacaoAtualDoDisplay()
+    }
+
     private fun startCamera() {
         val f = ProcessCameraProvider.getInstance(this)
         f.addListener({
@@ -1808,10 +1975,7 @@ class MainActivity : BaseActivity() {
                     a moldura errada, porque o PreviewView esta em FIT_CENTER e
                     sobra tarja.
                  */
-                val deitado = rotacao == android.view.Surface.ROTATION_90 ||
-                              rotacao == android.view.Surface.ROTATION_270
-                molduraRecorte?.aspectoVisor = if (deitado) 16f / 9f else 9f / 16f
-                mostrarMolduraDoVisor()
+                aplicarProporcaoDaMoldura()
             } catch (e: Exception) {
                 Toast.makeText(this, getString(R.string.err_camera, e.message ?: ""), Toast.LENGTH_LONG).show()
             }
@@ -2210,7 +2374,32 @@ class MainActivity : BaseActivity() {
         if (!sessionManager.temFotoAcessorios()) avisos.add(getString(R.string.missing_accessories))
 
         if (avisos.isNotEmpty()) {
-            val msg = avisos.joinToString("\n") + "\n\nProsseguir mesmo assim?"
+            /*
+                A IDENTIDADE ENTRA AQUI DENTRO, e não numa tela a mais.
+
+                A página 1 da ficha é o Time-Out, e este portão conferia
+                objetos — rosto, acessórios — e nunca perguntava "é este o
+                paciente". Pôr um passo novo custaria um clique em toda
+                finalização, e clique é o recurso escasso; pôr a identidade no
+                topo do diálogo que já aparece custa zero.
+
+                Quando não há aviso nenhum, continua não havendo diálogo:
+                confirmar identidade sem nada pendente seria exatamente a
+                confirmação inferível que este projeto não acrescenta.
+
+                O "Prosseguir mesmo assim?" que ficava concatenado aqui saiu.
+                missing_face e missing_accessories JÁ terminam com essa
+                pergunta, nos doze idiomas — com os dois avisos, o diálogo a
+                fazia três vezes, e a terceira era literal em português no meio
+                de uma tela em japonês ou árabe.
+             */
+            val identidade = buildString {
+                append(sessionManager.nomePaciente)
+                sessionManager.prontuario.takeIf { it.isNotBlank() }?.let { append(" · ").append(it) }
+                sessionManager.dataNascimento.takeIf { it.isNotBlank() }?.let { append(" · ").append(it) }
+            }
+            val msg = getString(R.string.gate_identidade, identidade) +
+                "\n\n" + avisos.joinToString("\n")
             AlertDialog.Builder(this).setTitle(R.string.warning).setMessage(msg)
                 .setPositiveButton(R.string.proceed_anyway) { _, _ -> abrirTelaFinalizar() }
                 .setNegativeButton(R.string.cancel, null)

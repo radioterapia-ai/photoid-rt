@@ -877,4 +877,25 @@
     <string name="sync_tip_direct">Activé, l\'application écrit directement dans le dossier final sans vérifier les dossiers au-dessus. Cela résout le cas courant à l\'hôpital : le compte peut écrire dans la destination mais ne peut pas LIRE les dossiers supérieurs, et la vérification échouerait sur un dossier qui n\'est même pas la destination. Ne le désactivez que si le serveur refuse l\'écriture directe.</string>
     <string name="tr_sync">Synchronisation</string>
     <string name="tr_sync_desc">Préférences et destinations. Le mot de passe de chaque destination NE voyage PAS dans le paquet : saisissez-le une fois sur chaque tablette.</string>
+    <string name="pront_em_uso">Le dossier %1$s est déjà enregistré pour %2$s.\n\nVérifiez qu\'il s\'agit bien du même patient avant de continuer.</string>
+    <string name="gate_identidade">Vous finalisez la simulation de :\n%1$s</string>
+    <string name="fin_ok_salva">Simulation enregistrée.</string>
+    <string name="banner_nova_sim">Nouv. sim. %1$d</string>
+    <string name="confirm_etiqueta_title">Vérifiez les données de l\'étiquette</string>
+    <string name="gallery_open_fail">Impossible d\'ouvrir la galerie.</string>
+    <string name="sync_falta_senha">En attente du mot de passe — appuyez pour le saisir.</string>
+    <string name="sync_importados_sem_senha">Les destinations de synchronisation ont été importées SANS mot de passe : il reste chiffré sur chaque appareil et ne voyage pas dans le paquet, qui circule par e-mail et clé USB.
+
+Ouvrez chaque destination et saisissez le mot de passe une fois sur cette tablette. Elles s\'activeront ensuite d\'elles-mêmes.</string>
+    <string name="wiz_resumo_linha">%1$s: %2$s</string>
+    <string name="nao_definido">(non défini)</string>
+    <string name="wiz_r_idioma">Langue</string>
+    <string name="wiz_r_clinica">Établissement</string>
+    <string name="wiz_r_pasta">Dossier des photos</string>
+    <string name="wiz_r_impressora">Imprimante</string>
+    <string name="wiz_r_impressao">Impression</string>
+    <string name="wiz_r_etiqueta">Étiquette %1$d×%2$d mm</string>
+    <string name="wiz_r_timeout">Time-Out inclus</string>
+    <string name="wiz_r_pdf">PDF</string>
+    <string name="ap_faixa_paciente">Patient : %1$s</string>
 </resources>

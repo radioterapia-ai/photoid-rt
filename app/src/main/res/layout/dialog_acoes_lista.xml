@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:background="@color/bg_card"
     android:orientation="vertical"
-    android:paddingVertical="8dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
 
     <TextView
         style="@style/PopupSecao"

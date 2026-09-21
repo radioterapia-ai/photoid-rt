@@ -269,15 +269,15 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
             blocoDaPagina.add(R.id.frameThumbEtiqueta)
         }
         sim.posicionamentos.forEachIndexed { i, f ->
-            carrossel.add(f); rotulosCarrossel.add("Posicionamento.${i + 1}")
+            carrossel.add(f); rotulosCarrossel.add("${getString(R.string.cat_positioning)}.${i + 1}")
             blocoDaPagina.add(R.id.frameThumbPosic)
         }
         sim.acessoriosLista.forEachIndexed { i, f ->
-            carrossel.add(f); rotulosCarrossel.add("Acessório.${i + 1}")
+            carrossel.add(f); rotulosCarrossel.add("${getString(R.string.cat_accessories)}.${i + 1}")
             blocoDaPagina.add(R.id.frameThumbPosic)
         }
         sim.documentos.forEachIndexed { i, f ->
-            carrossel.add(f); rotulosCarrossel.add("Impresso.${i + 1}")
+            carrossel.add(f); rotulosCarrossel.add("${getString(R.string.docs_viewer_label)}.${i + 1}")
             blocoDaPagina.add(R.id.frameThumbDocs)
         }
         // Primeira página de cada bloco, para o clique na miniatura saltar até lá.
@@ -549,9 +549,14 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         stack.visibility = View.VISIBLE
 
         val rotulos = mutableListOf<String>()
-        sim.posicionamentos.forEachIndexed { i, _ -> rotulos.add("POSIC. ${i + 1}") }
+        // TAG DE RECURSO, em caixa alta pela propria string quando o idioma tem
+        // caixa. "POSIC." e "ACESSÓRIO" eram literais em portugues, visiveis em
+        // toda abertura de paciente, em qualquer idioma.
+        val tagPos = getString(R.string.cat_positioning).uppercase()
+        val tagAce = getString(R.string.cat_accessories).uppercase()
+        sim.posicionamentos.forEachIndexed { i, _ -> rotulos.add("$tagPos ${i + 1}") }
         sim.acessoriosLista.forEachIndexed { i, _ ->
-            rotulos.add(if (sim.acessoriosLista.size > 1) "ACESSÓRIO ${i + 1}" else "ACESSÓRIO") }
+            rotulos.add(if (sim.acessoriosLista.size > 1) "$tagAce ${i + 1}" else tagAce) }
 
         val cabem = if (fotos.size <= 4) fotos.size else 3
         for (i in 0 until cabem) {
@@ -687,7 +692,18 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
     /** Texto de identificação do paciente para a faixa inferior (nome + prontuário). */
     private fun montarIdentificacao(): String {
         // Busca dados completos do cache (nascimento/prontuário) para a faixa inferior.
-        val dados = try { com.radioterapia.ai.patient.PatientCache(this).obterDadosPaciente(nomePaciente) } catch (_: Exception) { null }
+        //
+        // COM O PRONTUÁRIO, e o campo `patientCache` que já existe.
+        //
+        // Sem o prontuário, obterDadosPaciente cai na heurística do "registro
+        // mais completo" e pode devolver o HOMÔNIMO — justamente nesta faixa,
+        // que existe para confirmar que a foto é do paciente certo. É a mesma
+        // família do bug de cadastro que a JORNADA descreve, cuja consequência
+        // registrada foi a data de nascimento da paciente errada. A linha 394
+        // deste mesmo arquivo já passava o prontuário; esta ficou para trás, e
+        // ainda construía um PatientCache novo — que relê e reparseia o JSON
+        // inteiro do cadastro — a cada página virada do carrossel.
+        val dados = try { patientCache.obterDadosPaciente(nomePaciente, prontuario) } catch (_: Exception) { null }
         val idioma = com.radioterapia.ai.i18n.LocaleManager.obterIdiomaAtual(this)
         val nascRaw = dados?.nascimento?.takeIf { it.isNotBlank() }
         val nasc = nascRaw?.let { com.radioterapia.ai.util.DateUtils.formatarNascimento(it, idioma) }

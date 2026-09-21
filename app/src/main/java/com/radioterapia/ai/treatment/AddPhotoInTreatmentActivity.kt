@@ -175,8 +175,8 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         val btnSwitch = findViewById<android.widget.ImageButton>(R.id.apBtnSwitchCam)
         val txtSwitch = findViewById<TextView>(R.id.apTxtSwitchCamLabel)
         fun pintarSwitch() {
-            btnSwitch.setColorFilter(if (usarCameraFrontal) 0xFFFFD54F.toInt() else 0xFF9E9E9E.toInt())
-            txtSwitch.setTextColor(if (usarCameraFrontal) 0xFFFFD54F.toInt() else 0xFFCCCCCC.toInt())
+            btnSwitch.setColorFilter(if (usarCameraFrontal) ContextCompat.getColor(this, R.color.brand_primary) else 0xFF9E9E9E.toInt())
+            txtSwitch.setTextColor(if (usarCameraFrontal) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
         }
         pintarSwitch()
         btnSwitch.setOnClickListener {
@@ -193,8 +193,17 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
 
         configurarMudoClique()
 
-        txtInfo.text = "Paciente: $nomePaciente\n" +
-            "Pasta no servidor: $nomePastaServidor"
+        /*
+            DE RECURSO, E NUMA LINHA SO.
+
+            Eram dois defeitos somados. O rotulo "Paciente:" era literal em
+            portugues, visivel em toda abertura desta camera, em qualquer
+            idioma. E o "\n" nunca renderizou: o TextView e maxLines="1", entao
+            a segunda metade — "Pasta no servidor: ..." — jamais apareceu para
+            ninguem. Ela saiu junto, porque era diagnostico de desenvolvedor num
+            lugar que nao o mostrava.
+         */
+        txtInfo.text = getString(R.string.ap_faixa_paciente, nomePaciente)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
         shutterSound.load(MediaActionSound.SHUTTER_CLICK)
@@ -271,9 +280,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                 seekZoom.progress = 0
                 // Mesma conta da tela de simulacao: a moldura segue a proporcao
                 // do QUADRO, que muda quando o tablet vira.
-                val deitado = rotacao == android.view.Surface.ROTATION_90 ||
-                              rotacao == android.view.Surface.ROTATION_270
-                apMolduraRecorte?.aspectoVisor = if (deitado) 16f / 9f else 9f / 16f
+                aplicarProporcaoDaMoldura()
                 apMolduraRecorte?.visibility = View.VISIBLE
                 com.radioterapia.ai.ui.anim.Movimento.mostrarAviso(apAvisoEncaixar, apImgPinca)
             } catch (e: Exception) {
@@ -329,8 +336,8 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
 
     private fun atualizarIconeFlash() {
         val flashOn = flashMode == ImageCapture.FLASH_MODE_ON
-        btnFlash.setColorFilter(if (flashOn) 0xFFFFD54F.toInt() else 0xFF9E9E9E.toInt())
-        txtFlashLabel.setTextColor(if (flashOn) 0xFFFFD54F.toInt() else 0xFFCCCCCC.toInt())
+        btnFlash.setColorFilter(if (flashOn) ContextCompat.getColor(this, R.color.brand_primary) else 0xFF9E9E9E.toInt())
+        txtFlashLabel.setTextColor(if (flashOn) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
         txtFlashLabel.text = if (flashMode == ImageCapture.FLASH_MODE_ON)
             getString(R.string.flash_on) else getString(R.string.flash_off)
     }
@@ -345,8 +352,8 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
     }
 
     private fun atualizarVisualMudo() {
-        btnMute.setColorFilter(if (!cliqueMudo) 0xFFFFD54F.toInt() else 0xFF9E9E9E.toInt())
-        txtMuteLabel.setTextColor(if (!cliqueMudo) 0xFFFFD54F.toInt() else 0xFFCCCCCC.toInt())
+        btnMute.setColorFilter(if (!cliqueMudo) ContextCompat.getColor(this, R.color.brand_primary) else 0xFF9E9E9E.toInt())
+        txtMuteLabel.setTextColor(if (!cliqueMudo) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
         txtMuteLabel.text = if (cliqueMudo) getString(R.string.mute_off)
                             else getString(R.string.mute_on)
     }
@@ -406,6 +413,32 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
 
     private lateinit var apCropPreview: com.radioterapia.ai.crop.CropImageView
     private var apMolduraRecorte: com.radioterapia.ai.camera.MolduraRecorteView? = null
+
+    /**
+     * A ORIENTAÇÃO VEM DA CONFIGURAÇÃO, NÃO DA ROTAÇÃO DO DISPLAY. Mesma
+     * correção da MainActivity, e pelo mesmo motivo: `ROTATION_90/270` só
+     * significa "deitado" em aparelho cuja orientação natural é retrato. O
+     * tablet, que é o aparelho alvo, tem orientação natural PAISAGEM e reporta
+     * `ROTATION_0` deitado — a conta antiga invertia os dois casos, e a moldura
+     * encolhia para uma faixa estreita no centro justamente no uso normal.
+     */
+    private fun aplicarProporcaoDaMoldura() {
+        val deitado = resources.configuration.orientation ==
+            android.content.res.Configuration.ORIENTATION_LANDSCAPE
+        apMolduraRecorte?.aspectoVisor = if (deitado) 16f / 9f else 9f / 16f
+    }
+
+    /**
+     * `configChanges` inclui `orientation`, então girar não recria a Activity e
+     * nada reavaliava a moldura: ela congelava na proporção de quando a câmera
+     * foi ligada.
+     */
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
+        super.onConfigurationChanged(newConfig)
+        aplicarProporcaoDaMoldura()
+        imageCapture?.targetRotation = rotacaoAtualDoDisplay()
+    }
+
     private var apAvisoEncaixar: View? = null
     private var apImgPinca: android.widget.ImageView? = null
     private lateinit var apBtnGirarVisor: android.widget.ImageButton
@@ -756,7 +789,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         try {
             escolherDaGaleriaAp.launch(arrayOf(com.radioterapia.ai.gallery.GaleriaImport.MIME))
         } catch (_: Exception) {
-            android.widget.Toast.makeText(this, R.string.gallery_fail,
+            android.widget.Toast.makeText(this, R.string.gallery_open_fail,
                 android.widget.Toast.LENGTH_SHORT).show()
         }
     }

@@ -325,6 +325,43 @@ class PatientCache(context: Context) {
     }
 
     /**
+     * O nome já cadastrado sob este prontuário, quando pertence a OUTRO
+     * paciente. `null` quando o prontuário é novo, ou é deste mesmo paciente.
+     *
+     * POR QUE ISTO EXISTE. A chave composta "NOME | PRONTUARIO" resolveu o lado
+     * do CADASTRO: duas Marias com prontuários diferentes deixaram de
+     * compartilhar registro. O lado da ENTRADA ficou sem proteção nenhuma —
+     * [obterContagemSimulacoes] é chaveada por nome E prontuário, então um nome
+     * diferente com o MESMO prontuário devolve 0 e passa em silêncio. O
+     * CLAUDE.md descrevia este alerta como existente; ele não existia em lugar
+     * nenhum do app.
+     *
+     * A comparação do prontuário ignora pontuação, pela mesma normalização que
+     * [chavesDoNome] usa — "12.345-6" e "123456" são o mesmo prontuário. A do
+     * nome usa [chavePadrao], para que acento e caixa não inventem divergência.
+     *
+     * Devolve o nome como está gravado, para que a mensagem possa dizer de quem
+     * é o prontuário em vez de só avisar que há conflito.
+     */
+    fun outroPacienteComProntuario(prontuario: String, nome: String): String? {
+        val pront = prontuario.trim().replace(Regex("[^A-Za-z0-9]"), "")
+        if (pront.isBlank()) return null
+        val base = chavePadrao(nome)
+        for (k in chavesPacientes()) {
+            val pk = if (k.contains(" | ")) {
+                k.substringAfterLast(" | ").replace(Regex("[^A-Za-z0-9]"), "")
+            } else {
+                dados.optJSONObject(k)?.optString("prontuario", "")
+                    ?.replace(Regex("[^A-Za-z0-9]"), "").orEmpty()
+            }
+            if (pk != pront) continue
+            val nomeK = k.substringBefore(" | ")
+            if (chavePadrao(nomeK) != base) return nomeK
+        }
+        return null
+    }
+
+    /**
      * Edita um paciente preservando histórico de simulações.
      * Se o nome mudou, transfere o registro para a nova chave.
      * Servidor não é tocado — apenas o cache local.

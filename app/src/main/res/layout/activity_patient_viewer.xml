@@ -7,6 +7,7 @@
     A versão paisagem (padrão do app) está em layout-land/.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -20,8 +21,10 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="@color/bg_card"
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="6dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:visibility="gone">
 
         <TextView
@@ -111,8 +114,10 @@
                 android:id="@+id/scrollResumoRail"
                 android:layout_width="264dp"
                 android:layout_height="match_parent"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="16dp"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
                 android:scrollbars="none">
 
                 <LinearLayout
@@ -241,8 +246,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom|start"
-                            android:paddingHorizontal="9dp"
-                            android:paddingVertical="5dp"
+                            android:paddingLeft="9dp"
+                            android:paddingRight="9dp"
+                            android:paddingTop="5dp"
+                            android:paddingBottom="5dp"
                             android:background="@drawable/bg_tag_foto"
                             android:text="@string/cat_face"
                             android:textAllCaps="true"
@@ -267,8 +274,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@color/bg_card"
-                    android:paddingHorizontal="14dp"
-                    android:paddingVertical="12dp"
+                    android:paddingLeft="14dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
                     android:visibility="gone">
 
                     <TextView
@@ -313,8 +322,10 @@
             android:layout_gravity="bottom"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="11dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="11dp"
+            android:paddingBottom="11dp"
             android:background="#C2424242">
 
             <TextView
@@ -335,10 +346,10 @@
                 android:textStyle="bold"
                 android:textColor="#FFFFFF" 
                 android:maxLines="2"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMinTextSize="9sp"
-                android:autoSizeMaxTextSize="14sp"
-                android:autoSizeStepGranularity="1sp" />
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="9sp"
+                app:autoSizeMaxTextSize="14sp"
+                app:autoSizeStepGranularity="1sp" />
         </LinearLayout>
 
         <!-- Mantido oculto para compatibilidade do código -->
@@ -352,7 +363,8 @@
         android:layout_width="match_parent"
         android:layout_height="110dp"
         android:orientation="horizontal"
-        android:paddingHorizontal="6dp">
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp">
 
         <FrameLayout
             android:id="@+id/frameThumbResumo"

@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "zh": "病历号 %1$s 已登记给 %2$s。\\n\\n请先确认是否为同一位患者。"
+ },
+ {
+  "k": "gate_identidade",
+  "zh": "您正在完成以下患者的模拟定位：\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "zh": "模拟定位已保存。"
+ },
+ {
+  "k": "banner_nova_sim",
+  "zh": "新模拟 %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "zh": "核对标签信息"
+ },
+ {
+  "k": "gallery_open_fail",
+  "zh": "无法打开相册。"
+ },
+ {
+  "k": "sync_falta_senha",
+  "zh": "等待输入密码 — 点击填写。"
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "zh": "同步目标已导入，但不含密码：密码在每台设备上加密保存，不随配置包传输，而配置包会通过电子邮件和U盘流转。\n\n请打开每个目标，在本平板上输入一次密码。之后它们会自动启用。"
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "zh": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "zh": "(未设置)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "zh": "语言"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "zh": "机构"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "zh": "照片文件夹"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "zh": "打印机"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "zh": "打印方式"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "zh": "标签 %1$d×%2$d 毫米"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "zh": "含 Time-Out 页"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "zh": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "zh": "患者：%1$s"
+ }
+]

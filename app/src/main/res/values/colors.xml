@@ -44,6 +44,15 @@
     <color name="bg_input">#1A2545</color>
     <color name="divider">#1E2D52</color>
 
+    <!--
+        Fundo da faixa de abas, que agora FLUTUA sobre o visor.
+
+        E o bg_card com 85% de opacidade, e a translucidez e a funcao: quem
+        enquadra precisa continuar vendo o que esta atras da faixa. Opaco, a
+        barra voltaria a ser uma barra, so que por cima da imagem.
+    -->
+    <color name="bg_abas_flutuante">#D90B132C</color>
+
     <!-- Indicadores -->
     <color name="badge_red">#C62828</color>
     <color name="overlay_dark">#CC000000</color>
@@ -69,5 +78,14 @@
          de opacidade pela View: apagado de proposito, para o confirmado ter
          para onde subir. -->
     <color name="confirm_pendente">#90A4AE</color>
+    <!--
+        VERMELHO DE PRIMEIRO PLANO, para texto sobre fundo escuro.
+
+        error_red (#C62828) foi escolhido para ser FUNDO de botao, com texto
+        branco por cima. Como TEXTO sobre bg_elevated (#0E1839) ele quase some —
+        mesmo raciocinio que ja esta escrito acima para o confirm_green. Este e
+        o par dele: da ~5,5:1 contra bg_elevated e continua lendo como vermelho.
+    -->
+    <color name="error_red_fg">#FF6B6B</color>
     <color name="error_red">#C62828</color>
 </resources>

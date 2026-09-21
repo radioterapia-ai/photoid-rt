@@ -250,9 +250,28 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                     // Mesma resolução da leitura, para gravar onde se lê.
                     val pasta = pastaDaSimulacao() ?: return@withContext false
 
+                    // LÊ ANTES DE GRAVAR, e não é ordem à toa.
+                    //
+                    // Registro tem NOVE campos; esta chamada passava SETE
+                    // posicionais, então fracoesMax e protocoloId caíam nos
+                    // defaults (0 e ""). A preservação existia logo abaixo —
+                    // relia o registro para reaproveitar as frações —, mas lia
+                    // DEPOIS desta gravação, ou seja, relia o zero que ela
+                    // acabara de escrever. O efeito é o que o comentário de lá
+                    // já descrevia e que continuou acontecendo: corrigir o nome
+                    // do médico apagava o número de frações, e o realce da
+                    // última fração sumia da folha sem ninguém ter pedido.
+                    val regAnterior = try {
+                        TimeOutStore.ler(pasta, numeroSimulacao)
+                    } catch (_: Exception) { null }
+
                     // Grava Time-Out + observação desta simulação.
                     TimeOutStore.gravar(pasta, numeroSimulacao,
-                        TimeOutStore.Registro(true, med, sitio, risco, prec, equip, alergia))
+                        TimeOutStore.Registro(
+                            true, med, sitio, risco, prec, equip, alergia,
+                            fracoesMax = regAnterior?.fracoesMax ?: 0,
+                            protocoloId = protocoloUi.ifBlank { regAnterior?.protocoloId ?: "" }
+                        ))
                     ObsStore.gravar(pasta, numeroSimulacao, obs)
                     // Guarda equipamento/médico habituais no cadastro (comodidade).
                     equip.takeIf { it.isNotBlank() }?.let { patientCache.atualizarEquipamento(nomePaciente, it, prontuario) }
@@ -261,6 +280,12 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                     // Monta a lista de fotos da simulação para regenerar o PDF.
                     val fotos = mutableListOf<File>()
                     val rotulos = mutableListOf<String>()
+                    // VOCABULARIO CANONICO EM PORTUGUES, DE PROPOSITO — nao e literal esquecido.
+                    // O PdfBuilder recebe estes rotulos em PT e os traduz no ponto de
+                    // desenho, em traduzirRotulo(), com pdf_lbl_face/label/positioning/
+                    // accessory. Trocar por getString aqui QUEBRA o mapa: "Rosto" deixa
+                    // de casar e o rotulo sai sem traducao. Tambem quebra ehEtiqueta(),
+                    // que compara a base contra "Etiqueta".
                     sim.rosto?.let { fotos.add(it.arquivoLocal); rotulos.add("Rosto") }
                     sim.etiqueta?.let { fotos.add(it.arquivoLocal); rotulos.add("Etiqueta") }
                     sim.posicionamentos.forEachIndexed { i, f ->
@@ -281,14 +306,12 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                         sexo = dadosPac?.sexo ?: "",
                         medicoAssistente = med
                     )
-                    // PRESERVA o numero de fracoes ja gravado. Esta tela ainda
-                    // nao tem o campo; construir sem ele zeraria o valor a cada
-                    // edicao de medico ou sitio, e o realce da ultima fracao
-                    // sumiria da folha sem ninguem ter pedido.
-                    val regGravado = try {
-                        com.radioterapia.ai.util.TimeOutStore.ler(pasta, numeroSimulacao)
-                    } catch (_: Exception) { null }
-                    val fracoesGravadas = regGravado?.fracoesMax ?: 0
+                    // As frações vêm de regAnterior, lido ANTES da gravação lá em
+                    // cima. Antes havia aqui uma segunda leitura do disco com
+                    // este mesmo propósito, só que ela rodava depois do gravar e
+                    // por isso relia o zero que o gravar tinha acabado de
+                    // escrever. Uma leitura só, no lugar certo.
+                    val fracoesGravadas = regAnterior?.fracoesMax ?: 0
                     // O QUE ESTA NA TELA MANDA. Antes so o valor gravado era
                     // reaproveitado, porque nao havia como muda-lo; agora que ha,
                     // reaproveita-lo ignoraria a escolha que o usuario acabou de

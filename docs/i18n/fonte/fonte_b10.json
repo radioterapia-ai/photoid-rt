@@ -1,0 +1,78 @@
+[
+ {
+  "k": "pront_em_uso",
+  "pt": "O prontuário %1$s já está cadastrado para %2$s.\\n\\nConfira se é o mesmo paciente antes de continuar."
+ },
+ {
+  "k": "gate_identidade",
+  "pt": "Você está fechando a simulação de:\\n%1$s"
+ },
+ {
+  "k": "fin_ok_salva",
+  "pt": "Simulação salva."
+ },
+ {
+  "k": "banner_nova_sim",
+  "pt": "Nova sim. %1$d"
+ },
+ {
+  "k": "confirm_etiqueta_title",
+  "pt": "Confira os dados da etiqueta"
+ },
+ {
+  "k": "gallery_open_fail",
+  "pt": "Não foi possível abrir a galeria."
+ },
+ {
+  "k": "sync_falta_senha",
+  "pt": "Aguardando a senha — toque para preencher."
+ },
+ {
+  "k": "sync_importados_sem_senha",
+  "pt": "Os destinos de sincronização foram importados SEM a senha: ela fica cifrada neste aparelho e não viaja no pacote, que segue por e-mail e pen-drive.\n\nAbra cada destino e digite a senha uma vez neste tablet. Eles ligam sozinhos depois disso."
+ },
+ {
+  "k": "wiz_resumo_linha",
+  "pt": "%1$s: %2$s"
+ },
+ {
+  "k": "nao_definido",
+  "pt": "(não definido)"
+ },
+ {
+  "k": "wiz_r_idioma",
+  "pt": "Idioma"
+ },
+ {
+  "k": "wiz_r_clinica",
+  "pt": "Clínica"
+ },
+ {
+  "k": "wiz_r_pasta",
+  "pt": "Pasta de fotos"
+ },
+ {
+  "k": "wiz_r_impressora",
+  "pt": "Impressora"
+ },
+ {
+  "k": "wiz_r_impressao",
+  "pt": "Impressão"
+ },
+ {
+  "k": "wiz_r_etiqueta",
+  "pt": "Etiqueta %1$d×%2$d mm"
+ },
+ {
+  "k": "wiz_r_timeout",
+  "pt": "Time-Out incluído"
+ },
+ {
+  "k": "wiz_r_pdf",
+  "pt": "PDF"
+ },
+ {
+  "k": "ap_faixa_paciente",
+  "pt": "Paciente: %1$s"
+ }
+]

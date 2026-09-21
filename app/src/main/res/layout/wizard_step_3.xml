@@ -34,7 +34,7 @@
         android:layout_marginTop="6dp"
         android:text="@string/wiz3_choose_logo"
         android:textColor="@color/text_on_dark"
-        android:backgroundTint="@color/brand_primary" />
+        android:backgroundTint="@color/brand_primary_dark" />
 
     <ImageView
         android:id="@+id/imgWizLogo"

@@ -88,6 +88,6 @@
             android:text="@string/next"
             android:textStyle="bold"
             android:textColor="@color/text_on_dark"
-            android:backgroundTint="@color/brand_primary" />
+            android:backgroundTint="@color/brand_primary_dark" />
     </LinearLayout>
 </LinearLayout>

@@ -212,6 +212,6 @@
             android:layout_marginTop="20dp"
             android:text="@string/about_open_website"
             android:textColor="@color/text_on_dark"
-            android:backgroundTint="@color/brand_primary" />
+            android:backgroundTint="@color/brand_primary_dark" />
     </LinearLayout>
 </ScrollView>

@@ -43,7 +43,10 @@ IDIOMAS = ["fr", "de", "it", "pl", "zh", "ja", "ko", "ar", "bn"]
 # b6 nasceu depois: e o bloco das strings acrescentadas apos a primeira
 # rodada. Bloco novo em vez de refatiar b1..b5, que invalidaria o que ja
 # estava traduzido.
-BLOCOS = ["b1", "b2", "b3", "b4", "b5", "juridico", "b6", "b7", "b8", "b9"]
+# b10 nasceu na rodada de correcoes de 20-21/09/2026, pelo mesmo
+# criterio do b6: bloco novo em vez de refatiar os anteriores.
+BLOCOS = ["b1", "b2", "b3", "b4", "b5", "juridico", "b6", "b7", "b8",
+          "b9", "b10"]
 
 PADRAO = re.compile(r'<string name="([^"]+)"[^>]*>(.*?)</string>', re.S)
 PLACEHOLDER = re.compile(r"%(?:\d+\$)?[a-zA-Z]")

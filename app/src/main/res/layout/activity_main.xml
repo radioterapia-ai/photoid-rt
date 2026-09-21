@@ -10,6 +10,7 @@
       CAPTURAR redondo vermelho 3D (sempre visível, perto do polegar direito).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -32,7 +33,7 @@
             android:layout_toStartOf="@+id/txtCategoriaAtiva"
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:maxLines="2"
@@ -43,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:text="Rosto" />
@@ -190,7 +191,7 @@
             <ImageButton
                 android:id="@+id/btnSwitchCam"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_switch_camera"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/switch_cam_label" />
@@ -209,7 +210,7 @@
             <ImageButton
                 android:id="@+id/btnFlash"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_flash_off"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/flash_label" />
@@ -225,7 +226,7 @@
             <ImageButton
                 android:id="@+id/btnMute"
                 android:layout_width="44dp"
-                android:layout_height="44dp"
+                android:layout_height="48dp"
                 android:src="@drawable/ic_sound_on"
                 android:background="@android:color/transparent"
                 android:layout_marginTop="6dp"
@@ -266,6 +267,58 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:visibility="gone" />
+        <!--
+            AS ABAS FLUTUAM SOBRE A BASE DO VISOR.
+
+            Elas viviam numa barra propria abaixo do visor, e duas coisas saiam
+            disso. A primeira e que a barra roubava altura da captura. A segunda
+            e que a troca automatica de categoria, que acontece sozinha depois
+            de salvar, so era anunciada por um Toast de dois segundos na
+            periferia — numa tela em que o tecnico esta olhando o paciente, nao
+            o tablet. O comentario de avancarCategoriaAutomatica ja dizia que
+            "ninguem confere a barra de abas antes de cada disparo", e a solucao
+            escolhida era justamente a que so funciona se a pessoa estiver
+            olhando.
+
+            Dentro do visor, o estado fica no caminho do olho. O fundo e
+            translucido de proposito: quem enquadra precisa continuar vendo o
+            que esta atras da faixa.
+
+            O indicador continua no mesmo FrameLayout das abas, porque precisa
+            poder se sobrepor a elas; como irmao num LinearLayout ele empurraria
+            a altura.
+        -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
+
+        <LinearLayout
+            android:id="@+id/tabsCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <include layout="@layout/category_tab" android:id="@+id/tabFace" />
+            <include layout="@layout/category_tab" android:id="@+id/tabLabel" />
+            <include layout="@layout/category_tab" android:id="@+id/tabPositioning" />
+            <include layout="@layout/category_tab" android:id="@+id/tabAccessories" />
+            <include layout="@layout/category_tab" android:id="@+id/tabDocs" />
+        </LinearLayout>
+
+            <!--
+                O INDICADOR. Largura zero aqui de proposito: ela e calculada
+                em codigo a partir do numero de abas que existirem, para o
+                dia em que uma categoria entrar ou sair nao deixar o
+                indicador com o tamanho errado.
+            -->
+            <View
+                android:id="@+id/indicadorAba"
+                android:layout_width="0dp"
+                android:layout_height="3dp"
+                android:layout_gravity="bottom|start"
+                android:background="@color/brand_primary" />
+        </FrameLayout>
     </FrameLayout>
 
     <!-- REGIÃO INFERIOR: esquerda (tabs + ações) | direita (botão capturar redondo) -->
@@ -281,41 +334,6 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <!--
-                As abas e o indicador que desliza entre elas, no mesmo
-                FrameLayout: o indicador precisa poder se sobrepor a barra, e
-                como irmao num LinearLayout ele empurraria a altura.
-            -->
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/tabsCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <include layout="@layout/category_tab" android:id="@+id/tabFace" />
-                <include layout="@layout/category_tab" android:id="@+id/tabLabel" />
-                <include layout="@layout/category_tab" android:id="@+id/tabPositioning" />
-                <include layout="@layout/category_tab" android:id="@+id/tabAccessories" />
-                <include layout="@layout/category_tab" android:id="@+id/tabDocs" />
-            </LinearLayout>
-
-                <!--
-                    O INDICADOR. Largura zero aqui de proposito: ela e calculada
-                    em codigo a partir do numero de abas que existirem, para o
-                    dia em que uma categoria entrar ou sair nao deixar o
-                    indicador com o tamanho errado.
-                -->
-                <View
-                    android:id="@+id/indicadorAba"
-                    android:layout_width="0dp"
-                    android:layout_height="3dp"
-                    android:layout_gravity="bottom|start"
-                    android:background="@color/brand_primary" />
-            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/layoutAcoesPosFoto"
@@ -367,10 +385,10 @@
                     android:textSize="15sp"
                     android:backgroundTint="@color/action_neutral"
             android:maxLines="2"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="9sp"
-            android:autoSizeMaxTextSize="14sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeStepGranularity="1sp" />
 
                 <Button
                     android:id="@+id/btnGaleria"
@@ -383,10 +401,10 @@
                     android:textSize="15sp"
                     android:backgroundTint="@color/action_neutral"
                     android:maxLines="2"
-                    android:autoSizeTextType="uniform"
-                    android:autoSizeMinTextSize="9sp"
-                    android:autoSizeMaxTextSize="14sp"
-                    android:autoSizeStepGranularity="1sp" />
+                    app:autoSizeTextType="uniform"
+                    app:autoSizeMinTextSize="9sp"
+                    app:autoSizeMaxTextSize="14sp"
+                    app:autoSizeStepGranularity="1sp" />
 
                 <Button
                     android:id="@+id/btnFinalizar"
@@ -400,10 +418,10 @@
                     android:textSize="15sp"
                     android:backgroundTint="@color/brand_primary_dark"
             android:maxLines="2"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="9sp"
-            android:autoSizeMaxTextSize="14sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeStepGranularity="1sp" />
             </LinearLayout>
         </LinearLayout>
 

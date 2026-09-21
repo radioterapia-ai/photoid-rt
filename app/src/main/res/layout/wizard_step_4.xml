@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
         android:layout_width="wrap_content"
@@ -44,10 +45,10 @@
             android:textColor="@color/text_on_dark"
             android:backgroundTint="@color/success_green"
             android:maxLines="2"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="9sp"
-            android:autoSizeMaxTextSize="14sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeStepGranularity="1sp" />
 
         <Button
             android:id="@+id/btnWizEscolherPastaFotos"
@@ -57,12 +58,12 @@
             android:layout_marginStart="6dp"
             android:text="@string/choose_other_folder"
             android:textColor="@color/text_on_dark"
-            android:backgroundTint="@color/brand_primary"
+            android:backgroundTint="@color/brand_primary_dark"
             android:maxLines="2"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="9sp"
-            android:autoSizeMaxTextSize="14sp"
-            android:autoSizeStepGranularity="1sp" />
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="9sp"
+            app:autoSizeMaxTextSize="14sp"
+            app:autoSizeStepGranularity="1sp" />
     </LinearLayout>
 
     <TextView

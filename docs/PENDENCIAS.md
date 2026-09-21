@@ -120,3 +120,9 @@ aparecer com frequência, vale reavaliar os limiares de decisão.
 **`runBlocking` no EditarPaciente.** A regeneração do PDF após migração usa
 `runBlocking` para chamar uma função suspensa. Funciona, mas bloqueia a thread;
 se a busca ficar lenta, converter para coroutine adequada.
+
+## Pipeline de i18n defasado em 85 strings (21/09/2026)
+
+`docs/i18n/pendente/traducoes` tem 779 chaves; `res/values-XX` tem 864.
+`i18n_montar.py --gravar` apagaria as 85 e ressuscitaria 5 ja removidas.
+Detalhe e o caminho de ressincronizacao em `docs/i18n/LEIA-ME.md`.
