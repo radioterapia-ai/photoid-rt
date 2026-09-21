@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "fr": "par Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "fr": "Choisi"
+ },
+ {
+  "k": "date_format_label",
+  "fr": "Format de date"
+ },
+ {
+  "k": "date_format_hint",
+  "fr": "S’applique à ce que vous saisissez. La date imprimée sur la fiche écrit toujours le mois en lettres, ce qui lève toute ambiguïté."
  }
 ]

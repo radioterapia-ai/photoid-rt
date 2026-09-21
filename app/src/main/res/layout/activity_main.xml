@@ -129,13 +129,19 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
             Embaixo e nao em cima: o que o tecnico precisa ver enquanto enquadra
             e o rosto ou o acessorio, que ficam no meio do visor. Um aviso no
             topo cobriria a faixa onde a etiqueta costuma aparecer.
+
+            A MARGEM VEM DE @dimen, e nao dos 22dp de antes: a faixa de abas
+            passou a flutuar sobre a base do visor, e o aviso ficava por cima
+            dela. A margem e a altura da faixa mais a folga, entao ele sobe
+            junto quando a faixa muda de tamanho entre celular e tablet — com
+            um numero fixo, acertar um aparelho erraria o outro.
         -->
         <include
             layout="@layout/aviso_encaixar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="22dp" />
+            android:layout_marginBottom="@dimen/aviso_encaixar_base" />
 
         <!-- ZOOM vertical funcional (esquerda). clipChildren=false deixa a
              SeekBar girada aparecer e receber toque. -->

@@ -318,8 +318,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
         if (sincronizando && com.radioterapia.ai.ui.anim.Movimento.ligado(this)) {
             if (b.animation == null) {
+                // ANTI-HORARIO, seguindo as setas do proprio icone. Girando
+                // para o outro lado, o desenho e o movimento contam historias
+                // opostas e o olho le como defeito, nao como progresso.
                 b.startAnimation(android.view.animation.RotateAnimation(
-                    0f, 360f,
+                    0f, -360f,
                     android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
                     android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f
                 ).apply {

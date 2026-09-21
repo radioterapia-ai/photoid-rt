@@ -736,10 +736,19 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
                 ).apply { marginEnd = (10 * d).toInt() }
             }
             val marca = android.widget.ToggleButton(this).apply {
-                textOn = getString(R.string.confirm)
+                // "Escolhido" AFIRMA a selecao. `confirm` e "Sim, esta correto",
+                // a frase de um dialogo de confirmacao — dizia a coisa errada
+                // para o estado de um item marcado.
+                textOn = getString(R.string.prot_escolhido)
                 textOff = getString(R.string.prot_marcar)
                 isChecked = false
-                textSize = 11f
+                textSize = 12f
+                isAllCaps = false
+                setTextColor(androidx.core.content.ContextCompat.getColor(
+                    this@FinalizarActivity, R.color.text_on_dark))
+                minHeight = 0
+                minimumHeight = 0
+                setPadding((10 * d).toInt(), (6 * d).toInt(), (10 * d).toInt(), (6 * d).toInt())
             }
             val img = android.widget.ImageView(this).apply {
                 layoutParams = android.widget.LinearLayout.LayoutParams(lado, (lado * 0.72f).toInt())
@@ -758,7 +767,13 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
                 maxWidth = lado
                 maxLines = 2
             }
-            col.addView(marca); col.addView(img); col.addView(nome)
+            // A COLUNA INTEIRA e o alvo do realce, nao so a borda da imagem:
+            // miniatura, nome e marcador formam um cartao so, e e o cartao que
+            // o olho procura de longe.
+            col.setPadding((6 * d).toInt(), (6 * d).toInt(), (6 * d).toInt(), (6 * d).toInt())
+            col.isClickable = true
+            col.setOnClickListener { marca.performClick() }
+            col.addView(img); col.addView(nome); col.addView(marca)
             faixa.addView(col)
 
             marca.setOnClickListener {
@@ -777,12 +792,29 @@ class FinalizarActivity : com.radioterapia.ai.BaseActivity() {
     ) {
         for (i in 0 until faixa.childCount) {
             val col = faixa.getChildAt(i) as? android.widget.LinearLayout ?: continue
-            val marca = col.getChildAt(0) as? android.widget.ToggleButton ?: continue
-            val img = col.getChildAt(1) as? android.widget.ImageView ?: continue
+            val img = col.getChildAt(0) as? android.widget.ImageView ?: continue
+            val marca = col.getChildAt(2) as? android.widget.ToggleButton ?: continue
             val p = todos.getOrNull(i) ?: continue
             val sel = p.id == protocoloEscolhido
             marca.isChecked = sel
-            img.setBackgroundColor(if (sel) 0xFF119EE0.toInt() else 0x22FFFFFF)
+
+            /*
+                O CARTAO INTEIRO MUDA, nao quatro pixels em volta da imagem.
+
+                bg_bloco_selecionado e bg_bloco_normal sao os mesmos drawables
+                que as outras telas usam para dizer "este esta escolhido" — a
+                escolha passa a parecer a mesma coisa em todo o app.
+
+                O marcador tambem muda de cor: cinza do Material nos dois
+                estados fazia o botao do escolhido ficar identico ao dos outros,
+                e o estado do item ficava so no texto.
+             */
+            col.setBackgroundResource(
+                if (sel) R.drawable.bg_bloco_selecionado else R.drawable.bg_bloco_normal)
+            img.setBackgroundColor(0x00000000)
+            marca.backgroundTintList = android.content.res.ColorStateList.valueOf(
+                androidx.core.content.ContextCompat.getColor(this,
+                    if (sel) R.color.brand_primary_dark else R.color.action_neutral))
         }
     }
 

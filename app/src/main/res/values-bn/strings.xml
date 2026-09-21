@@ -899,4 +899,7 @@
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">রোগী: %1$s</string>
     <string name="authored_by">লেখক: Henrique Braga</string>
+    <string name="prot_escolhido">নির্বাচিত</string>
+    <string name="date_format_label">তারিখের বিন্যাস</string>
+    <string name="date_format_hint">আপনি যা লেখেন তার জন্য প্রযোজ্য। ফর্মে মুদ্রিত তারিখে মাসের নাম লেখা থাকে, তাই অস্পষ্টতা থাকে না।</string>
 </resources>

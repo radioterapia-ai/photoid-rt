@@ -89,7 +89,19 @@ object UiText {
 
     /** Máscara dd/MM/yyyy. A barra é inserida ANTES do próximo dígito (nunca
      *  fica sobrando no fim), senão o backspace trava ao chegar nela. */
-    fun aplicarMascaraData(edt: android.widget.EditText) {
+    /**
+     * A mascara segue a PREFERENCIA DO SERVICO, nao o dd/MM fixo de antes.
+     *
+     * dd/MM e MM/dd sao mecanicamente iguais — dois digitos, dois digitos,
+     * quatro — e so a interpretacao muda; yyyy-MM-dd corta em outro lugar. O
+     * corte e o separador vem de DateUtils.cortesDaMascara, que e o unico
+     * lugar que sabe disso.
+     *
+     * O padrao continua dd/MM/yyyy: quem nao configurou nada nao ve diferenca.
+     */
+    fun aplicarMascaraData(edt: android.widget.EditText,
+                           formato: String = "dd/MM/yyyy") {
+        val (cortes, separador) = com.radioterapia.ai.util.DateUtils.cortesDaMascara(formato)
         edt.addTextChangedListener(object : android.text.TextWatcher {
             private var editando = false
             override fun beforeTextChanged(s: CharSequence?, a: Int, b: Int, c: Int) {}
@@ -100,7 +112,7 @@ object UiText {
                 val dig = s.toString().filter { it.isDigit() }.take(8)
                 val sb = StringBuilder()
                 for ((i2, ch) in dig.withIndex()) {
-                    if (i2 == 2 || i2 == 4) sb.append('/')
+                    if (i2 in cortes) sb.append(separador)
                     sb.append(ch)
                 }
                 val novo = sb.toString()

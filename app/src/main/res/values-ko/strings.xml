@@ -899,4 +899,7 @@
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">환자: %1$s</string>
     <string name="authored_by">제작: Henrique Braga</string>
+    <string name="prot_escolhido">선택됨</string>
+    <string name="date_format_label">날짜 형식</string>
+    <string name="date_format_hint">입력 형식에만 적용됩니다. 용지에 인쇄되는 날짜는 항상 월 이름으로 표기되어 모호하지 않습니다.</string>
 </resources>

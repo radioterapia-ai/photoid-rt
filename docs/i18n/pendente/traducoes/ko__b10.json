@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "ko": "제작: Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "ko": "선택됨"
+ },
+ {
+  "k": "date_format_label",
+  "ko": "날짜 형식"
+ },
+ {
+  "k": "date_format_hint",
+  "ko": "입력 형식에만 적용됩니다. 용지에 인쇄되는 날짜는 항상 월 이름으로 표기되어 모호하지 않습니다."
  }
 ]

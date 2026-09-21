@@ -899,4 +899,7 @@ Ouvrez chaque destination et saisissez le mot de passe une fois sur cette tablet
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Patient : %1$s</string>
     <string name="authored_by">par Henrique Braga</string>
+    <string name="prot_escolhido">Choisi</string>
+    <string name="date_format_label">Format de date</string>
+    <string name="date_format_hint">S’applique à ce que vous saisissez. La date imprimée sur la fiche écrit toujours le mois en lettres, ce qui lève toute ambiguïté.</string>
 </resources>

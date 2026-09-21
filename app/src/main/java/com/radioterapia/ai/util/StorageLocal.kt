@@ -169,7 +169,8 @@ object StorageLocal {
 
     /**
      * Decide se uma pasta pertence ao paciente. Casa pelo NOME e aceita o sufixo
-     * do prontuário (dígitos) no fim, com qualquer separador (" - ", "_" ou espaço).
+     * do prontuário no fim — de qualquer formato, numérico ou não —, com
+     * qualquer separador (" - ", "_" ou espaço).
      * Assim a busca por nome encontra a pasta tanto no formato novo
      * ("NOME - PRONTUÁRIO") quanto em pastas antigas ("NOME_PRONTUÁRIO" ou só "NOME").
      */
@@ -177,6 +178,30 @@ object StorageLocal {
         val k = chaveNome(nomePasta)
         val alvo = chaveNome(nomePaciente)
         if (k == alvo) return true
+
+        /*
+            O PRONTUÁRIO NÃO PRECISA SER NUMÉRICO.
+
+            As duas regras abaixo exigem que o sufixo depois do nome seja só
+            dígitos, e o KDoc acima dizia isso com todas as letras. Só que
+            [nomePastaPaciente] grava o prontuário COMO ELE FOI DIGITADO, e
+            serviço nenhum é obrigado a usar prontuário numérico — "RT-2024-001"
+            e "A1234" são formatos comuns.
+
+            O efeito: a pasta existia, com as fotos dentro, e o módulo de
+            Tratamento dizia "paciente não encontrado", porque a varredura não
+            reconhecia a pasta como sendo dele. Pelo cadastro o paciente
+            continuava lá, com card e miniatura — que é como o defeito aparece
+            para quem usa.
+
+            A regra nova casa pela CONVENÇÃO DO NOME DA PASTA, que é
+            "NOME - PRONTUARIO": compara o que vem antes do último " - " com o
+            nome procurado. É a mesma convenção que EditarPacienteActivity já
+            usava para reencontrar a pasta na exclusão — as duas leituras do
+            mesmo formato agora concordam.
+         */
+        if (chaveNome(nomePasta?.substringBeforeLast(" - ")) == alvo) return true
+
         if (k.startsWith("$alvo ")) {
             val resto = k.removePrefix("$alvo ").trimStart('-', ' ', '_').trim()
             if (resto.isNotEmpty() && resto.all { it.isDigit() }) return true
@@ -252,6 +277,55 @@ object StorageLocal {
         candidatas.firstOrNull { chaveNome(nomeDaPasta(it.name)) == alvo }?.let { return it }
         return if (candidatas.size == 1) candidatas[0] else null
     }
+
+    /**
+     * TODAS as pastas deste paciente: a da simulação inicial e as de
+     * reirradiação ("... NOVA SIMULACAO n").
+     *
+     * POR QUE EXISTE. A exclusão do paciente montava o caminho à mão e, quando
+     * ele não existia, casava SÓ POR NOME — com duas homônimas, apagava as
+     * fotos da paciente errada. E apagava uma pasta só, deixando as de
+     * reirradiação para trás, embora prometesse remover tudo.
+     *
+     * A regra de divergência é a mesma de [escolherPasta], e por isso vale a
+     * pena repetir aqui o que ela significa NESTE uso: com prontuário
+     * informado, pasta cujo prontuário diverge não entra na lista. Na dúvida a
+     * lista sai VAZIA — quem chama trata a falta. Numa exclusão, não apagar
+     * nada é o erro barato; apagar a pasta de outra pessoa não tem volta.
+     */
+    fun pastasDoPaciente(context: Context, nomePaciente: String,
+                         prontuario: String = ""): List<File> =
+        pastasDoPaciente(photos(context), nomePaciente, prontuario)
+
+    /**
+     * A mesma decisão a partir da pasta PHOTOS já resolvida.
+     *
+     * Existe separada da versão com [Context] para que o teste alcance
+     * exatamente o que falhava — a ESCOLHA entre pastas homônimas —, sem
+     * precisar de Android no caminho.
+     */
+    fun pastasDoPaciente(base: File, nomePaciente: String,
+                         prontuario: String = ""): List<File> {
+        val todas = (base.listFiles() ?: return emptyList()).filter { it.isDirectory }
+        val achadas = mutableListOf<File>()
+        // Uma varredura por número de simulação, reaproveitando o desempate já
+        // validado: pastaCandidata separa por sufixo, escolherPasta decide
+        // entre as homônimas que sobraram.
+        var n = 1
+        while (n <= LIMITE_NOVA_SIM) {
+            val candidatas = todas.filter { pastaCandidata(it.name, nomePaciente, n) }
+            val escolhida = escolherPasta(candidatas, nomePaciente, prontuario)
+            if (escolhida != null && achadas.none { it.path == escolhida.path }) {
+                achadas.add(escolhida)
+            }
+            n++
+        }
+        return achadas
+    }
+
+    /** Teto da varredura de reirradiação. Alto o bastante para qualquer caso
+     *  real e finito o bastante para não varrer o disco à toa. */
+    private const val LIMITE_NOVA_SIM = 20
 
     /** "MARIA SILVA - 123 NOVA SIMULACAO 1" -> "MARIA SILVA". */
     fun nomeDaPasta(nomePasta: String): String =

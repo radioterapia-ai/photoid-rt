@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "it": "di Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "it": "Scelto"
+ },
+ {
+  "k": "date_format_label",
+  "it": "Formato data"
+ },
+ {
+  "k": "date_format_hint",
+  "it": "Vale per ciò che digiti. La data stampata sulla scheda riporta sempre il mese per esteso, che non è ambiguo."
  }
 ]

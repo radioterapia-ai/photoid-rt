@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "ja": "作: Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "ja": "選択済み"
+ },
+ {
+  "k": "date_format_label",
+  "ja": "日付の形式"
+ },
+ {
+  "k": "date_format_hint",
+  "ja": "入力する形式にのみ適用されます。用紙に印刷される日付は常に月名で書かれ、あいまいになりません。"
  }
 ]

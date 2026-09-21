@@ -1041,4 +1041,7 @@ Abra cada destino e digite a senha uma vez neste tablet. Eles ligam sozinhos dep
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Paciente: %1$s</string>
     <string name="authored_by">por Henrique Braga</string>
+    <string name="prot_escolhido">Escolhido</string>
+    <string name="date_format_label">Formato da data</string>
+    <string name="date_format_hint">Vale para o que você digita. A data impressa na ficha sai sempre com o mês por extenso, que não é ambíguo.</string>
 </resources>

@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "pl": "autor: Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "pl": "Wybrany"
+ },
+ {
+  "k": "date_format_label",
+  "pl": "Format daty"
+ },
+ {
+  "k": "date_format_hint",
+  "pl": "Dotyczy tego, co wpisujesz. Data drukowana na karcie zawsze zawiera nazwę miesiąca, co nie jest dwuznaczne."
  }
 ]

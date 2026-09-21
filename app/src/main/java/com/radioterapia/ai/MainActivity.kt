@@ -1105,7 +1105,7 @@ class MainActivity : BaseActivity() {
         val etNome = view.findViewById<EditText>(R.id.etNovoNome)
         val etNasc = view.findViewById<EditText>(R.id.etNovoNascimento)
         val etProt = view.findViewById<EditText>(R.id.etNovoProntuario)
-        com.radioterapia.ai.util.UiText.aplicarMascaraData(etNasc)
+        com.radioterapia.ai.util.UiText.aplicarMascaraData(etNasc, config.formatoData)
         // Obrigatórios com asterisco vermelho
         fun asterisco(id: Int, resId: Int) {
             view.findViewById<TextView>(id).text = android.text.Html.fromHtml(
@@ -1150,7 +1150,9 @@ class MainActivity : BaseActivity() {
                 setOnShowListener {
                     getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         val nome = etNome.text.toString().trim()
-                        val nasc = etNasc.text.toString().trim()
+                        // Do formato do servico para o canonico, ANTES de validar.
+                        val nasc = com.radioterapia.ai.util.DateUtils.entradaParaCanonico(
+                            etNasc.text.toString().trim(), config.formatoData)
                         val pront = etProt.text.toString().trim()
                         if (nome.isEmpty()) {
                             etNome.error = getString(R.string.name_required)
@@ -1286,12 +1288,14 @@ class MainActivity : BaseActivity() {
         rbSexoF.isChecked = sexoSugerido == "F"
 
         edtNome.setText(nomeSugerido)
-        edtNasc.setText(nascSugerida)
+        // A sugestao do OCR vem canonica (dd/MM/yyyy); o campo mostra no
+        // formato do servico.
+        edtNasc.setText(com.radioterapia.ai.util.DateUtils.canonicoParaEntrada(nascSugerida, config.formatoData))
         edtPront.setText(prontSugerido)
 
         edtNasc.inputType = android.text.InputType.TYPE_CLASS_NUMBER
         edtNasc.keyListener = android.text.method.DigitsKeyListener.getInstance("0123456789/")
-        com.radioterapia.ai.util.UiText.aplicarMascaraData(edtNasc)
+        com.radioterapia.ai.util.UiText.aplicarMascaraData(edtNasc, config.formatoData)
 
         /*
             UM VISTO POR CAMPO, e editar o campo desfaz o visto dele.
@@ -1345,7 +1349,8 @@ class MainActivity : BaseActivity() {
                 setOnShowListener {
                     getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         val nome = edtNome.text.toString().trim()
-                        val nasc = edtNasc.text.toString().trim()
+                        val nasc = com.radioterapia.ai.util.DateUtils.entradaParaCanonico(
+                            edtNasc.text.toString().trim(), config.formatoData)
                         val pront = edtPront.text.toString().trim()
 
                         /*
@@ -1629,7 +1634,7 @@ class MainActivity : BaseActivity() {
         val etNome = view.findViewById<EditText>(R.id.etNovoNome)
         val etNasc = view.findViewById<EditText>(R.id.etNovoNascimento)
         val etProt = view.findViewById<EditText>(R.id.etNovoProntuario)
-        com.radioterapia.ai.util.UiText.aplicarMascaraData(etNasc)
+        com.radioterapia.ai.util.UiText.aplicarMascaraData(etNasc, config.formatoData)
         fun asterisco2(id: Int, resId: Int) {
             view.findViewById<TextView>(id).text = android.text.Html.fromHtml(
                 getString(resId) + " <font color='#E53935'>*</font>",
@@ -1643,7 +1648,8 @@ class MainActivity : BaseActivity() {
         asterisco2(R.id.lblSexo, R.string.cad_sexo_label_req)
 
         etNome.setText(sessionManager.nomePaciente)
-        etNasc.setText(sessionManager.dataNascimento)
+        etNasc.setText(com.radioterapia.ai.util.DateUtils.canonicoParaEntrada(
+            sessionManager.dataNascimento, config.formatoData))
         etProt.setText(sessionManager.prontuario)
         val dadosPac = patientCache.obterDadosPaciente(sessionManager.nomePaciente)
         when (dadosPac?.sexo) {
@@ -1661,7 +1667,9 @@ class MainActivity : BaseActivity() {
                 setOnShowListener {
                     getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         val nome = etNome.text.toString().trim()
-                        val nasc = etNasc.text.toString().trim()
+                        // Do formato do servico para o canonico, ANTES de validar.
+                        val nasc = com.radioterapia.ai.util.DateUtils.entradaParaCanonico(
+                            etNasc.text.toString().trim(), config.formatoData)
                         val pront = etProt.text.toString().trim()
                         if (nome.isBlank()) {
                             Toast.makeText(this@MainActivity, getString(R.string.hc_name_empty), Toast.LENGTH_SHORT).show()

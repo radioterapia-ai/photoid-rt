@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "pt": "por Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "pt": "Escolhido"
+ },
+ {
+  "k": "date_format_label",
+  "pt": "Formato da data"
+ },
+ {
+  "k": "date_format_hint",
+  "pt": "Vale para o que você digita. A data impressa na ficha sai sempre com o mês por extenso, que não é ambíguo."
  }
 ]

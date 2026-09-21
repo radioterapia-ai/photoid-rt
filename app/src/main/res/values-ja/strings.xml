@@ -899,4 +899,7 @@
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">患者: %1$s</string>
     <string name="authored_by">作: Henrique Braga</string>
+    <string name="prot_escolhido">選択済み</string>
+    <string name="date_format_label">日付の形式</string>
+    <string name="date_format_hint">入力する形式にのみ適用されます。用紙に印刷される日付は常に月名で書かれ、あいまいになりません。</string>
 </resources>

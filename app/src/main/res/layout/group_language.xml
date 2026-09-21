@@ -27,6 +27,30 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp" />
 
+    <!--
+        FORMATO DE DATA, junto do idioma porque e a mesma pergunta: como este
+        servico escreve as coisas. Vale para o que o tecnico DIGITA; o que e
+        gravado continua canonico, e a ficha impressa continua com o mes por
+        extenso, que nao e ambiguo em idioma nenhum.
+    -->
+    <TextView
+        style="@style/FieldLabel"
+        android:text="@string/date_format_label" />
+
+    <Spinner
+        android:id="@+id/spinnerFormatoData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="13sp"
+        android:textColor="@color/text_tertiary"
+        android:text="@string/date_format_hint" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

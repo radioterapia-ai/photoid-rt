@@ -16,6 +16,10 @@
     <dimen name="secondary_btn_height">78dp</dimen>
 
     <!-- Câmera -->
+    <!-- Altura do aviso "ajuste para encaixar" sobre a base do visor.
+         E cam_tab_height + 22dp: ele tem que ficar ACIMA da faixa de
+         abas, que passou a flutuar sobre o visor. -->
+    <dimen name="aviso_encaixar_base">78dp</dimen>
     <dimen name="cam_tab_height">56dp</dimen>
     <dimen name="cam_action_height">64dp</dimen>
     <!-- O obturador. Tem que CABER na barra: ela mede

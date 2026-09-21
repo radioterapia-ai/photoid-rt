@@ -38,6 +38,7 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
 
     private lateinit var edtNome: EditText
     private lateinit var edtNasc: EditText
+    private val configData by lazy { com.radioterapia.ai.AppConfig(this) }
     private lateinit var edtPront: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,9 +64,11 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
         edtPront = findViewById(R.id.edtEditPront)
 
         edtNome.setText(dados.nome)
-        edtNasc.setText(dados.nascimento)
+        // O campo mostra no formato do servico; o cadastro guarda canonico.
+        edtNasc.setText(com.radioterapia.ai.util.DateUtils.canonicoParaEntrada(
+            dados.nascimento, configData.formatoData))
         edtPront.setText(dados.prontuario)
-        com.radioterapia.ai.util.UiText.aplicarMascaraData(edtNasc)
+        com.radioterapia.ai.util.UiText.aplicarMascaraData(edtNasc, configData.formatoData)
         // Sexo/Médico (corrigíveis na edição do cadastro)
         when (dados.sexo) {
             "M" -> findViewById<android.widget.RadioButton>(R.id.rbEditSexoM).isChecked = true
@@ -83,7 +86,11 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
 
     private fun salvar() {
         val novoNome = edtNome.text.toString().trim()
-        val novoNasc = edtNasc.text.toString().trim()
+        // De volta ao canonico ANTES de qualquer validacao ou gravacao. String
+        // vazia = data invalida no formato escolhido, e quem chama ja trata
+        // nascimento vazio.
+        val novoNasc = com.radioterapia.ai.util.DateUtils.entradaParaCanonico(
+            edtNasc.text.toString().trim(), configData.formatoData)
         val novoPront = edtPront.text.toString().trim()
 
         if (novoNome.isBlank()) {
@@ -214,16 +221,16 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
             val prefA = normalizarNome(nomeOriginal).replace(" ", "_")
             val prefN = normalizarNome(novoNome).replace(" ", "_")
 
-            // Pasta antiga: pelo padrão "NOME - PRONT"; fallback: varredura por chave.
-            var dirAntigo = java.io.File(photos,
-                com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomeOriginal, prontAntigo))
-            if (!dirAntigo.exists()) {
-                dirAntigo = photos.listFiles()?.firstOrNull { d ->
-                    d.isDirectory && com.radioterapia.ai.util.StorageLocal.chaveNome(
-                        d.name.substringBeforeLast(" - ")) ==
-                        com.radioterapia.ai.util.StorageLocal.chaveNome(nomeOriginal)
-                } ?: dirAntigo
-            }
+            // Pasta antiga pelo resolvedor oficial. O fallback anterior casava
+            // SO POR NOME: com duas homonimas, editar o cadastro de uma
+            // renomeava a pasta da outra, e as fotos passavam a morar sob o
+            // nome errado sem nenhum aviso. resolverPastaSim aplica a regra de
+            // divergencia de prontuario e, quando nao tem certeza, devolve o
+            // caminho exato (que nao existe) — e o `exists()` abaixo trata.
+            val dirAntigo = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
+                this, nomeOriginal, 1,
+                com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomeOriginal, prontAntigo),
+                prontAntigo)
             val dirNovo = java.io.File(photos,
                 com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(novoNome, novoPront))
 
@@ -395,18 +402,24 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
             val arquivos = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 var removidos = 0
                 try {
-                    val photos = com.radioterapia.ai.util.StorageLocal.photos(this@EditarPacienteActivity)
-                    val prontAntigo = dadosOriginais.prontuario
-                    var dir = java.io.File(photos,
-                        com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomeOriginal, prontAntigo))
-                    if (!dir.exists()) {
-                        dir = photos.listFiles()?.firstOrNull { d ->
-                            d.isDirectory && com.radioterapia.ai.util.StorageLocal.chaveNome(
-                                d.name.substringBeforeLast(" - ")) ==
-                                com.radioterapia.ai.util.StorageLocal.chaveNome(nomeOriginal)
-                        } ?: dir
+                    // A pasta sai do MESMO resolvedor que a leitura usa. Antes
+                    // o caminho era montado aqui e, quando nao existia, havia um
+                    // casamento so por nome: com duas homonimas, a exclusao
+                    // apagava as fotos da paciente errada — e este e o caminho
+                    // do app que nao tem volta. pastasDoPaciente devolve VAZIO
+                    // na duvida, e vazio aqui significa "nao apaguei nada",
+                    // que e o erro barato.
+                    //
+                    // Sao TODAS as pastas, nao uma: reirradiacao mora em pastas
+                    // irmas ("... NOVA SIMULACAO n"), que antes sobreviviam a
+                    // uma exclusao que prometia remover tudo.
+                    val pastas = com.radioterapia.ai.util.StorageLocal.pastasDoPaciente(
+                        this@EditarPacienteActivity, nomeOriginal, dadosOriginais.prontuario)
+                    for (dir in pastas) {
+                        if (!dir.exists()) continue
+                        removidos += dir.walkBottomUp().count { it.isFile }
+                        dir.deleteRecursively()
                     }
-                    if (dir.exists()) { removidos = dir.walkBottomUp().count { it.isFile }; dir.deleteRecursively() }
                 } catch (_: Exception) {}
                 patientCache.remover(nomeOriginal, dadosOriginais.prontuario)
                 patientCache.removerPorNome(nomeOriginal)  // chaves legadas/órfãs

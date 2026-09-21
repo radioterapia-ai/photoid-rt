@@ -899,4 +899,7 @@ Apri ogni destinazione e digita la password una volta su questo tablet. Dopo si 
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Paziente: %1$s</string>
     <string name="authored_by">di Henrique Braga</string>
+    <string name="prot_escolhido">Scelto</string>
+    <string name="date_format_label">Formato data</string>
+    <string name="date_format_hint">Vale per ciò che digiti. La data stampata sulla scheda riporta sempre il mese per esteso, che non è ambiguo.</string>
 </resources>

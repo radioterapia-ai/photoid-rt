@@ -52,6 +52,17 @@ object EtiquetaParser {
             if (combinado.length <= 80) return combinado
         }
 
+        /*
+            O ROTULO SAI ANTES de a linha ser aceita, e nao depois.
+
+            "PACIENTE MARIA DA SILVA" sem os dois-pontos passa em pareceNome()
+            inteiro — nao e um rotulo sozinho, tem quatro palavras e nenhum
+            digito. Aceitar a linha primeiro e so entao tentar descolar o
+            rotulo nunca chega a acontecer: o `return` ja foi. O nome ia para o
+            cadastro e para a pasta em disco com "PACIENTE" na frente.
+         */
+        val l1SemRotulo = semRotuloInicial(l1)
+        if (l1SemRotulo != l1 && pareceNome(l1SemRotulo)) return l1SemRotulo
         if (l1ParecesserNome) return l1
 
         // Critério 4 (fallback): maiúsculas, 2+ palavras, sem dígitos
@@ -81,9 +92,85 @@ object EtiquetaParser {
      * Indica se a linha parece ser parte de um nome de pessoa.
      * Aceita 1 palavra (caso o nome esteja quebrado) ou mais.
      */
+
+    /**
+     * Palavras que sao ROTULO DE CAMPO, e nunca nome de paciente.
+     *
+     * POR QUE ISTO EXISTE. As etiquetas costumam trazer "PACIENTE: MARIA DA
+     * SILVA". O criterio do rotulo explicito resolve esse caso — quando o OCR
+     * le os dois-pontos. So que dois-pontos e um sinal fino, e o ML Kit o perde
+     * com frequencia: sobra a linha "PACIENTE", que passa em pareceNome()
+     * (oito letras, sem digito, 100% letras) e vira o nome do paciente.
+     *
+     * Relatado em campo em 21/09/2026, e acontecia todo dia.
+     *
+     * A LISTA E MULTILINGUE porque o app e universal. A etiqueta e impressa
+     * pelo sistema do hospital, no idioma dele, e nao no idioma em que o
+     * tablet esta configurado — um servico em Lisboa e um em Berlim imprimem
+     * rotulos diferentes e o app tem que ignorar os dois.
+     *
+     * Estao aqui tambem os rotulos dos OUTROS campos da etiqueta (prontuario,
+     * nascimento, sexo, leito). Eles nunca foram o defeito relatado, mas caem
+     * na mesma armadilha pelo mesmo caminho, e descobri-los um a um custaria um
+     * relato de campo cada.
+     */
+    private val ROTULOS_DE_CAMPO = setOf(
+        // Portugues
+        "PACIENTE", "NOME", "NOME DO PACIENTE", "NOME COMPLETO", "PCTE", "PAC",
+        "PRONTUARIO", "REGISTRO", "MATRICULA", "ATENDIMENTO", "CONVENIO",
+        "NASCIMENTO", "DATA DE NASCIMENTO", "DATA NASC", "NASC", "SEXO",
+        "IDADE", "LEITO", "QUARTO", "SETOR", "DATA",
+        // Ingles
+        "PATIENT", "PATIENT NAME", "FULL NAME", "RECORD", "RECORD NUMBER",
+        "MRN", "CHART", "DOB", "DATE OF BIRTH", "BIRTH DATE", "SEX", "GENDER",
+        "AGE", "WARD", "BED", "ROOM", "DATE",
+        // Espanhol
+        "NOMBRE", "NOMBRE DEL PACIENTE", "NOMBRE COMPLETO", "HISTORIA",
+        "HISTORIA CLINICA", "EXPEDIENTE", "FECHA DE NACIMIENTO", "NACIMIENTO",
+        "EDAD", "CAMA", "HABITACION", "FECHA",
+        // Frances
+        "NOM", "NOM DU PATIENT", "NOM COMPLET", "PRENOM", "DOSSIER",
+        "DATE DE NAISSANCE", "NAISSANCE", "SEXE", "AGE", "LIT", "CHAMBRE",
+        // Alemao
+        "PATIENTENNAME", "VOLLSTANDIGER NAME", "AKTE", "FALLNUMMER",
+        "GEBURTSDATUM", "GEBURT", "GESCHLECHT", "ALTER", "ZIMMER", "BETT",
+        // Italiano
+        "PAZIENTE", "NOME DEL PAZIENTE", "CARTELLA", "CARTELLA CLINICA",
+        "DATA DI NASCITA", "NASCITA", "SESSO", "ETA", "LETTO", "STANZA",
+    )
+
+    /** Sem acento, em maiusculas, sem pontuacao de rotulo nas pontas. */
+    private fun normalizarRotulo(linha: String): String =
+        com.radioterapia.ai.util.StorageLocal.removerAcentosMaiusculas(linha)
+            .trim().trim(':', '-', '.', ',', ' ')
+            .replace(Regex("\\s+"), " ")
+
+    /** A linha INTEIRA e um rotulo de campo? */
+    private fun ehRotuloDeCampo(linha: String): Boolean =
+        normalizarRotulo(linha) in ROTULOS_DE_CAMPO
+
+    /**
+     * Tira o rotulo do comeco da linha, quando ele veio colado ao valor.
+     *
+     * "PACIENTE MARIA DA SILVA" sem os dois-pontos devolve "MARIA DA SILVA".
+     * So corta quando o que sobra ainda parece nome: cortar "NOME" de um
+     * paciente chamado "NOME..." (que nao existe) seria pior que nao cortar.
+     */
+    private fun semRotuloInicial(linha: String): String {
+        val norm = normalizarRotulo(linha)
+        val rotulo = ROTULOS_DE_CAMPO
+            .filter { norm.startsWith("$it ") }
+            .maxByOrNull { it.length } ?: return linha
+        val resto = norm.removePrefix("$rotulo ").trim(':', '-', ' ')
+        return if (resto.length >= 4 && resto.contains(' ')) resto else linha
+    }
+
     private fun pareceNome(linha: String): Boolean {
         if (linha.isBlank() || linha.length < 2 || linha.length > 80) return false
         if (linha.any { it.isDigit() }) return false
+        // ROTULO NAO E NOME. Sem isto, "PACIENTE" numa linha sozinha — o que
+        // sobra quando o OCR perde os dois-pontos — vira o nome do paciente.
+        if (ehRotuloDeCampo(linha)) return false
         // Pelo menos 70% das letras
         val letras = linha.count { it.isLetter() }
         val total = linha.count { !it.isWhitespace() }
@@ -154,6 +241,9 @@ object EtiquetaParser {
     private fun ehNomeValido(s: String): Boolean {
         if (s.length < 4 || s.length > 80) return false
         if (s.any { it.isDigit() }) return false
+        // Pega tambem os rotulos de DUAS palavras ("NOME DO PACIENTE"), que
+        // passariam pela exigencia de duas palavras logo abaixo.
+        if (ehRotuloDeCampo(s)) return false
         val palavras = s.split(Regex("\\s+"))
         return palavras.size >= 2
     }

@@ -899,4 +899,7 @@ Otwórz każde miejsce docelowe i wpisz hasło raz na tym tablecie. Potem włąc
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Pacjent: %1$s</string>
     <string name="authored_by">autor: Henrique Braga</string>
+    <string name="prot_escolhido">Wybrany</string>
+    <string name="date_format_label">Format daty</string>
+    <string name="date_format_hint">Dotyczy tego, co wpisujesz. Data drukowana na karcie zawsze zawiera nazwę miesiąca, co nie jest dwuznaczne.</string>
 </resources>

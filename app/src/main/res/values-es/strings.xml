@@ -972,4 +972,7 @@ Abra cada destino e introduzca la contraseña una vez en esta tableta. Se activa
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Paciente: %1$s</string>
     <string name="authored_by">por Henrique Braga</string>
+    <string name="prot_escolhido">Elegido</string>
+    <string name="date_format_label">Formato de fecha</string>
+    <string name="date_format_hint">Se aplica a lo que usted escribe. La fecha impresa en la hoja siempre lleva el mes en letras, que no es ambiguo.</string>
 </resources>

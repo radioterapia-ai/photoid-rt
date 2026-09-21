@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "zh": "作者：Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "zh": "已选择"
+ },
+ {
+  "k": "date_format_label",
+  "zh": "日期格式"
+ },
+ {
+  "k": "date_format_hint",
+  "zh": "仅影响您输入的内容。打印在表单上的日期始终以月份名称书写，不会产生歧义。"
  }
 ]

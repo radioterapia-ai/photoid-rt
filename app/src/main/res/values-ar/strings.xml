@@ -899,4 +899,7 @@
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">المريض: %1$s</string>
     <string name="authored_by">بقلم Henrique Braga</string>
+    <string name="prot_escolhido">تم الاختيار</string>
+    <string name="date_format_label">صيغة التاريخ</string>
+    <string name="date_format_hint">ينطبق على ما تكتبه. التاريخ المطبوع على الورقة يكتب اسم الشهر دائمًا، فلا يكون ملتبسًا.</string>
 </resources>

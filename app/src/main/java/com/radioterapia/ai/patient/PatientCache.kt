@@ -489,14 +489,41 @@ class PatientCache(context: Context) {
 
     /** Remove o registro cujo nome de pasta ("NOME - PRONTUARIO" ou "NOME") corresponda. */
     fun removerPorNomePasta(nomePasta: String) {
-        // O nome da pasta pode ter o prontuário no fim; a chave do cache é só o nome.
-        // Removemos a chave que seja prefixo do nome-da-pasta normalizado.
+        /*
+            COMPARA CHAVE NORMALIZADA COM CHAVE NORMALIZADA.
+
+            Esta função comparava o nome da pasta NORMALIZADO contra as chaves
+            CRUAS do cadastro, e por isso não removia nada quando a chave era
+            composta — que é o formato desde o schema 2:
+
+                pasta  "MARIA DA SILVA - 123456"  -> chavePadrao -> "MARIA DA SILVA 123456"
+                chave  "MARIA DA SILVA | 123456"
+
+            Os dois nunca casam, nem no `dados.has(alvo)` nem no `startsWith`.
+            O efeito em campo é exatamente o relatado: a pasta some, as fotos
+            somem, e o paciente continua na lista com o card e a miniatura —
+            aí abrir o resumo diz "paciente não encontrado", porque não há mais
+            pasta para varrer.
+
+            É a MESMA armadilha que removerPorNome já documenta três funções
+            acima, e que foi corrigida lá: `chavePadrao` remove o "|" e cola o
+            prontuário. A correção não veio para esta irmã.
+
+            Agora a comparação acontece dos dois lados normalizados, e pelas
+            duas partes da chave — a inteira e só o nome —, porque uma pasta
+            sem prontuário no fim tem que continuar removendo o registro dela.
+         */
         val alvo = chavePadrao(nomePasta)
-        val chaves = listarPacientes()
-        // tenta match exato primeiro
         if (dados.has(alvo)) { dados.remove(alvo); salvar(); return }
-        // senão, acha a chave que o nome-da-pasta começa com ela
-        val achada = chaves.firstOrNull { alvo == it || alvo.startsWith("$it ") }
+
+        val achada = chavesPacientes().firstOrNull { k ->
+            val kNorm = chavePadrao(k)
+            val soNome = chavePadrao(k.substringBefore(" | "))
+            kNorm == alvo ||
+                alvo == soNome ||
+                alvo.startsWith("$soNome ") ||
+                kNorm.startsWith("$alvo ")
+        }
         if (achada != null) { dados.remove(achada); salvar() }
     }
 

@@ -3,7 +3,9 @@ package com.radioterapia.ai.util
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 
 /**
  * Resolução da pasta do paciente.
@@ -104,5 +106,107 @@ class PastaPacienteTest {
     fun `extrai nome da pasta sem prontuario nem sufixo`() {
         assertEquals("MARIA SILVA",
             StorageLocal.nomeDaPasta("MARIA SILVA - 123 NOVA SIMULACAO 2"))
+    }
+
+    // ---------- prontuario NAO numerico (relato de campo, 21/09/2026) ----------
+
+    /**
+     * O prontuario nao precisa ser numerico, e a pasta nao se importa.
+     *
+     * `nomePastaPaciente` grava o prontuario COMO FOI DIGITADO, e servico
+     * nenhum e obrigado a usar numero puro — "RT-2024-001" e "A1234" sao
+     * formatos comuns. A comparacao exigia digitos no sufixo, entao a pasta
+     * existia, com as fotos dentro, e o modulo de Tratamento respondia
+     * "paciente nao encontrado". Pelo cadastro o paciente seguia la, com card
+     * e miniatura — que e como o defeito aparece para quem usa.
+     */
+    @Test
+    fun `pasta casa com prontuario alfanumerico`() {
+        assertTrue(StorageLocal.pastaCasaPaciente("MARIA SILVA - RT2024", "Maria Silva"))
+        assertTrue(StorageLocal.pastaCasaPaciente("MARIA SILVA - RT-2024-001", "Maria Silva"))
+        assertTrue(StorageLocal.pastaCasaPaciente("MARIA SILVA - A1234", "Maria Silva"))
+    }
+
+    @Test
+    fun `pasta com prontuario numerico continua casando`() {
+        assertTrue(StorageLocal.pastaCasaPaciente("MARIA SILVA - 123456", "Maria Silva"))
+        assertTrue(StorageLocal.pastaCasaPaciente("MARIA SILVA_123456", "Maria Silva"))
+        assertTrue(StorageLocal.pastaCasaPaciente("MARIA SILVA", "Maria Silva"))
+    }
+
+    /**
+     * A regra nova nao pode virar "casa com qualquer um": o sobrenome a mais
+     * precisa continuar sendo OUTRO paciente, senao a ficha de uma sai com as
+     * fotos de outra — que e o defeito que este arquivo inteiro existe para
+     * impedir.
+     */
+    @Test
+    fun `nome mais longo continua sendo outro paciente`() {
+        assertFalse(StorageLocal.pastaCasaPaciente("MARIA SILVA SANTOS - 99", "Maria Silva"))
+        assertFalse(StorageLocal.pastaCasaPaciente("MARIA SILVA SANTOS", "Maria Silva"))
+        assertFalse(StorageLocal.pastaCasaPaciente("JOAO SILVA - RT2024", "Maria Silva"))
+    }
+
+    // ---------- as pastas que a EXCLUSAO vai apagar ----------
+
+    @get:Rule
+    val tmp = TemporaryFolder()
+
+    private fun photos(vararg nomes: String): java.io.File {
+        val base = tmp.newFolder("PHOTOS")
+        for (n in nomes) java.io.File(base, n).mkdirs()
+        return base
+    }
+
+    @Test
+    fun `exclusao nao leva a pasta da homonima`() {
+        // O defeito: o casamento era so por nome, e o listFiles decidia qual
+        // das duas Marias perdia as fotos.
+        val base = photos("MARIA SILVA - 123", "MARIA SILVA - 456")
+        val achadas = StorageLocal.pastasDoPaciente(base, "Maria Silva", "456")
+        assertEquals(1, achadas.size)
+        assertEquals("MARIA SILVA - 456", achadas[0].name)
+    }
+
+    @Test
+    fun `exclusao leva tambem as pastas de reirradiacao`() {
+        val base = photos("MARIA SILVA - 123",
+                          "MARIA SILVA - 123 NOVA SIMULACAO 1",
+                          "MARIA SILVA - 123 NOVA SIMULACAO 2")
+        val achadas = StorageLocal.pastasDoPaciente(base, "Maria Silva", "123")
+        assertEquals(3, achadas.size)
+    }
+
+    @Test
+    fun `reirradiacao da homonima fica de fora`() {
+        val base = photos("MARIA SILVA - 123",
+                          "MARIA SILVA - 456 NOVA SIMULACAO 1")
+        val achadas = StorageLocal.pastasDoPaciente(base, "Maria Silva", "123")
+        assertEquals(1, achadas.size)
+        assertEquals("MARIA SILVA - 123", achadas[0].name)
+    }
+
+    @Test
+    fun `na duvida nao apaga nada`() {
+        // Prontuario informado e nenhuma pasta com ele: devolver a pasta "mais
+        // parecida" seria apagar a pessoa errada. Lista vazia e a resposta.
+        val base = photos("MARIA SILVA - 123", "MARIA SILVA - 456")
+        assertEquals(0, StorageLocal.pastasDoPaciente(base, "Maria Silva", "999").size)
+    }
+
+    @Test
+    fun `prefixo de nome nao arrasta a pasta da outra`() {
+        // "ANA" casa por prefixo com "ANA MARIA - 999".
+        val base = photos("ANA MARIA - 999")
+        assertEquals(0, StorageLocal.pastasDoPaciente(base, "Ana", "111").size)
+    }
+
+    @Test
+    fun `pasta antiga sem prontuario no nome ainda e encontrada`() {
+        // Base gravada antes de o prontuario entrar no nome da pasta.
+        val base = photos("MARIA SILVA")
+        val achadas = StorageLocal.pastasDoPaciente(base, "Maria Silva", "123")
+        assertEquals(1, achadas.size)
+        assertEquals("MARIA SILVA", achadas[0].name)
     }
 }

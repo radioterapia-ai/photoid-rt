@@ -103,4 +103,75 @@ class DateUtilsTest {
         assertEquals("SEM DATA", DateUtils.formatarNascimento("SEM DATA", "pt"))
         assertEquals("", DateUtils.formatarNascimento(null, "pt"))
     }
+
+    // ---------- formato de entrada (pedido de campo, 21/09/2026) ----------
+
+    /**
+     * O CANONICO NAO MUDA. A preferencia diz como o tecnico DIGITA; o que vai
+     * para o cadastro e para a pasta em disco continua dd/MM/yyyy, sempre.
+     * Sem isso, mexer numa configuracao de tela mudaria o significado do que
+     * ja esta gravado.
+     */
+    @Test
+    fun `entrada em dd-MM vira canonico`() {
+        assertEquals("15/07/1982",
+            DateUtils.entradaParaCanonico("15/07/1982", "dd/MM/yyyy"))
+    }
+
+    @Test
+    fun `entrada em MM-dd vira canonico`() {
+        assertEquals("15/07/1982",
+            DateUtils.entradaParaCanonico("07/15/1982", "MM/dd/yyyy"))
+    }
+
+    @Test
+    fun `entrada em ISO vira canonico`() {
+        assertEquals("15/07/1982",
+            DateUtils.entradaParaCanonico("1982-07-15", "yyyy-MM-dd"))
+    }
+
+    /**
+     * O caso que o defeito produzia em silencio: 03/04 e 4 de marco para um
+     * servico e 3 de abril para o outro, e as duas leituras sao datas VALIDAS.
+     * Nada avisaria — a ficha sairia com a data de nascimento errada.
+     */
+    @Test
+    fun `data ambigua e lida conforme o formato escolhido`() {
+        assertEquals("04/03/1982", DateUtils.entradaParaCanonico("03/04/1982", "MM/dd/yyyy"))
+        assertEquals("03/04/1982", DateUtils.entradaParaCanonico("03/04/1982", "dd/MM/yyyy"))
+    }
+
+    @Test
+    fun `entrada invalida no formato escolhido e recusada`() {
+        // 15 nao e mes: quem escolheu MM/dd e digitou dd/MM tem que ser barrado,
+        // nao "corrigido" por adivinhacao.
+        assertEquals("", DateUtils.entradaParaCanonico("15/07/1982", "MM/dd/yyyy"))
+        assertEquals("", DateUtils.entradaParaCanonico("31/02/1982", "dd/MM/yyyy"))
+        assertEquals("", DateUtils.entradaParaCanonico("1507", "dd/MM/yyyy"))
+    }
+
+    @Test
+    fun `o caminho de volta preenche o campo no formato do servico`() {
+        assertEquals("07/15/1982", DateUtils.canonicoParaEntrada("15/07/1982", "MM/dd/yyyy"))
+        assertEquals("1982-07-15", DateUtils.canonicoParaEntrada("15/07/1982", "yyyy-MM-dd"))
+        assertEquals("15/07/1982", DateUtils.canonicoParaEntrada("15/07/1982", "dd/MM/yyyy"))
+    }
+
+    /** Ida e volta nao pode perder nem trocar nada, em formato nenhum. */
+    @Test
+    fun `ida e volta preserva a data em todos os formatos`() {
+        for (f in DateUtils.FORMATOS_ENTRADA) {
+            val naTela = DateUtils.canonicoParaEntrada("15/07/1982", f)
+            assertEquals("falhou em $f", "15/07/1982",
+                DateUtils.entradaParaCanonico(naTela, f))
+        }
+    }
+
+    @Test
+    fun `a mascara corta no lugar certo de cada formato`() {
+        assertEquals(listOf(2, 4) to '/', DateUtils.cortesDaMascara("dd/MM/yyyy"))
+        assertEquals(listOf(2, 4) to '/', DateUtils.cortesDaMascara("MM/dd/yyyy"))
+        assertEquals(listOf(4, 6) to '-', DateUtils.cortesDaMascara("yyyy-MM-dd"))
+    }
+
 }

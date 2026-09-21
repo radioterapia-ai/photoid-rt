@@ -78,5 +78,17 @@
  {
   "k": "authored_by",
   "de": "von Henrique Braga"
+ },
+ {
+  "k": "prot_escolhido",
+  "de": "Gewählt"
+ },
+ {
+  "k": "date_format_label",
+  "de": "Datumsformat"
+ },
+ {
+  "k": "date_format_hint",
+  "de": "Gilt für Ihre Eingabe. Das auf dem Blatt gedruckte Datum schreibt den Monat immer aus, was nie mehrdeutig ist."
  }
 ]

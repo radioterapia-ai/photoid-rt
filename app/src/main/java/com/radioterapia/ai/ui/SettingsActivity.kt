@@ -93,6 +93,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     // Idioma
     private var chkLangAuto: CheckBox? = null
     private var spinnerLanguage: Spinner? = null
+    private var spinnerFormatoData: Spinner? = null
 
     // Pasta local (edtLocalFolder saiu junto com o bind; ver salvarTudo())
     private var txtPastaFotos: TextView? = null
@@ -404,6 +405,13 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             chkLangAuto?.setOnCheckedChangeListener { _, checked ->
                 spinnerLanguage?.isEnabled = !checked
             }
+            // O formato aparece como o usuario o le — "DD/MM/AAAA" —, e nao
+            // como o codigo o guarda ("dd/MM/yyyy". As duas listas andam
+            // juntas, pelo indice.
+            spinnerFormatoData = it.findViewById(R.id.spinnerFormatoData)
+            spinnerFormatoData?.adapter = ArrayAdapter(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                com.radioterapia.ai.util.DateUtils.FORMATOS_ENTRADA.map { f -> rotuloFormato(f) })
         }
 
 
@@ -497,6 +505,19 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     private fun precisaSenha(p: com.radioterapia.ai.sync.PerfilSync): Boolean =
         p.tipo != com.radioterapia.ai.sync.PerfilSync.Tipo.SAF &&
         com.radioterapia.ai.sync.PerfilStore(this).senha(p.id).isBlank()
+
+    /**
+     * O formato como o usuario o le.
+     *
+     * "dd/MM/yyyy" e a forma que o codigo entende; "DD/MM/AAAA" e a que a
+     * pessoa reconhece. Mostrar o padrao do Java numa tela de configuracao
+     * seria pedir que ela traduza convencao de programador.
+     */
+    private fun rotuloFormato(f: String): String = when (f) {
+        "MM/dd/yyyy" -> "MM/DD/AAAA"
+        "yyyy-MM-dd" -> "AAAA-MM-DD"
+        else          -> "DD/MM/AAAA"
+    }
 
     private fun desenharPerfisSync() {
         val lista = listaSyncPerfis ?: return
@@ -711,6 +732,10 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         val langAtual = LocaleManager.obterIdiomaConfigurado(this)
         val idx = idiomasMap.indexOfFirst { it.first == langAtual }
         if (idx >= 0) spinnerLanguage?.setSelection(idx)
+
+        val idxFmt = com.radioterapia.ai.util.DateUtils.FORMATOS_ENTRADA
+            .indexOf(config.formatoData)
+        if (idxFmt >= 0) spinnerFormatoData?.setSelection(idxFmt)
 
         // Pasta local e grade da câmera: bind removido. Ver a nota em salvarTudo().
 
@@ -1521,6 +1546,12 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         edtEtiquetaLargura?.text?.toString()?.toIntOrNull()?.let { config.pdfEtiquetaLarguraMm = it }
         edtPdfMargem?.text?.toString()?.toIntOrNull()?.let { config.pdfMargemMm = it }
         edtEtiquetaAltura?.text?.toString()?.toIntOrNull()?.let { config.pdfEtiquetaAlturaMm = it }
+
+        // Formato de data (entrada). O armazenamento segue canonico.
+        spinnerFormatoData?.selectedItemPosition?.let { i ->
+            com.radioterapia.ai.util.DateUtils.FORMATOS_ENTRADA.getOrNull(i)
+                ?.let { config.formatoData = it }
+        }
 
         // Idioma (sem modo auto - sempre manual pelo spinner; item 10)
         val idx = spinnerLanguage?.selectedItemPosition ?: 0

@@ -152,6 +152,21 @@ class AppConfig(context: Context) {
         get() = prefs.getBoolean("all_files_solicitado", false)
         set(value) = prefs.edit().putBoolean("all_files_solicitado", value).apply()
 
+    /**
+     * Como o técnico DIGITA a data de nascimento.
+     *
+     * "dd/MM/yyyy" (padrão), "MM/dd/yyyy" ou "yyyy-MM-dd". A preferência vale
+     * só na entrada e na releitura do campo: o que é GRAVADO continua canônico
+     * em dd/MM/yyyy, porque uma configuração de tela não pode mudar o
+     * significado do que já está em disco.
+     *
+     * A data impressa na ficha não usa isto — ela sai com o mês por extenso
+     * ("15-JUL-1982"), que não é ambíguo em idioma nenhum.
+     */
+    var formatoData: String
+        get() = prefs.getString(KEY_FORMATO_DATA, "dd/MM/yyyy") ?: "dd/MM/yyyy"
+        set(value) = prefs.edit().putString(KEY_FORMATO_DATA, value).apply()
+
     /** Orientação do PDF: false = retrato (padrão), true = paisagem (8 fotos em 4x2). */
     var pdfLandscape: Boolean
         get() = prefs.getBoolean(KEY_PDF_LANDSCAPE, false)
@@ -307,6 +322,7 @@ class AppConfig(context: Context) {
         private const val KEY_PRINTER_NOME = "printer_nome"
         private const val KEY_PDF_SERVIDOR = "pdf_servidor"
         private const val KEY_PDF_LANDSCAPE = "pdf_landscape"
+        private const val KEY_FORMATO_DATA = "formato_data"
         private const val KEY_PDF_ETIQ_LARG = "pdf_etiqueta_largura_mm"
         private const val KEY_PDF_ETIQ_ALT = "pdf_etiqueta_altura_mm"
     private const val KEY_PDF_MARGEM = "pdf_margem_mm"

@@ -116,6 +116,54 @@ object DateUtils {
         return "%02d-%s-%04d".format(dia, mm, ano)
     }
 
+    // ==================== FORMATO DE ENTRADA ====================
+
+    /** Os formatos de digitacao oferecidos. O primeiro e o padrao. */
+    val FORMATOS_ENTRADA = listOf("dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd")
+
+    /**
+     * Converte o que o tecnico digitou para o CANONICO dd/MM/yyyy.
+     *
+     * Devolve "" quando a data nao e valida no formato escolhido — quem chama
+     * trata isso como recusa, e e de proposito: aceitar "meio valido" aqui
+     * significa gravar data de nascimento errada no cadastro do paciente.
+     */
+    fun entradaParaCanonico(txt: String?, formato: String): String {
+        val dig = (txt ?: "").filter { it.isDigit() }
+        if (dig.length != 8) return ""
+        val (d, m, a) = when (formato) {
+            "MM/dd/yyyy" -> Triple(dig.substring(2, 4), dig.substring(0, 2), dig.substring(4, 8))
+            "yyyy-MM-dd" -> Triple(dig.substring(6, 8), dig.substring(4, 6), dig.substring(0, 4))
+            else          -> Triple(dig.substring(0, 2), dig.substring(2, 4), dig.substring(4, 8))
+        }
+        val canonico = "$d/$m/$a"
+        return if (nascimentoValido(canonico)) canonico else ""
+    }
+
+    /**
+     * O caminho de volta: canonico dd/MM/yyyy para o formato de digitacao.
+     *
+     * Usado ao PREENCHER o campo com um valor ja gravado. Sem ele, um servico
+     * em MM/dd abriria a revisao do cadastro e leria a data no formato do
+     * vizinho — e corrigiria um campo que estava certo.
+     */
+    fun canonicoParaEntrada(canonico: String?, formato: String): String {
+        val dig = (canonico ?: "").filter { it.isDigit() }
+        if (dig.length != 8) return canonico.orEmpty()
+        val d = dig.substring(0, 2); val m = dig.substring(2, 4); val a = dig.substring(4, 8)
+        return when (formato) {
+            "MM/dd/yyyy" -> "$m/$d/$a"
+            "yyyy-MM-dd" -> "$a-$m-$d"
+            else          -> "$d/$m/$a"
+        }
+    }
+
+    /** Onde a mascara insere o separador, e qual separador, por formato. */
+    fun cortesDaMascara(formato: String): Pair<List<Int>, Char> = when (formato) {
+        "yyyy-MM-dd" -> listOf(4, 6) to '-'
+        else          -> listOf(2, 4) to '/'
+    }
+
     private fun normalizarAno(a: Int): Int {
         if (a in 1000..9999) return a
         // ano com 2 dígitos: assume 19xx/20xx

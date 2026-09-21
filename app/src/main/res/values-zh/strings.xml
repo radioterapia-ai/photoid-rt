@@ -899,4 +899,7 @@
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">患者：%1$s</string>
     <string name="authored_by">作者：Henrique Braga</string>
+    <string name="prot_escolhido">已选择</string>
+    <string name="date_format_label">日期格式</string>
+    <string name="date_format_hint">仅影响您输入的内容。打印在表单上的日期始终以月份名称书写，不会产生歧义。</string>
 </resources>
