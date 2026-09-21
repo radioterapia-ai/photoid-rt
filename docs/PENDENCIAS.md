@@ -8,6 +8,30 @@ o impossível.
 
 ## Em aberto — vale fazer
 
+### Card órfão: chave paralela vazia no `PatientCache`
+
+**Relatado em 21/09/2026, não reproduzido.** Um paciente criado logo após o
+cadastro do segundo protocolo ficou com um card que não some: o PDF e as fotos
+foram apagados, mas o card seguiu exibindo nome e prontuário. Em «editar
+cadastro» o nome e o prontuário aparecem preenchidos e a data de nascimento e o
+sexo estão vazios; «editar informações da simulação» não abre.
+
+O rastro aponta para uma **chave paralela vazia** — o footgun nº 9, que já
+mordeu antes. `obterDadosPaciente` lê nome e prontuário da **CHAVE** e
+nascimento e sexo do **CORPO** do registro. Um corpo vazio sob uma chave válida
+produz exatamente esse sintoma, e explica por que a remoção não alcança o
+registro: ela procura pela chave que o card mostra, que não é a que sobrou.
+
+Não foi corrigido na v4.3 porque **não há caso que o reproduza**, e correção sem
+caso é palpite — mexer no `PatientCache` às cegas é como a chave paralela
+nasceu. O que a v4.3 corrigiu foi o que estava provado por leitura: o
+casamento de pasta só por nome na exclusão e na edição.
+
+**Para atacar:** procurar qual escrita parcial cria chave sem corpo. Os
+candidatos são `atualizarEquipamento`, `atualizarSexoMedico` e `consolidar`,
+que são os caminhos que gravam sem passar pelo cadastro completo.
+
+
 ### Importação da base de pacientes está sem tela de configuração
 
 O `CsvSyncManager` é lido na abertura do app (`HomeActivity`), mas **não há
