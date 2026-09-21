@@ -74,5 +74,9 @@
  {
   "k": "ap_faixa_paciente",
   "ko": "환자: %1$s"
+ },
+ {
+  "k": "authored_by",
+  "ko": "제작: Henrique Braga"
  }
 ]

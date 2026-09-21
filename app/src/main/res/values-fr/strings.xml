@@ -898,4 +898,5 @@ Ouvrez chaque destination et saisissez le mot de passe une fois sur cette tablet
     <string name="wiz_r_timeout">Time-Out inclus</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Patient : %1$s</string>
+    <string name="authored_by">par Henrique Braga</string>
 </resources>

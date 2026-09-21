@@ -971,4 +971,5 @@ Open each destination and type the password once on this tablet. They switch on 
     <string name="wiz_r_timeout">Time-Out included</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Patient: %1$s</string>
+    <string name="authored_by">by Henrique Braga</string>
 </resources>

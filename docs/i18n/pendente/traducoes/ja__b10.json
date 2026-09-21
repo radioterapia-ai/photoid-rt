@@ -74,5 +74,9 @@
  {
   "k": "ap_faixa_paciente",
   "ja": "患者: %1$s"
+ },
+ {
+  "k": "authored_by",
+  "ja": "作: Henrique Braga"
  }
 ]

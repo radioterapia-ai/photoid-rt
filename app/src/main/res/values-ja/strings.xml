@@ -898,4 +898,5 @@
     <string name="wiz_r_timeout">タイムアウトを含む</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">患者: %1$s</string>
+    <string name="authored_by">作: Henrique Braga</string>
 </resources>

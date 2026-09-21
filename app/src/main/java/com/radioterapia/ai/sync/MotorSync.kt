@@ -126,6 +126,30 @@ class MotorSync(private val context: Context) {
         return Resumo(perfil.id, enviados, jaEstavam, pendentes, erro)
     }
 
+    /**
+     * Tira o `PHOTOS/` da frente do caminho relativo.
+     *
+     * A PASTA DO PACIENTE VAI NA PASTA QUE O SERVIÇO ESCOLHEU, e não numa
+     * subpasta dentro dela. Antes, o caminho era calculado da raiz
+     * `PhotoID_RT/` — que tem `PHOTOS/` e `DATABASE/` dentro —, então uma foto
+     * em `PhotoID_RT/PHOTOS/MARIA - 123/rosto.jpg` chegava ao destino como
+     * `<destino>/PHOTOS/MARIA - 123/rosto.jpg`. O `PHOTOS` era estrutura
+     * INTERNA do tablet vazando para o servidor: quem escolheu a pasta de
+     * destino ja disse onde quer as coisas, e encontrava os pacientes um nivel
+     * abaixo do que pediu.
+     *
+     * `DATABASE/` e o que mais houver continuam onde estao. So o nivel do
+     * `PHOTOS` some, porque so ele e redundante com a escolha do destino.
+     *
+     * CONSEQUENCIA QUE VALE SABER: o indice de enviados e chaveado por este
+     * caminho, entao o que ja subiu sob `PHOTOS/` sera enviado UMA VEZ no
+     * layout novo. E, como a sincronizacao e de uma via e nunca apaga, a pasta
+     * `PHOTOS/` antiga permanece no destino ate alguem remove-la a mao — o
+     * motor nao apaga nada, nem o que ele mesmo criou.
+     */
+    private fun semPrefixoPhotos(relativo: String): String =
+        if (relativo.startsWith("PHOTOS/")) relativo.removePrefix("PHOTOS/") else relativo
+
     /** Um arquivo local e onde ele fica em relação à raiz. */
     private data class Local(val arquivo: File, val relativo: String) {
         val pasta: String get() = relativo.substringBeforeLast('/', "")
@@ -162,7 +186,8 @@ class MotorSync(private val context: Context) {
                 // marcaria no índice um arquivo incompleto, e ele nunca mais
                 // subiria inteiro — o tamanho no índice é o tamanho truncado.
                 if (agora - f.lastModified() < 3_000L) return@forEach
-                achados.add(Local(f, f.absolutePath.substring(prefixo).replace('\\', '/')))
+                val rel = f.absolutePath.substring(prefixo).replace('\\', '/')
+                achados.add(Local(f, semPrefixoPhotos(rel)))
             }
 
         return achados.sortedBy { it.arquivo.lastModified() }

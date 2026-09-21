@@ -1315,7 +1315,34 @@ object PdfBuilder {
         // ----- Coluna direita: logo (em cima) + título (embaixo) -----
         val xDir = MARGIN + leftAreaW + 8f
         val rectDir = RectF(xDir, topo, xDir + colDirW, baseHeader)
-        val tituloBlocoTopo = baseHeader - 50f
+
+        /*
+            O TITULO TEM QUE TERMINAR ACIMA DA LINHA DE IDENTIFICACAO.
+
+            A linha de identificacao e desenhada com `PAGE_WIDTH - MARGIN * 2`
+            de largura — ela atravessa a folha inteira, inclusive POR BAIXO
+            desta coluna, que a esta altura ja acabou. Por isso as duas se
+            encontram, apesar de "uma estar a esquerda e outra a direita".
+
+            A conta de antes era fixa: segunda linha em baseHeader - 18. Como
+            headerHAtual = etqH + ALTURA_LINHA_IDS + 8 e a linha de IDs cai em
+            etqH + 12, a linha de IDs fica em baseHeader - 12 — seis pontos
+            abaixo da segunda linha do titulo, que com 16pt de corpo desce
+            quatro. Sobrepunham-se em ~6pt, e quanto maior a etiqueta do
+            servico, pior.
+
+            Agora a posicao vem da linha de IDs, nao de um numero escolhido: o
+            titulo para 10pt acima dela, aconteca o que acontecer com o tamanho
+            da etiqueta. O `minOf` mantem o comportamento antigo quando ha
+            folga de sobra, para a folha nao mudar de cara sem motivo.
+         */
+        val yIdsBase = topo + alturaCaixaEtiqueta(etiqAltPt) + 12f
+        val baseTitulo2 =
+            if (semPaciente) baseHeader - 30f
+            else minOf(baseHeader - 30f, yIdsBase - 10f)
+        val baseTitulo1 = baseTitulo2 - 18f
+
+        val tituloBlocoTopo = baseTitulo1 - 12f
         val logoTopo = topo + 4f
         val logoAreaBase = tituloBlocoTopo - 8f
 
@@ -1325,14 +1352,15 @@ object PdfBuilder {
             color = Color.parseColor("#333333"); textSize = 16f
             isFakeBoldText = true; isAntiAlias = true; textAlign = Paint.Align.CENTER
         }
-        // Titulo de UMA linha (rubricario) fica no meio da faixa das duas, e
-        // nao na posicao da primeira: desenhado em -34 com nada em -18, ele
-        // pareceria descolado para cima do bloco do logo.
+        // Titulo de UMA linha (rubricario) fica no MEIO da faixa das duas, e
+        // nao na posicao da primeira: desenhado la em cima com nada embaixo,
+        // ele pareceria descolado do bloco do logo.
         if (titulo2.isBlank()) {
-            canvas.drawText(titulo1, rectDir.centerX(), baseHeader - 24f, paintTitulo)
+            canvas.drawText(titulo1, rectDir.centerX(),
+                (baseTitulo1 + baseTitulo2) / 2f, paintTitulo)
         } else {
-            canvas.drawText(titulo1, rectDir.centerX(), baseHeader - 34f, paintTitulo)
-            canvas.drawText(titulo2, rectDir.centerX(), baseHeader - 18f, paintTitulo)
+            canvas.drawText(titulo1, rectDir.centerX(), baseTitulo1, paintTitulo)
+            canvas.drawText(titulo2, rectDir.centerX(), baseTitulo2, paintTitulo)
         }
 
 

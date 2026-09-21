@@ -1040,4 +1040,5 @@ Abra cada destino e digite a senha uma vez neste tablet. Eles ligam sozinhos dep
     <string name="wiz_r_timeout">Time-Out incluído</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Paciente: %1$s</string>
+    <string name="authored_by">por Henrique Braga</string>
 </resources>

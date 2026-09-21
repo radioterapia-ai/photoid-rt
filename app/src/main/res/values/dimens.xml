@@ -19,6 +19,9 @@
     <!-- Câmera -->
     <dimen name="cam_tab_height">48dp</dimen>
     <dimen name="cam_action_height">52dp</dimen>
+    <!-- O obturador. Tem que CABER na barra: ela mede
+         cam_bottom_height + 12dp de padding. -->
+    <dimen name="cam_capture_size">64dp</dimen>
     <dimen name="cam_bottom_height">48dp</dimen>
     <dimen name="hist_thumb_size">82dp</dimen>
     <dimen name="hist_nome_text">17sp</dimen>

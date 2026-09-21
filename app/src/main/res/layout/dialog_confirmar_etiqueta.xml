@@ -148,6 +148,62 @@
         </LinearLayout>
 
         <!--
+            ============ SEXO ============
+
+            Era um dialogo INTEIRO so para ele, depois de os outros tres ja
+            terem sido confirmados: mais um modal, mais um Confirmar, e o
+            tecnico via o sexo sem ver o nome ao lado do qual ele vale. Aqui
+            ele e o quarto campo da mesma conferencia, com o mesmo visto.
+
+            Os radios tem 48dp de altura pelo piso de alvo de toque — sao
+            tocados de luva, como o resto desta tela.
+        -->
+        <TextView
+            android:id="@+id/txtLabelSexo"
+            style="@style/FieldLabel" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:gravity="center_vertical">
+
+            <RadioGroup
+                android:id="@+id/rgSexo"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbSexoM"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="24dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+
+                <RadioButton
+                    android:id="@+id/rbSexoF"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:textSize="16sp"
+                    android:textColor="@color/text_primary" />
+            </RadioGroup>
+
+            <ImageButton
+                android:id="@+id/btnVistoSexo"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_check_confirm"
+                android:background="@drawable/bg_icon_visor"
+                android:scaleType="centerInside"
+                android:contentDescription="@string/confirm" />
+        </LinearLayout>
+
+        <!--
             O TEXTO BRUTO, por ultimo e como referencia.
 
             Subiu de 10sp para 13sp: era o menor corpo do produto inteiro, e e

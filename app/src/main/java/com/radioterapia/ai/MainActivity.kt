@@ -1268,10 +1268,22 @@ class MainActivity : BaseActivity() {
         val vistoNome = view.findViewById<android.widget.ImageButton>(R.id.btnVistoNome)
         val vistoNasc = view.findViewById<android.widget.ImageButton>(R.id.btnVistoNasc)
         val vistoPront = view.findViewById<android.widget.ImageButton>(R.id.btnVistoPront)
+        val vistoSexo = view.findViewById<android.widget.ImageButton>(R.id.btnVistoSexo)
+        val rgSexo = view.findViewById<android.widget.RadioGroup>(R.id.rgSexo)
+        val rbSexoM = view.findViewById<android.widget.RadioButton>(R.id.rbSexoM)
+        val rbSexoF = view.findViewById<android.widget.RadioButton>(R.id.rbSexoF)
 
         view.findViewById<TextView>(R.id.txtLabelNome).text = getString(R.string.lbl_patient_name)
         view.findViewById<TextView>(R.id.txtLabelNasc).text = getString(R.string.lbl_birth_date)
         view.findViewById<TextView>(R.id.txtLabelPront).text = getString(R.string.lbl_record)
+        view.findViewById<TextView>(R.id.txtLabelSexo).text =
+            getString(R.string.cad_sexo_label_req)
+        rbSexoM.text = getString(R.string.cad_sexo_m)
+        rbSexoF.text = getString(R.string.cad_sexo_f)
+
+        val sexoSugerido = EtiquetaParser.extrairSexo(textoOcr)
+        rbSexoM.isChecked = sexoSugerido == "M"
+        rbSexoF.isChecked = sexoSugerido == "F"
 
         edtNome.setText(nomeSugerido)
         edtNasc.setText(nascSugerida)
@@ -1288,10 +1300,22 @@ class MainActivity : BaseActivity() {
             Editar um campo não mexe no visto dos outros: cada um é uma
             afirmação clínica independente.
          */
-        val confirmados = booleanArrayOf(false, false, false)
-        val vistos = arrayOf(vistoNome, vistoNasc, vistoPront)
+        val confirmados = booleanArrayOf(false, false, false, false)
+        val vistos = arrayOf(vistoNome, vistoNasc, vistoPront, vistoSexo)
         val campos = arrayOf(edtNome, edtNasc, edtPront)
         val M = com.radioterapia.ai.ui.anim.Movimento
+
+        // O visto do SEXO se desfaz ao trocar o radio, como os outros se
+        // desfazem ao editar o texto: confirmar e sobre o valor que esta ali,
+        // nao sobre o ato de ter tocado uma vez.
+        M.vistoConfirmado(vistoSexo, false)
+        vistoSexo.setOnClickListener {
+            confirmados[3] = !confirmados[3]
+            M.vistoConfirmado(vistoSexo, confirmados[3])
+        }
+        rgSexo.setOnCheckedChangeListener { _, _ ->
+            if (confirmados[3]) { confirmados[3] = false; M.vistoConfirmado(vistoSexo, false) }
+        }
 
         for (i in 0..2) {
             M.vistoConfirmado(vistos[i], false)
@@ -1331,10 +1355,11 @@ class MainActivity : BaseActivity() {
                          */
                         val rotulos = arrayOf(getString(R.string.lbl_patient_name),
                                               getString(R.string.lbl_birth_date),
-                                              getString(R.string.lbl_record))
-                        for (i in 0..2) if (!confirmados[i]) {
+                                              getString(R.string.lbl_record),
+                                              getString(R.string.cad_sexo_label_req))
+                        for (i in 0..3) if (!confirmados[i]) {
                             M.sacudirErro(vistos[i])
-                            campos[i].requestFocus()
+                            if (i <= 2) campos[i].requestFocus() else rgSexo.requestFocus()
                             Toast.makeText(this@MainActivity,
                                 getString(R.string.confirm_field_alert, rotulos[i]),
                                 Toast.LENGTH_LONG).show()
@@ -1357,9 +1382,22 @@ class MainActivity : BaseActivity() {
                             edtPront.requestFocus(); return@setOnClickListener
                         }
 
+                        val sexo = when {
+                            rbSexoM.isChecked -> "M"
+                            rbSexoF.isChecked -> "F"
+                            else -> ""
+                        }
+                        if (sexo.isBlank()) {
+                            M.sacudirErro(vistoSexo)
+                            Toast.makeText(this@MainActivity,
+                                R.string.cad_sexo_required, Toast.LENGTH_LONG).show()
+                            return@setOnClickListener
+                        }
+
                         dismiss()
                         confirmarSeNomeSuspeito(nome) { c ->
-                            coletarExtrasEConcluir(c, pront, nasc, textoOcr, imagemPath)
+                            finalizarIdentificacao(c, pront, nasc)
+                            patientCache.atualizarSexoMedico(c, sexo, "", pront)
                         }
                     }
                 }
@@ -1570,76 +1608,18 @@ class MainActivity : BaseActivity() {
 
     /** Pós-etiqueta: SEXO (obrigatório, com visto) e MÉDICO (opcional, mesma
      *  interface da confirmação do nome) — tudo confirmado no ✓ verde. */
-    private fun coletarExtrasEConcluir(nome: String, prontuario: String, nascimento: String,
-                                       textoOcr: String = "", imagemPath: String = "") {
-        val cont = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.VERTICAL
-            setBackgroundColor(0xFF263238.toInt())
-            setPadding(48, 28, 48, 20)
-        }
-        cont.addView(TextView(this).apply {
-            text = android.text.Html.fromHtml(
-                getString(R.string.cad_sexo_label_req) + " <font color='#E53935'>*</font>",
-                android.text.Html.FROM_HTML_MODE_LEGACY)
-            textSize = 14f; setTextColor(0xFFECEFF1.toInt())
-        })
-        val linha = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.HORIZONTAL
-            gravity = android.view.Gravity.CENTER_VERTICAL
-        }
-        val rg = android.widget.RadioGroup(this).apply {
-            orientation = android.widget.RadioGroup.HORIZONTAL
-        }
-        val sugestao = com.radioterapia.ai.scan.EtiquetaParser.extrairSexo(textoOcr)
-        val rbM = android.widget.RadioButton(this).apply {
-            id = View.generateViewId(); text = "M"; setTextColor(0xFFECEFF1.toInt())
-            isChecked = sugestao == "M"
-        }
-        val rbF = android.widget.RadioButton(this).apply {
-            id = View.generateViewId(); text = "F"; setTextColor(0xFFECEFF1.toInt())
-            isChecked = sugestao == "F"
-        }
-        rg.addView(rbM); rg.addView(rbF)
-        val btnVisto = android.widget.ImageButton(this).apply {
-            setImageResource(R.drawable.ic_check_confirm)
-            setBackgroundResource(R.drawable.bg_icon_visor)
-            scaleType = android.widget.ImageView.ScaleType.CENTER_INSIDE
-            layoutParams = android.widget.LinearLayout.LayoutParams(110, 110)
-        }
-        var confirmado = false
-        fun pintar() {
-            com.radioterapia.ai.ui.anim.Movimento.vistoConfirmado(btnVisto, confirmado)
-        }
-        pintar()
-        btnVisto.setOnClickListener { confirmado = !confirmado; pintar() }
-        rg.setOnCheckedChangeListener { _, _ -> if (confirmado) { confirmado = false; pintar() } }
-        linha.addView(rg, android.widget.LinearLayout.LayoutParams(
-            0, android.view.ViewGroup.LayoutParams.WRAP_CONTENT, 1f))
-        linha.addView(btnVisto)
-        cont.addView(linha)
+    /*
+        coletarExtrasEConcluir REMOVIDA.
 
-        AlertDialog.Builder(this)
-            .setView(cont)
-            .setCancelable(false)
-            .setPositiveButton(R.string.confirm, null)
-            .create().apply {
-                setOnShowListener {
-                    getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-                        val sexo = if (rbM.isChecked) "M" else if (rbF.isChecked) "F" else ""
-                        if (sexo.isBlank() || !confirmado) {
-                            com.radioterapia.ai.ui.anim.Movimento.sacudirErro(btnVisto)
-                            Toast.makeText(this@MainActivity,
-                                R.string.cad_sexo_required, Toast.LENGTH_LONG).show()
-                            return@setOnClickListener
-                        }
-                        dismiss()
-                        finalizarIdentificacao(nome, prontuario, nascimento)
-                        patientCache.atualizarSexoMedico(nome, sexo, "", prontuario)
-                    }
-                }
-                show()
-            }
-    }
+        Ela era um dialogo inteiro so para o SEXO, aberto depois de nome,
+        nascimento e prontuario ja terem sido confirmados — mais um modal, mais
+        um Confirmar, e a escolha acontecia sem o nome a vista. O sexo agora e o
+        quarto campo da propria tela de conferencia da etiqueta, com o mesmo
+        visto e a mesma regra de desfazer ao alterar.
+
+        Ficou orfa pela mudanca e saiu junto; nao era codigo morto de antes.
+     */
+
 
     /** Revisão da identificação no meio da simulação (voltar da câmera):
      *  mesmo formulário do cadastro, pré-preenchido; corrigir salva na sessão.

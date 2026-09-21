@@ -898,4 +898,5 @@
     <string name="wiz_r_timeout">타임아웃 포함</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">환자: %1$s</string>
+    <string name="authored_by">제작: Henrique Braga</string>
 </resources>

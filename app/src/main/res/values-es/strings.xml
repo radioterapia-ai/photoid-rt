@@ -971,4 +971,5 @@ Abra cada destino e introduzca la contraseña una vez en esta tableta. Se activa
     <string name="wiz_r_timeout">Time-Out incluido</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Paciente: %1$s</string>
+    <string name="authored_by">por Henrique Braga</string>
 </resources>

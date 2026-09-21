@@ -74,5 +74,9 @@
  {
   "k": "ap_faixa_paciente",
   "zh": "患者：%1$s"
+ },
+ {
+  "k": "authored_by",
+  "zh": "作者：Henrique Braga"
  }
 ]

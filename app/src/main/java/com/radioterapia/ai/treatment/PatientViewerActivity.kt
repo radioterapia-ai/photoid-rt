@@ -68,7 +68,6 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
     private var pdfAtualCarrossel: java.io.File? = null
     private lateinit var txtOrigem: TextView
     private lateinit var btnAbrirPdf: ImageButton
-    private lateinit var txtViewerLabel: TextView
     private lateinit var txtViewerPaciente: TextView
 
     private var simulacoes: List<TreatmentPhotoFetcher.Simulacao> = emptyList()
@@ -118,7 +117,6 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         layoutVazio = findViewById(R.id.layoutPvVazio)
         txtOrigem = findViewById(R.id.txtPvOrigem)
         btnAbrirPdf = findViewById(R.id.btnAbrirPdf)
-        txtViewerLabel = findViewById(R.id.txtViewerLabel)
         txtViewerPaciente = findViewById(R.id.txtViewerPaciente)
 
         txtNome.text = nomePaciente
@@ -354,7 +352,6 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
                     blocoDaPagina.getOrNull(position)?.let { marcarBlocoSelecionado(it) }
                     if (viewPagerCarrossel.visibility == View.VISIBLE) {
                         txtViewerPaciente.text = montarIdentificacao()
-                        txtViewerLabel.text = rotulosAtuais.getOrNull(position)
                             ?: getString(R.string.cat_positioning)
                     }
                 }
@@ -412,7 +409,6 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
             imgR.setOnClickListener(null)
         }
         montarMiniaturas(sim, opt)
-        txtViewerLabel.text = getString(R.string.viewer_summary)
         // A identificação já aparece no rail à esquerda; repeti-la na barra
         // inferior era redundante. No RESUMO a barra passa a mostrar a
         // observação (preenchida quando a leitura do Time-Out terminar).
@@ -680,7 +676,6 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         mostrarCarrossel()
         viewPagerCarrossel.adapter = CarrosselAdapter(fotos, rotulos)
         viewPagerCarrossel.setCurrentItem(0, false)
-        txtViewerLabel.text = rotulos.firstOrNull() ?: getString(R.string.cat_positioning)
     }
 
 

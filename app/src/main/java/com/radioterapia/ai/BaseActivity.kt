@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.radioterapia.ai.i18n.LocaleManager
 import com.radioterapia.ai.ui.SettingsActivity
@@ -185,9 +186,11 @@ abstract class BaseActivity : AppCompatActivity() {
             btnToolbarVoltar = btnBack
             toolbar.addView(btnBack)
         } else {
-            // Spacer (mesma largura do botão para o título ficar realmente centrado)
+            // Spacer da largura dos DOIS botoes da direita (sincronizar +
+            // engrenagem), senao o titulo sai do meio: ele ocupa o que sobra, e
+            // o que sobra deixou de ser simetrico quando o segundo botao entrou.
             toolbar.addView(View(this).apply {
-                layoutParams = LinearLayout.LayoutParams(dp(48), dp(48))
+                layoutParams = LinearLayout.LayoutParams(dp(56 + 56), dp(48))
             })
         }
 
@@ -205,6 +208,8 @@ abstract class BaseActivity : AppCompatActivity() {
 
         // Botão direita: engrenagem na Home, vazio nas outras
         if (mostrarEngrenagemAoInvesDeVoltar()) {
+            toolbar.addView(montarBotaoSincronizar())
+
             val btnGear = ImageButton(this).apply {
                 setImageResource(R.drawable.ic_settings_gear)
                 background = null
@@ -247,7 +252,137 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         root.addView(container)
 
+
         return root
+    }
+
+    // ===================== SINCRONIZAR, na barra de titulo =====================
+
+    private var btnSync: ImageButton? = null
+    private var pontoFalhaSync: View? = null
+    private var sincronizando = false
+
+    /**
+     * O botao de sincronizar da Home, ao lado da engrenagem.
+     *
+     * TRES ESTADOS, E NENHUM DELES DEPENDE DE ANIMACAO PARA EXISTIR:
+     *
+     *  - parado: icone branco, como a engrenagem ao lado;
+     *  - sincronizando: icone em brand_primary E girando;
+     *  - falhou: ponto vermelho no canto superior direito, que so sai na
+     *    proxima sincronizacao bem-sucedida.
+     *
+     * A COR MUDA ALEM DA ROTACAO de proposito. Este projeto exige que estado
+     * nunca dependa de animacao, porque a escala de animacao do sistema pode
+     * estar em zero — e ai um icone que so girasse ficaria parado, sem dizer
+     * nada. Com a cor, o estado sobrevive; a rotacao e o reforco.
+     */
+    private fun montarBotaoSincronizar(): View {
+        val caixa = FrameLayout(this).apply {
+            layoutParams = LinearLayout.LayoutParams(dp(56), dp(56))
+        }
+
+        val btn = ImageButton(this).apply {
+            setImageResource(R.drawable.ic_sync)
+            background = null
+            contentDescription = getString(R.string.sync_now)
+            layoutParams = FrameLayout.LayoutParams(dp(56), dp(56))
+            setPadding(dp(8), dp(8), dp(8), dp(8))
+            setOnClickListener { sincronizarPelaBarra() }
+        }
+        btnSync = btn
+        caixa.addView(btn)
+
+        // O ponto de falha: canto superior direito, sobre o icone.
+        val ponto = View(this).apply {
+            setBackgroundResource(R.drawable.badge_dot)
+            layoutParams = FrameLayout.LayoutParams(dp(11), dp(11)).apply {
+                gravity = Gravity.TOP or Gravity.END
+                topMargin = dp(9)
+                marginEnd = dp(9)
+            }
+            visibility = View.GONE
+        }
+        pontoFalhaSync = ponto
+        caixa.addView(ponto)
+
+        return caixa
+    }
+
+    private fun pintarEstadoSync() {
+        val b = btnSync ?: return
+        val cor = if (sincronizando)
+            androidx.core.content.ContextCompat.getColor(this, R.color.brand_primary)
+        else Color.WHITE
+        b.setColorFilter(cor)
+
+        if (sincronizando && com.radioterapia.ai.ui.anim.Movimento.ligado(this)) {
+            if (b.animation == null) {
+                b.startAnimation(android.view.animation.RotateAnimation(
+                    0f, 360f,
+                    android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f,
+                    android.view.animation.Animation.RELATIVE_TO_SELF, 0.5f
+                ).apply {
+                    duration = 1000L
+                    repeatCount = android.view.animation.Animation.INFINITE
+                    interpolator = android.view.animation.LinearInterpolator()
+                })
+            }
+        } else {
+            b.clearAnimation()
+        }
+    }
+
+    /**
+     * Toque no botao: sincroniza e gira ate terminar.
+     *
+     * NAO EMPILHA. Tocar de novo enquanto roda nao dispara uma segunda
+     * varredura — duas varreduras concorrentes disputariam o indice de
+     * enviados, e o que uma marcasse a outra poderia reenviar.
+     *
+     * O orcamento de 45 segundos e o mesmo do "Sincronizar agora" das
+     * Configuracoes, e pela mesma razao: esta varredura esta presa a uma tela
+     * aberta e sem botao de cancelar. O que nao couber continua pela fila do
+     * WorkManager.
+     */
+    private fun sincronizarPelaBarra() {
+        if (sincronizando) return
+
+        val cfg = com.radioterapia.ai.sync.SyncConfig(this)
+        if (!cfg.ativo) {
+            Toast.makeText(this, R.string.sync_master_hint, Toast.LENGTH_LONG).show()
+            return
+        }
+
+        sincronizando = true
+        pontoFalhaSync?.visibility = View.GONE
+        pintarEstadoSync()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            val resumos = try {
+                withContext(Dispatchers.IO) {
+                    com.radioterapia.ai.sync.MotorSync(this@BaseActivity)
+                        .sincronizarTudo(limiteMs = 45_000L)
+                }
+            } catch (_: Exception) { emptyList() }
+
+            sincronizando = false
+            pintarEstadoSync()
+            if (isFinishing || isDestroyed) return@launch
+
+            val env = resumos.sumOf { it.enviados }
+            val ja = resumos.sumOf { it.jaEstavam }
+            val pend = resumos.sumOf { it.pendentes }
+            val falhou = resumos.isEmpty() || resumos.any { it.houveFalha }
+
+            pontoFalhaSync?.visibility = if (falhou) View.VISIBLE else View.GONE
+            Toast.makeText(this@BaseActivity,
+                getString(R.string.sync_result, env, ja, pend),
+                Toast.LENGTH_LONG).show()
+
+            // O QUE SOBROU VAI PARA A FILA, como no botao das Configuracoes.
+            if (pend > 0) com.radioterapia.ai.sync.SyncWorker.agora(this@BaseActivity)
+        }
     }
 
     // ---------- Pen-drive por cabo OTG ----------

@@ -898,4 +898,5 @@ Otwórz każde miejsce docelowe i wpisz hasło raz na tym tablecie. Potem włąc
     <string name="wiz_r_timeout">Time-Out dołączony</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">Pacjent: %1$s</string>
+    <string name="authored_by">autor: Henrique Braga</string>
 </resources>

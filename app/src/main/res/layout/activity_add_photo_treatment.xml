@@ -234,6 +234,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:baselineAligned="false"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="4dp"
@@ -302,6 +303,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:baselineAligned="false"
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginVertical="5dp">
 
@@ -345,14 +347,17 @@
 
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:paddingStart="8dp"
-            android:paddingEnd="10dp">
+            android:paddingEnd="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
 
             <ImageButton
                 android:id="@+id/btnApCapturar"
-                android:layout_width="78dp"
-                android:layout_height="78dp"
+                android:layout_width="@dimen/cam_capture_size"
+                android:layout_height="@dimen/cam_capture_size"
                 android:layout_gravity="center"
                 android:background="@drawable/btn_capture_round"
                 android:scaleType="centerInside"

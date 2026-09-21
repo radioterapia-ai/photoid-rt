@@ -326,22 +326,22 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
             android:paddingRight="12dp"
             android:paddingTop="11dp"
             android:paddingBottom="11dp"
-            android:background="#C2424242">
+            android:background="@color/bg_abas_flutuante">
 
-            <TextView
-                android:id="@+id/txtViewerLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF" />
+            <!--
+                UMA FUNCAO SO: de quem e a foto.
 
+                Havia aqui um segundo TextView (txtViewerLabel) escrevendo
+                "Resumo", "Rosto" ou "Posicionamento.N" — a mesma informacao que
+                a tag azul de cada card ja carrega, e que cada pagina do
+                carrossel tambem carrega. Duas copias do mesmo dado, e esta
+                tapava o que estava atras.
+            -->
             <TextView
                 android:id="@+id/txtViewerPaciente"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="end"
+                android:gravity="center"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF" 

@@ -898,4 +898,5 @@
     <string name="wiz_r_timeout">يتضمن صفحة Time-Out</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">المريض: %1$s</string>
+    <string name="authored_by">بقلم Henrique Braga</string>
 </resources>

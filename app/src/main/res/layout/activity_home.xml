@@ -65,14 +65,38 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <TextView
+        <!--
+            RODAPE DE DUAS LINHAS, um alvo de toque so.
+
+            O clique mora no container, e nao na segunda linha: com ele la, a
+            primeira linha seria azul, do mesmo tamanho, e nao responderia ao
+            toque — e azul, neste app, e cor de coisa que se toca. Assim o
+            realce cobre as duas.
+        -->
+        <LinearLayout
             android:id="@+id/txtLearnMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/learn_more"
-            android:textSize="14sp"
-            android:textColor="@color/brand_primary"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
             android:padding="14dp"
-            android:background="?attr/selectableItemBackground" />
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/authored_by"
+                android:textSize="14sp"
+                android:textColor="@color/brand_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/learn_more"
+                android:textSize="14sp"
+                android:textColor="@color/brand_primary" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

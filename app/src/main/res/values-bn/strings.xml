@@ -898,4 +898,5 @@
     <string name="wiz_r_timeout">টাইম-আউট অন্তর্ভুক্ত</string>
     <string name="wiz_r_pdf">PDF</string>
     <string name="ap_faixa_paciente">রোগী: %1$s</string>
+    <string name="authored_by">লেখক: Henrique Braga</string>
 </resources>

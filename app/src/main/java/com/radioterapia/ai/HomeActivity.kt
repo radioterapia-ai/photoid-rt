@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import android.view.View
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +70,8 @@ class HomeActivity : BaseActivity() {
             startActivity(Intent(this, com.radioterapia.ai.treatment.TreatmentActivity::class.java))
         }
 
-        findViewById<TextView>(R.id.txtLearnMore).setOnClickListener {
+        // O id agora e o CONTAINER das duas linhas, nao um TextView.
+        findViewById<View>(R.id.txtLearnMore).setOnClickListener {
             abrirSiteRadioterapia()
         }
 

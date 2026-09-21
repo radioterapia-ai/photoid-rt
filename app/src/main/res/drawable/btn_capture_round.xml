@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Botão circular vermelho com efeito 3D (gradiente + borda clara) para o disparo da câmera -->
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Sombra -->
-    <item android:top="3dp">
-        <shape android:shape="oval">
-            <solid android:color="#33000000" />
-        </shape>
-    </item>
-    <!-- Corpo com gradiente -->
-    <item android:bottom="3dp">
-        <shape android:shape="oval">
-            <gradient
-                android:startColor="#FF5252"
-                android:centerColor="#E53935"
-                android:endColor="#B71C1C"
-                android:angle="270" />
-            <stroke android:width="3dp" android:color="#FFFFFF" />
-        </shape>
-    </item>
-</layer-list>
+<!--
+    O obturador: dois estados, sem animacao.
+
+    O nome do arquivo nao muda porque ele ja e referenciado pelos dois layouts
+    de camera; trocar o nome obrigaria a acertar os dois e lembrar do terceiro
+    que vier.
+
+    `state_pressed` vem PRIMEIRO: o seletor devolve o primeiro item que casa, e
+    um item sem condicao casa sempre.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@drawable/btn_capture_pressed" />
+    <item android:drawable="@drawable/btn_capture_normal" />
+</selector>

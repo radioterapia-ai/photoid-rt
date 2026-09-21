@@ -74,5 +74,9 @@
  {
   "k": "ap_faixa_paciente",
   "pt": "Paciente: %1$s"
+ },
+ {
+  "k": "authored_by",
+  "pt": "por Henrique Braga"
  }
 ]
