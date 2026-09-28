@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Alias: refs antigas usam @drawable/logo_radioterapia. Aponta pro splash_logo
+    (PNG nodpi, 905x464 com canal alfa).
+
+    gravity="fill", e NAO "center".
+    ================================
+    Com "center" o BitmapDrawable NAO ESCALA: ele centraliza o bitmap no tamanho
+    nativo e RECORTA o que passar dos limites. A PNG tem 905x464 px e a ImageView
+    da tela de abertura tem 200x80 dp — ou seja, o bitmap e maior que a area em
+    qualquer densidade, e o que aparecia era um pedaco do meio do logotipo, com a
+    marca cortada e aparentemente deslocada dentro de um retangulo escuro.
+
+    O sintoma enganava: parecia margem errada no layout, e o layout estava certo.
+    Quem recortava era o drawable.
+
+    Com "fill" o bitmap e escalado ate os limites do drawable — e como as
+    ImageViews usam scaleType="fitCenter", esses limites ja vem com a proporcao
+    correta do bitmap. Fica escalado e sem deformar.
+-->
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+    android:src="@drawable/splash_logo"
+    android:gravity="fill"
+    android:antialias="true" />

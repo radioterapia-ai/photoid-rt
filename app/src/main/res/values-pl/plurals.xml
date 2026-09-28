@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plurais - pl
+
+    As CATEGORIAS de quantidade sao por idioma, definidas pelo CLDR, e nao
+    acompanham o portugues. Este arquivo usa: one, few, many, other.
+
+    Categoria de menos faz a frase sair errada numa faixa de numeros; categoria
+    de mais vira recurso morto. Conferir no CLDR antes de editar.
+-->
+<resources>
+    <plurals name="patient_count_plural">
+        <item quantity="one">%d zapisany pacjent</item>
+        <item quantity="few">%d zapisani pacjenci</item>
+        <item quantity="many">%d zapisanych pacjentów</item>
+        <item quantity="other">%d zapisanych pacjentów</item>
+    </plurals>
+    <plurals name="treatment_count_plural">
+        <item quantity="one">%d pacjent w trakcie leczenia</item>
+        <item quantity="few">%d pacjenci w trakcie leczenia</item>
+        <item quantity="many">%d pacjentów w trakcie leczenia</item>
+        <item quantity="other">%d pacjentów w trakcie leczenia</item>
+    </plurals>
+    <plurals name="simulations_count_plural">
+        <item quantity="one">%d symulacja</item>
+        <item quantity="few">%d symulacje</item>
+        <item quantity="many">%d symulacji</item>
+        <item quantity="other">%d symulacji</item>
+    </plurals>
+</resources>

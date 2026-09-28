@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Aba única "Identidade da clínica": reúne identidade (nome, logo, PDF) e
+     equipe/tratamentos (médicos, equipamentos, sítios). Antes eram duas abas,
+     e o usuário precisava lembrar em qual estava cada campo. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <include layout="@layout/group_clinic_identity" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginBottom="12dp"
+        android:background="#1E2D52" />
+
+    <include layout="@layout/group_timeout" />
+</LinearLayout>

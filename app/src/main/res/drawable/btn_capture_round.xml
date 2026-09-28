@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    O obturador: dois estados, sem animacao.
+
+    O nome do arquivo nao muda porque ele ja e referenciado pelos dois layouts
+    de camera; trocar o nome obrigaria a acertar os dois e lembrar do terceiro
+    que vier.
+
+    `state_pressed` vem PRIMEIRO: o seletor devolve o primeiro item que casa, e
+    um item sem condicao casa sempre.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:drawable="@drawable/btn_capture_pressed" />
+    <item android:drawable="@drawable/btn_capture_normal" />
+</selector>

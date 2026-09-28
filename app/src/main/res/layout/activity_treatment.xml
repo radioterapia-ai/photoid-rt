@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Tela "Tratamento". Hierarquia invertida (Histórico principal, Escanear/Ler
+    secundários). Responsiva via ScrollView + @dimen.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="@dimen/landing_padding">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.35" />
+
+        <com.radioterapia.ai.ui.PhotoIdHeaderView
+            android:id="@+id/headerCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/brand_title_sub"
+            android:text="RT Check" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/treatment_desc"
+            android:textSize="@dimen/landing_subtitle"
+            android:textColor="@color/text_secondary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="@dimen/landing_subtitle_margin" />
+
+        <!-- BOTÃO PRINCIPAL: Pacientes em Tratamento (azul preenchido) -->
+        <Button
+            android:id="@+id/btnEmTratamento"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/module_btn_height"
+            android:text="@string/patients_in_treatment"
+            android:textSize="@dimen/module_btn_text"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:background="@drawable/btn_module_3d"
+            android:layout_marginBottom="@dimen/module_btn_gap" />
+
+        <!-- BOTÃO SECUNDÁRIO: Histórico (transparente, só texto — igual RT SIM) -->
+        <Button
+            android:id="@+id/btnHistoricoTreat"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/secondary_btn_height"
+            android:text="@string/patient_history_title"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:textColor="@color/brand_primary"
+            android:background="?attr/selectableItemBackground" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/txtTreatStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:textColor="@color/text_secondary"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

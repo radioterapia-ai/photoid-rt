@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/timeout_medicos_cfg_hint"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/edtTimeoutMedicos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:minLines="3"
+        android:maxLines="8"
+        android:gravity="top"
+        android:inputType="textMultiLine|textCapWords"
+        android:hint="@string/timeout_medicos_cfg_ex"
+        android:textSize="14sp"
+        android:textColor="#212121"
+        android:textColorHint="#9E9E9E"
+        android:background="@drawable/bg_input_white"
+        android:padding="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/cfg_equip_hint"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/edtEquipamentos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:minLines="2"
+        android:maxLines="6"
+        android:gravity="top"
+        android:inputType="textMultiLine|textCapWords"
+        android:textSize="14sp"
+        android:textColor="#212121"
+        android:background="@drawable/bg_input_white"
+        android:padding="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="@string/cfg_sitios_hint"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <EditText
+        android:id="@+id/edtSitiosLista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:minLines="4"
+        android:maxLines="10"
+        android:gravity="top"
+        android:inputType="textMultiLine|textCapCharacters"
+        android:textSize="13sp"
+        android:textColor="#212121"
+        android:background="@drawable/bg_input_white"
+        android:padding="10dp" />
+</LinearLayout>

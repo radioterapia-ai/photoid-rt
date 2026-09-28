@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:textSize="13sp"
+            android:textColor="#FFD54F"
+            android:background="@drawable/bg_card_warning"
+            android:text="@string/edit_warning"
+            android:layout_marginBottom="20dp" />
+
+        <TextView style="@style/FieldLabel" android:text="@string/hl_full_name" />
+        <EditText android:id="@+id/edtEditNome"
+            style="@style/InputField"
+            android:inputType="textCapWords" />
+
+        <TextView style="@style/FieldLabel" android:text="@string/hl_birth_date" />
+        <EditText android:id="@+id/edtEditNasc"
+            style="@style/InputField"
+            android:hint="@string/hl_date_mask" />
+
+        <TextView style="@style/FieldLabel" android:text="@string/hl_record" />
+        <EditText android:id="@+id/edtEditPront"
+            style="@style/InputField" />
+
+        <TextView style="@style/FieldLabel" android:text="@string/cad_sexo_label_req" />
+        <RadioGroup
+            android:id="@+id/rgEditSexo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbEditSexoM"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="M" android:textColor="@color/text_primary" />
+            <RadioButton android:id="@+id/rbEditSexoF"
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="F" android:textColor="@color/text_primary" />
+        </RadioGroup>
+
+        <Button android:id="@+id/btnSalvarEdicao"
+            android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/save"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_save" />
+
+        <Button android:id="@+id/btnCancelarEdicao"
+            android:layout_width="match_parent" android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/cancel"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <View style="@style/Separator" />
+
+        <Button android:id="@+id/btnRemover"
+            android:layout_width="match_parent" android:layout_height="56dp"
+            android:text="@string/remove_from_history"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_discard" />
+    </LinearLayout>
+</ScrollView>

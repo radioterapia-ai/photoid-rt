@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="patient_count_plural">
+        <item quantity="one">1 patient registered</item>
+        <item quantity="other">%d patients registered</item>
+    </plurals>
+    <plurals name="treatment_count_plural">
+        <item quantity="one">1 patient in treatment</item>
+        <item quantity="other">%d patients in treatment</item>
+    </plurals>
+    <plurals name="simulations_count_plural">
+        <item quantity="one">1 simulation</item>
+        <item quantity="other">%d simulations</item>
+    </plurals>
+</resources>

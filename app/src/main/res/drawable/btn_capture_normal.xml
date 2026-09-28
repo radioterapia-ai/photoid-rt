@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    O OBTURADOR, em repouso.
+
+    Quatro camadas, de baixo para cima, e cada uma faz uma coisa que as outras
+    nao fazem:
+
+      1. SOMBRA PROJETADA — deslocada 5dp para baixo. E o que separa o botao da
+         barra e diz que ele esta ACIMA dela.
+      2. ANEL BRANCO — o aro externo. Alem de citar o obturador de camera, e o
+         que garante contraste do botao contra qualquer fundo: a barra e escura,
+         mas o botao tambem aparece sobre a foto em revisao.
+      3. CORPO — gradiente vertical de vermelho claro no topo a vermelho escuro
+         na base. Luz vindo de cima, que e de onde o olho espera.
+      4. BRILHO ESPECULAR — radial, centrado acima do meio, de branco a 40% ate
+         transparente. E esta camada que faz a superficie parecer abaulada em
+         vez de chapada; sem ela o gradiente sozinho le como um disco pintado.
+
+    A aritmetica das margens: o anel ocupa 0..H-5 (a sombra come os 5dp de
+    baixo), e o corpo entra 4dp dentro dele por todos os lados — top 4, laterais
+    4, bottom 9. E dai que sai a espessura constante do aro.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:top="5dp" android:left="1dp" android:right="1dp">
+        <shape android:shape="oval">
+            <solid android:color="#59000000" />
+        </shape>
+    </item>
+
+    <item android:bottom="5dp">
+        <shape android:shape="oval">
+            <solid android:color="#FFFFFF" />
+        </shape>
+    </item>
+
+    <item android:top="4dp" android:left="4dp" android:right="4dp" android:bottom="9dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="linear"
+                android:angle="270"
+                android:startColor="#FF7B7B"
+                android:centerColor="#E53935"
+                android:endColor="#8E1111" />
+        </shape>
+    </item>
+
+    <item android:top="4dp" android:left="4dp" android:right="4dp" android:bottom="9dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="55%p"
+                android:centerX="0.5"
+                android:centerY="0.2"
+                android:startColor="#66FFFFFF"
+                android:endColor="#00FFFFFF" />
+        </shape>
+    </item>
+
+</layer-list>

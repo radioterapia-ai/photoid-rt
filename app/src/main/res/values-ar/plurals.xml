@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plurais - ar
+
+    As CATEGORIAS de quantidade sao por idioma, definidas pelo CLDR, e nao
+    acompanham o portugues. Este arquivo usa: zero, one, two, few, many, other.
+
+    Categoria de menos faz a frase sair errada numa faixa de numeros; categoria
+    de mais vira recurso morto. Conferir no CLDR antes de editar.
+-->
+<resources>
+    <plurals name="patient_count_plural">
+        <item quantity="zero">لا يوجد مرضى مسجلون</item>
+        <item quantity="one">مريض واحد مسجل</item>
+        <item quantity="two">مريضان مسجلان</item>
+        <item quantity="few">%d مرضى مسجلين</item>
+        <item quantity="many">%d مريضًا مسجلًا</item>
+        <item quantity="other">%d مريض مسجل</item>
+    </plurals>
+    <plurals name="treatment_count_plural">
+        <item quantity="zero">لا يوجد مرضى قيد العلاج</item>
+        <item quantity="one">مريض واحد قيد العلاج</item>
+        <item quantity="two">مريضان قيد العلاج</item>
+        <item quantity="few">%d مرضى قيد العلاج</item>
+        <item quantity="many">%d مريضًا قيد العلاج</item>
+        <item quantity="other">%d مريض قيد العلاج</item>
+    </plurals>
+    <plurals name="simulations_count_plural">
+        <item quantity="zero">لا توجد محاكيات</item>
+        <item quantity="one">محاكاة واحدة</item>
+        <item quantity="two">محاكاتان</item>
+        <item quantity="few">%d محاكيات</item>
+        <item quantity="many">%d محاكاةً</item>
+        <item quantity="other">%d محاكاة</item>
+    </plurals>
+</resources>

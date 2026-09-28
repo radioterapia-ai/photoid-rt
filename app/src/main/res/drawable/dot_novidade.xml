@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    O ponto de novidade sobre a engrenagem.
+
+    Solido, sem anel de contorno: o anel teria de casar com o fundo da barra de
+    titulo, e passaria a depender de um valor que vive em outro arquivo. Um
+    ponto de 10dp no canto, afastado do glifo, se separa por posicao em vez de
+    por contorno — e nao quebra se a barra mudar de cor.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/badge_red" />
+</shape>

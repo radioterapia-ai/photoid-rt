@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fundo do aviso flutuante: azul da marca, translucido.
+
+    TRANSLUCIDO DE PROPOSITO. O aviso cobre parte do visor no momento em que a
+    pessoa esta mirando; opaco, ele esconderia justamente o que ela precisa ver
+    para enquadrar. A 85% o texto continua legivel e a imagem atravessa.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#D91565C0" />
+    <corners android:radius="22dp" />
+</shape>

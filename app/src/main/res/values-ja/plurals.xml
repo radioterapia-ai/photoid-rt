@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plurais - ja
+
+    As CATEGORIAS de quantidade sao por idioma, definidas pelo CLDR, e nao
+    acompanham o portugues. Este arquivo usa: other.
+
+    Categoria de menos faz a frase sair errada numa faixa de numeros; categoria
+    de mais vira recurso morto. Conferir no CLDR antes de editar.
+-->
+<resources>
+    <plurals name="patient_count_plural">
+        <item quantity="other">登録患者%d名</item>
+    </plurals>
+    <plurals name="treatment_count_plural">
+        <item quantity="other">治療中の患者%d名</item>
+    </plurals>
+    <plurals name="simulations_count_plural">
+        <item quantity="other">シミュレーション%d件</item>
+    </plurals>
+</resources>

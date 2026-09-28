@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Plurais - de
+
+    As CATEGORIAS de quantidade sao por idioma, definidas pelo CLDR, e nao
+    acompanham o portugues. Este arquivo usa: one, other.
+
+    Categoria de menos faz a frase sair errada numa faixa de numeros; categoria
+    de mais vira recurso morto. Conferir no CLDR antes de editar.
+-->
+<resources>
+    <plurals name="patient_count_plural">
+        <item quantity="one">1 Patient erfasst</item>
+        <item quantity="other">%d Patienten erfasst</item>
+    </plurals>
+    <plurals name="treatment_count_plural">
+        <item quantity="one">1 Patient in Bestrahlung</item>
+        <item quantity="other">%d Patienten in Bestrahlung</item>
+    </plurals>
+    <plurals name="simulations_count_plural">
+        <item quantity="one">1 Planungs-CT</item>
+        <item quantity="other">%d Planungs-CTs</item>
+    </plurals>
+</resources>

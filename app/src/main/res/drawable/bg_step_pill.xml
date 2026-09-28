@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pílula semi-transparente para o contador de passos flutuar com contraste -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#CC1565C0" />
+    <corners android:radius="20dp" />
+</shape>

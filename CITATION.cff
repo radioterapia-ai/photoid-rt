@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: "PhotoID RT: positioning photo documentation for radiation therapy"
+message: >-
+  If this software is useful in your work, a citation is appreciated.
+  It is asked for, not required by the licence.
+type: software
+authors:
+  - family-names: "Braga"
+    given-names: "Henrique Faria"
+    website: "https://radioterapia.ai"
+repository-code: "https://github.com/radioterapia-ai/photoid-rt"
+url: "https://radioterapia.ai"
+abstract: >-
+  An Android application for photographic documentation of patient positioning
+  in radiation therapy. It organises capture by category, builds the positioning
+  sheet with its Time-Out page, and makes the images available during treatment.
+  Optical character recognition and barcode reading are performed on-device by
+  Google ML Kit, a third-party component; this project builds the accessibility
+  layer around it. Not a medical device, and not validated for clinical use.
+keywords:
+  - radiation therapy
+  - radiotherapy
+  - patient positioning
+  - clinical documentation
+  - android
+  - time-out
+  - patient safety
+license: Apache-2.0

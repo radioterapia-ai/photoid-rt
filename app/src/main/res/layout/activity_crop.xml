@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#000000">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/crop_hint"
+        android:textColor="#FFFFFF"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="#1565C0" />
+
+    <com.radioterapia.ai.crop.CropImageView
+        android:id="@+id/cropView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/btnCropCancelar"
+            android:maxLines="1"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_discard" />
+
+        <Button
+            android:id="@+id/btnCropGirar"
+            android:maxLines="1"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/crop_rotate"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <Button
+            android:id="@+id/btnCropConfirmar"
+            android:maxLines="1"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:layout_weight="2"
+            android:layout_marginStart="8dp"
+            android:text="@string/crop_confirm"
+            android:textStyle="bold"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_save" />
+    </LinearLayout>
+</LinearLayout>
