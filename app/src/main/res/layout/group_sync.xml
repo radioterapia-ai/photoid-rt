@@ -41,6 +41,15 @@
             android:paddingTop="4dp"
             android:paddingBottom="4dp" />
 
+        <!-- A cópia das configurações que vai junto com cada sincronização:
+             só informa, não pede clique. O texto vem do código, com o nome da
+             pasta e o título do grupo de Transferência. -->
+        <TextView android:id="@+id/txtSyncCopiaConfig"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:textSize="12sp" android:textColor="@color/text_secondary"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
         <TextView style="@style/FieldLabel" android:layout_marginTop="8dp"
             android:text="@string/sync_interval" />
         <EditText android:id="@+id/edtSyncIntervalo" style="@style/InputField"

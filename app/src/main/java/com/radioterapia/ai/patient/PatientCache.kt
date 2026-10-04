@@ -30,14 +30,25 @@ class PatientCache(context: Context) {
     private val SCHEMA_ATUAL = 2
     private val CHAVE_META = "__schema__"
 
-    private val dados: JSONObject = if (arquivo.exists()) {
-        try { JSONObject(arquivo.readText()) } catch (e: Exception) { JSONObject() }
-    } else JSONObject()
+    /**
+     * O arquivo existia e não pôde ser lido. Este objeto começa vazio, e a
+     * primeira gravação dele tira o ilegível do caminho antes de gravar.
+     */
+    private var leituraFalhou = false
+
+    private val dados: JSONObject = lerCadastro(arquivo).let { (obj, falhou) ->
+        leituraFalhou = falhou
+        obj
+    }
 
     init { migrar(context) }
 
     /** Aplica os passos de migração pendentes, com backup por versão. */
     private fun migrar(context: Context) {
+        // GUARDA: só abrir o app nunca grava por cima de um cadastro que não
+        // pôde ser lido. Carimbar a versão aqui gravaria um arquivo só com o
+        // schema no lugar do cadastro inteiro.
+        if (leituraFalhou) return
         try {
             val versao = dados.optJSONObject(CHAVE_META)?.optInt("versao", 1)
                 ?: if (dados.length() == 0) SCHEMA_ATUAL else 1
@@ -196,7 +207,7 @@ class PatientCache(context: Context) {
 
     /**
      * Salva o caminho da foto-rosto da última simulação para uso como thumbnail no
-     * histórico (item 12/13 da rodada UI). O arquivo pode deixar de existir depois
+     * histórico. O arquivo pode deixar de existir depois
      * (limpeza de cache), por isso o adapter verifica existência antes de carregar.
      */
     fun salvarCaminhoFotoRosto(nome: String, caminho: String, prontuario: String = "") {
@@ -261,10 +272,18 @@ class PatientCache(context: Context) {
                 d.isDirectory && com.radioterapia.ai.util.StorageLocal
                     .pastaCasaPaciente(d.name, nome)
             } ?: return null
-            val rosto = dir.listFiles()?.firstOrNull {
-                it.isFile && it.name.lowercase().contains("_rosto") &&
-                    !it.name.lowercase().endsWith("_original.jpg")
-            } ?: return null
+            // Rosto nos dois esquemas de nome, pela classificacao que tira o
+            // nome do paciente antes de procurar o tipo (o legado comeca pelo
+            // nome completo, e "face" dentro de FACELI nao e rosto). O par
+            // "_ORIGINAL" fica de fora, e entre varios rostos — reirradiacao,
+            // rosto refeito — vence o MAIS RECENTE, que e o da ultima simulacao.
+            val rosto = dir.listFiles()?.filter {
+                it.isFile && !it.name.startsWith(".") &&
+                    (it.extension.equals("jpg", true) || it.extension.equals("jpeg", true)) &&
+                    !com.radioterapia.ai.util.NomeArquivo.ehOriginal(it.name) &&
+                    com.radioterapia.ai.util.FotosArquivadas.tipoProvavel(it.name, nome) ==
+                        com.radioterapia.ai.util.NomeArquivo.Tipo.ROSTO
+            }?.maxByOrNull { it.lastModified() } ?: return null
             // Grava na chave REAL do registro. Com chavePadrao, o paciente ja
             // migrado para chave composta nunca tinha o caminho gravado de
             // volta: a lista varria o disco de novo a cada rolagem, e apos uma
@@ -443,7 +462,19 @@ class PatientCache(context: Context) {
                 if (chave.isBlank() || dados.has(chave)) continue
                 val arquivos = dir.listFiles()?.filter { it.isFile } ?: emptyList()
                 val ult = arquivos.maxOfOrNull { it.lastModified() } ?: dir.lastModified()
-                val nSim = arquivos.count { it.name.endsWith(".pdf", true) }.coerceAtLeast(1)
+                // Quantas simulacoes = a MAIOR marca de simulacao nos nomes das
+                // fotos e fichas, e nao a quantidade de PDFs. A pasta pode
+                // guardar varias versoes da ficha de uma mesma simulacao (a
+                // pasta escolhida pelo usuario nao apaga a anterior), e esta
+                // contagem decide o numero da proxima simulacao, que vai no nome
+                // de cada arquivo: contar PDFs numeraria uma reirradiacao que
+                // nao existe.
+                val nSim = arquivos
+                    .filter { !it.name.startsWith(".") &&
+                        (it.extension.equals("pdf", true) || it.extension.equals("jpg", true) ||
+                            it.extension.equals("jpeg", true)) }
+                    .maxOfOrNull { com.radioterapia.ai.util.NomeArquivo.numeroSimulacao(it.name) }
+                    ?.coerceAtLeast(1) ?: 1
                 val obj = JSONObject()
                 obj.put("prontuario", pront)
                 obj.put("nascimento", "")
@@ -634,7 +665,15 @@ class PatientCache(context: Context) {
     }
 
     private fun salvar() {
-        try { arquivo.writeText(dados.toString(2)) } catch (e: Exception) { }
+        try {
+            if (leituraFalhou) {
+                // O ilegível fica guardado ao lado, para recuperação manual,
+                // e só então o cadastro deste objeto ocupa o lugar dele.
+                guardarIlegivel(arquivo)
+                leituraFalhou = false
+            }
+            gravarAtomico(arquivo, dados.toString(2))
+        } catch (_: Exception) { }
     }
 
     /**
@@ -750,6 +789,59 @@ class PatientCache(context: Context) {
             .replace(Regex("\\s+"), " ")
             .trim()
             .uppercase(Locale("pt", "BR"))
+    }
+
+    companion object {
+        /**
+         * Lê o cadastro. Devolve o objeto e se a leitura FALHOU num arquivo que
+         * existe e tem conteúdo — caso em que o objeto vem vazio e quem chama
+         * não pode tratá-lo como "não há pacientes".
+         */
+        internal fun lerCadastro(arquivo: File): Pair<JSONObject, Boolean> {
+            if (!arquivo.exists() || arquivo.length() == 0L) return JSONObject() to false
+            val texto = try { arquivo.readText() } catch (_: Exception) { null }
+            if (texto != null) {
+                try { return JSONObject(texto) to false } catch (_: Exception) { }
+            }
+            return JSONObject() to true
+        }
+
+        /**
+         * Grava em `<arquivo>.tmp` e renomeia por cima. O rename é atômico no
+         * mesmo sistema de arquivos: quem lê ao mesmo tempo vê o cadastro
+         * anterior inteiro ou o novo inteiro, nunca um arquivo truncado. Com
+         * `writeText` direto, a leitura no meio da gravação via um arquivo vazio
+         * e passava a tratar o aparelho como sem pacientes.
+         */
+        internal fun gravarAtomico(arquivo: File, texto: String): Boolean {
+            val tmp = File(arquivo.parentFile, arquivo.name + ".tmp")
+            return try {
+                java.io.FileOutputStream(tmp).use { saida ->
+                    saida.write(texto.toByteArray(Charsets.UTF_8))
+                    saida.fd.sync()
+                }
+                if (tmp.renameTo(arquivo)) true
+                else {
+                    // Sistema que não substitui no rename: copia por cima.
+                    tmp.copyTo(arquivo, overwrite = true)
+                    tmp.delete()
+                    true
+                }
+            } catch (_: Exception) {
+                tmp.delete()
+                false
+            }
+        }
+
+        /** Tira o cadastro ilegível do caminho sem apagá-lo. */
+        internal fun guardarIlegivel(arquivo: File) {
+            if (!arquivo.exists()) return
+            val destino = File(arquivo.parentFile,
+                arquivo.nameWithoutExtension + ".ilegivel_" + System.currentTimeMillis() + ".json")
+            if (!arquivo.renameTo(destino)) {
+                try { arquivo.copyTo(destino, overwrite = false) } catch (_: Exception) { }
+            }
+        }
     }
 
     data class DadosPaciente(

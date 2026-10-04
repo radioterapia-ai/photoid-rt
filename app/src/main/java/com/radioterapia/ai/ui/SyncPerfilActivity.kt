@@ -16,6 +16,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.radioterapia.ai.BaseActivity
 import com.radioterapia.ai.R
 import com.radioterapia.ai.sync.LogConexao
+import com.radioterapia.ai.sync.MotorSync
 import com.radioterapia.ai.sync.PerfilStore
 import com.radioterapia.ai.sync.PerfilSync
 import com.radioterapia.ai.sync.SyncWorker
@@ -185,12 +186,11 @@ class SyncPerfilActivity : BaseActivity() {
         // O DESTINO MUDOU, ENTÃO O HISTÓRICO NÃO VALE MAIS. Pasta remota nova é
         // um destino vazio; o índice do destino anterior diria que já está tudo
         // lá, e nada subiria — um erro que só aparece quando alguém procura uma
-        // foto no servidor e não a encontra.
-        val anterior = store.obter(p.id)
-        if (anterior != null && destinoMudou(anterior, p)) {
-            com.radioterapia.ai.sync.IndiceEnviados(this, p.id).limpar()
-        }
-        store.salvar(p)
+        // foto no servidor e não a encontra. Zerar o índice e gravar o perfil
+        // passam pelo motor, sob a trava que a varredura em curso também pega
+        // antes de cada envio: sem ela, a varredura seguiria mandando o lote
+        // ao destino antigo e anotaria esses arquivos no índice do novo.
+        MotorSync.salvarPerfil(this, p)
         store.salvarSenha(p.id, findViewById<EditText>(R.id.edtSyncSenha).text?.toString().orEmpty())
         perfil = p
         SyncWorker.reprogramar(this)
@@ -200,25 +200,20 @@ class SyncPerfilActivity : BaseActivity() {
         }
     }
 
-    private fun destinoMudou(a: PerfilSync, b: PerfilSync): Boolean =
-        a.tipo != b.tipo || a.host != b.host || a.share != b.share ||
-        a.urlBase != b.urlBase || a.safUri != b.safUri || a.caminhoRemoto != b.caminhoRemoto
-
     private fun confirmarRemocao() {
         val b = AlertDialog.Builder(this)
             .setTitle(R.string.sync_delete)
             .setMessage(R.string.sync_delete_q)
             .setPositiveButton(R.string.sync_delete) { _, _ ->
-                perfil?.let { store.remover(it.id) }
+                perfil?.let { MotorSync.removerPerfil(this, it.id) }
                 SyncWorker.reprogramar(this)
                 finish()
             }
             .setNegativeButton(R.string.cancel, null)
-        // BUTTON_POSITIVE é -1, não 1. Com o literal, pintarBotoesDialog chamava
-        // getButton(1), que devolve null, e pintarBotao é nulo-seguro — então o
-        // botão que apaga um destino inteiro saía cinza, igual ao "Cancelar",
-        // sem erro e sem log. Era o único dos cinco pontos de chamada do app que
-        // passava número cru em vez da constante.
+        // GUARDA: a constante, nunca um número. BUTTON_POSITIVE vale -1, e
+        // getButton com outro valor devolve null; como pintarBotao é
+        // nulo-seguro, o botão que apaga um destino inteiro sairia cinza, igual
+        // ao "Cancelar", sem erro e sem log.
         mostrarDialogPintado(b, destrutivo = android.content.DialogInterface.BUTTON_POSITIVE)
     }
 
@@ -234,12 +229,10 @@ class SyncPerfilActivity : BaseActivity() {
         /*
             RESULTADO DO TESTE: fundo da escada tonal, texto de primeiro plano.
 
-            Antes o fundo era pastel (#FFFDE7 / #C8E6C9 / #FFCDD2) e o texto
-            herdava text_primary (#FFFFFF): 1,07:1 no amarelo, 1,34:1 no verde,
-            1,41:1 no vermelho. Nao era contraste baixo — era texto invisivel, e
-            justamente a frase que o KDoc desta tela chama de centro dela. De
-            quebra, amarelo e vermelho pastel como estado de sistema e o que a
-            Regra do Alerta Clinico proibe.
+            O texto herda text_primary, que é branco. Sobre fundo pastel
+            (amarelo, verde ou vermelho claro) o contraste fica perto de 1:1:
+            a frase que esta tela existe para mostrar sai invisível. A cor vai
+            no texto, e o fundo fica no tom elevado do tema.
          */
         resumo.text = getString(R.string.sync_testing)
         resumo.setBackgroundColor(ContextCompat.getColor(this@SyncPerfilActivity, R.color.bg_elevated))

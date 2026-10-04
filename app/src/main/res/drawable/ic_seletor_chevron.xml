@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Seta dos campos de seleção escuros. O desenho é o de ic_dropdown_arrow; a
+    cor é text_secondary, que se lê sobre bg_input. ic_dropdown_arrow continua
+    servindo às telas de campo branco, e não deve ser recolorido no lugar.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp"
+    android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@color/text_secondary" android:pathData="M7,10l5,5 5,-5z"/>
+</vector>

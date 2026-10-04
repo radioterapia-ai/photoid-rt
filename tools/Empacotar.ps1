@@ -3,16 +3,15 @@
  EMPACOTADOR do PhotoID RT
 ================================================================
 
- DESTINO=pendrive  ·  PROJETO=PHOTOID_RT  ·  VERSAO lida do build.gradle
+ DESTINO=deploy  ·  PROJETO=PHOTOID_RT  ·  VERSAO lida do build.gradle
 
- POR QUE PENDRIVE
- O APK carrega 56,6 MB de bibliotecas nativas de terceiro — o motor de OCR
- (`libmlkit_google_ocr_pipeline.so`) e o leitor de codigo de barras
- (`libbarhopper_v3.so`) do Google ML Kit, em 4 ABIs. E imagem de terceiro
- embarcada, e o criterio do ENTREGA.md manda isso para pendrive.
+ PARA ONDE VAI
+ Para a pasta de entrega, $env:SystemDrive\AI_DEPLOY\<PROJETO>\v<versao>-build<n>\,
+ com o apelido de nome fixo ao lado, em latest\ (etapa 7b). A raiz tem que
+ existir antes: o script falha em vez de cria-la (ver a checagem da raiz).
 
  PHOTOID RT E A EXCECAO DO CONTRATO DE INSTALADOR
- O contrato geral (secao 0) manda gerar um .zip com INSTALAR.cmd que instala
+ O contrato geral de entrega manda gerar um .zip com INSTALAR.cmd que instala
  na pasta de dados da estacao e registra em _instalados.json. Aqui NAO:
  o artefato e um APK que instala no TABLET, nao na estacao. Nao ha o que
  instalar no Windows, nao ha atalho na area de trabalho, e escrever no
@@ -22,10 +21,10 @@
  PROJETO/VERSAO/DATA, e LEIA-ME.txt com o procedimento de instalacao.
 
  O APK FICA SOLTO, sem .zip por cima. O .zip do contrato existe para deixar
- o download do Drive limpo; este projeto nao vai para o Drive. E um APK
- dentro de um .zip obriga o tecnico a descompactar antes de copiar para o
- tablet — um passo a mais no lugar onde a regra do produto e que clique
- custa. Se quiser o .zip mesmo assim, use -ComZip.
+ o download limpo, mas um APK dentro de um .zip obriga o tecnico a
+ descompactar antes de copiar para o tablet — um passo a mais no lugar onde
+ a regra do produto e que clique custa. Se quiser o .zip mesmo assim, use
+ -ComZip.
 
  SEM CAMINHO ABSOLUTO: o destino e montado a partir de $Destino, $Projeto e
  da versao lida do app/build.gradle.
@@ -42,10 +41,9 @@ $ErrorActionPreference = 'Stop'
 # ---------------------------------------------------------------- contrato
 $Destino = 'deploy'            # deploy | pendrive
 #
-# MUDOU DE 'pendrive' PARA 'deploy' EM 16/08/2026, e o motivo nao foi
-# reavaliacao do criterio: C:\PENDRIVE_AI_EXPORT DEIXOU DE EXISTIR na
-# reorganizacao do ecossistema. Nao ha destino "pendrive" para onde
-# entregar. Todo pacote vai para a pasta de entrega.
+# 'pendrive' continua no mapa, mas nao e destino utilizavel: essa raiz foi
+# desativada, e a checagem da raiz abaixo recusa destino sem raiz em vez de
+# recria-la. Todo pacote vai para a pasta de entrega.
 $Projeto = 'PHOTOID_RT'
 
 $RaizPorDestino = @{
@@ -85,9 +83,8 @@ if (-not $RaizPorDestino.ContainsKey($Destino)) {
 }
 
 # A RAIZ do destino tem que JA EXISTIR. Criar sozinho seria recriar uma
-# pasta que o ecossistema pode ter apagado de proposito — foi assim que
-# uma arvore-sombra apareceu antes, com o build indo para um lugar que
-# ninguem olhava e parecendo ter dado certo.
+# pasta que o ecossistema pode ter apagado de proposito, e o build iria para
+# um lugar que ninguem olha, parecendo ter dado certo.
 $raizDestino = $RaizPorDestino[$Destino]
 if (-not (Test-Path $raizDestino)) {
     Falhar @"
@@ -95,7 +92,6 @@ A raiz do destino nao existe: $raizDestino
 
 DESTINO esta como '$Destino'. Se a estrutura do ecossistema mudou, ajuste
 `$Destino e `$RaizPorDestino no topo deste script — nao crie a pasta na mao.
-Ver ENTREGA.md.
 "@
 }
 
@@ -135,7 +131,7 @@ if ($PularPortao) {
     # GoogleDriveFS marca arquivos de app\build como somente-leitura enquanto os
     # processa. O Gradle apaga essa pasta a cada build e falha com "Unable to
     # delete directory" — mensagem que manda procurar processo travado, quando o
-    # que ha e um atributo. Ja custou varias entregas interrompidas no meio.
+    # que ha e um atributo.
     & (Join-Path $PSScriptRoot 'Destravar-Build.ps1') | Out-Null
 
     & (Join-Path $raizProjeto 'gradlew.bat') check assembleRelease --console=plain
@@ -225,18 +221,15 @@ if ($aapt) {
     Por isso a impressao digital vai conferida aqui, contra o valor esperado.
     Ela e informacao publica: esta dentro de todo APK que sai.
 
-    TROCADA UMA VEZ, em 20/09/2026, e o registro fica porque a proxima pessoa
-    que pensar em troca-la precisa saber o que isso custou.
+    Trocar o valor abaixo E a decisao de trocar a chave, e ela aparece no diff.
+    A trava recusa todo pacote de outra chave, inclusive o primeiro de uma chave
+    nova legitima: e o comportamento certo, porque a identidade do app nao muda
+    sem que alguem edite esta linha.
 
-    A keystore original (SHA-256 101BE60F...) foi PERDIDA: nao estava em maquina
-    nenhuma nem em backup. Sem ela nao ha como atualizar o que esta instalado,
-    entao os dois tablets em campo desinstalaram e reinstalaram — e o cadastro
-    do PatientCache so sobreviveu porque foi exportado antes.
-
-    Esta trava recusou o primeiro pacote da chave nova, que e o comportamento
-    certo: trocar o valor abaixo E a decisao, e ela aparece no diff. Se este
-    numero mudar de novo sem um paragrafo aqui explicando, alguma coisa deu
-    errado.
+    PERDER A KEYSTORE CUSTA O MESMO QUE TROCA-LA. Sem ela nao ha como atualizar
+    o que esta instalado: cada aparelho desinstala e reinstala, e o cadastro do
+    PatientCache so sobrevive se tiver sido exportado antes. A keystore precisa
+    de copia de seguranca fora da maquina que empacota.
 #>
 $IMPRESSAO_ESPERADA = '7589DE5ADE90CF475A455B2234BD6F4CF33ED4E534EF129BCFD6B55EB25F0C33'
 
@@ -268,9 +261,10 @@ if ($apksigner) {
 # ---------------------------------------------------------------- 4b. varredura
 Etapa '4b' 'Varrendo o pacote por credencial e dado de paciente'
 
-# O ENTREGA.md conta que uma chave de 72 bytes ja viajou dentro de um bundle de
-# 7,9 GB. Aqui a superficie e pequena — um APK — mas a varredura fica porque o
-# custo e zero e a falha e cara.
+# Chave de assinatura ou credencial nunca pode viajar dentro de um pacote, e
+# num pacote grande um arquivo de poucos bytes passa despercebido. Aqui a
+# superficie e pequena — um APK — mas a varredura fica porque o custo e zero
+# e a falha e cara.
 $padroes = @('BEGIN RSA PRIVATE KEY', 'BEGIN PRIVATE KEY', 'BEGIN OPENSSH PRIVATE KEY')
 $achados = @()
 $bytes = [System.IO.File]::ReadAllBytes($apk)
@@ -305,9 +299,9 @@ $data = Get-Date -Format 'yyyy-MM-dd'
 # nao tem como distinguir um download corrompido de um arquivo trocado, e a
 # unica resposta possivel a "esse APK e o de voces?" seria a confianca.
 #
-# Ficava de fora e era escrito a mao na hora de publicar. O do build 16 saiu
-# nomeando um arquivo que nao existia na pasta -- que e exatamente o que
-# acontece com passo manual: ele nao falha, ele sai errado em silencio.
+# Gerado aqui, e nao escrito a mao na hora de publicar: passo manual nao
+# falha, ele sai errado em silencio -- nomeando, por exemplo, um arquivo que
+# nao existe na pasta.
 #
 # Reaproveita os bytes ja lidos na varredura de credencial: o APK nao e lido
 # duas vezes.
@@ -346,22 +340,35 @@ Write-Host "    SHA256.txt  ($($hashApk.Substring(0,16))...)"
 #
 # minSdk vem do build.gradle, nao de constante repetida: e o campo que impede
 # oferecer a um tablet API 24 uma versao que ele nao consegue instalar.
+#
+# FORMATO 2, e o link do APK no campo "apkUrl". O campo antigo "apk" NAO e
+# escrito, de proposito: o leitor do formato 1 exige "apk" e, sem ele, conclui
+# que nao ha versao publicada. E assim que os aparelhos com aquele leitor -- cuja
+# copia antes de atualizar levava o acervo de fotos inteiro -- deixam de receber
+# o convite e passam uma vez pelo APK instalado a mao. Escrever "apk" de novo
+# "por compatibilidade" devolveria o convite a eles.
+#
+# O app aceita SO o formato que conhece (GerenciadorAtualizacao.FORMATO_VERSAO).
+# Mudar o numero aqui tira o convite de todo aparelho com o leitor atual; campo
+# novo e opcional nao pede formato novo.
 if ($txtGradle -notmatch 'minSdk\s+(\d+)') { Falhar 'minSdk nao encontrado no build.gradle.' }
 $minSdk = [int]$Matches[1]
 
+$formatoVersao = 2
 $urlApkRelease = 'https://github.com/radioterapia-ai/photoid-rt/releases/latest/download/PhotoID_RT_LATEST.apk'
 
 Gravar-Texto (Join-Path $pastaDestino 'version.json') @"
 {
+  "formato": $formatoVersao,
   "versionCode": $versionCode,
   "versionName": "$versionName",
-  "apk": "$urlApkRelease",
+  "apkUrl": "$urlApkRelease",
   "sha256": "$hashApk",
   "minSdk": $minSdk,
   "notas": ""
 }
 "@
-Write-Host "    version.json  (code=$versionCode  minSdk=$minSdk)"
+Write-Host "    version.json  (formato=$formatoVersao  code=$versionCode  minSdk=$minSdk)"
 
 # entrega.txt — o que o contrato exige que todo pacote carregue.
 @"
@@ -482,9 +489,8 @@ if ($faltando) { Falhar "Faltou no pacote: $($faltando -join ', ')" }
 
     FICA EM latest\, e nao dentro da pasta da versao: a pasta da versao responde
     "o que foi entregue nesta versao", e dois arquivos ali sao duas respostas.
-    Ja aconteceu de tres entregas ficarem SO com o nome fixo, sem a copia
-    versionada — e dali nao se descobre o que esta instalado sem abrir o
-    entrega.txt ao lado.
+    Entrega que fica SO com o nome fixo, sem a copia versionada, nao diz o que
+    esta instalado sem abrir o entrega.txt ao lado.
 
     E E GERADO AQUI, nao a mao. Apelido feito a mao envelhece calado: publicar a
     versao seguinte e esquecer de atualiza-lo deixa o link servindo a anterior

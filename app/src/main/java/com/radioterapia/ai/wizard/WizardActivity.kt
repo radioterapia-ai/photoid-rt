@@ -568,6 +568,14 @@ class WizardActivity : com.radioterapia.ai.BaseActivity() {
     }
 
     private fun marcarConcluido() {
+        // Fixa o idioma da lista padrão de sítios no idioma em que o tablet foi
+        // configurado. Fica AQUI, no fim, e não no onCreate: as duas saídas do
+        // wizard (Concluir e Pular tudo) passam por esta função, sempre depois
+        // de qualquer importação feita no passo 2. Um pacote que trouxe a lista
+        // de sítios continua valendo, porque a fixação só é consultada quando
+        // não há lista gravada. Fixado uma vez, não muda com trocas de idioma.
+        if (config.sitiosIdiomaPadrao.isBlank())
+            config.sitiosIdiomaPadrao = LocaleManager.obterIdiomaAtual(this)
         getSharedPreferences("wizard", MODE_PRIVATE).edit().putBoolean("done", true).apply()
     }
 

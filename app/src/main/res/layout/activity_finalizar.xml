@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Tela de Finalização / Pós-processamento (item 8).
-    
+
     Comportamento:
     - Após o usuário clicar "Finalizar simulação" na câmera, a sessão é ENCERRADA
       automaticamente (sessionManager.limparSessao() na MainActivity) - assim a Home
@@ -34,18 +34,95 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
             android:textColor="@color/text_primary"
             android:layout_marginBottom="20dp" />
 
-        <TextView
-            android:id="@+id/txtResumo"
+        <!--
+            LINHAS DE ESTADO da simulação finalizada: sincronia e impressora.
+
+            ACIMA do cartão de resumo, de propósito. O cartão cresce com o que
+            foi preenchido, e embaixo dele as duas linhas ficariam abaixo da
+            dobra em paisagem — justamente as que dizem se o envio deu certo e
+            se a impressora responde. Aqui elas ficam na primeira tela nas duas
+            orientações.
+
+            O bloco só aparece na fase de resultado; o código o mostra e o
+            esconde junto com as fases (mostrarFaseResultado / entrarModoEdicao).
+            Cada linha cuida da própria visibilidade dentro dele.
+        -->
+        <LinearLayout
+            android:id="@+id/layoutStatusFin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="14dp"
-            android:textSize="12sp"
-            android:fontFamily="monospace"
-            android:background="@color/bg_card"
-            android:textColor="@color/text_primary" />
+            android:orientation="vertical"
+            android:layout_marginBottom="14dp"
+            android:visibility="gone">
+
+            <!-- Sincronia: oculta quando a sincronização está desligada, sem
+                 destino ou com «enviar ao finalizar» desligado. Os 6dp abaixo
+                 juntam as duas linhas num bloco só; com ela oculta, a margem
+                 some junto. -->
+            <TextView
+                android:id="@+id/txtSyncInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:minHeight="@dimen/fin_status_altura_min"
+                android:gravity="center_vertical|start"
+                android:padding="10dp"
+                android:textSize="@dimen/fin_status_texto"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card_warning"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/txtImprInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/fin_status_altura_min"
+                android:gravity="center_vertical|start"
+                android:padding="10dp"
+                android:textSize="@dimen/fin_status_texto"
+                android:textColor="@color/text_secondary"
+                android:background="@drawable/bg_card_warning"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!--
+            CARTÃO DE RESUMO. Grupo do app (bg_settings_group: cartão, traço de
+            1dp, raio 8dp). A hierarquia vem dos spans montados no código:
+            rótulo em cor secundária, valor em branco, contagem em azul de marca
+            e zero esmaecido. Os alertas ativos entram abaixo do texto como
+            pílulas, na forma que espelha a ficha de Time-Out.
+        -->
+        <LinearLayout
+            android:id="@+id/cardResumo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_settings_group">
+
+            <TextView
+                android:id="@+id/txtResumo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/fin_resumo_texto"
+                android:lineSpacingExtra="4dp"
+                android:textColor="@color/text_primary" />
+
+            <LinearLayout
+                android:id="@+id/boxFinAlertas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <!-- ===== TIME-OUT (rotina da clínica): sítio opcional + risco/precaução.
-             Visível somente se o PDF inclui a página (Configurações/Onboarding). -->
+             Visível somente se o PDF inclui a página (Configurações/Onboarding).
+
+             Os quatro campos de seleção falam a mesma língua: campo escuro
+             (bg_seletor), altura e texto de dimens, contorno quando em foco. A
+             seta é posta pelo código, no lado final do campo. -->
         <LinearLayout
             android:id="@+id/layoutTimeOutCampos"
             android:layout_width="match_parent"
@@ -54,59 +131,94 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
             android:visibility="gone">
 
             <TextView style="@style/FieldLabel"
+                android:layout_marginTop="12dp"
                 android:text="@string/team_medico_label" />
 
             <AutoCompleteTextView
                 android:id="@+id/actTimeoutMedico"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="@dimen/fin_campo_altura"
                 android:hint="@string/timeout_medico_hint"
-                android:textSize="14sp"
-                android:textColor="#212121"
-                android:textColorHint="#9E9E9E"
-                android:background="@drawable/bg_input_white"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:textSize="@dimen/fin_campo_texto"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                android:background="@drawable/bg_seletor"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:popupBackground="@drawable/bg_popup_seletor"
+                android:dropDownVerticalOffset="4dp"
                 android:inputType="textCapWords"
                 android:completionThreshold="1" />
 
             <TextView style="@style/FieldLabel"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/timeout_equip_label" />
 
             <AutoCompleteTextView
                 android:id="@+id/actTimeoutEquip"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="@dimen/fin_campo_altura"
                 android:hint="@string/timeout_equip_hint"
-                android:textSize="14sp"
-                android:textColor="#212121"
-                android:textColorHint="#9E9E9E"
-                android:background="@drawable/bg_input_white"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:textSize="@dimen/fin_campo_texto"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                android:background="@drawable/bg_seletor"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:popupBackground="@drawable/bg_popup_seletor"
+                android:dropDownVerticalOffset="4dp"
                 android:focusable="false"
                 android:clickable="true"
-                android:drawableEnd="@drawable/ic_dropdown_arrow"
                 android:completionThreshold="1" />
 
             <TextView style="@style/FieldLabel"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/sitio_topografia_label" />
 
             <AutoCompleteTextView
                 android:id="@+id/actTimeoutSitio"
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
+                android:layout_height="@dimen/fin_campo_altura"
                 android:hint="@string/sitio_topografia_hint"
-                android:textSize="14sp"
-                android:textColor="#212121"
-                android:textColorHint="#9E9E9E"
-                android:background="@drawable/bg_input_white"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"
+                android:textSize="@dimen/fin_campo_texto"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                android:background="@drawable/bg_seletor"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:popupBackground="@drawable/bg_popup_seletor"
+                android:dropDownVerticalOffset="4dp"
                 android:inputType="textCapCharacters"
                 android:completionThreshold="1" />
+
+            <!--
+                Número máximo de visitas (opcional), logo depois do sítio.
+
+                É informação de PLANEJAMENTO, como o sítio, e fica no grupo
+                dele, antes dos alertas. Mora dentro do bloco do Time-Out porque
+                o valor só chega à ficha pela página de Time-Out: com a página
+                desligada, o campo some junto, em vez de oferecer um dado que
+                não iria a lugar nenhum.
+            -->
+            <LinearLayout
+                android:id="@+id/layoutFracoes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView style="@style/FieldLabel"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/fin_fracoes_label" />
+
+                <Spinner
+                    android:id="@+id/spFracoes"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/fin_campo_altura"
+                    android:background="@drawable/bg_seletor_spinner"
+                    android:popupBackground="@drawable/bg_popup_seletor"
+                    android:spinnerMode="dropdown"
+                    android:dropDownVerticalOffset="4dp" />
+            </LinearLayout>
 
             <!--
                 OS TRES ALERTAS, com a cor que eles produzem no cabecalho do PDF.
@@ -198,10 +310,10 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
         <!--
             Protocolo desta simulação.
 
-            DEPOIS dos alertas e da caixa de observações, como pedido: é a
-            última decisão da tela, e a que muda o que sai impresso no fim da
-            ficha. O bloco inteiro só aparece quando há mais de um protocolo —
-            com um só não há escolha a fazer, e a faixa seria ruído.
+            Depois dos alertas e antes da caixa de observação: é a escolha que
+            muda o que sai impresso no fim da ficha. O bloco inteiro só aparece
+            quando há mais de um protocolo — com um só não há escolha a fazer,
+            e a faixa seria ruído.
         -->
         <LinearLayout
             android:id="@+id/layoutProtocolos"
@@ -240,36 +352,9 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
             </HorizontalScrollView>
         </LinearLayout>
 
-        <!--
-            Número máximo de frações (opcional).
-
-            ANTES das observações de propósito: é a última informação de
-            PLANEJAMENTO da tela, e a caixa de observações é texto livre — quem
-            começa a escrever ali não volta para preencher um campo acima.
-        -->
-        <LinearLayout
-            android:id="@+id/layoutFracoes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="@string/fin_fracoes_label"
-                android:textColor="@color/text_primary"
-                android:textSize="14sp" />
-
-            <Spinner
-                android:id="@+id/spFracoes"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <!-- Observações da simulação (vira box na ficha do PDF se preenchido) -->
+        <!-- Observações da simulação (vira box na ficha do PDF se preenchido).
+             Campo escuro como os de seleção acima; até 4 linhas digitadas
+             (o limite e o vigia estão no código, em CampoObservacao). -->
         <LinearLayout
             android:id="@+id/layoutObservacao"
             android:layout_width="match_parent"
@@ -302,11 +387,11 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:padding="10dp"
                 android:hint="@string/fin_observation_hint"
                 android:inputType="textMultiLine|textCapSentences"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:textSize="14sp"
-                android:textColor="#212121"
-                android:textColorHint="#9E9E9E"
-                android:background="@drawable/bg_input_white" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_tertiary"
+                android:background="@drawable/bg_seletor" />
         </LinearLayout>
 
         <!-- ===== FASE 1 (pré-finalização): Voltar à câmera | Finalizar simulação ===== -->
@@ -535,17 +620,6 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
                     app:autoSizeMaxTextSize="14sp"
                     app:autoSizeStepGranularity="1sp" />
             </LinearLayout>
-
-            <TextView
-                android:id="@+id/txtImprInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:padding="10dp"
-                android:textSize="13sp"
-                android:textColor="@color/text_secondary"
-                android:background="@drawable/bg_card_warning"
-                android:visibility="gone" />
 
             <!-- Voltar ao Menu -->
             <Button

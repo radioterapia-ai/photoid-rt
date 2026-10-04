@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fundo do Spinner com a seta. O fundo padrão do Spinner traz a seta dele, e
+    trocá-lo tira a seta junto; esta camada a devolve no mesmo lugar em que os
+    outros três campos a mostram (24dp, 14dp da borda final).
+
+    gravity/width/height/end em item de layer-list são da API 23; o minSdk é 24.
+    "end" segue a direção do layout: em árabe a seta vai para a esquerda.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_seletor" />
+    <item
+        android:drawable="@drawable/ic_seletor_chevron"
+        android:gravity="end|center_vertical"
+        android:end="14dp"
+        android:width="24dp"
+        android:height="24dp" />
+</layer-list>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    "Página n de N" da calibração, entre a ajuda e a prévia. Incluído pelos dois
+    layouts da tela (retrato e paisagem), com os mesmos ids.
+
+    Nasce GONE: só aparece quando o PDF tem mais de uma página, e um PDF de
+    página única continua com a tela de sempre. Nas pontas a seta fica
+    desabilitada, e não some, para a outra não mudar de lugar sob o dedo.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linhaProtPagNav"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:visibility="gone">
+
+    <Button
+        android:id="@+id/btnProtPagAnt"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:minWidth="0dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="@string/seta_esq"
+        android:textSize="16sp"
+        android:contentDescription="@string/prot_pag_anterior"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral" />
+
+    <TextView
+        android:id="@+id/txtProtPagNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        android:accessibilityLiveRegion="polite" />
+
+    <Button
+        android:id="@+id/btnProtPagProx"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:minWidth="0dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:text="@string/seta_dir"
+        android:textSize="16sp"
+        android:contentDescription="@string/prot_pag_proxima"
+        android:textColor="@color/text_on_dark"
+        android:backgroundTint="@color/action_neutral" />
+</LinearLayout>

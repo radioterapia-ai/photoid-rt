@@ -1,6 +1,8 @@
 package com.radioterapia.ai
 
 import android.content.Context
+import android.content.res.Configuration
+import com.radioterapia.ai.i18n.LocaleManager
 
 /**
  * Modelo de um destino SMB. O destino primário é obrigatório.
@@ -27,6 +29,13 @@ data class DestinoSmb(
 class AppConfig(context: Context) {
 
     private val prefs = context.getSharedPreferences("config_radioterapia", Context.MODE_PRIVATE)
+
+    /**
+     * Contexto da aplicação, para ler recurso num idioma escolhido. Guardar o da
+     * Activity prenderia a tela enquanto este objeto vivesse; o da aplicação já
+     * existe enquanto o processo existir.
+     */
+    private val app: Context = context.applicationContext ?: context
 
     var pastaBaseLocal: String
         get() = prefs.getString(KEY_PASTA_LOCAL, "Pictures") ?: "Pictures"
@@ -205,6 +214,30 @@ class AppConfig(context: Context) {
         get() = prefs.getLong(KEY_ATU_CHECAGEM, 0L)
         set(v) = prefs.edit().putLong(KEY_ATU_CHECAGEM, v).apply()
 
+    // Marcador de pré-instalação: gravado logo antes de abrir o instalador e
+    // conferido na primeira abertura da versão nova, que compara as contagens
+    // de antes com as de depois. Nenhum dos três deve viajar em cópia ou pacote
+    // de configuração: é estado deste aparelho, não do serviço.
+    //
+    // GUARDA: os três gravam com commit(), não apply(). O instalador substitui
+    // o app e encerra o processo logo em seguida; uma gravação assíncrona ainda
+    // na fila se perderia, e a conferência pós-atualização não aconteceria.
+
+    /** versionCode instalado quando o marcador foi gravado. 0 = sem marcador. */
+    var atualizacaoDe: Int
+        get() = prefs.getInt(KEY_ATU_DE, 0)
+        set(v) { prefs.edit().putInt(KEY_ATU_DE, v).commit() }
+
+    /** Contagens de antes da atualização, codificadas como `chave=n;chave=n`. */
+    var atualizacaoContagens: String
+        get() = prefs.getString(KEY_ATU_CONTAGENS, "") ?: ""
+        set(v) { prefs.edit().putString(KEY_ATU_CONTAGENS, v).commit() }
+
+    /** Caminho absoluto da cópia de segurança gravada antes de atualizar. */
+    var atualizacaoBackup: String
+        get() = prefs.getString(KEY_ATU_BACKUP, "") ?: ""
+        set(v) { prefs.edit().putString(KEY_ATU_BACKUP, v).commit() }
+
     /**
      * Como o técnico DIGITA a data de nascimento.
      *
@@ -283,16 +316,46 @@ class AppConfig(context: Context) {
         get() = prefs.getString(KEY_NOME_CLINICA, "") ?: ""
         set(value) { prefs.edit().putString(KEY_NOME_CLINICA, value).commit() }
 
-    /** Sítios anatômicos / topografias (um por linha). Padrão: lista clínica
-     *  completa; editável em Configurações → Equipe e Tratamentos. */
+    /**
+     * Sítios anatômicos / topografias (um por linha), editáveis em Configurações
+     * → Equipe e Tratamentos.
+     *
+     * Sem lista gravada, vale a lista clínica padrão: no idioma fixado em
+     * [sitiosIdiomaPadrao], pelo recurso `sitios_padrao`; sem idioma fixado, a
+     * lista em português de [com.radioterapia.ai.util.TimeOutData], a mesma de
+     * sempre, para uma instalação em uso não ver a lista mudar sozinha.
+     *
+     * O padrão NÃO é gravado em `sitios_lista`. Gravado, ele contaria como lista
+     * preenchida, e a importação em modo SOMAR, que pula chave que já tem valor,
+     * descartaria em silêncio a lista vinda de outro tablet.
+     */
     var sitiosLista: String
         get() {
             val v = prefs.getString("sitios_lista", "") ?: ""
-            return if (v.isBlank())
-                com.radioterapia.ai.util.TimeOutData.SITIOS.joinToString("\n")
-            else v
+            if (v.isNotBlank()) return v
+            val lang = sitiosIdiomaPadrao
+            if (lang.isNotBlank()) {
+                try {
+                    val c = Configuration(app.resources.configuration)
+                    c.setLocale(LocaleManager.localeDe(lang))
+                    return app.createConfigurationContext(c).getString(R.string.sitios_padrao)
+                } catch (_: Exception) { /* recurso ilegível: cai na lista de reserva */ }
+            }
+            return com.radioterapia.ai.util.TimeOutData.SITIOS.joinToString("\n")
         }
         set(value) { prefs.edit().putString("sitios_lista", value).commit() }
+
+    /**
+     * Idioma da lista padrão de sítios, fixado uma vez, no fim do onboarding.
+     * Vazio = instalação sem fixação, que continua com a lista em português.
+     *
+     * Não acompanha trocas de idioma posteriores: a lista padrão é a do idioma
+     * em que o serviço configurou o tablet, e trocar a interface depois não
+     * troca, por baixo, o vocabulário clínico que a equipe já usa.
+     */
+    var sitiosIdiomaPadrao: String
+        get() = prefs.getString(KEY_SITIOS_IDIOMA, "") ?: ""
+        set(value) { prefs.edit().putString(KEY_SITIOS_IDIOMA, value).commit() }
 
     /** Equipamentos da clínica (um por linha) — dropdown na finalização. */
     var equipamentos: String
@@ -381,6 +444,20 @@ class AppConfig(context: Context) {
         private const val KEY_ATU_NOME = "atualizacao_nome"
         private const val KEY_ATU_DISPENSADA = "atualizacao_dispensada"
         private const val KEY_ATU_CHECAGEM = "atualizacao_checagem"
+        private const val KEY_ATU_DE = "atualizacao_de"
+        private const val KEY_ATU_CONTAGENS = "atualizacao_contagens"
+        private const val KEY_ATU_BACKUP = "atualizacao_backup"
+
+        /**
+         * Chaves que descrevem ESTE aparelho num instante (o marcador de
+         * pré-instalação), e não a configuração do serviço. Ficam fora da
+         * exportação e da importação em JSON: levadas a outro tablet, fariam a
+         * conferência pós-atualização de lá comparar contagens que não são dele
+         * e apontar uma cópia de segurança que lá não existe.
+         */
+        private val CHAVES_DO_APARELHO = setOf(KEY_ATU_DE, KEY_ATU_CONTAGENS, KEY_ATU_BACKUP)
+
+        private const val KEY_SITIOS_IDIOMA = "sitios_idioma_padrao"
         private const val KEY_PDF_ETIQ_LARG = "pdf_etiqueta_largura_mm"
         private const val KEY_PDF_ETIQ_ALT = "pdf_etiqueta_altura_mm"
     private const val KEY_PDF_MARGEM = "pdf_margem_mm"
@@ -417,6 +494,7 @@ class AppConfig(context: Context) {
         raiz.put("_data", System.currentTimeMillis())
         val vals = org.json.JSONObject()
         for ((chave, valor) in prefs.all) {
+            if (chave in CHAVES_DO_APARELHO) continue
             when (valor) {
                 is String -> vals.put(chave, valor)
                 is Boolean -> vals.put(chave, valor)
@@ -442,6 +520,7 @@ class AppConfig(context: Context) {
             val ed = prefs.edit()
             var n = 0
             for (chave in vals.keys()) {
+                if (chave in CHAVES_DO_APARELHO) continue
                 when (val v = vals.get(chave)) {
                     is String -> ed.putString(chave, v)
                     is Boolean -> ed.putBoolean(chave, v)

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * Tela inicial (Home) - item 1, 5, 7 da rodada UI v4.
+ * Tela inicial (Home).
  *
  * - mostrarEngrenagemAoInvesDeVoltar() = true: a toolbar da BaseActivity coloca a
  *   engrenagem (maior, 28dp) à direita em vez do botão voltar.
@@ -61,6 +61,7 @@ class HomeActivity : BaseActivity() {
         // mudanca de intervalo nas Configuracoes valer sem reinstalar o app.
         // Com o interruptor mestre desligado, nao faz absolutamente nada.
         com.radioterapia.ai.sync.SyncWorker.aoAbrir(this)
+        separarArquivadasRepetidas()
 
         findViewById<Button>(R.id.btnSimulation).setOnClickListener {
             startActivity(Intent(this, SimulationHomeActivity::class.java))
@@ -76,7 +77,126 @@ class HomeActivity : BaseActivity() {
         }
 
         atualizarBaseDePacientes()
+        conferirPosAtualizacao()
+        // Instalador cancelado ou deixado pendente: enquanto esta versão segue
+        // em uso, as contagens do marcador acompanham altas e exclusões, e a
+        // versão nova não acusa perda que não houve. Registra uma vez por
+        // processo; sem marcador, cada saída do app só lê preferências.
+        com.radioterapia.ai.update.GerenciadorAtualizacao.vigiarInstalacaoPendente(application)
         procurarVersaoNova()
+    }
+
+    /**
+     * Separa as fotos arquivadas que aparecem em mais de uma pasta de paciente.
+     *
+     * Repete a cada abertura até uma passada limpa, quando a própria rotina
+     * guarda a marca, e volta a rodar depois de uma importação que trouxe fotos.
+     * Só em IO: ela percorre o acervo inteiro, e na thread principal a Home congelaria na
+     * primeira abertura. Nada é apagado — as fotos vão para a quarentena — e o
+     * resultado vai só para o registro de auditoria, sem diálogo: não há decisão
+     * a pedir a quem está abrindo o app com um paciente esperando.
+     */
+    private fun separarArquivadasRepetidas() {
+        // Uma vez por processo: girar o tablet recria a Home, e duas varreduras
+        // do acervo ao mesmo tempo disputariam os mesmos arquivos.
+        if (!quarentenaDisparada.compareAndSet(false, true)) return
+        val app = applicationContext
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val r = com.radioterapia.ai.util.QuarentenaArquivadas.executarSeNecessario(app)
+                if (r != null && r.movidos > 0) {
+                    com.radioterapia.ai.audit.AuditLogger(app).registrar(
+                        com.radioterapia.ai.audit.AuditLogger.Tipo.INFO,
+                        "Fotos arquivadas repetidas entre pacientes movidas para quarentena",
+                        mapOf(
+                            "examinados" to r.examinados,
+                            "movidos" to r.movidos,
+                            "pastas" to r.pastas
+                        )
+                    )
+                }
+            } catch (_: Exception) { /* silencioso: nunca atrapalha a abertura */ }
+        }
+    }
+
+    /**
+     * Na primeira abertura depois de uma atualização, confirma a versão nova e
+     * que os dados chegaram.
+     *
+     * Tudo chegou: um aviso curto, que não pede toque. Algo diminuiu: um diálogo
+     * que diz o quê, quanto, e onde está a cópia gravada antes de atualizar. Ele
+     * só informa — restaurar por cima do que existe é decisão de quem conhece o
+     * aparelho, e não do app.
+     *
+     * A leitura é em IO; o aviso, na thread principal, e só numa Home que esteja
+     * na frente: View tocada em Dispatchers.IO lança, e diálogo sobre Activity
+     * destruída também.
+     */
+    private fun conferirPosAtualizacao() {
+        // Uma vez por processo: duas leituras ao mesmo tempo veriam o mesmo
+        // marcador antes de qualquer uma apagá-lo, e a confirmação sairia dupla.
+        if (!conferenciaDisparada.compareAndSet(false, true)) return
+        val app = applicationContext
+        CoroutineScope(Dispatchers.Main).launch {
+            val r = withContext(Dispatchers.IO) {
+                try { com.radioterapia.ai.update.GerenciadorAtualizacao.conferirPosAtualizacao(app) }
+                catch (_: Exception) { null }
+            } ?: return@launch
+            // A leitura já apagou o marcador, então o resultado não pode morrer
+            // com esta instância: se a Home foi recriada (o tablet girou) enquanto
+            // a leitura corria, quem mostra é a que estiver na frente agora, ou a
+            // próxima que voltar à frente. Tudo na thread principal, sem disputa.
+            posAtualizacaoPendente = r
+            homeNaFrente?.get()?.mostrarPosAtualizacaoPendente()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        homeNaFrente = java.lang.ref.WeakReference(this)
+        mostrarPosAtualizacaoPendente()
+    }
+
+    override fun onPause() {
+        if (homeNaFrente?.get() === this) homeNaFrente = null
+        super.onPause()
+    }
+
+    private fun mostrarPosAtualizacaoPendente() {
+        val r = posAtualizacaoPendente ?: return
+        if (isFinishing || isDestroyed) return
+        posAtualizacaoPendente = null
+
+        if (r.encolhidos.isEmpty()) {
+            android.widget.Toast.makeText(this,
+                getString(R.string.update_done_fmt, r.versionName),
+                android.widget.Toast.LENGTH_LONG).show()
+            return
+        }
+        val linhas = r.encolhidos.entries.joinToString("\n") { (chave, par) ->
+            getString(R.string.update_transplant_item_fmt,
+                rotuloDaContagem(chave), par.first, par.second)
+        }
+        try {
+            android.app.AlertDialog.Builder(this)
+                .setTitle(R.string.group_update)
+                .setMessage(getString(R.string.update_transplant_warn_fmt, linhas, r.pastaBackup))
+                .setPositiveButton(R.string.ok, null)
+                .show()
+        } catch (_: Exception) { }
+    }
+
+    /** O nome que a tela de Transferência já usa para cada item contado. */
+    private fun rotuloDaContagem(chave: String): String = when (chave) {
+        com.radioterapia.ai.update.GerenciadorAtualizacao.CONT_PACIENTES ->
+            getString(R.string.tr_pacientes)
+        com.radioterapia.ai.update.GerenciadorAtualizacao.CONT_PROTOCOLOS ->
+            getString(R.string.tr_protocolos)
+        com.radioterapia.ai.update.GerenciadorAtualizacao.CONT_RUBRICARIO ->
+            getString(R.string.tr_rubricario)
+        com.radioterapia.ai.update.GerenciadorAtualizacao.CONT_TRATAMENTO ->
+            getString(R.string.tr_tratamento)
+        else -> chave
     }
 
     /**
@@ -149,5 +269,20 @@ class HomeActivity : BaseActivity() {
             android.widget.Toast.makeText(this, getString(R.string.hc_no_browser),
                 android.widget.Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private companion object {
+        /** A separação das arquivadas já foi disparada neste processo. */
+        val quarentenaDisparada = java.util.concurrent.atomic.AtomicBoolean(false)
+
+        /** A conferência pós-atualização já foi disparada neste processo. */
+        val conferenciaDisparada = java.util.concurrent.atomic.AtomicBoolean(false)
+
+        /** O que a conferência achou e ainda não foi mostrado. Só a thread
+         *  principal lê e grava. */
+        var posAtualizacaoPendente: com.radioterapia.ai.update.GerenciadorAtualizacao.PosAtualizacao? = null
+
+        /** A Home que está na frente, sem segurá-la viva depois de destruída. */
+        var homeNaFrente: java.lang.ref.WeakReference<HomeActivity>? = null
     }
 }

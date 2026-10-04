@@ -43,9 +43,9 @@ class TreatmentActivity : com.radioterapia.ai.BaseActivity() {
     override fun onSupportNavigateUp(): Boolean { finish(); return true }
 
     companion object {
-        // Usadas pelo HistoricoActivity (modo seleção) e SimulationHomeActivity.
+        // Lista do histórico em modo seleção, aberta pela SimulationHomeActivity.
+        // A própria lista abre o visualizador e continua na pilha, então não há
+        // resultado a devolver a quem a abriu.
         const val EXTRA_MODO_SELECAO = "modo_selecao"
-        const val EXTRA_NOME_SELECIONADO = "nome_selecionado"
-        const val EXTRA_PRONT_SELECIONADO = "prontuario_selecionado"
     }
 }

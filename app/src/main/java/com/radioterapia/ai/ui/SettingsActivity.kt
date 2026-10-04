@@ -28,8 +28,12 @@ import com.radioterapia.ai.branding.LogoManager
 import com.radioterapia.ai.i18n.LocaleManager
 import com.radioterapia.ai.patient.PatientCache
 import com.radioterapia.ai.print.PrinterClient
+import com.radioterapia.ai.protocolo.ProtocoloStore
 import com.radioterapia.ai.security.CredentialStore
 import com.radioterapia.ai.session.SessionManager
+import com.radioterapia.ai.update.AtualizacaoRemota
+import com.radioterapia.ai.update.BackupPreAtualizacao
+import com.radioterapia.ai.update.GerenciadorAtualizacao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -293,6 +297,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             listaSyncPerfis = it.findViewById(R.id.listaSyncPerfis)
             txtSyncEstado = it.findViewById(R.id.txtSyncEstado)
             txtSyncOrigem = it.findViewById(R.id.txtSyncOrigem)
+            txtSyncCopiaConfig = it.findViewById(R.id.txtSyncCopiaConfig)
 
             val cfg = com.radioterapia.ai.sync.SyncConfig(this)
             swSyncMestre?.isChecked = cfg.ativo
@@ -449,7 +454,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             }
         }
 
-        // Termos e Privacidade (item 11) - acessível também depois do consentimento
+        // Termos e Privacidade - acessível também depois do consentimento
         adicionarGrupo("📜", R.string.terms_and_privacy, R.layout.group_terms_privacy) {
             it.findViewById<Button>(R.id.btnOpenTerms).setOnClickListener {
                 mostrarTextoLongo(getString(R.string.terms_title), getString(R.string.terms_body))
@@ -485,7 +490,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     /** Pares (conteúdo, seta) de todos os grupos, para o acordeão exclusivo. */
     private val gruposAcordeao = mutableListOf<Pair<LinearLayout, TextView>>()
 
-    // ---- Sincronização de prontuários (v4.0)
+    // ---- Sincronização de prontuários
     private var swSyncMestre: com.google.android.material.switchmaterial.SwitchMaterial? = null
     private var blocoSyncDetalhe: View? = null
     private var edtSyncIntervalo: EditText? = null
@@ -496,6 +501,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     private var listaSyncPerfis: LinearLayout? = null
     private var txtSyncEstado: TextView? = null
     private var txtSyncOrigem: TextView? = null
+    private var txtSyncCopiaConfig: TextView? = null
 
     /**
      * Desenha um cartão por destino.
@@ -531,18 +537,52 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     // ==================== ATUALIZAÇÃO DO APLICATIVO ====================
 
     private var txtUpdEstado: TextView? = null
-    private var txtUpdNotas: TextView? = null
-    private var btnUpdAgora: Button? = null
+    private var btnUpdAtualizar: Button? = null
     private var btnUpdPagina: Button? = null
-    private var publicadaAtual: com.radioterapia.ai.update.AtualizacaoRemota.Publicada? = null
+
+    /**
+     * Há um fluxo de atualização em curso. Enquanto for `true`, o botão fica
+     * desabilitado: dois toques seguidos abririam dois downloads do mesmo APK
+     * no mesmo arquivo.
+     */
+    private var fluxoAtualizacaoAtivo = false
+
+    /** A versão que esperava a liberação de «instalar apps desconhecidos». */
+    private var pubAguardandoPermissao: AtualizacaoRemota.Publicada? = null
+
+    /**
+     * Volta da tela do sistema que libera a instalação por esta via.
+     *
+     * Liberada, o fluxo segue sozinho para a cópia de segurança e o download:
+     * pedir que a pessoa toque de novo em «Atualizar agora» seria um clique
+     * que a tela consegue inferir. A tela do sistema não devolve resultado
+     * útil, então quem decide é podeInstalar, relido na volta. Se esta
+     * Activity foi recriada enquanto a tela do sistema estava na frente, o
+     * fluxo não sobreviveu, e a volta só destrava o botão e a orientação.
+     *
+     * Inicializador de propriedade, como os demais launchers desta tela: o
+     * registro precisa acontecer antes de STARTED.
+     */
+    private val liberarInstalacaoLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        val pub = pubAguardandoPermissao
+        pubAguardandoPermissao = null
+        if (pub != null && fluxoAtualizacaoAtivo && !isFinishing && !isDestroyed &&
+            GerenciadorAtualizacao.podeInstalar(this)) {
+            executarAtualizacao(pub)
+        } else {
+            encerrarFluxo()
+        }
+    }
 
     /**
      * Monta o grupo. Não pergunta nada à rede ao abrir: mostra o que a última
-     * checagem já gravou, e só sai para a rede quando alguém aperta «Checar».
-     * Abrir Configurações não é pedido de atualização.
+     * checagem já gravou, e só sai para a rede quando alguém toca em
+     * «Atualizar agora». Abrir Configurações não é pedido de atualização.
      */
     private fun montarAtualizacao(raiz: View) {
-        val g = com.radioterapia.ai.update.GerenciadorAtualizacao
+        val g = GerenciadorAtualizacao
 
         raiz.findViewById<TextView>(R.id.txtUpdateInstalada).text = getString(
             R.string.update_installed_fmt,
@@ -556,159 +596,374 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         }
 
         txtUpdEstado = raiz.findViewById(R.id.txtUpdateEstado)
-        txtUpdNotas = raiz.findViewById(R.id.txtUpdateNotas)
-        btnUpdAgora = raiz.findViewById(R.id.btnUpdateAgora)
+        btnUpdAtualizar = raiz.findViewById(R.id.btnUpdateAtualizar)
         btnUpdPagina = raiz.findViewById(R.id.btnUpdatePagina)
 
-        // Se a checagem de fundo já achou algo, o grupo abre mostrando, sem
-        // pedir que o usuário aperte «Checar» para descobrir o que o app já sabe.
+        // Se a checagem de fundo já achou versão nova, o grupo abre dizendo, e
+        // a página da versão fica à mão como saída manual.
         if (g.avisoPendente(this)) {
-            txtUpdEstado?.text = getString(R.string.update_found_fmt, config.atualizacaoNome)
-            btnUpdAgora?.visibility = View.VISIBLE
+            mostrarEstadoAtualizacao(getString(R.string.update_found_fmt, config.atualizacaoNome))
             btnUpdPagina?.visibility = View.VISIBLE
         } else {
-            txtUpdEstado?.text = ""
+            mostrarEstadoAtualizacao("")
         }
 
-        raiz.findViewById<Button>(R.id.btnUpdateChecar).setOnClickListener { checarAgora() }
-        btnUpdAgora?.setOnClickListener { atualizarAgora() }
+        btnUpdAtualizar?.setOnClickListener { atualizarPeloBotao() }
         btnUpdPagina?.setOnClickListener {
             try {
                 startActivity(android.content.Intent(android.content.Intent.ACTION_VIEW,
-                    android.net.Uri.parse(
-                        com.radioterapia.ai.update.AtualizacaoRemota.URL_RELEASES)))
+                    android.net.Uri.parse(AtualizacaoRemota.URL_RELEASES)))
             } catch (_: Throwable) {
             }
         }
     }
 
     /**
-     * O botão «Checar». Aqui a falha APARECE.
-     *
-     * É a única parte desta função que fala quando não conseguiu: em todo o
-     * resto do app, não achar versão nova e não conseguir perguntar são a mesma
-     * coisa — silêncio. Mas quem apertou um botão está esperando resposta, e
-     * devolver silêncio a um toque faz o botão parecer quebrado.
+     * A linha de estado some quando não tem o que dizer: vazia, ela ainda
+     * reservaria uma faixa em branco abaixo do botão.
      */
-    private fun checarAgora() {
-        txtUpdEstado?.text = getString(R.string.update_checking)
-        btnUpdAgora?.visibility = View.GONE
-        btnUpdNotasEsconder()
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val pub = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                com.radioterapia.ai.update.GerenciadorAtualizacao.checarEGravar(
-                    this@SettingsActivity, forcado = true)
-            }
-            publicadaAtual = pub
-            val g = com.radioterapia.ai.update.GerenciadorAtualizacao
-            when {
-                pub == null -> txtUpdEstado?.text = getString(R.string.update_offline)
-                g.cabeAtualizar(g.versaoInstalada(), pub.versionCode, pub.minSdk,
-                    android.os.Build.VERSION.SDK_INT) -> {
-                    txtUpdEstado?.text =
-                        getString(R.string.update_found_fmt, pub.versionName)
-                    btnUpdAgora?.visibility = View.VISIBLE
-                    btnUpdPagina?.visibility = View.VISIBLE
-                    if (pub.notas.isNotBlank()) {
-                        txtUpdNotas?.text = getString(R.string.update_notes_title) +
-                            "\n" + pub.notas
-                        txtUpdNotas?.visibility = View.VISIBLE
-                    }
-                }
-                else -> txtUpdEstado?.text = getString(R.string.update_uptodate)
-            }
-        }
-    }
-
-    private fun btnUpdNotasEsconder() {
-        txtUpdNotas?.visibility = View.GONE
-        btnUpdPagina?.visibility = View.GONE
+    private fun mostrarEstadoAtualizacao(texto: String) {
+        txtUpdEstado?.text = texto
+        txtUpdEstado?.visibility = if (texto.isBlank()) View.GONE else View.VISIBLE
     }
 
     /**
-     * Backup, download, conferência do hash, instalador do sistema — nessa
-     * ordem, e a ordem é o ponto.
+     * «Atualizar agora», o único botão do grupo: checar → (há versão nova?) →
+     * confirmar → liberar a instalação → cópia de segurança → download com
+     * SHA-256 → assinatura → instalador do sistema.
      *
-     * O backup vem ANTES do download porque é o passo que protege o dado, e
-     * porque é o único que funciona sem rede. Se o download falhar depois, a
-     * cópia já está gravada e não custou nada.
+     * Aqui a falha APARECE. Em todo o resto do app, não achar versão nova e
+     * não conseguir perguntar são a mesma coisa — silêncio. Quem tocou num
+     * botão está esperando resposta, e silêncio faria o botão parecer
+     * quebrado.
+     *
+     * [jaConfirmado] vem do convite que aparece ao abrir esta tela: aquele
+     * diálogo já foi a confirmação, e repeti-lo pediria o mesmo sim duas
+     * vezes. Como o grupo pode estar recolhido nesse caso, o resultado da
+     * checagem também sai em aviso curto.
+     *
+     * A ORIENTAÇÃO FICA TRAVADA enquanto o fluxo corre. Esta Activity é
+     * recriada ao girar; girar o tablet no meio do download destruiria a dona
+     * dos diálogos, e um `show()` numa Activity destruída derruba o app.
+     * Travar evita a recriação sem acrescentar dependência de ciclo de vida.
+     * Todo passo que volta de IO ainda confere `isFinishing || isDestroyed`
+     * antes de tocar na tela.
      */
-    private fun atualizarAgora() {
-        val pub = publicadaAtual
-        if (pub == null) { checarAgora(); return }
-        val g = com.radioterapia.ai.update.GerenciadorAtualizacao
+    private fun atualizarPeloBotao(jaConfirmado: Boolean = false) {
+        if (fluxoAtualizacaoAtivo) return
+        fluxoAtualizacaoAtivo = true
+        btnUpdAtualizar?.isEnabled = false
+        btnUpdPagina?.visibility = View.GONE
+        requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED
+        mostrarEstadoAtualizacao(getString(R.string.update_checking))
 
-        // A liberação do sistema é pedida ANTES de baixar 70 MB: descobrir que
-        // falta permissão depois do download gasta a rede da clínica para nada.
-        if (!g.podeInstalar(this)) {
-            AlertDialog.Builder(this)
-                .setTitle(R.string.group_update)
-                .setMessage(R.string.update_perm_needed)
-                .setNegativeButton(R.string.cancel, null)
-                .setPositiveButton(R.string.ok) { _, _ ->
-                    g.intentLiberarInstalacao(this)?.let {
-                        try { startActivity(it) } catch (_: Throwable) {}
-                    }
+        val app = applicationContext
+        CoroutineScope(Dispatchers.Main).launch {
+            val pub = withContext(Dispatchers.IO) {
+                try { GerenciadorAtualizacao.checarEGravar(app, forcado = true) }
+                catch (_: Exception) { null }
+            }
+            if (isFinishing || isDestroyed) return@launch
+            val g = GerenciadorAtualizacao
+            when {
+                pub == null -> {
+                    mostrarEstadoAtualizacao(getString(R.string.update_offline))
+                    if (jaConfirmado) Toast.makeText(this@SettingsActivity,
+                        R.string.update_offline, Toast.LENGTH_LONG).show()
+                    encerrarFluxo()
                 }
-                .show()
+                !g.cabeAtualizar(g.versaoInstalada(), pub.versionCode, pub.minSdk,
+                    android.os.Build.VERSION.SDK_INT) -> {
+                    mostrarEstadoAtualizacao(getString(R.string.update_uptodate))
+                    if (jaConfirmado) Toast.makeText(this@SettingsActivity,
+                        R.string.update_uptodate, Toast.LENGTH_LONG).show()
+                    encerrarFluxo()
+                }
+                else -> {
+                    mostrarEstadoAtualizacao(getString(R.string.update_found_fmt, pub.versionName))
+                    if (jaConfirmado) prosseguirComPermissao(pub) else confirmarAtualizacao(pub)
+                }
+            }
+        }
+    }
+
+    /**
+     * A confirmação, com a versão no texto e as notas publicadas, quando há.
+     *
+     * «Depois» dispensa ESTA versão — grava o versionCode, como o convite — e
+     * a página da versão aparece como caminho manual. Voltar ou tocar fora só
+     * encerra, sem dispensar nada: não é resposta.
+     */
+    private fun confirmarAtualizacao(pub: AtualizacaoRemota.Publicada) {
+        val msg = StringBuilder(getString(R.string.update_dialog_msg_fmt, pub.versionName))
+        if (pub.notas.isNotBlank()) {
+            msg.append("\n\n").append(getString(R.string.update_notes_title))
+                .append('\n').append(pub.notas.trim())
+        }
+        var respondeu = false
+        AlertDialog.Builder(this)
+            .setTitle(R.string.update_dialog_title)
+            .setMessage(msg.toString())
+            .setNegativeButton(R.string.update_later) { _, _ ->
+                respondeu = true
+                config.atualizacaoDispensada = pub.versionCode
+                btnUpdPagina?.visibility = View.VISIBLE
+                encerrarFluxo()
+            }
+            .setPositiveButton(R.string.update_now_btn) { _, _ ->
+                respondeu = true
+                prosseguirComPermissao(pub)
+            }
+            .setOnDismissListener { if (!respondeu) encerrarFluxo() }
+            .show()
+    }
+
+    /**
+     * A liberação do sistema é pedida ANTES da cópia e do download: descobrir
+     * que falta permissão depois de baixar dezenas de MB gasta a rede da
+     * clínica para nada. O diálogo diz por que uma tela do sistema vai abrir;
+     * sem ele, ela pareceria ter tomado o lugar do app sem pedir.
+     */
+    private fun prosseguirComPermissao(pub: AtualizacaoRemota.Publicada) {
+        val g = GerenciadorAtualizacao
+        val liberar = if (g.podeInstalar(this)) null else g.intentLiberarInstalacao(this)
+        if (liberar == null) {
+            executarAtualizacao(pub)
             return
         }
+        var respondeu = false
+        AlertDialog.Builder(this)
+            .setTitle(R.string.group_update)
+            .setMessage(R.string.update_perm_needed)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.ok) { _, _ ->
+                respondeu = true
+                pubAguardandoPermissao = pub
+                try {
+                    liberarInstalacaoLauncher.launch(liberar)
+                } catch (_: Exception) {
+                    // Aparelho sem essa tela do sistema: resta a página da versão.
+                    pubAguardandoPermissao = null
+                    btnUpdPagina?.visibility = View.VISIBLE
+                    Toast.makeText(this, R.string.update_install_failed, Toast.LENGTH_LONG).show()
+                    encerrarFluxo()
+                }
+            }
+            .setOnDismissListener { if (!respondeu) encerrarFluxo() }
+            .show()
+    }
 
+    /**
+     * Cópia de segurança, depois o download.
+     *
+     * A cópia vem ANTES do download porque é o passo que protege o dado, e
+     * porque é o único que funciona sem rede. Se o download falhar depois, a
+     * cópia já está gravada e não custou nada. Uma cópia em andamento não é
+     * interrompida pelo Cancelar: o pedido é atendido assim que ela termina.
+     */
+    private fun executarAtualizacao(pub: AtualizacaoRemota.Publicada) {
+        val app = applicationContext
+        val cancelado = java.util.concurrent.atomic.AtomicBoolean(false)
         val dlg = AlertDialog.Builder(this)
             .setTitle(R.string.group_update)
             .setMessage(R.string.update_backup_running)
             .setCancelable(false)
+            .setNegativeButton(R.string.cancel) { _, _ -> cancelado.set(true) }
             .create()
         dlg.show()
 
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val backup = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                com.radioterapia.ai.update.BackupPreAtualizacao.executar(this@SettingsActivity)
+        CoroutineScope(Dispatchers.Main).launch {
+            val backup = withContext(Dispatchers.IO) {
+                val r = try { BackupPreAtualizacao.executar(app) }
+                        catch (_: Exception) { BackupPreAtualizacao.Resultado(null, 0, 0L) }
+                if (r.ok) {
+                    try {
+                        com.radioterapia.ai.audit.AuditLogger(app).registrar(
+                            com.radioterapia.ai.audit.AuditLogger.Tipo.EDIT,
+                            "Copia de seguranca antes de atualizar",
+                            mapOf("pasta" to (r.pasta?.name ?: ""),
+                                  "arquivos" to r.arquivos))
+                    } catch (_: Exception) {
+                    }
+                }
+                r
+            }
+            fecharDialogo(dlg)
+            if (isFinishing || isDestroyed) return@launch
+            if (cancelado.get()) {
+                mostrarEstadoAtualizacao("")
+                encerrarFluxo()
+                return@launch
             }
             if (backup.ok) {
-                com.radioterapia.ai.audit.AuditLogger(this@SettingsActivity).registrar(
-                    com.radioterapia.ai.audit.AuditLogger.Tipo.EDIT,
-                    "Copia de seguranca antes de atualizar",
-                    mapOf("pasta" to (backup.pasta?.name ?: ""),
-                          "arquivos" to backup.arquivos))
+                baixarEInstalar(pub, backup)
+                return@launch
             }
+            // A cópia falhou. É uma escolha de risco, que só aparece neste caso
+            // e que nada permite inferir: por isso, e só por isso, pergunta.
+            var respondeu = false
+            AlertDialog.Builder(this@SettingsActivity)
+                .setTitle(R.string.group_update)
+                .setMessage(R.string.update_backup_failed_continue)
+                .setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.update_now_btn) { _, _ ->
+                    respondeu = true
+                    baixarEInstalar(pub, backup)
+                }
+                .setOnDismissListener { if (!respondeu) encerrarFluxo() }
+                .show()
+        }
+    }
 
-            val apk = g.arquivoApk(this@SettingsActivity)
-            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                com.radioterapia.ai.update.AtualizacaoRemota.baixarApk(
-                    pub.urlApk, apk, pub.sha256
+    /**
+     * Download com SHA-256, conferência da assinatura e entrega ao instalador.
+     *
+     * Cada desfecho do download tem a sua frase: sem rede e arquivo que não
+     * confere pedem ações diferentes, e uma mensagem só para os dois mandaria
+     * a pessoa procurar o defeito errado. Cancelar não é erro e não diz nada.
+     *
+     * Assinatura diferente da instalada para aqui, com o caminho da cópia: o
+     * instalador recusaria com uma mensagem genérica, e o passo seguinte de
+     * quem a lê é desinstalar, o que apaga os dados internos. Não deu para
+     * conferir (`null`) segue, e o instalador continua sendo a autoridade.
+     */
+    private fun baixarEInstalar(pub: AtualizacaoRemota.Publicada,
+                                backup: BackupPreAtualizacao.Resultado) {
+        val app = applicationContext
+        val g = GerenciadorAtualizacao
+        val cancelado = java.util.concurrent.atomic.AtomicBoolean(false)
+        val dlg = AlertDialog.Builder(this)
+            .setTitle(R.string.group_update)
+            .setMessage(getString(R.string.update_downloading_fmt, 0))
+            .setCancelable(false)
+            .setNegativeButton(R.string.cancel) { _, _ -> cancelado.set(true) }
+            .create()
+        dlg.show()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            var ultimoPct = -1
+            val apk = withContext(Dispatchers.IO) { g.arquivoApk(app) }
+            val resultado = withContext(Dispatchers.IO) {
+                AtualizacaoRemota.baixarApk(
+                    pub.urlApk, apk, pub.sha256, cancelado = { cancelado.get() }
                 ) { lidos, total ->
-                    if (total > 0) {
-                        val pct = (lidos * 100 / total).toInt()
-                        // A View é tocada na thread principal, sempre. Capturar
-                        // o texto aqui e postar é o que evita o "Only the
-                        // original thread..."
+                    val pct = if (total > 0) (lidos * 100 / total).toInt() else -1
+                    if (pct >= 0 && pct != ultimoPct) {
+                        ultimoPct = pct
+                        // A View é tocada na thread principal, sempre: o texto
+                        // é postado, e não escrito daqui, que é IO.
                         dlg.window?.decorView?.post {
-                            dlg.setMessage(getString(R.string.update_downloading_fmt, pct))
+                            if (dlg.isShowing) {
+                                dlg.setMessage(getString(R.string.update_downloading_fmt, pct))
+                            }
                         }
                     }
                 }
             }
-            dlg.dismiss()
+            fecharDialogo(dlg)
+            if (isFinishing || isDestroyed) return@launch
+            when (resultado) {
+                AtualizacaoRemota.Download.OK -> Unit
+                AtualizacaoRemota.Download.CANCELADO -> {
+                    mostrarEstadoAtualizacao("")
+                    encerrarFluxo()
+                    return@launch
+                }
+                AtualizacaoRemota.Download.FALHA -> {
+                    btnUpdPagina?.visibility = View.VISIBLE
+                    avisarAtualizacao(getString(R.string.update_download_fail))
+                    encerrarFluxo()
+                    return@launch
+                }
+                AtualizacaoRemota.Download.HASH_DIFERENTE -> {
+                    avisarAtualizacao(getString(R.string.update_hash_fail))
+                    encerrarFluxo()
+                    return@launch
+                }
+            }
 
-            if (!ok) {
-                AlertDialog.Builder(this@SettingsActivity)
-                    .setTitle(R.string.group_update)
-                    .setMessage(R.string.update_hash_fail)
-                    .setPositiveButton(R.string.ok, null)
-                    .show()
+            val (compativel, pastaCopia) = withContext(Dispatchers.IO) {
+                val c = try { g.assinaturaCompativel(app, apk) } catch (_: Exception) { null }
+                if (c == false) apk.delete()
+                c to caminhoDaCopia(app, backup)
+            }
+            if (isFinishing || isDestroyed) return@launch
+            if (compativel == false) {
+                avisarAtualizacao(getString(R.string.update_signature_mismatch_fmt, pastaCopia))
+                encerrarFluxo()
                 return@launch
             }
-            if (backup.ok && backup.pasta != null) {
+
+            // O marcador vai ANTES do instalador, gravado de forma síncrona:
+            // com a troca do pacote o processo morre, e o que não estiver no
+            // disco se perde. É ele que deixa a versão nova confirmar, na
+            // primeira abertura, que os dados chegaram. Vai junto o versionCode
+            // deste APK: um marcador de instalação cancelada não pode valer para
+            // outra versão instalada depois por outro caminho.
+            withContext(Dispatchers.IO) {
+                try { g.gravarMarcadorPreInstalacao(app, backup, pub.versionCode) }
+                catch (_: Exception) {}
+            }
+            if (isFinishing || isDestroyed) return@launch
+            if (backup.ok) {
                 Toast.makeText(this@SettingsActivity,
-                    getString(R.string.update_backup_ok_fmt, backup.pasta.name),
+                    getString(if (backup.privada) R.string.update_backup_private_fmt
+                              else R.string.update_backup_ok_fmt, pastaCopia),
                     Toast.LENGTH_LONG).show()
             }
-            if (!g.instalar(this@SettingsActivity, apk)) {
+            if (g.instalar(app, apk)) {
                 Toast.makeText(this@SettingsActivity,
-                    R.string.update_install_failed, Toast.LENGTH_LONG).show()
+                    R.string.update_installer_hint, Toast.LENGTH_LONG).show()
+            } else {
+                // Nada foi entregue ao instalador: sem desfazer o marcador, a
+                // próxima versão instalada leria contagens de uma tentativa
+                // que não aconteceu.
+                withContext(Dispatchers.IO) { config.atualizacaoDe = 0 }
+                Toast.makeText(app, R.string.update_install_failed, Toast.LENGTH_LONG).show()
             }
+            encerrarFluxo()
         }
+    }
+
+    /**
+     * Onde está a cópia, no caminho que a pessoa reconhece. Sem cópia gravada —
+     * ela falhou e a pessoa seguiu assim mesmo — aponta a pasta das cópias,
+     * onde as anteriores continuam. Resolve a pasta base: chamar fora da
+     * thread principal.
+     */
+    private fun caminhoDaCopia(ctx: android.content.Context,
+                               backup: BackupPreAtualizacao.Resultado): String {
+        val pasta = backup.pasta ?: try {
+            java.io.File(com.radioterapia.ai.util.StorageLocal.base(ctx),
+                BackupPreAtualizacao.NOME_PASTA)
+        } catch (_: Exception) { null }
+        return pasta?.let { com.radioterapia.ai.util.StorageLocal.amigavel(it.absolutePath) }
+            ?: BackupPreAtualizacao.NOME_PASTA
+    }
+
+    /** Desfecho que a pessoa precisa ler: diálogo de uma frase, só com OK. */
+    private fun avisarAtualizacao(texto: String) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.group_update)
+            .setMessage(texto)
+            .setPositiveButton(R.string.ok, null)
+            .show()
+    }
+
+    /** Fecha um diálogo de progresso que pode já ter sido fechado pelo Cancelar. */
+    private fun fecharDialogo(dlg: android.app.Dialog) {
+        try {
+            if (dlg.isShowing) dlg.dismiss()
+        } catch (_: Exception) {
+        }
+    }
+
+    /** Fim do fluxo, por qualquer caminho: destrava o botão e a orientação. */
+    private fun encerrarFluxo() {
+        fluxoAtualizacaoAtivo = false
+        pubAguardandoPermissao = null
+        btnUpdAtualizar?.isEnabled = true
+        requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     }
 
     /**
@@ -719,7 +974,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
      * desligaria o aviso para sempre.
      */
     private fun oferecerAtualizacaoSeHouver() {
-        val g = com.radioterapia.ai.update.GerenciadorAtualizacao
+        val g = GerenciadorAtualizacao
         if (!g.avisoPendente(this)) return
         val nome = config.atualizacaoNome
         if (nome.isBlank()) return
@@ -730,28 +985,12 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                 config.atualizacaoDispensada = config.atualizacaoCode
             }
             .setPositiveButton(R.string.update_now_btn) { _, _ ->
-                // Vem do aviso, então ainda não houve «Checar» nesta tela: a
-                // checagem forçada preenche publicadaAtual e segue para o
-                // download com o hash em mãos.
-                checarEAtualizar()
+                // O convite já foi a confirmação. A checagem forçada traz o
+                // hash e o endereço publicados agora, e o fluxo segue direto
+                // para a liberação, a cópia e o download.
+                atualizarPeloBotao(jaConfirmado = true)
             }
             .show()
-    }
-
-    private fun checarEAtualizar() {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val pub = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                com.radioterapia.ai.update.GerenciadorAtualizacao.checarEGravar(
-                    this@SettingsActivity, forcado = true)
-            }
-            publicadaAtual = pub
-            if (pub == null) {
-                Toast.makeText(this@SettingsActivity, R.string.update_offline,
-                    Toast.LENGTH_LONG).show()
-            } else {
-                atualizarAgora()
-            }
-        }
     }
 
     private fun desenharPerfisSync() {
@@ -846,6 +1085,12 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         blocoSyncDetalhe?.alpha = if (cfg.ativo) 1f else 0.4f
         txtSyncOrigem?.text = getString(R.string.sync_origin,
             com.radioterapia.ai.util.StorageLocal.caminhoLegivel(this))
+        // O nome da pasta vai literal, igual ao que aparece no destino; o
+        // grupo de Transferência é citado pelo próprio título, para a frase
+        // apontar o lugar exato onde se importa a cópia.
+        txtSyncCopiaConfig?.text = getString(R.string.sync_config_copy_hint,
+            com.radioterapia.ai.transfer.CopiaConfiguracao.NOME_PASTA,
+            getString(R.string.group_transferencia))
         txtSyncEstado?.text =
             if (cfg.ultimaVarredura > 0)
                 getString(R.string.sync_last, java.text.SimpleDateFormat(
@@ -868,9 +1113,25 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             // cancelar. O que não couber em 45 segundos continua pela fila do
             // WorkManager, que é onde uma tarefa longa deve morar — e o número
             // de pendentes no fim da linha diz exatamente quanto sobrou.
+            val app = applicationContext
             val resumos = withContext(Dispatchers.IO) {
-                com.radioterapia.ai.sync.MotorSync(this@SettingsActivity)
-                    .sincronizarTudo(limiteMs = 45_000L)
+                try {
+                    com.radioterapia.ai.sync.MotorSync(app).sincronizarTudo(limiteMs = 45_000L)
+                } catch (_: Exception) { emptyList<com.radioterapia.ai.sync.MotorSync.Resumo>() }
+            }
+            // Outra varredura ficou com a vez durante todo o prazo: nada foi
+            // enviado por este toque, e isso não é falha. Mas a que está
+            // rodando fez a lista dela ao começar e não vê o que foi gravado
+            // depois. O trabalho posto na fila aqui espera a vez, lista de
+            // novo e leva o que chegou depois logo em seguida. Enfileira antes
+            // de conferir a tela: quem saiu dela também tem arquivos novos.
+            val emAndamento = resumos.any { it.emAndamento }
+            if (emAndamento) com.radioterapia.ai.sync.SyncWorker.agora(app)
+            if (isFinishing || isDestroyed) return@launch
+            if (emAndamento) {
+                txtSyncEstado?.text = getString(R.string.sync_em_andamento)
+                desenharPerfisSync()
+                return@launch
             }
             val env = resumos.sumOf { it.enviados }
             val ja = resumos.sumOf { it.jaEstavam }
@@ -996,25 +1257,60 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
     ) { desenharProtocolos() }
 
     /**
-     * Lista os protocolos, com editar e excluir.
+     * Cada desenho da lista de protocolos ganha um número. A contagem de
+     * páginas que volta do IO só preenche a lista que a pediu, e não uma
+     * redesenhada depois por uma seta ou pela volta do editor.
+     */
+    private var protGeracao = 0
+
+    /** Protocolos sendo duplicados agora: o Duplicar deles nasce desabilitado
+     *  mesmo que a lista seja redesenhada no meio da cópia. */
+    private val protDuplicando = mutableSetOf<String>()
+
+    /**
+     * Lista os protocolos: setas, nome, total de páginas, Editar, Duplicar e
+     * Excluir.
      *
-     * O PADRÃO aparece com uma explicação e SEM botão de excluir. A proibição
-     * de verdade está no ProtocoloStore — esconder o botão é o que evita o
-     * usuário tentar; a regra é que impede o dado sumir.
+     * O PADRÃO mostra só o nome — e o total de páginas, se alguém lhe
+     * acrescentou alguma —, fica fixo em primeiro, sem setas, e não tem
+     * Excluir. A proibição de verdade está no ProtocoloStore; esconder os
+     * botões é o que evita o usuário tentar. No lugar das setas e do Excluir
+     * dele ficam vagas INVISIBLE, e não GONE: sem elas, o nome e os botões do
+     * Padrão sairiam deslocados das colunas das outras linhas. Pelo mesmo
+     * motivo, a seta que não se aplica a uma linha fica invisível em vez de
+     * sumir.
+     *
+     * O total de páginas abre cada PDF, então é contado em IO depois que as
+     * linhas já estão na tela. Até lá o subtítulo fica vazio com a altura
+     * reservada, e a linha não pula quando o número chega.
      */
     private fun desenharProtocolos() {
         val lista = protLista ?: return
-        val store = com.radioterapia.ai.protocolo.ProtocoloStore(this)
+        val store = ProtocoloStore(this)
         val todos = store.listar()
+        val geracao = ++protGeracao
         protTotal?.text = getString(R.string.prot_total, todos.size)
         lista.removeAllViews()
 
-        todos.forEach { p ->
+        val subtitulos = HashMap<String, TextView>()
+        todos.forEachIndexed { i, p ->
             val linha = android.widget.LinearLayout(this).apply {
                 orientation = android.widget.LinearLayout.HORIZONTAL
                 gravity = android.view.Gravity.CENTER_VERTICAL
                 setPadding(0, dpSet(6), 0, dpSet(6))
             }
+
+            // O Padrão não se move, e nenhum protocolo passa à frente dele.
+            // Mover grava só a ordem do lista.json, que é pequeno.
+            val sobe = !p.padrao && i > 0 && !todos[i - 1].padrao
+            val desce = !p.padrao && i < todos.lastIndex && !todos[i + 1].padrao
+            linha.addView(botaoSeta(R.string.seta_cima, R.string.prot_mover_cima, sobe) {
+                if (store.mover(p.id, -1)) desenharProtocolos()
+            })
+            linha.addView(botaoSeta(R.string.seta_baixo, R.string.prot_mover_baixo, desce) {
+                if (store.mover(p.id, +1)) desenharProtocolos()
+            })
+
             val col = android.widget.LinearLayout(this).apply {
                 orientation = android.widget.LinearLayout.VERTICAL
                 layoutParams = android.widget.LinearLayout.LayoutParams(0,
@@ -1026,13 +1322,16 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                     this@SettingsActivity, R.color.text_primary))
                 textSize = 14f
             })
-            col.addView(TextView(this).apply {
-                text = if (p.padrao) getString(R.string.prot_padrao_desc)
-                       else getString(R.string.prot_qtd_paginas, p.paginas.size)
-                setTextColor(androidx.core.content.ContextCompat.getColor(
-                    this@SettingsActivity, R.color.text_secondary))
-                textSize = 11f
-            })
+            if (!p.padrao || p.paginas.isNotEmpty()) {
+                val sub = TextView(this).apply {
+                    text = ""
+                    setTextColor(androidx.core.content.ContextCompat.getColor(
+                        this@SettingsActivity, R.color.text_secondary))
+                    textSize = 11f
+                }
+                col.addView(sub)
+                subtitulos[p.id] = sub
+            }
             linha.addView(col)
 
             linha.addView(android.widget.Button(this).apply {
@@ -1043,10 +1342,18 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                         .abrir(this@SettingsActivity, editarProtocolo, p.id)
                 }
             })
-            if (!p.padrao) {
-                linha.addView(android.widget.Button(this).apply {
-                    setText(R.string.rub_excluir)
-                    textSize = 12f
+            linha.addView(android.widget.Button(this).apply {
+                setText(R.string.prot_duplicar)
+                textSize = 12f
+                isEnabled = p.id !in protDuplicando
+                setOnClickListener { v -> duplicarProtocolo(p, v) }
+            })
+            linha.addView(android.widget.Button(this).apply {
+                setText(R.string.rub_excluir)
+                textSize = 12f
+                if (p.padrao) {
+                    visibility = View.INVISIBLE
+                } else {
                     setOnClickListener {
                         android.app.AlertDialog.Builder(this@SettingsActivity)
                             .setTitle(getString(R.string.prot_excluir_q, p.nome))
@@ -1057,9 +1364,78 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                             .setNegativeButton(R.string.cancel, null)
                             .show()
                     }
-                })
-            }
+                }
+            })
             lista.addView(linha)
+        }
+
+        if (subtitulos.isEmpty()) return
+        val aContar = todos.filter { it.id in subtitulos }
+        val app = applicationContext
+        CoroutineScope(Dispatchers.Main).launch {
+            val totais = withContext(Dispatchers.IO) {
+                try {
+                    val s = ProtocoloStore(app)
+                    aContar.associate { it.id to s.contarPaginas(it) }
+                } catch (_: Exception) { emptyMap<String, Int>() }
+            }
+            if (isFinishing || isDestroyed || geracao != protGeracao) return@launch
+            totais.forEach { (id, n) ->
+                subtitulos[id]?.text = getString(R.string.prot_qtd_paginas, n)
+            }
+        }
+    }
+
+    /**
+     * Seta de reordenar, com largura FIXA de 48dp nos LayoutParams.
+     *
+     * GUARDA: o Button do framework lê o minWidth duas vezes, no View e no
+     * TextView, e com WRAP_CONTENT ficaria com os 88dp do estilo mesmo com um
+     * dos dois zerado. A largura exata nos LayoutParams vence os dois. Sem
+     * ação, a seta fica INVISIBLE: ocupa a vaga e mantém a coluna do nome
+     * alinhada entre as linhas.
+     */
+    private fun botaoSeta(@androidx.annotation.StringRes glifo: Int,
+                          @androidx.annotation.StringRes descricao: Int,
+                          ativa: Boolean,
+                          aoTocar: () -> Unit): Button =
+        android.widget.Button(this).apply {
+            setText(glifo)
+            contentDescription = getString(descricao)
+            textSize = 14f
+            minWidth = 0
+            minimumWidth = 0
+            layoutParams = android.widget.LinearLayout.LayoutParams(
+                dpSet(48), android.widget.LinearLayout.LayoutParams.WRAP_CONTENT)
+            visibility = if (ativa) View.VISIBLE else View.INVISIBLE
+            if (ativa) setOnClickListener { aoTocar() }
+        }
+
+    /**
+     * Duplica e abre a cópia no editor. Duplica-se para editar, então abrir o
+     * editor direto poupa um clique e não é passo de confirmação; cancelar o
+     * editor mantém a cópia, que já está gravada. A cópia dos PDFs roda em IO,
+     * e o botão fica desabilitado enquanto ela corre, para dois toques não
+     * fazerem duas cópias.
+     */
+    private fun duplicarProtocolo(p: ProtocoloStore.Protocolo, botao: View) {
+        if (!protDuplicando.add(p.id)) return
+        botao.isEnabled = false
+        val app = applicationContext
+        CoroutineScope(Dispatchers.Main).launch {
+            val copia = withContext(Dispatchers.IO) {
+                try { ProtocoloStore(app).duplicar(p.id) } catch (_: Exception) { null }
+            }
+            protDuplicando.remove(p.id)
+            if (isFinishing || isDestroyed) return@launch
+            desenharProtocolos()
+            if (copia == null) {
+                Toast.makeText(this@SettingsActivity, R.string.prot_duplicar_falhou,
+                    Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            com.radioterapia.ai.protocolo.ProtocoloActivity
+                .abrir(this@SettingsActivity, editarProtocolo, copia.id)
         }
     }
 
@@ -1475,6 +1851,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         val raiz = org.json.JSONObject(texto)
         if (!raiz.has("valores")) false
         else {
+            limparSenhaSeDestinoSmbMudar(raiz)
             val n = config.importarJson(texto)
             val nRub = try {
                 raiz.optJSONArray("rubricario")?.let { arr ->
@@ -1487,6 +1864,23 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
             true
         }
     } catch (_: Throwable) { false }
+
+    /**
+     * Tira a senha SMB guardada quando o JSON de preferências traz outro
+     * endereço, conta ou pasta SMB — a mesma regra do pacote
+     * ([com.radioterapia.ai.transfer.PacoteConfig.mudaDestinoSmb]). Chamar
+     * ANTES de aplicar as preferências: entre as duas gravações, uma busca de
+     * fotos levaria a senha deste aparelho ao endereço que chegou no arquivo.
+     */
+    private fun limparSenhaSeDestinoSmbMudar(raiz: org.json.JSONObject) {
+        val vindos = raiz.optJSONObject("valores") ?: return
+        val locais = getSharedPreferences("config_radioterapia", MODE_PRIVATE).all
+        val caduca = vindos.keys().asSequence().any { chave ->
+            com.radioterapia.ai.transfer.PacoteConfig
+                .mudaDestinoSmb(chave, locais[chave], vindos.opt(chave))
+        }
+        if (caduca) credentials.limparSenha()
+    }
 
     // ==================== BLOCOS DO RUBRICARIO ====================
 
@@ -1788,7 +2182,7 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
                 ?.let { config.formatoData = it }
         }
 
-        // Idioma (sem modo auto - sempre manual pelo spinner; item 10)
+        // Idioma (sem modo auto - sempre manual pelo spinner)
         val idx = spinnerLanguage?.selectedItemPosition ?: 0
         val langSelecionado = idiomasMap.getOrNull(idx)?.first ?: LocaleManager.LANG_PT
         val langAtual = LocaleManager.obterIdiomaAtual(this)
@@ -1850,6 +2244,9 @@ class SettingsActivity : com.radioterapia.ai.BaseActivity() {
         try {
             val texto = contentResolver.openInputStream(uri)
                 ?.use { it.readBytes().toString(Charsets.UTF_8) } ?: ""
+            try {
+                limparSenhaSeDestinoSmbMudar(org.json.JSONObject(texto))
+            } catch (_: org.json.JSONException) { /* importarJson recusa o mesmo texto */ }
             val n = config.importarJson(texto)
             // Rubricario, quando o arquivo trouxer. ACRESCENTA a equipe que ja
             // existe no tablet — importar a configuracao de outra unidade nao

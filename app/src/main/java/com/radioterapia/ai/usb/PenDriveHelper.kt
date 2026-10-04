@@ -318,11 +318,18 @@ class PenDriveHelper(private val context: Context) {
         }
     }
 
-    /** Ficha avulsa do paciente que está na sala. */
-    fun gravarPacienteAtual(pdf: File): Resultado {
+    /**
+     * Ficha avulsa do paciente que está na sala.
+     *
+     * @param nomeArquivo nome da cópia no pen-drive. Quem chama passa o nome de
+     *   entrega, com o nome completo do paciente: o arquivo guardado na pasta do
+     *   paciente leva só as iniciais, e no pen-drive não há pasta em volta dizendo
+     *   de quem é a ficha. Nulo, a cópia sai com o nome do arquivo de origem.
+     */
+    fun gravarPacienteAtual(pdf: File, nomeArquivo: String? = null): Resultado {
         val r = raiz() ?: return Resultado(false, "Pasta do pen-drive não escolhida ou removida.")
         arquivarPasta(r, Pasta.PACIENTE_ATUAL)   // ficha anterior vai para o histórico
-        return gravarEm(Pasta.PACIENTE_ATUAL, pdf)
+        return gravarEm(Pasta.PACIENTE_ATUAL, pdf, nomeArquivo?.takeIf { it.isNotBlank() })
     }
 
     /**
@@ -335,11 +342,16 @@ class PenDriveHelper(private val context: Context) {
      *
      * As duas pastas são arquivadas automaticamente antes de receber o novo
      * material.
+     *
+     * @param nomesArquivo nome de entrega de cada PDF, na ordem de [pdfs]. Onde
+     *   ele falta (ficha com nome do esquema anterior, que já traz o nome
+     *   completo), a cópia sai como sempre saiu: nome do paciente e hora.
      */
     fun gravarLote(
         pdfs: List<File>,
         nomes: List<String>,
-        itens: List<com.radioterapia.ai.pdf.PdfBuilder.ItemLote>
+        itens: List<com.radioterapia.ai.pdf.PdfBuilder.ItemLote>,
+        nomesArquivo: List<String?> = emptyList()
     ): Resultado {
         if (pdfs.isEmpty() && itens.isEmpty())
             return Resultado(false, "Nenhum paciente selecionado.")
@@ -350,13 +362,14 @@ class PenDriveHelper(private val context: Context) {
         // ---- Individuais ----
         var ok = 0
         pdfs.forEachIndexed { i, f ->
-            val nome = nomes.getOrNull(i)?.takeIf { it.isNotBlank() }?.let { bruto ->
-                val limpo = com.radioterapia.ai.util.StorageLocal
-                    .removerAcentosMaiusculas(bruto).replace(" ", "_")
-                val hora = java.text.SimpleDateFormat("HHmmss", java.util.Locale.US)
-                    .format(java.util.Date(System.currentTimeMillis() + i * 1000L))
-                "${limpo}_$hora.pdf"
-            }
+            val nome = nomesArquivo.getOrNull(i)?.takeIf { it.isNotBlank() }
+                ?: nomes.getOrNull(i)?.takeIf { it.isNotBlank() }?.let { bruto ->
+                    val limpo = com.radioterapia.ai.util.StorageLocal
+                        .removerAcentosMaiusculas(bruto).replace(" ", "_")
+                    val hora = java.text.SimpleDateFormat("HHmmss", java.util.Locale.US)
+                        .format(java.util.Date(System.currentTimeMillis() + i * 1000L))
+                    "${limpo}_$hora.pdf"
+                }
             if (gravarEm(Pasta.LOTE_INDIVIDUAIS, f, nome).sucesso) ok++
         }
 

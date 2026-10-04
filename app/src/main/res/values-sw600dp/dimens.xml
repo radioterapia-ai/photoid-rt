@@ -30,4 +30,9 @@
     <dimen name="hist_nome_text">21sp</dimen>
     <dimen name="hist_sub_text">15sp</dimen>
     <dimen name="hist_sub2_text">14sp</dimen>
+
+    <!-- Finalizar: cartão de resumo e campos de seleção -->
+    <dimen name="fin_resumo_texto">16sp</dimen>
+    <dimen name="fin_campo_altura">56dp</dimen>
+    <dimen name="fin_campo_texto">17sp</dimen>
 </resources>

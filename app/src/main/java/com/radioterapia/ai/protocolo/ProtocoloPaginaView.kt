@@ -26,6 +26,10 @@ import android.view.View
  * páginas da ficha — deixar mudar o tamanho aqui produziria um documento com o
  * logo de um tamanho nas fotos e de outro no protocolo, que é exatamente o
  * defeito que a unificação do cabeçalho corrigiu.
+ *
+ * O RODAPÉ DA FICHA aparece na prévia, no lugar e no corpo em que vai ser
+ * impresso, enquanto estiver ligado para a página ([rodapeAtivo]). Sem isso um
+ * logo arrastado para o pé da página o cobriria sem ninguém ver.
  */
 class ProtocoloPaginaView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyle: Int = 0
@@ -38,6 +42,13 @@ class ProtocoloPaginaView @JvmOverloads constructor(
         const val LOGO_LARGURA_MAX_PT = 150f
         /** Margem de toque em volta do box, para o dedo pegar a borda. */
         const val FOLGA_TOQUE = 24f
+        /** Rodapé da ficha: corpo e distância da linha de base à borda de baixo, em pt. */
+        const val RODAPE_CORPO_PT = 9f
+        const val RODAPE_BASE_PT = 12f
+        /** Margem lateral da ficha, em pt: o rodapé encolhe para caber entre elas. */
+        const val RODAPE_MARGEM_PT = 28f
+        /** Altura do rótulo do box, em px, desenhado logo acima dele. */
+        const val ROTULO_ALTURA = 28f
     }
 
     private var pagina: Bitmap? = null
@@ -51,6 +62,9 @@ class ProtocoloPaginaView @JvmOverloads constructor(
     var etqAtiva = true
         set(v) { field = v; invalidate() }
     var logoAtivo = false
+        set(v) { field = v; invalidate() }
+    /** Rodapé da ficha nesta página. Ligado por padrão, como no PDF gerado. */
+    var rodapeAtivo = true
         set(v) { field = v; invalidate() }
 
     var etqXmm = 10f; var etqYmm = 10f
@@ -79,6 +93,26 @@ class ProtocoloPaginaView @JvmOverloads constructor(
         typeface = android.graphics.Typeface.DEFAULT_BOLD
     }
     private val pRotuloFundo = Paint().apply { color = Color.parseColor("#CC000000") }
+    private val pRodapeFundo = Paint().apply { color = Color.parseColor("#22666666") }
+    private val pRodape = Paint().apply {
+        color = Color.parseColor("#666666"); isAntiAlias = true
+        textAlign = Paint.Align.CENTER
+    }
+
+    /**
+     * Texto do rodapé como o PDF o escreve, com "n" no lugar do número: o
+     * número de verdade depende de quantas páginas a ficha do paciente tem
+     * antes do protocolo. Lido uma vez — o nome da clínica não muda com a tela
+     * aberta.
+     */
+    private val textoRodape: String by lazy {
+        try {
+            val pagina = context.getString(com.radioterapia.ai.R.string.pdf_page)
+                .replace(Regex("%(\\d+\\\$)?d"), "n")
+            com.radioterapia.ai.pdf.PdfBuilder.textoRodape(
+                com.radioterapia.ai.AppConfig(context).nomeClinica, pagina)
+        } catch (_: Exception) { "" }
+    }
 
     fun definirPagina(bm: Bitmap?, larguraPt: Float, alturaPt: Float) {
         pagina = bm
@@ -127,10 +161,14 @@ class ProtocoloPaginaView @JvmOverloads constructor(
         if (bm != null) canvas.drawBitmap(bm, null, a, pPagina)
         else canvas.drawRect(a, pFundoVazio)
 
+        if (rodapeAtivo) desenharRodape(canvas, a)
         if (etqAtiva) {
             val r = rectEtiqueta()
-            canvas.drawRect(r, pEtqFundo)
-            canvas.drawRect(r, pEtqBorda)
+            // Cantos com o raio da etiqueta impressa, na escala da prévia: o box
+            // tem a forma do que vai sair no papel.
+            val raio = com.radioterapia.ai.pdf.PdfBuilder.RAIO_CANTO * escalaAtual()
+            canvas.drawRoundRect(r, raio, raio, pEtqFundo)
+            canvas.drawRoundRect(r, raio, raio, pEtqBorda)
             rotulo(canvas, context.getString(
                 com.radioterapia.ai.R.string.prot_box_etiqueta), r.left, r.top)
         }
@@ -143,11 +181,41 @@ class ProtocoloPaginaView @JvmOverloads constructor(
         }
     }
 
-    /** Etiqueta do box, sobre fundo escuro: sem ele o texto some numa página clara. */
+    /**
+     * Etiqueta do box, sobre fundo escuro: sem ele o texto some numa página clara.
+     *
+     * Acima do box; DENTRO dele, no alto, quando acima sairia da view — o que
+     * acontece com o box encostado no topo de uma prévia pequena.
+     */
     private fun rotulo(canvas: Canvas, txt: String, x: Float, y: Float) {
         val w = pRotulo.measureText(txt) + 12f
-        canvas.drawRect(x, y - 30f, x + w, y - 2f, pRotuloFundo)
-        canvas.drawText(txt, x + 6f, y - 9f, pRotulo)
+        val topo = if (y - 2f - ROTULO_ALTURA >= 0f) y - 2f - ROTULO_ALTURA else y + 2f
+        canvas.drawRect(x, topo, x + w, topo + ROTULO_ALTURA, pRotuloFundo)
+        canvas.drawText(txt, x + 6f, topo + ROTULO_ALTURA - 7f, pRotulo)
+    }
+
+    /**
+     * Rodapé da ficha na prévia: mesmo texto, corpo e linha de base do PDF
+     * (9 pt, ou menos com nome de clínica longo, a 12 pt da borda de baixo,
+     * centrado na largura da página), sobre
+     * uma faixa clara que marca a área que ele ocupa.
+     */
+    private fun desenharRodape(canvas: Canvas, a: RectF) {
+        val txt = textoRodape
+        if (txt.isEmpty()) return
+        val e = escalaAtual()
+        if (e <= 0f) return
+        pRodape.textSize = RODAPE_CORPO_PT * e
+        // Nome de clínica longo encolhe como no PDF: mesma conta, sobre a largura
+        // em pontos e as margens de 28 pt da ficha.
+        val corpo = com.radioterapia.ai.pdf.PdfBuilder.corpoRodape(
+            pRodape.measureText(txt) / e, pagWpt - RODAPE_MARGEM_PT * 2)
+        pRodape.textSize = corpo * e
+        val cx = a.centerX()
+        val base = a.bottom - RODAPE_BASE_PT * e
+        val meia = pRodape.measureText(txt) / 2f + 2f * e
+        canvas.drawRect(cx - meia, base - RODAPE_CORPO_PT * e, cx + meia, base + 3f * e, pRodapeFundo)
+        canvas.drawText(txt, cx, base, pRodape)
     }
 
     // ---------------------------------------------------------------- arrasto
@@ -180,14 +248,20 @@ class ProtocoloPaginaView @JvmOverloads constructor(
                 if (e <= 0f) return true
                 val dxMm = (event.x - ultX) / e / MM_TO_PT
                 val dyMm = (event.y - ultY) / e / MM_TO_PT
+                // O teto nunca fica abaixo de zero: box maior que a página
+                // (PDF pequeno) faria coerceIn lançar exceção no meio do arrasto.
                 if (arrastando == 1) {
-                    etqXmm = (etqXmm + dxMm).coerceIn(0f, pagWpt / MM_TO_PT - etqWmm)
-                    etqYmm = (etqYmm + dyMm).coerceIn(0f, pagHpt / MM_TO_PT - etqHmm)
+                    etqXmm = (etqXmm + dxMm).coerceIn(0f, (pagWpt / MM_TO_PT - etqWmm).coerceAtLeast(0f))
+                    etqYmm = (etqYmm + dyMm).coerceIn(0f, (pagHpt / MM_TO_PT - etqHmm).coerceAtLeast(0f))
                 } else {
                     // O logo é ancorado à DIREITA: arrastar para a direita
-                    // DIMINUI a distância da borda.
-                    logoXmm = (logoXmm - dxMm).coerceIn(0f, pagWpt / MM_TO_PT - 10f)
-                    logoYmm = (logoYmm + dyMm).coerceIn(0f, pagHpt / MM_TO_PT - 10f)
+                    // DIMINUI a distância da borda. O limite é o tamanho REAL
+                    // do logo impresso (a mesma conta de rectLogo), para ele
+                    // não sair do papel pela esquerda nem por baixo.
+                    val logoWmm = minOf(LOGO_ALTURA_PT * logoAspecto, LOGO_LARGURA_MAX_PT) / MM_TO_PT
+                    val logoHmm = LOGO_ALTURA_PT / MM_TO_PT
+                    logoXmm = (logoXmm - dxMm).coerceIn(0f, (pagWpt / MM_TO_PT - logoWmm).coerceAtLeast(0f))
+                    logoYmm = (logoYmm + dyMm).coerceIn(0f, (pagHpt / MM_TO_PT - logoHmm).coerceAtLeast(0f))
                 }
                 ultX = event.x; ultY = event.y
                 aoMover?.invoke()

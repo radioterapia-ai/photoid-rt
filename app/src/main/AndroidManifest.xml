@@ -70,7 +70,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Consentimento (LGPD, primeiro acesso) - item 11 -->
+        <!-- Consentimento (LGPD, primeiro acesso) -->
         <activity
             android:name=".consent.ConsentActivity"
             android:exported="false"
@@ -223,7 +223,7 @@
             android:exported="false"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboardHidden" />
 
-        <!-- FileProvider para abrir PDFs em outros apps (item 8 - Visualizar PDF) -->
+        <!-- FileProvider para abrir PDFs em outros apps -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

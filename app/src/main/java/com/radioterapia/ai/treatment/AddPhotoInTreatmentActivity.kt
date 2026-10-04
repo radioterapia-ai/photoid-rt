@@ -39,15 +39,14 @@ import com.radioterapia.ai.pdf.PdfBuilder
 import com.radioterapia.ai.security.CredentialStore
 import com.radioterapia.ai.smb.SmbClient
 import com.radioterapia.ai.ui.GridOverlay
+import com.radioterapia.ai.util.FotosArquivadas
+import com.radioterapia.ai.util.NomeArquivo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.text.Normalizer
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -55,17 +54,18 @@ import java.util.concurrent.Executors
  * Adicionar foto durante o tratamento.
  *
  * Diferenças vs a captura normal:
- *   - Apenas categoria POSICIONAMENTO (não há rosto/etiqueta a refazer durante tratamento)
- *   - Após captura, usuário decide: descartar / salvar e enviar
- *   - Salvar e enviar:
+ *   - As cinco categorias estão disponíveis; rosto e etiqueta, que são únicas,
+ *     substituem a anterior, que vai para ARQUIVADAS (ver [configurarTabsAp])
+ *   - As fotos vão para um ROLO local; nada é gravado até "Salvar e adicionar"
+ *   - Salvar:
  *     a. Aplica marca d'água (mesmo padrão da simulação)
- *     b. Salva localmente com nome `_Posicionamento_TRATAMENTO_<timestamp>.jpg`
+ *     b. Grava na pasta do paciente com o nome de util/NomeArquivo, marcado
+ *        TRAT (`<INICIAIS>_POS_TRAT[_NS<n>]_<data>_<contagem>.jpg`), com a
+ *        contagem continuando a das fotos já gravadas daquele tipo
  *     c. Envia para o servidor (todos os destinos ativos)
- *     d. Re-baixa todas as fotos da pasta para regerar o PDF da Folha de Posicionamento
- *     e. Envia novo PDF (sobrescreve antigo)
+ *     d. Relê as fotos da simulação e regera a Folha de Posicionamento
+ *     e. Grava o PDF novo no lugar do anterior DESTA simulação
  *     f. Pergunta se quer imprimir nova versão
- *
- * Observação: NÃO mexe com a foto de rosto/etiqueta/acessórios — só adiciona posicionamento.
  */
 class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
 
@@ -505,10 +505,29 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
 
     /** Já existe foto gravada desta categoria nesta simulação? */
     private fun existeFotoDaCategoria(cat: com.radioterapia.ai.session.SessionManager.Category): Boolean = try {
+        val tipo = NomeArquivo.tipoDe(cat)
         fotosExistentes.any { arq ->
-            arq.name.lowercase().contains(cat.nomeArquivoBase.lowercase().removePrefix("_"))
+            !NomeArquivo.ehOriginal(arq.name) && tipoDoArquivo(arq.name) == tipo
         }
     } catch (_: Exception) { false }
+
+    /**
+     * Tipo de uma foto já gravada, nos dois esquemas de nome, sem deixar o nome
+     * do paciente decidir (ver FotosArquivadas.tipoProvavel). Serve a quem
+     * rotula e conta; quem MOVE arquivo usa a versão estrita.
+     */
+    private fun tipoDoArquivo(nome: String): NomeArquivo.Tipo? =
+        FotosArquivadas.tipoProvavel(nome, nomePaciente)
+
+    /** Rótulo falado pelo leitor de tela: a categoria, não o nome do arquivo. */
+    private fun descricaoDaFoto(nome: String): String = getString(when (tipoDoArquivo(nome)) {
+        NomeArquivo.Tipo.ROSTO -> R.string.cat_face
+        NomeArquivo.Tipo.ETIQUETA -> R.string.cat_label
+        NomeArquivo.Tipo.POSICIONAMENTO -> R.string.cat_positioning
+        NomeArquivo.Tipo.ACESSORIOS -> R.string.cat_accessories
+        NomeArquivo.Tipo.IMPRESSO -> R.string.cat_documents
+        else -> R.string.photo_existing_title
+    })
 
     private fun aplicarCategoriaAp(cat: com.radioterapia.ai.session.SessionManager.Category) {
         categoriaAp = cat
@@ -582,9 +601,6 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             var n = 0
             withContext(Dispatchers.IO) {
-                val nomeNorm = normalizarNome(nomePaciente)
-                val prefArq = nomeNorm.trim().uppercase().replace(Regex("\\s+"), " ").replace(" ", "_")
-                val tagSim = if (numeroSimulacao > 1) "_NOVASIM${numeroSimulacao - 1}" else ""
                 for (p in paginas) {
                     try {
                         val tmp = File(cacheDir, "doc_${System.currentTimeMillis()}_${n}.jpg")
@@ -710,11 +726,15 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
             } catch (_: Exception) {}
         }
 
-        val ehAcessorio = categoriaAp == com.radioterapia.ai.session.SessionManager.Category.ACCESSORIES
-        val tagExifBase = when {
-            modoDocumento() -> "DOCUMENTO TRATAMENTO"
-            ehAcessorio -> "ACESSORIO TRATAMENTO"
-            else -> "POSICIONAMENTO TRATAMENTO"
+        // Uma etiqueta por categoria, sem "else": com ele, rosto e etiqueta
+        // refeitos no Tratamento sairiam carimbados como posicionamento no
+        // EXIF, contradizendo o tipo gravado no nome do arquivo.
+        val tagExifBase = when (categoriaAp) {
+            Category.FACE -> "ROSTO TRATAMENTO"
+            Category.LABEL -> "ETIQUETA TRATAMENTO"
+            Category.POSITIONING -> "POSICIONAMENTO TRATAMENTO"
+            Category.ACCESSORIES -> "ACESSORIO TRATAMENTO"
+            Category.DOCUMENTS -> "DOCUMENTO TRATAMENTO"
         }
         val tag = if (numeroSimulacao > 1) "$tagExifBase NOVA SIMULACAO ${numeroSimulacao - 1}" else tagExifBase
         ExifWatermark.aplicar(this, arq, nomePaciente, "TRATAMENTO_${System.currentTimeMillis()}", tag)
@@ -812,13 +832,25 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
      *
      * Volta para o ROLO, e nao direto para a pasta: a foto devolvida passa pelo
      * mesmo "Finalizar" das novas, e ate la o tecnico ainda pode desistir.
+     *
+     * Volta na categoria do NOME do arquivo, e nao na aba ativa, como na tela de
+     * simulacao: um rosto arquivado devolvido com a aba Posicionamento aberta
+     * entraria no grid de posicionamento da ficha impressa. A aba ativa so
+     * decide quando o nome nao diz o tipo.
      */
     private fun abrirArquivadasAp() {
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val base = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                try { acharOuCriarPastaPacienteFile() } catch (_: Exception) { null }
+            // Só leitura: a pasta é resolvida pela regra do prontuário e não é
+            // criada. As arquivadas da homônima não aparecem para devolver ao rolo.
+            val alvo = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                try { resolverPastaAlvo(criar = false, saf = false) } catch (_: Exception) { PastaAlvo.Nenhuma }
             }
             if (isFinishing || isDestroyed) return@launch
+            if (alvo is PastaAlvo.Recusada) {
+                avisarPastaIncerta(fechar = false)
+                return@launch
+            }
+            val base = (alvo as? PastaAlvo.Arquivo)?.pasta
             if (base == null) {
                 android.widget.Toast.makeText(this@AddPhotoInTreatmentActivity,
                     R.string.arq_vazio, android.widget.Toast.LENGTH_LONG).show()
@@ -828,8 +860,9 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                 this@AddPhotoInTreatmentActivity, listOf(base)
             ) { arq ->
                 val tmp = File(cacheDir, "rolo_arq_${System.currentTimeMillis()}.jpg")
-                if (com.radioterapia.ai.util.FotosArquivadas.copiarParaTemp(arq, tmp)) {
-                    roloFotos.add(tmp to categoriaAp)
+                val cat = tipoDoArquivo(arq.name)?.let { NomeArquivo.categoriaDe(it) } ?: categoriaAp
+                if (FotosArquivadas.copiarParaTemp(arq, tmp)) {
+                    roloFotos.add(tmp to cat)
                     atualizarBotaoRolo()
                     android.widget.Toast.makeText(this@AddPhotoInTreatmentActivity,
                         R.string.arq_restaurada, android.widget.Toast.LENGTH_SHORT).show()
@@ -929,18 +962,24 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
      */
     private fun carregarFotosExistentes() {
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val achadas = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            val (achadas, recusada) = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 try {
+                    val alvo = resolverPastaAlvo(criar = false)
+                    if (alvo is PastaAlvo.Recusada) return@withContext emptyList<File>() to true
                     val sims = TreatmentPhotoFetcher(this@AddPhotoInTreatmentActivity)
-                        .buscarSimulacoes(nomePaciente)
-                    val sim = sims.find { it.numeroSimulacao == numeroSimulacao }
-                        ?: sims.maxByOrNull { it.timestampPrincipal }
-                    sim?.fotos?.map { it.arquivoLocal }?.sortedBy { it.name }.orEmpty()
-                } catch (_: Exception) { emptyList() }
+                        .buscarSimulacoes(nomePaciente, prontuario)
+                    // GUARDA: pasta E número, sem alternativa. Estas fotos são as
+                    // que o técnico pode excluir, arquivar ou reenquadrar; "a do
+                    // mesmo número" ou "a mais recente" pode ser da homônima.
+                    val sim = TreatmentPhotoFetcher.simulacaoExata(
+                        sims, numeroSimulacao, nomePastaServidor, alvo.nome)
+                    sim?.fotos?.map { it.arquivoLocal }?.sortedBy { it.name }.orEmpty() to false
+                } catch (_: Exception) { emptyList<File>() to false }
             }
             if (isFinishing || isDestroyed) return@launch
             fotosExistentes = achadas
             desenharFaixaExistentes()
+            if (recusada) avisarPastaIncerta(fechar = true)
         }
     }
 
@@ -958,7 +997,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                     marginEnd = (6 * resources.displayMetrics.density).toInt()
                 }
                 scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
-                contentDescription = arq.name
+                contentDescription = descricaoDaFoto(arq.name)
                 setOnClickListener { acoesDaFoto(arq) }
             }
             // Miniatura subsampleada: a faixa pode ter dezenas de fotos, e
@@ -1010,10 +1049,16 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         txtProgresso.visibility = View.VISIBLE
         txtProgresso.text = getString(R.string.ap_finishing)
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            // null: pasta do paciente incerta, nada foi movido.
+            val ok = kotlinx.coroutines.withContext<Boolean?>(kotlinx.coroutines.Dispatchers.IO) {
+                if (!podeAlterarFotoSalva(arq)) return@withContext null
                 com.radioterapia.ai.util.FotosArquivadas.arquivar(arq) != null
             }
             if (isFinishing || isDestroyed) return@launch
+            if (ok == null) {
+                avisarPastaIncerta(fechar = false)
+                return@launch
+            }
             if (!ok) {
                 txtProgresso.visibility = View.GONE
                 android.widget.Toast.makeText(this@AddPhotoInTreatmentActivity,
@@ -1035,21 +1080,27 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
      *
      * Extraida porque tres caminhos precisam dela — excluir, arquivar e
      * reenquadrar — e as tres copias ja tinham comecado a divergir no nome do
-     * arquivo gerado.
+     * arquivo gerado. O nome sai de um lugar so ([nomeFichaGuardada]).
      */
     private suspend fun regerarFichaAposMudanca() {
+        val instante = System.currentTimeMillis()
+        // Pasta resolvida sem criar: a ficha só é regravada na pasta exata
+        // deste paciente. Incerta, nenhuma ficha é gerada nem apagada.
+        val alvo = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            try { resolverPastaAlvo(criar = false) } catch (_: Exception) { PastaAlvo.Nenhuma }
+        }
+        if (alvo is PastaAlvo.Recusada) {
+            avisarPastaIncerta(fechar = false)
+            carregarFotosExistentes()
+            return
+        }
         val pdf = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-            try { regerarPdf(observacoesAtuais()) } catch (_: Exception) { null }
+            try { regerarPdf(alvo, observacoesAtuais(alvo), instante) } catch (_: Exception) { null }
         }
         if (pdf != null) {
-            val ts = SimpleDateFormat("dd-MMM-yyyy_HH-mm-ss", Locale("pt", "BR"))
-                .format(Date()).uppercase()
-            val pref = normalizarNome(nomePaciente).trim().uppercase()
-                .replace(Regex("\\s+"), " ").replace(" ", "_")
-            val tag = if (numeroSimulacao > 1) "_NOVASIM${numeroSimulacao - 1}" else ""
             kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 try {
-                    salvarPdfNaPastaPaciente(pdf, "${pref}_FOLHA_SIMULACAO${tag}_$ts.pdf")
+                    salvarPdfNaPastaPaciente(pdf, nomeFichaGuardada(instante), alvo)
                 } catch (_: Exception) {}
             }
         }
@@ -1070,9 +1121,8 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
      * a partir dele devolve o enquadramento inteiro para reescolher.
      */
     private fun editarFotoSalva(arq: java.io.File) {
-        val original = java.io.File(arq.parentFile,
-            arq.nameWithoutExtension + com.radioterapia.ai.session.SessionManager.SUFIXO_ORIGINAL)
-        val fonte = if (original.exists() && original.length() > 0) original else arq
+        // O par e procurado nas grafias que existem em campo (NomeArquivo).
+        val fonte = NomeArquivo.originalDe(arq) ?: arq
         try {
             // Trabalha numa COPIA: se o tecnico cancelar no meio, a foto gravada
             // fica intacta. Sobrescrever direto arriscaria perder a original.
@@ -1111,7 +1161,12 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         txtProgresso.visibility = View.VISIBLE
         txtProgresso.text = getString(R.string.ap_finishing)
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            // null: pasta do paciente incerta, a foto gravada ficou intacta.
+            val ok = kotlinx.coroutines.withContext<Boolean?>(kotlinx.coroutines.Dispatchers.IO) {
+                if (!podeAlterarFotoSalva(alvo)) {
+                    novo.delete()
+                    return@withContext null
+                }
                 try {
                     novo.copyTo(alvo, overwrite = true)
                     novo.delete()
@@ -1126,6 +1181,10 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                 } catch (_: Exception) { false }
             }
             if (isFinishing || isDestroyed) return@launch
+            if (ok == null) {
+                avisarPastaIncerta(fechar = false)
+                return@launch
+            }
             if (!ok) {
                 txtProgresso.visibility = View.GONE
                 android.widget.Toast.makeText(this@AddPhotoInTreatmentActivity,
@@ -1146,13 +1205,11 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         val msg = StringBuilder(getString(R.string.photo_delete_warn))
         // Aviso extra quando e a UNICA da categoria: apagar a unica foto de
         // rosto deixa a ficha sem o rosto, e quem esta refazendo quer justamente
-        // substituir — nao ficar sem.
-        val tipo = arq.name.uppercase()
-        val mesmoTipo = fotosExistentes.count { outra ->
-            listOf("_ROSTO", "_ETIQUETA", "_POSICIONAMENTO", "_ACESSORIOS", "_DOC")
-                .firstOrNull { tipo.contains(it) }
-                ?.let { outra.name.uppercase().contains(it) } ?: false
-        }
+        // substituir — nao ficar sem. Tipo desconhecido conta zero e o aviso
+        // aparece: na duvida, avisar custa menos que apagar sem aviso.
+        val tipo = tipoDoArquivo(arq.name)
+        val mesmoTipo = if (tipo == null) 0
+                        else fotosExistentes.count { tipoDoArquivo(it.name) == tipo }
         if (mesmoTipo <= 1) msg.append("\n\n").append(getString(R.string.photo_delete_last))
 
         android.app.AlertDialog.Builder(this)
@@ -1174,19 +1231,30 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         txtProgresso.visibility = View.VISIBLE
         txtProgresso.text = getString(R.string.ap_finishing)
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
-            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+            // null: pasta do paciente incerta, nada foi apagado.
+            val ok = kotlinx.coroutines.withContext<Boolean?>(kotlinx.coroutines.Dispatchers.IO) {
+                if (!podeAlterarFotoSalva(arq)) return@withContext null
                 try {
                     val apagou = !arq.exists() || arq.delete()
                     // O "_ORIGINAL" e o quadro cheio da mesma foto: manter um
                     // sem o outro deixaria a pasta com um original orfao, que
-                    // o sincronizador levaria para o servidor sem par.
-                    val orig = java.io.File(arq.parentFile,
-                        arq.nameWithoutExtension + "_ORIGINAL.jpg")
-                    if (orig.exists()) orig.delete()
+                    // o sincronizador levaria para o servidor sem par. Sai
+                    // toda grafia de par que existir (NomeArquivo).
+                    val pai = arq.parentFile
+                    if (pai != null) {
+                        NomeArquivo.candidatosOriginal(arq.name)
+                            .map { java.io.File(pai, it) }
+                            .filter { it.exists() }
+                            .forEach { it.delete() }
+                    }
                     apagou
                 } catch (_: Exception) { false }
             }
             if (isFinishing || isDestroyed) return@launch
+            if (ok == null) {
+                avisarPastaIncerta(fechar = false)
+                return@launch
+            }
             if (!ok) {
                 txtProgresso.visibility = View.GONE
                 android.widget.Toast.makeText(this@AddPhotoInTreatmentActivity,
@@ -1204,10 +1272,8 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
     }
 
     /** Observacao ja gravada nesta simulacao, para a ficha regerada nao perde-la. */
-    private fun observacoesAtuais(): String = try {
-        val pasta = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
-            this, nomePaciente, numeroSimulacao, nomePastaServidor, prontuario)
-        com.radioterapia.ai.util.ObsStore.ler(pasta, numeroSimulacao)
+    private fun observacoesAtuais(alvo: PastaAlvo): String = try {
+        pastaDosRegistros(alvo)?.let { com.radioterapia.ai.util.ObsStore.ler(it, numeroSimulacao) }.orEmpty()
     } catch (_: Exception) { "" }
 
     private fun atualizarBotaoRolo() {
@@ -1236,23 +1302,46 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         txtProgresso.text = getString(R.string.saving_locally)
         CoroutineScope(Dispatchers.Main).launch {
             var falhas = 0
+            // A pasta é resolvida UMA vez, antes de qualquer gravação. Incerta
+            // (homônima de outro prontuário, ou homônimas sem prontuário), ou sem
+            // como abrir a pasta: nada é gravado, criado, arquivado nem enviado,
+            // e o rolo fica como estava.
+            val alvo = withContext(Dispatchers.IO) {
+                try { resolverPastaAlvo(criar = true) } catch (_: Exception) { PastaAlvo.Nenhuma }
+            }
+            if (isFinishing || isDestroyed) return@launch
+            if (alvo is PastaAlvo.Recusada) {
+                avisarPastaIncerta(fechar = false)
+                return@launch
+            }
+            if (alvo is PastaAlvo.Nenhuma) {
+                txtProgresso.visibility = View.GONE
+                AlertDialog.Builder(this@AddPhotoInTreatmentActivity)
+                    .setTitle(R.string.hc_finish_error)
+                    .setMessage(R.string.storage_path_error)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
+                return@launch
+            }
             withContext(Dispatchers.IO) {
-                val nomeNorm = normalizarNome(nomePaciente)
-                val prefArq = nomeNorm.trim().uppercase().replace(Regex("\\s+"), " ").replace(" ", "_")
-                val tagSim = if (numeroSimulacao > 1) "_NOVASIM${numeroSimulacao - 1}" else ""
-                roloFotos.forEachIndexed { idx, (tmp, cat) ->
+                // A contagem de cada tipo CONTINUA a da pasta: os nomes ja
+                // gravados sao lidos uma vez, antes do lote, e cada foto do lote
+                // recebe o proximo numero do seu tipo nesta simulacao. Fotos
+                // legadas entram na conta pela quantidade, entao a primeira foto
+                // nova depois de quatro posicionamentos antigos sai com 5.
+                val existentes = try { nomesNaPastaDoPaciente(alvo) } catch (_: Exception) { emptyList() }
+                val proximo = mutableMapOf<NomeArquivo.Tipo, Int>()
+                roloFotos.forEach { (tmp, cat) ->
                     try {
-                        val ts = SimpleDateFormat("dd-MMM-yyyy_HH-mm-ss", Locale("pt", "BR"))
-                            .format(Date()).uppercase()
-                        val nomeArq = when (cat) {
-                            com.radioterapia.ai.session.SessionManager.Category.DOCUMENTS ->
-                                "${prefArq}_DOC${tagSim}_${ts}_${idx + 1}.jpg"
-                            com.radioterapia.ai.session.SessionManager.Category.ACCESSORIES ->
-                                "${prefArq}_ACESSORIOS_TRATAMENTO${tagSim}_${ts}_${idx + 1}.jpg"
-                            else ->
-                                "${prefArq}_POSICIONAMENTO_TRATAMENTO${tagSim}_${ts}_${idx + 1}.jpg"
+                        val tipo = NomeArquivo.tipoDe(cat)
+                        val n = proximo.getOrPut(tipo) {
+                            NomeArquivo.proximoContador(existentes, numeroSimulacao, tipo)
                         }
-                        salvarLocalmente(tmp, nomeArq)
+                        proximo[tipo] = n + 1
+                        val nomeArq = NomeArquivo.montar(nomePaciente, tipo, numeroSimulacao,
+                            System.currentTimeMillis(), n, "jpg", NomeArquivo.Contexto.TRATAMENTO)
+                        salvarLocalmente(tmp, nomeArq, alvo)
+                        if (cat.unico) arquivarAnterioresDoTipo(tipo, nomeArq, alvo)
                         enviarFotoTodosDestinos(tmp, nomeArq)
                         tmp.delete()
                     } catch (_: Exception) { falhas++ }
@@ -1267,7 +1356,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
             if (falhas > 0) android.widget.Toast.makeText(this@AddPhotoInTreatmentActivity,
                 "Algumas fotos ficaram pendentes de envio ($falhas).",
                 android.widget.Toast.LENGTH_LONG).show()
-            finalizarComPdf(observacoes)
+            finalizarComPdf(observacoes, alvo)
         }
     }
 
@@ -1276,13 +1365,10 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val obsAtual = withContext(Dispatchers.IO) {
                 try {
-                    // Resolve a pasta local pelo NOME + número (o nome do servidor
-                    // pode divergir da pasta gravada), então lê a observação da
-                    // simulação ORIGINAL para pré-preencher o campo.
-                    val pasta = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
-                        this@AddPhotoInTreatmentActivity, nomePaciente,
-                        numeroSimulacao, nomePastaServidor, prontuario)
-                    com.radioterapia.ai.util.ObsStore.ler(pasta, numeroSimulacao)
+                    // Lê a observação da simulação ORIGINAL para pré-preencher o
+                    // campo, da pasta de registros deste paciente: a de uma
+                    // homônima iria para a ficha deste ao salvar.
+                    observacoesAtuais(resolverPastaAlvo(criar = false))
                 } catch (_: Exception) { "" }
             }
             val cont = android.widget.LinearLayout(this@AddPhotoInTreatmentActivity).apply {
@@ -1295,12 +1381,38 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
             }
             val edt = android.widget.EditText(this@AddPhotoInTreatmentActivity).apply {
                 setText(obsAtual)
-                minLines = 2; maxLines = 3
+                minLines = 2; maxLines = 4
                 setHint(R.string.fin_observation_hint)
                 setTextColor(0xFF212121.toInt()); setHintTextColor(0xFF9E9E9E.toInt())
                 setBackgroundResource(R.drawable.bg_input_white)
                 setPadding(28, 22, 28, 22)
             }
+            // Mesma regra da tela de finalizacao e da edicao da simulacao: ate 4
+            // linhas digitadas, ou seja, no maximo MAX_QUEBRAS_OBS quebras. O
+            // vigia entra DEPOIS do setText acima, para o texto ja gravado nao
+            // passar por ele. Recusa so a mudanca que AUMENTA as quebras acima do
+            // teto: uma observacao ja gravada com mais linhas que o teto
+            // continua editavel e pode ser encurtada, em vez de travar o campo
+            // inteiro. O setText de reversao dispara o
+            // vigia de novo, mas com menos quebras que o texto recusado, entao
+            // nao entra em laco.
+            edt.addTextChangedListener(object : android.text.TextWatcher {
+                private var anterior = ""
+                override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) {
+                    anterior = s?.toString() ?: ""
+                }
+                override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    val quebras = (s?.toString() ?: "").count { it == '\n' }
+                    if (quebras > MAX_QUEBRAS_OBS && quebras > anterior.count { it == '\n' }) {
+                        // Copia antes do setText: a chamada reentrante do vigia
+                        // sobrescreve `anterior` com o texto recusado.
+                        val aceito = anterior
+                        edt.setText(aceito)
+                        edt.setSelection(aceito.length.coerceAtMost(edt.text.length))
+                    }
+                }
+            })
             cont.addView(msg)
             val lp = android.widget.LinearLayout.LayoutParams(
                 android.view.ViewGroup.LayoutParams.MATCH_PARENT,
@@ -1318,22 +1430,20 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         }
     }
 
-    private fun finalizarComPdf(observacoes: String) {
+    private fun finalizarComPdf(observacoes: String, alvo: PastaAlvo) {
         txtProgresso.visibility = View.VISIBLE
         txtProgresso.text = getString(R.string.ap_finishing)
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val timestamp = SimpleDateFormat("dd-MMM-yyyy_HH-mm-ss", Locale("pt", "BR")).format(Date()).uppercase()
-                val prefArq = normalizarNome(nomePaciente).trim().uppercase()
-                    .replace(Regex("\\s+"), " ").replace(" ", "_")
-                val tagSim = if (numeroSimulacao > 1) "_NOVASIM${numeroSimulacao - 1}" else ""
-
-                val pdfRegerado = withContext(Dispatchers.IO) { regerarPdf(observacoes) }
+                // Um instante so para as duas copias da mesma ficha: a de
+                // entrega (cache, impressao) e a guardada (pasta, servidor).
+                val instante = System.currentTimeMillis()
+                val pdfRegerado = withContext(Dispatchers.IO) { regerarPdf(alvo, observacoes, instante) }
                 if (pdfRegerado != null) {
-                    val nomePdfNovo = "${prefArq}_FOLHA_SIMULACAO${tagSim}_${timestamp}.pdf"
-                    withContext(Dispatchers.IO) { salvarPdfNaPastaPaciente(pdfRegerado, nomePdfNovo) }
+                    val nomePdfNovo = nomeFichaGuardada(instante)
+                    withContext(Dispatchers.IO) { salvarPdfNaPastaPaciente(pdfRegerado, nomePdfNovo, alvo) }
                     txtProgresso.text = getString(R.string.hc_sending_new_pdf)
-                    withContext(Dispatchers.IO) { enviarPdfTodosDestinos(pdfRegerado) }
+                    withContext(Dispatchers.IO) { enviarPdfTodosDestinos(pdfRegerado, nomePdfNovo) }
                     auditLogger.registrar(
                         AuditLogger.Tipo.UPLOAD, "PDF regenerado ao finalizar adição de fotos",
                         mapOf("paciente" to nomePaciente, "pasta" to nomePastaServidor))
@@ -1344,12 +1454,14 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                         .setMessage(R.string.ap_saved_msg)
                         .setCancelable(false)
                         .apply {
-                            // ITEM 7: não imprime "às cegas". O seletor de modo
+                            // Não imprime "às cegas". O seletor de modo
                             // testa a impressora de rede e oferece sistema,
                             // pen-drive OTG ou pasta — nada de barra de progresso
                             // enquanto o JetDirect 9100 falha em silêncio.
+                            // Nome de entrega explícito: pen-drive e pasta da
+                            // impressora não dependem de como o cache foi nomeado.
                             setPositiveButton(R.string.print_sheet) { _, _ ->
-                                escolherModoImpressao(pdfRegerado)
+                                escolherModoImpressao(pdfRegerado, nomeFichaEntrega(instante))
                             }
                         }
                         .setNeutralButton(R.string.view_pdf_only) { _, _ ->
@@ -1361,8 +1473,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
                     txtProgresso.visibility = View.GONE
                     AlertDialog.Builder(this@AddPhotoInTreatmentActivity)
                         .setTitle(getString(R.string.hc_photos_saved))
-                        .setMessage(getString(R.string.hc_photos_saved_no_pdf) +
-                            "agora. Ao abrir novamente, tente finalizar de novo.")
+                        .setMessage(getString(R.string.hc_photos_saved_no_pdf))
                         .setPositiveButton(R.string.ok) { _, _ -> finalizar() }
                         .show()
                 }
@@ -1397,19 +1508,33 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         finish()
     }
 
-    /** Re-lê todas as fotos da pasta (com a nova) e gera o PDF cumulativo. */
-    private suspend fun regerarPdf(observacoes: String = ""): File? {
+    /**
+     * Re-lê todas as fotos da pasta (com a nova) e gera o PDF cumulativo.
+     *
+     * O arquivo devolvido fica no cache e é a cópia de ENTREGA — a que vai para
+     * a impressão, o pen-drive e o leitor de PDF —, por isso leva o nome
+     * completo do paciente em ASCII ([nomeFichaEntrega]): quem pega a
+     * folha na impressora precisa saber de quem ela é. A cópia guardada na
+     * pasta do paciente e no servidor recebe o nome com iniciais
+     * ([nomeFichaGuardada]), calculado com o MESMO [instante].
+     */
+    private suspend fun regerarPdf(alvo: PastaAlvo, observacoes: String,
+                                   instante: Long): File? {
+        // Sem pasta resolvida não há onde guardar a ficha nem a observação, e o
+        // resolvedor por nome poderia achar a pasta de outra paciente.
+        if (alvo !is PastaAlvo.Arquivo && alvo !is PastaAlvo.Documento) return null
         val fetcher = TreatmentPhotoFetcher(this)
-        val sims = fetcher.buscarSimulacoes(nomePaciente)
-        // Casa pelo nome da pasta; se mudou (modelo novo), usa a mais recente.
-        // Casa pela pasta E pelo NUMERO da simulacao. So a pasta nao basta
-        // mais: desde que as simulacoes deixaram de ser devolvidas como uma
-        // so, varias dividem o mesmo diretorio do paciente, e casar apenas
-        // pelo nome da pasta regeneraria o PDF da simulacao errada.
-        val sim = sims.find {
-            it.nomePastaCompleto == nomePastaServidor && it.numeroSimulacao == numeroSimulacao
-        } ?: sims.find { it.numeroSimulacao == numeroSimulacao }
-            ?: sims.maxByOrNull { it.timestampPrincipal } ?: return null
+        val sims = fetcher.buscarSimulacoes(nomePaciente, prontuario)
+        // Casa pela pasta E pelo NUMERO da simulacao. So a pasta nao basta:
+        // varias simulacoes dividem o mesmo diretorio do paciente, e casar
+        // apenas pelo nome da pasta regeneraria o PDF da simulacao errada.
+        // GUARDA: sem alternativa por numero nem "a mais recente". Com uma
+        // homonima no tablet, as duas sao achadas pela busca, e a ficha da
+        // outra paciente seria regravada na pasta desta. A pasta aberta vem
+        // primeiro; a resolvida para gravar entra quando a aberta e de outro
+        // layout (servidor) e nao aparece na busca local.
+        val sim = TreatmentPhotoFetcher.simulacaoExata(
+            sims, numeroSimulacao, nomePastaServidor, alvo.nome) ?: return null
 
         // Ordena: rosto, etiqueta, posicionamentos, TODOS os acessórios
         val ordenadas = mutableListOf<File>()
@@ -1419,10 +1544,21 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         sim.posicionamentos.forEachIndexed { i, f -> ordenadas.add(f.arquivoLocal); rotulos.add("Posicionamento.${i + 1}") }
         sim.acessoriosLista.forEachIndexed { i, f -> ordenadas.add(f.arquivoLocal); rotulos.add("Acessório.${i + 1}") }
 
-        val data = SimpleDateFormat("dd_MMM_yyyy__HH_mm_ss", Locale("pt", "BR")).format(Date())
-        val pdfFile = File(cacheDir, "pdf_treat_${normalizarNome(nomePaciente).replace(" ", "_")}_${data}.pdf")
+        val pdfFile = File(cacheDir, nomeFichaEntrega(instante))
+        // Cabeçalho pela chave nome + prontuário. Só pelo nome, a busca do
+        // cadastro escolhe entre homônimas o registro mais completo, e a ficha
+        // sairia com o prontuário desta e o nascimento, o sexo e o médico da
+        // outra. Sem prontuário na Intent vale o da pasta onde se grava, que é
+        // a pasta destas fotos. Registro que não serve deixa os campos em branco.
+        val prontuarioFicha = prontuario.ifBlank {
+            alvo.nome?.let { TreatmentPhotoFetcher.prontuarioDaPastaDoPaciente(it, nomePaciente) }.orEmpty()
+        }
         val dadosPac = try {
-            com.radioterapia.ai.patient.PatientCache(this).obterDadosPaciente(nomePaciente)
+            val cache = com.radioterapia.ai.patient.PatientCache(this)
+            cache.obterDadosPaciente(nomePaciente, prontuarioFicha)?.takeIf { d ->
+                TreatmentPhotoFetcher.cadastroServeAoPaciente(prontuarioFicha, d.prontuario,
+                    prontuarioFicha.isBlank() && cache.temHomonimos(nomePaciente))
+            }
         } catch (_: Exception) { null }
         val nascFmt = com.radioterapia.ai.util.DateUtils.formatarNascimento(
             dadosPac?.nascimento ?: "",
@@ -1430,7 +1566,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         val dados = PdfBuilder.DadosCabecalho(
             nomePaciente = nomePaciente,
             nascimento = nascFmt,
-            prontuario = prontuario.ifBlank { dadosPac?.prontuario ?: "" },
+            prontuario = prontuarioFicha,
             idsExtras = emptyList(),
             dataSimulacao = Date(),
             numeroSimulacao = numeroSimulacao,
@@ -1438,11 +1574,13 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
             sexo = dadosPac?.sexo ?: "",
             medicoAssistente = dadosPac?.medicoAssistente ?: ""
         )
-        // Persiste a observação junto da simulação (reeditável depois)
-        val pastaSim = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
-            this, nomePaciente, numeroSimulacao, sim.nomePastaCompleto, prontuario)
-        com.radioterapia.ai.util.ObsStore.gravar(pastaSim, numeroSimulacao, observacoes)
-        val toReg = com.radioterapia.ai.util.TimeOutStore.ler(pastaSim, numeroSimulacao)
+        // Persiste a observação junto da simulação (reeditável depois), na
+        // pasta de registros deste paciente ([pastaDosRegistros]). Incerta,
+        // a observação não é gravada e a ficha sai sem a página de Time-Out:
+        // a de outra paciente traria os alertas dela.
+        val pastaSim = pastaDosRegistros(alvo)
+        pastaSim?.let { com.radioterapia.ai.util.ObsStore.gravar(it, numeroSimulacao, observacoes) }
+        val toReg = pastaSim?.let { com.radioterapia.ai.util.TimeOutStore.ler(it, numeroSimulacao) }
         val timeOut = if (toReg != null && toReg.ativo)
             PdfBuilder.DadosTimeOut(toReg.medico, toReg.sitio, toReg.riscoQueda,
                 toReg.precaucaoContato, sim.rosto?.arquivoLocal,
@@ -1471,13 +1609,12 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         return erros
     }
 
-    private fun enviarPdfTodosDestinos(pdf: File): List<String> {
+    /**
+     * Envia a ficha ao servidor com o nome GUARDADO (iniciais), o mesmo da pasta
+     * do paciente: o servidor é cópia da pasta, não cópia de entrega.
+     */
+    private fun enviarPdfTodosDestinos(pdf: File, nomePdf: String): List<String> {
         if (!config.pdfParaServidor) return emptyList()
-        val nomeNorm = normalizarNome(nomePaciente).replace(' ', '_')
-        val data = SimpleDateFormat("dd_MMM_yyyy__HH_mm_ss", Locale("pt", "BR")).format(Date())
-        val tagSim = if (numeroSimulacao > 1) "_NOVASIM${numeroSimulacao - 1}" else ""
-        val nomePdf = "${nomeNorm}_FolhaSimulacao${tagSim}_${data}.pdf"
-
         val erros = mutableListOf<String>()
         for ((idx, destino) in config.obterDestinosAtivos().withIndex()) {
             try {
@@ -1508,23 +1645,22 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
      * Salva a foto adicional NA PASTA DO PACIENTE do modelo novo
      * (PhotoID_RT/PHOTOS/<PACIENTE>), para o carrossel e o PDF enxergarem.
      * Usa SAF se o usuário escolheu pasta própria; senão StorageLocal (raiz/app).
+     * A pasta chega resolvida ([resolverPastaAlvo]); sem ela, nada é gravado.
      * Também faz cópia no rolo da câmera (best-effort).
      */
-    private fun salvarLocalmente(foto: File, nomeArquivo: String) {
+    private fun salvarLocalmente(foto: File, nomeArquivo: String, alvo: PastaAlvo) {
         try {
-            if (config.pastaFotosUri.isNotBlank()) {
-                val base = androidx.documentfile.provider.DocumentFile.fromTreeUri(
-                    this, Uri.parse(config.pastaFotosUri)) ?: return
-                val photos = obterOuCriarPastaDoc(obterOuCriarPastaDoc(base, "PhotoID_RT"), "PHOTOS") ?: return
-                val pastaPac = acharOuCriarPastaPacienteDoc(photos) ?: return
-                pastaPac.findFile(nomeArquivo)?.delete()
-                val doc = pastaPac.createFile("image/jpeg", nomeArquivo) ?: return
-                contentResolver.openOutputStream(doc.uri)?.use { saida ->
-                    foto.inputStream().use { it.copyTo(saida) }
+            when (alvo) {
+                is PastaAlvo.Documento -> {
+                    val pastaPac = alvo.pasta
+                    pastaPac.findFile(nomeArquivo)?.delete()
+                    val doc = pastaPac.createFile("image/jpeg", nomeArquivo) ?: return
+                    contentResolver.openOutputStream(doc.uri)?.use { saida ->
+                        foto.inputStream().use { it.copyTo(saida) }
+                    }
                 }
-            } else {
-                val pastaPac = acharOuCriarPastaPacienteFile()
-                foto.copyTo(File(pastaPac, nomeArquivo), overwrite = true)
+                is PastaAlvo.Arquivo -> foto.copyTo(File(alvo.pasta, nomeArquivo), overwrite = true)
+                else -> return
             }
             // GATILHO: foto de tratamento tambem e documentacao de
             // posicionamento, e chega dias depois da simulacao — se so a
@@ -1549,61 +1685,248 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         } catch (_: Exception) {}
     }
 
-    /** Salva o PDF regenerado na pasta do paciente, removendo os PDFs antigos
-     *  (a folha é cumulativa — só a versão mais nova vale). */
-    private fun salvarPdfNaPastaPaciente(pdf: File, nomePdf: String) {
+    /**
+     * Salva o PDF regenerado na pasta do paciente, removendo os PDFs antigos
+     * DESTA simulação (a folha é cumulativa — só a versão mais nova vale).
+     *
+     * GUARDA: só desta. Todas as simulações do paciente dividem a pasta, e
+     * apagar todo PDF da pasta levaria junto a ficha das outras simulações.
+     * E só na pasta resolvida ([resolverPastaAlvo]): a ficha apagada aqui é a
+     * do paciente desta tela, nunca a de uma homônima.
+     */
+    private fun salvarPdfNaPastaPaciente(pdf: File, nomePdf: String, alvo: PastaAlvo) {
         try {
-            if (config.pastaFotosUri.isNotBlank()) {
-                val base = androidx.documentfile.provider.DocumentFile.fromTreeUri(
-                    this, Uri.parse(config.pastaFotosUri)) ?: return
-                val photos = obterOuCriarPastaDoc(obterOuCriarPastaDoc(base, "PhotoID_RT"), "PHOTOS") ?: return
-                val pastaPac = acharOuCriarPastaPacienteDoc(photos) ?: return
-                pastaPac.listFiles().filter { it.name?.endsWith(".pdf", true) == true }
-                    .forEach { it.delete() }
-                val doc = pastaPac.createFile("application/pdf", nomePdf) ?: return
-                contentResolver.openOutputStream(doc.uri)?.use { saida ->
-                    pdf.inputStream().use { it.copyTo(saida) }
+            when (alvo) {
+                is PastaAlvo.Documento -> {
+                    val pastaPac = alvo.pasta
+                    pastaPac.listFiles()
+                        .filter { NomeArquivo.ehFichaDaSimulacao(it.name ?: "", numeroSimulacao) }
+                        .forEach { it.delete() }
+                    val doc = pastaPac.createFile("application/pdf", nomePdf) ?: return
+                    contentResolver.openOutputStream(doc.uri)?.use { saida ->
+                        pdf.inputStream().use { it.copyTo(saida) }
+                    }
                 }
-            } else {
-                val pastaPac = acharOuCriarPastaPacienteFile()
-                pastaPac.listFiles { _, n -> n.endsWith(".pdf", true) }?.forEach { it.delete() }
-                pdf.copyTo(File(pastaPac, nomePdf), overwrite = true)
+                is PastaAlvo.Arquivo -> {
+                    val pastaPac = alvo.pasta
+                    pastaPac.listFiles { _, n -> NomeArquivo.ehFichaDaSimulacao(n, numeroSimulacao) }
+                        ?.forEach { it.delete() }
+                    pdf.copyTo(File(pastaPac, nomePdf), overwrite = true)
+                }
+                else -> return
             }
         } catch (_: Exception) {}
     }
 
-    /** Acha (ignorando _/espacos/caixa) ou cria a pasta do paciente — SAF. */
-    private fun acharOuCriarPastaPacienteDoc(
-        photos: androidx.documentfile.provider.DocumentFile
-    ): androidx.documentfile.provider.DocumentFile? {
-        photos.listFiles().firstOrNull {
-            it.isDirectory && com.radioterapia.ai.util.StorageLocal.pastaCasaPaciente(it.name, nomePaciente)
-        }?.let { return it }
-        return photos.createDirectory(
-            com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomePaciente, prontuario))
+    /** Nome da ficha GUARDADA (pasta do paciente e servidor): com iniciais. */
+    private fun nomeFichaGuardada(instante: Long): String =
+        NomeArquivo.montar(nomePaciente, NomeArquivo.Tipo.FICHA, numeroSimulacao, instante, 1, "pdf")
+
+    /**
+     * Nome da ficha ENTREGUE (cache, impressão, pen-drive, leitor de PDF): com
+     * o nome completo em ASCII. Mesmo [instante] de [nomeFichaGuardada], para
+     * as duas cópias dizerem a mesma hora.
+     */
+    private fun nomeFichaEntrega(instante: Long): String =
+        NomeArquivo.montarEntrega(nomePaciente, NomeArquivo.Tipo.FICHA, numeroSimulacao, instante, 1, "pdf")
+
+    /**
+     * Nomes de primeiro nível da pasta do paciente, para a contagem continuar
+     * a das fotos já gravadas. Só leitura de disco (chamar fora da thread
+     * principal); não toca em View.
+     */
+    private fun nomesNaPastaDoPaciente(alvo: PastaAlvo): List<String> = when (alvo) {
+        is PastaAlvo.Documento -> alvo.pasta.listFiles().mapNotNull { it.name }
+        is PastaAlvo.Arquivo -> alvo.pasta.list()?.toList().orEmpty()
+        else -> emptyList()
     }
 
-    /** Acha (por nome + prontuário) ou cria a pasta do paciente — File (raiz/app). */
-    private fun acharOuCriarPastaPacienteFile(): File {
+    /**
+     * Rosto ou etiqueta refeitos no Tratamento: a foto anterior do MESMO tipo e
+     * da MESMA simulação vai para ARQUIVADAS (com o par "_ORIGINAL"), como a
+     * captura da simulação faz e como o aviso de refazer promete.
+     *
+     * GUARDA: três travas, todas pelo mesmo motivo — mover arquivo errado tira
+     * foto da ficha impressa:
+     *  - a nova precisa estar gravada; sem ela, arquivar a anterior deixaria a
+     *    ficha sem rosto;
+     *  - o tipo vem de [FotosArquivadas.tipoConfiavel], que tira o nome do
+     *    paciente antes de classificar e devolve `null` na dúvida — e na dúvida
+     *    nada se move;
+     *  - só no modo de pasta do app. Na pasta escolhida pelo usuário (SAF) nada
+     *    é movido: a anterior continua na pasta, e a leitura faz a mais recente
+     *    vencer, de modo que ela sai da ficha do mesmo jeito.
+     * E só na pasta resolvida, a mesma onde a nova foi gravada.
+     */
+    private fun arquivarAnterioresDoTipo(tipo: NomeArquivo.Tipo, nomeNovo: String, alvo: PastaAlvo) {
+        if (config.pastaFotosUri.isNotBlank()) return
+        val pasta = (alvo as? PastaAlvo.Arquivo)?.pasta ?: return
+        val nova = File(pasta, nomeNovo)
+        if (!nova.isFile || nova.length() == 0L) return
+        pasta.listFiles()?.filter { f ->
+            f.isFile && f.name != nomeNovo && !f.name.startsWith(".") &&
+                !NomeArquivo.ehOriginal(f.name) &&
+                NomeArquivo.numeroSimulacao(f.name) == numeroSimulacao &&
+                FotosArquivadas.tipoConfiavel(f.name, nomePaciente) == tipo
+        }?.forEach { FotosArquivadas.arquivar(it) }
+    }
+
+    /**
+     * A pasta do paciente já resolvida para uma gravação desta tela.
+     *
+     * Resolvida UMA vez por operação e passada adiante: a foto, o arquivamento
+     * da anterior, a contagem e a ficha caem todos na mesma pasta, em vez de
+     * cada passo procurar a sua.
+     */
+    private sealed class PastaAlvo {
+        open val nome: String? get() = null
+        class Arquivo(val pasta: File) : PastaAlvo() {
+            override val nome: String get() = pasta.name
+        }
+        class Documento(val pasta: androidx.documentfile.provider.DocumentFile) : PastaAlvo() {
+            override val nome: String? get() = pasta.name
+        }
+        /** Não há pasta do paciente (e não se pediu para criar), ou a pasta SAF não abriu. */
+        object Nenhuma : PastaAlvo()
+        /** Há pasta com o nome, mas nenhuma é com certeza a deste paciente. */
+        object Recusada : PastaAlvo()
+    }
+
+    /**
+     * Resolve a pasta onde esta tela grava, pela regra de
+     * [TreatmentPhotoFetcher.decidirPasta]: a pasta da simulação aberta
+     * ([nomePastaServidor]) quando ela existe aqui e é deste prontuário; fora
+     * disso, a única pasta aceita pelo prontuário. Pasta de homônima de outro
+     * prontuário nunca, e sem prontuário com homônimas também não.
+     *
+     * GUARDA: casar só pelo NOME não basta. Com "MARIA DA SILVA - 1001" e
+     * "MARIA DA SILVA - 2002" no tablet, a primeira pasta da listagem pode ser
+     * a da outra: a foto de 2002 seria gravada na pasta de 1001, o rosto de
+     * 1001 iria para as arquivadas e a ficha de 1001 seria trocada pela de 2002.
+     *
+     * Criar só acontece com [criar] e quando NENHUMA pasta casa com o nome.
+     * Só disco, nenhuma View: chamar fora da thread principal.
+     *
+     * @param saf pasta escolhida pelo usuário (SAF) ou pasta do app (File).
+     */
+    private fun resolverPastaAlvo(criar: Boolean,
+                                  saf: Boolean = config.pastaFotosUri.isNotBlank()): PastaAlvo {
+        if (saf) {
+            val base = androidx.documentfile.provider.DocumentFile.fromTreeUri(
+                this, Uri.parse(config.pastaFotosUri)) ?: return PastaAlvo.Nenhuma
+            val photos = (if (criar) obterOuCriarPastaDoc(obterOuCriarPastaDoc(base, "PhotoID_RT"), "PHOTOS")
+                          else base.findFile("PhotoID_RT")?.findFile("PHOTOS"))
+                ?: return PastaAlvo.Nenhuma
+            val pastas = photos.listFiles().filter { it.isDirectory }
+            return when (val d = TreatmentPhotoFetcher.decidirPasta(
+                pastas.mapNotNull { it.name }, nomePaciente, prontuario, nomePastaServidor,
+                homonimosNoCadastro)) {
+                is TreatmentPhotoFetcher.DecisaoPasta.Existente ->
+                    pastas.firstOrNull { it.name == d.nomePasta }
+                        ?.let { PastaAlvo.Documento(it) } ?: PastaAlvo.Nenhuma
+                TreatmentPhotoFetcher.DecisaoPasta.Nenhuma ->
+                    if (!criar) PastaAlvo.Nenhuma
+                    else photos.createDirectory(
+                        com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomePaciente, prontuario))
+                        ?.let { PastaAlvo.Documento(it) } ?: PastaAlvo.Nenhuma
+                TreatmentPhotoFetcher.DecisaoPasta.Incerta -> PastaAlvo.Recusada
+            }
+        }
         val photos = com.radioterapia.ai.util.StorageLocal.photos(this)
-        photos.listFiles { f ->
-            f.isDirectory && com.radioterapia.ai.util.StorageLocal.pastaCasaPaciente(f.name, nomePaciente)
-        }?.firstOrNull()?.let { return it }
-        return File(photos,
-            com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomePaciente, prontuario)).apply { mkdirs() }
+        val nomes = photos.listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty()
+        return when (val d = TreatmentPhotoFetcher.decidirPasta(
+            nomes, nomePaciente, prontuario, nomePastaServidor, homonimosNoCadastro)) {
+            is TreatmentPhotoFetcher.DecisaoPasta.Existente -> PastaAlvo.Arquivo(File(photos, d.nomePasta))
+            TreatmentPhotoFetcher.DecisaoPasta.Nenhuma -> {
+                val nova = File(photos,
+                    com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomePaciente, prontuario))
+                if (criar && (nova.mkdirs() || nova.isDirectory)) PastaAlvo.Arquivo(nova)
+                else PastaAlvo.Nenhuma
+            }
+            TreatmentPhotoFetcher.DecisaoPasta.Incerta -> PastaAlvo.Recusada
+        }
+    }
+
+    /**
+     * Sem prontuário nesta tela, o cadastro tem outro registro com o mesmo
+     * nome? Então nenhuma pasta é com certeza a deste paciente, nem a única do
+     * tablet. Lido uma vez, na primeira resolução (fora da thread principal):
+     * o cadastro é um JSON inteiro relido a cada construção.
+     */
+    private val homonimosNoCadastro: Boolean by lazy {
+        prontuario.isBlank() && try {
+            com.radioterapia.ai.patient.PatientCache(this).temHomonimos(nomePaciente)
+        } catch (_: Exception) { false }
+    }
+
+    /**
+     * A pasta do PHOTOS do app onde moram o Time-Out e as observações desta
+     * simulação — inclusive no modo SAF, em que as fotos ficam noutra árvore.
+     *
+     * Na pasta do app já resolvida para gravar, é ela. Fora disso, o
+     * resolvedor por nome e número (StorageLocal.resolverPastaSim) parte do
+     * nome da pasta confirmada, e o que ele devolve só vale se
+     * [TreatmentPhotoFetcher.pastaDeRegistrosServe] aceitar: a regra dele é
+     * mais fraca e pode cair na pasta de uma homônima. `null` quando não
+     * serve. Pasta que ainda não existe volta como está: ler não acha nada, e
+     * gravar cria a do nome confirmado. Só disco: fora da thread principal.
+     */
+    private fun pastaDosRegistros(alvo: PastaAlvo): File? {
+        (alvo as? PastaAlvo.Arquivo)?.let { return it.pasta }
+        if (alvo is PastaAlvo.Recusada) return null
+        val confirmada = alvo.nome
+        val pasta = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
+            this, nomePaciente, numeroSimulacao, confirmada ?: nomePastaServidor, prontuario)
+        if (!pasta.exists()) return pasta
+        val nomes = com.radioterapia.ai.util.StorageLocal.photos(this)
+            .listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty()
+        return pasta.takeIf {
+            TreatmentPhotoFetcher.pastaDeRegistrosServe(it.name, confirmada, nomes,
+                nomePaciente, prontuario, homonimosNoCadastro)
+        }
+    }
+
+    /**
+     * Uma foto já gravada pode ser alterada aqui (excluir, arquivar,
+     * reenquadrar)? Não, quando a pasta do paciente é incerta, nem quando a
+     * foto está noutra pasta de paciente que não a resolvida. Só disco:
+     * chamar fora da thread principal.
+     */
+    private fun podeAlterarFotoSalva(arq: File): Boolean = when (val alvo = resolverPastaAlvo(criar = false)) {
+        is PastaAlvo.Recusada -> false
+        is PastaAlvo.Arquivo -> {
+            val pai = arq.parentFile
+            // Foto fora do PHOTOS (cópia em cache) segue como sempre; dentro
+            // dele, só a da pasta resolvida.
+            pai == null || pai.parentFile?.absolutePath != alvo.pasta.parentFile?.absolutePath ||
+                pai.absolutePath == alvo.pasta.absolutePath
+        }
+        else -> true
+    }
+
+    private var avisouPastaIncerta = false
+
+    /**
+     * Avisa que nada foi gravado porque a pasta do paciente é incerta. Na
+     * abertura da tela ([fechar]), sai dela no OK quando o rolo está vazio:
+     * fotografar para não poder salvar seria trabalho perdido.
+     */
+    private fun avisarPastaIncerta(fechar: Boolean) {
+        txtProgresso.visibility = View.GONE
+        if (fechar && avisouPastaIncerta) return
+        avisouPastaIncerta = true
+        AlertDialog.Builder(this)
+            .setTitle(R.string.warning)
+            .setMessage(R.string.ap_pasta_incerta)
+            .setCancelable(false)
+            .setPositiveButton(R.string.ok) { _, _ -> if (fechar && roloFotos.isEmpty()) finalizar() }
+            .show()
     }
 
     private fun obterOuCriarPastaDoc(pai: androidx.documentfile.provider.DocumentFile?,
                                      nome: String): androidx.documentfile.provider.DocumentFile? {
         if (pai == null) return null
         return pai.findFile(nome)?.takeIf { it.isDirectory } ?: pai.createDirectory(nome)
-    }
-
-    private fun normalizarNome(nome: String): String {
-        val s = Normalizer.normalize(nome, Normalizer.Form.NFD)
-            .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
-        return s.replace(Regex("[^A-Za-z0-9 ]"), "")
-            .replace(Regex("\\s+"), " ").trim().uppercase(Locale.getDefault())
     }
 
     companion object {
@@ -1613,5 +1936,7 @@ class AddPhotoInTreatmentActivity : com.radioterapia.ai.BaseActivity() {
         const val EXTRA_NUM_SIMULACAO = "num_sim"
         private const val REQUEST_PERM = 11
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
+        /** Quebras de linha aceitas na observacao: 3 quebras = 4 linhas. */
+        private const val MAX_QUEBRAS_OBS = 3
     }
 }

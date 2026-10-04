@@ -1,8 +1,8 @@
-# Fim de linha e codificacao. Regra do ecossistema: C:\AI\CLAUDE.md
+# Fim de linha e codificacao.
 
 * text=auto
 
-# ─── cmd.exe exige CRLF (regra do ecossistema, ver C:\AI\CLAUDE.md) ─────────
+# ─── cmd.exe exige CRLF ──────────────────────────────────────────────────────
 # O cmd.exe le o lote por OFFSET DE BYTE. Com LF ele perde o rumo e passa a
 # executar como comando do prompt o que vier depois -- inclusive linha de
 # PowerShell. O sintoma nao parece erro de fim de linha: parece codigo errado.

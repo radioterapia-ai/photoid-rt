@@ -18,15 +18,22 @@ import kotlinx.coroutines.withContext
 /**
  * Listagem do histórico local de pacientes.
  *
- * TRÊS modos de uso (item: histórico unificado, sem edição fora das Configurações):
- *  - MODO_SELECAO (Tratamento/Check): toque retorna nome+prontuário pra Activity chamadora
- *    (que abre a visualização das fotos). Ativado por TreatmentActivity.EXTRA_MODO_SELECAO.
- *  - MODO_RETOMAR (Simulação/Sim): toque inicia nova captura de fotos para o paciente
- *    existente (abre MainActivity já com os dados dele). Ativado por EXTRA_MODO_RETOMAR.
- *  - MODO_EDICAO (Configurações): toque abre EditarPacienteActivity (renomear, excluir
- *    fotos, etc). Ativado por EXTRA_MODO_EDICAO. É o ÚNICO ponto de edição do app.
+ * Histórico unificado, sem edição fora das Configurações. Modos de uso:
+ *  - Seleção (RT SIM, aberto pela SimulationHomeActivity com
+ *    TreatmentActivity.EXTRA_MODO_SELECAO, com o mesmo botão Tratar do histórico
+ *    do tratamento),
+ *  - Pacientes em Tratamento (RT CHECK, EXTRA_MODO_TRATAMENTO: só os pacientes em
+ *    tratamento, com o cabeçalho de leitura da etiqueta e o botão Alta) e
+ *  - Histórico do Tratamento (RT CHECK, EXTRA_MODO_HISTORICO_TRAT, com o botão Tratar):
+ *    nos três, o toque abre o PatientViewerActivity do paciente e a lista CONTINUA na
+ *    pilha, de modo que o voltar do visualizador retorna a ela, com a busca e a
+ *    rolagem preservadas. Por isso a lista não se encerra nem devolve resultado
+ *    nesses modos: se ela saísse da pilha, o voltar cairia na tela que a abriu.
+ *  - Edição (Configurações, EXTRA_MODO_EDICAO): o toque abre o EditarPacienteActivity
+ *    (renomear, excluir fotos etc.). É o ÚNICO ponto de edição do app.
  *
- * Default (nenhuma extra) = MODO_RETOMAR, comportamento seguro (nunca edita por engano).
+ * Sem extra nenhuma, o toque abre a captura (MainActivity) já com os dados do paciente
+ * e encerra a lista; nunca edita por engano.
  */
 class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
 
@@ -91,8 +98,7 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
                 val fetcher = com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this@HistoricoActivity)
                 val pares = escolhidos.mapNotNull { d ->
                     try {
-                        val pdf = fetcher.buscarSimulacoes(d.nome)
-                            .maxByOrNull { it.timestampPrincipal }?.arquivoPdfLocal
+                        val pdf = simulacaoMaisRecente(fetcher, d)?.arquivoPdfLocal
                         if (pdf != null && pdf.exists()) pdf to d.nome else null
                     } catch (_: Exception) { null }
                 }
@@ -111,6 +117,25 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
         }
     }
 
+    /**
+     * A simulação mais recente DESTE paciente, para reimprimir, abrir ou montar
+     * o lote.
+     *
+     * Com o prontuário do cadastro: a busca só pelo nome acha também a pasta
+     * de uma homônima, e "a mais recente" pode ser a ficha dela indo para a
+     * impressora. Sem prontuário e com pastas de mais de um paciente, ou com
+     * outro registro do mesmo nome no cadastro, nenhuma — a tela diz que não
+     * achou a ficha, em vez de entregar a de outra.
+     */
+    private suspend fun simulacaoMaisRecente(
+        fetcher: com.radioterapia.ai.treatment.TreatmentPhotoFetcher,
+        d: PatientCache.DadosPaciente
+    ): com.radioterapia.ai.treatment.TreatmentPhotoFetcher.Simulacao? =
+        com.radioterapia.ai.treatment.TreatmentPhotoFetcher.simulacoesInequivocas(
+            fetcher.buscarSimulacoes(d.nome, d.prontuario), d.nome, d.prontuario,
+            d.prontuario.isBlank() && patientCache.temHomonimos(d.nome))
+            .maxByOrNull { it.timestampPrincipal }
+
     /** Reúne fotos, cadastro, Time-Out e observações de cada paciente escolhido. */
     private suspend fun montarItensLote(
         escolhidos: List<PatientCache.DadosPaciente>
@@ -120,8 +145,7 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
         val itens = mutableListOf<com.radioterapia.ai.pdf.PdfBuilder.ItemLote>()
         for (d in escolhidos) {
             try {
-                val sim = fetcher.buscarSimulacoes(d.nome)
-                    .maxByOrNull { it.timestampPrincipal } ?: continue
+                val sim = simulacaoMaisRecente(fetcher, d) ?: continue
                 val fotos = mutableListOf<java.io.File>()
                 val rotulos = mutableListOf<String>()
                 // Vocabulário CANÔNICO em português, como nos demais caminhos: o
@@ -496,16 +520,10 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
             tratLabel, tratCor, tratClick, tratProvider) { dadosClicado ->
             fecharBusca()
             when {
-                modoSelecao -> {
-                    val data = Intent().apply {
-                        putExtra(TreatmentActivity.EXTRA_NOME_SELECIONADO, dadosClicado.nome)
-                        putExtra(TreatmentActivity.EXTRA_PRONT_SELECIONADO, dadosClicado.prontuario)
-                    }
-                    setResult(Activity.RESULT_OK, data)
-                    finish()
-                }
-                modoTratamento || modoHistoricoTrat -> {
-                    // Toque abre o visualizador (fotos/carrossel) do paciente.
+                modoSelecao || modoTratamento || modoHistoricoTrat -> {
+                    // Toque abre o visualizador (fotos/carrossel) do paciente sem
+                    // encerrar a lista: o voltar do visualizador precisa encontrá-la
+                    // na pilha, no RT SIM tanto quanto no RT CHECK.
                     abrirVisualizador(dadosClicado)
                 }
                 modoEdicao -> {
@@ -575,12 +593,17 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
             val resultado = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 try {
                     val fetcher = com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this@HistoricoActivity)
-                    val pdf = fetcher.buscarSimulacoes(dados.nome)
-                        .maxByOrNull { it.timestampPrincipal }?.arquivoPdfLocal
+                    val pdf = simulacaoMaisRecente(fetcher, dados)?.arquivoPdfLocal
                     if (pdf == null || !pdf.exists()) null
                     else {
                         val config = com.radioterapia.ai.AppConfig(this@HistoricoActivity)
-                        com.radioterapia.ai.print.PrinterClient(config.impressoraIp).imprimirPdf(pdf, config.printerDuplexMode)
+                        // Ficha com protocolo frente e verso força a borda longa, como
+                        // na impressão do BaseActivity: frente e verso do impresso têm
+                        // de sair na mesma folha mesmo com a impressora configurada
+                        // para uma página por folha.
+                        val modo = if (com.radioterapia.ai.pdf.PdfBuilder.temFrenteVerso(pdf, this@HistoricoActivity)) "long"
+                            else config.printerDuplexMode
+                        com.radioterapia.ai.print.PrinterClient(config.impressoraIp).imprimirPdf(pdf, modo)
                     }
                 } catch (_: Exception) { null }
             }
@@ -605,8 +628,7 @@ class HistoricoActivity : com.radioterapia.ai.BaseActivity() {
             val pdf = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 try {
                     val fetcher = com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this@HistoricoActivity)
-                    val sims = fetcher.buscarSimulacoes(dados.nome)
-                    sims.maxByOrNull { it.timestampPrincipal }?.arquivoPdfLocal
+                    simulacaoMaisRecente(fetcher, dados)?.arquivoPdfLocal
                 } catch (_: Exception) { null }
             }
             progresso.dismiss()

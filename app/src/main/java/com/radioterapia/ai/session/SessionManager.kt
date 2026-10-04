@@ -23,6 +23,10 @@ import java.util.concurrent.TimeUnit
  *   _etiqueta.jpg           (categoria LABEL)
  *   _acessorios.jpg         (categoria ACCESSORIES)
  *   _pos_<timestamp>_N.jpg  (categoria POSITIONING)
+ *   ARQUIVADAS/             substituídas NESTA sessão; esvaziada por [limparSessao]
+ *
+ * Fora da sessão, também em filesDir: arquivadas_retidas/, as arquivadas que a
+ * finalização não conseguiu levar à pasta do paciente ([reterArquivadas]).
  */
 class SessionManager(context: Context) {
 
@@ -40,12 +44,99 @@ class SessionManager(context: Context) {
     companion object {
         /** Sufixo do arquivo que guarda o quadro cheio, sem recorte. */
         const val SUFIXO_ORIGINAL = "_ORIGINAL.jpg"
+
+        /** Chave da meta com os arquivos que a reconstrução trouxe da pasta. */
+        private const val CHAVE_RECONSTRUIDOS = "edit_reconstruidos"
+
+        /** Pasta das pastas de paciente, dentro da base (ver StorageLocal.photos). */
+        private const val PASTA_PHOTOS = "PHOTOS"
+
+        /**
+         * A origem mora DIRETO na pasta do paciente em edição (`PHOTOS/<pasta>/`)?
+         *
+         * Só esse arquivo pode ser contado como reconstruído: a regravação apaga
+         * pelo caminho registrado, e o caminho de uma cópia de cache (servidor,
+         * pasta escolhida por SAF) ou de uma foto de `ARQUIVADAS/` não é o do
+         * arquivo da pasta. Pasta de outro paciente também não casa — o nome
+         * comparado é o da pasta inteira, com o prontuário.
+         */
+        fun ehDaPastaEditada(origem: File, nomePastaEditada: String): Boolean {
+            if (nomePastaEditada.isBlank()) return false
+            val pai = origem.parentFile ?: return false
+            return pai.name == nomePastaEditada && pai.parentFile?.name == PASTA_PHOTOS
+        }
+
+        /**
+         * Move `ARQUIVADAS/` de [sessao] para uma subpasta nova de [retidas], sem
+         * apagar nada.
+         *
+         * Primeiro por renomeação: sessão e retidas ficam no mesmo volume
+         * (`filesDir`), e renomear não precisa de espaço livre — que é o que
+         * costuma faltar quando a cópia para a pasta do paciente falhou. Pelo
+         * mesmo motivo, se nem a pasta [retidas] puder ser criada, a subpasta
+         * vai para o lado dela, com o nome dela como prefixo: renomear não cria
+         * pasta nova. Se a renomeação falhar, copia, confere o tamanho de cada
+         * arquivo e só então remove a origem. Cópia incompleta deixa a origem
+         * intacta.
+         *
+         * @return a pasta onde as arquivadas ficaram, ou `null` quando não havia
+         *   arquivo ou nenhum dos caminhos deu certo.
+         */
+        internal fun reterArquivadasEm(sessao: File, retidas: File, rotulo: String,
+                                       agoraMs: Long): File? {
+            val origem = com.radioterapia.ai.util.FotosArquivadas.pasta(sessao)
+            val arquivos = origem.listFiles()?.filter { it.isFile }.orEmpty()
+            if (arquivos.isEmpty()) return null
+            retidas.mkdirs()
+            val nome = rotuloSeguro(rotulo) + "_" + agoraMs
+            val destino = if (retidas.isDirectory) destinoLivre(retidas, nome)
+                          else destinoLivre(retidas.parentFile ?: return null, retidas.name + "_" + nome)
+            if (origem.renameTo(destino)) return destino
+            return try {
+                if (!destino.mkdirs()) return null
+                arquivos.forEach { a ->
+                    val copia = File(destino, a.name)
+                    a.copyTo(copia, overwrite = true)
+                    if (copia.length() != a.length()) return null
+                }
+                arquivos.forEach { it.delete() }
+                origem.delete()
+                destino
+            } catch (_: Exception) { null }
+        }
+
+        /** Rótulo da pasta retida só com letras, dígitos, espaço, `-` e `_`. */
+        private fun rotuloSeguro(rotulo: String): String =
+            rotulo.replace(Regex("[^A-Za-z0-9 _-]"), "_").trim().take(60).ifBlank { "SESSAO" }
+
+        /** O nome pedido, ou o mesmo com `_2`, `_3`... quando já existe. */
+        private fun destinoLivre(pai: File, nome: String): File {
+            var f = File(pai, nome)
+            var n = 2
+            while (f.exists()) { f = File(pai, "${nome}_$n"); n++ }
+            return f
+        }
     }
 
     private val baseDir: File = File(context.filesDir, "sessao_atual").apply {
         if (!exists()) mkdirs()
     }
     private val arquivoMetadados: File = File(baseDir, "_metadata.json")
+
+    /**
+     * Para onde vai a subpasta de arquivadas que resistir à exclusão em
+     * [limparSessao]. Fica no cache, e não em `filesDir`: o que sobrar ali é
+     * descartável, e nada que copie `filesDir` o leva junto.
+     */
+    private val descarte: File = File(context.cacheDir, "sessao_descartada")
+
+    /**
+     * Para onde vão as arquivadas da sessão que não chegaram à pasta do
+     * paciente (ver [reterArquivadas]). Fica em `filesDir`, e não no cache: o
+     * sistema limpa o cache sozinho, e o que está aqui é a única cópia. Nenhuma
+     * rotina do app apaga esta pasta.
+     */
+    private val retidas: File = File(context.filesDir, "arquivadas_retidas")
 
     /** Lista global de fotos da sessão (todas as categorias). */
     private val _fotos = mutableListOf<FotoCategorizada>()
@@ -149,15 +240,79 @@ class SessionManager(context: Context) {
      * Adiciona foto à categoria.
      * Para categorias únicas (rosto, etiqueta, acessórios) substitui a anterior.
      */
-    /** Adiciona uma foto copiando de uma origem SEM apagar o original (reconstrução da sessão da pasta). */
+    /**
+     * Adiciona uma foto copiando de uma origem SEM apagar o original (reconstrução
+     * da sessão da pasta, restauração de arquivada).
+     *
+     * Quando a origem está direto na pasta em edição ([ehDaPastaEditada]), ela
+     * entra em [reconstruidos] — e só depois de a cópia ter dado certo.
+     */
     fun adicionarCopiando(origem: File, categoria: Category): File? = try {
         val tmp = File(baseDir, "_import_${System.currentTimeMillis()}.jpg")
         origem.copyTo(tmp, overwrite = true)
-        adicionarFoto(tmp, categoria)  // consome tmp; origem permanece
+        adicionarFoto(tmp, categoria).also {  // consome tmp; origem permanece
+            if (ehDaPastaEditada(origem, editandoNomePasta)) registrarReconstruido(origem)
+        }
     } catch (e: Exception) {
         // Disco cheio / arquivo sumiu / permissão revogada: não derruba a
-        // reconstrução da sessão — a foto que falhou simplesmente não entra.
+        // reconstrução da sessão — a foto que falhou simplesmente não entra, e
+        // por isso também não entra em reconstruidos(): a regravação a deixa
+        // na pasta.
         null
+    }
+
+    /**
+     * Reconstrução da sessão a partir da pasta do paciente: a foto e, quando
+     * existe, o quadro cheio (`_ORIGINAL`) que a acompanha.
+     *
+     * A regravação em modo edição grava a sessão inteira com nomes novos e
+     * depois tira da pasta o que foi trazido para cá. O quadro cheio que não
+     * viesse junto seria gravado de volta só se estivesse na sessão — por isso
+     * ele é copiado aqui, e registrado em [reconstruidos] apenas quando a cópia
+     * deu certo. Quadro cheio que falhou fica na pasta.
+     *
+     * Roda fora da thread principal: copia arquivos.
+     *
+     * @return a foto já na sessão, ou `null` quando ela não entrou.
+     */
+    fun adicionarDaPasta(origem: File, categoria: Category): File? {
+        val daSessao = adicionarCopiando(origem, categoria) ?: return null
+        val original = com.radioterapia.ai.util.NomeArquivo.originalDe(origem) ?: return daSessao
+        val destino = File(baseDir, daSessao.nameWithoutExtension + SUFIXO_ORIGINAL)
+        try {
+            original.copyTo(destino, overwrite = true)
+            if (ehDaPastaEditada(origem, editandoNomePasta)) registrarReconstruido(original)
+        } catch (_: Exception) {
+            destino.delete()
+        }
+        return daSessao
+    }
+
+    /**
+     * Caminhos absolutos dos arquivos da pasta em edição que a reconstrução
+     * trouxe para a sessão: fotos e quadros cheios que de fato entraram.
+     *
+     * A regravação em modo edição tira da pasta SÓ estes (e as fichas desta
+     * simulação, que a ficha nova substitui). O que não voltou para a sessão —
+     * cópia que falhou, quadro cheio que não veio, arquivo sem tipo
+     * reconhecível, foto legada que a classificação por nome não alcança,
+     * DICOM — fica onde está: apagar o que não vai ser gravado de novo é
+     * perder o arquivo.
+     */
+    fun reconstruidos(): Set<String> {
+        val arr = meta.optJSONArray(CHAVE_RECONSTRUIDOS) ?: return emptySet()
+        val saida = LinkedHashSet<String>()
+        for (i in 0 until arr.length()) {
+            arr.optString(i, "").takeIf { it.isNotBlank() }?.let { saida.add(it) }
+        }
+        return saida
+    }
+
+    private fun registrarReconstruido(arquivo: File) {
+        val arr = meta.optJSONArray(CHAVE_RECONSTRUIDOS)
+            ?: org.json.JSONArray().also { meta.put(CHAVE_RECONSTRUIDOS, it) }
+        arr.put(arquivo.absolutePath)
+        salvarMeta()
     }
 
     /** Nome da pasta da simulação sendo EDITADA via "adicionar mais fotos" (vazio = simulação nova). */
@@ -259,13 +414,65 @@ class SessionManager(context: Context) {
     /** Pasta de trabalho da sessão, para quem precisa transferir o arquivo. */
     fun pastaDeTrabalho(): File = baseDir
 
-    fun limparSessao() {
+    /**
+     * Tira `ARQUIVADAS/` da sessão SEM apagar, para [retidas].
+     *
+     * Para quando a cópia das arquivadas para a pasta do paciente falhou (disco
+     * cheio, pasta SAF recusada). [limparSessao] apaga `ARQUIVADAS/` de
+     * propósito — deixá-la para a sessão seguinte poria as fotos deste paciente
+     * na pasta do próximo —, e sem este passo a foto substituída na sala, que
+     * não chegou a lugar nenhum, iria junto.
+     *
+     * Roda fora da thread principal.
+     *
+     * @param rotulo nome da pasta do paciente, para a pasta retida ser
+     *   reconhecível.
+     * @return a pasta onde ficaram, ou `null` quando não havia arquivo ou nada
+     *   pôde ser movido.
+     */
+    fun reterArquivadas(rotulo: String): File? =
+        reterArquivadasEm(baseDir, retidas, rotulo, System.currentTimeMillis())
+
+    /**
+     * Esvazia a sessão: fotos, metadados e a subpasta `ARQUIVADAS/`.
+     *
+     * GUARDA: subpasta sai com `deleteRecursively`, e o resultado é conferido.
+     * `File.delete()` numa pasta com arquivos devolve `false` sem lançar nada, e
+     * `ARQUIVADAS/` ficaria para a sessão seguinte. Como a finalização copia o
+     * que está nessa subpasta para a pasta do paciente (`FotosArquivadas.transferir`),
+     * o rosto e a etiqueta arquivados de um paciente iriam parar na pasta de
+     * todos os que viessem depois, subiriam ao servidor e seriam oferecidos para
+     * restaurar na ficha de outra pessoa.
+     *
+     * Quando a subpasta resiste à exclusão, ela é tirada da sessão por
+     * renomeação, para [descarte]: o que importa é a sessão seguinte começar sem
+     * arquivo de ninguém.
+     *
+     * Esta função não sabe se as arquivadas chegaram à pasta do paciente. Quem
+     * finaliza confere a cópia e, quando ela ficou incompleta, chama
+     * [reterArquivadas] ANTES — senão a única cópia vai embora aqui.
+     *
+     * @return `true` quando a sessão ficou vazia.
+     */
+    fun limparSessao(): Boolean {
         _fotos.clear()
+        ultimaArquivada = null
         if (baseDir.exists()) {
-            baseDir.listFiles()?.forEach { it.delete() }
+            baseDir.listFiles()?.forEach { f ->
+                if (f.isDirectory) f.deleteRecursively() else f.delete()
+            }
         }
         meta = JSONObject()
         salvarMeta()
+
+        val arquivadas = com.radioterapia.ai.util.FotosArquivadas.pasta(baseDir)
+        if (arquivadas.exists()) {
+            descarte.mkdirs()
+            val fora = File(descarte, System.currentTimeMillis().toString())
+            if (arquivadas.renameTo(fora)) fora.deleteRecursively()
+        }
+        val restantes = baseDir.listFiles()?.filter { it != arquivoMetadados }.orEmpty()
+        return restantes.isEmpty()
     }
 
     /**
@@ -303,20 +510,6 @@ class SessionManager(context: Context) {
         _fotos.filter { it.categoria == Category.ACCESSORIES }.sortedBy { it.timestampMs }
             .forEachIndexed { i, _ -> rotulos.add("Acessório.${i + 1}") }
         return rotulos
-    }
-
-    /** Tags de tipo (sem acento) paralelas a fotosOrdenadasParaPdf(), para nomear
-     *  arquivos de forma que o leitor de tratamento reconheça a categoria.
-     *  Valores: "Rosto", "Etiqueta", "Posicionamento", "Acessorios". */
-    fun tiposParaPdf(): List<String> {
-        val tipos = mutableListOf<String>()
-        _fotos.firstOrNull { it.categoria == Category.FACE }?.let { tipos.add("Rosto") }
-        _fotos.firstOrNull { it.categoria == Category.LABEL }?.let { tipos.add("Etiqueta") }
-        _fotos.filter { it.categoria == Category.POSITIONING }.sortedBy { it.timestampMs }
-            .forEach { tipos.add("Posicionamento") }
-        _fotos.filter { it.categoria == Category.ACCESSORIES }.sortedBy { it.timestampMs }
-            .forEach { tipos.add("Acessorios") }
-        return tipos
     }
 
     // ----------- Persistência -----------

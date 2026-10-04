@@ -1,6 +1,7 @@
 package com.radioterapia.ai.export
 
 import android.content.Context
+import com.radioterapia.ai.util.NomeArquivo
 import com.radioterapia.ai.util.ObsStore
 import com.radioterapia.ai.util.StorageLocal
 import com.radioterapia.ai.util.TimeOutStore
@@ -39,20 +40,25 @@ object SimulacaoZipExporter {
             context, nomePaciente, numSim, nomePastaSim, prontuario)
         if (!pasta.exists() || !pasta.isDirectory) return Resultado(false, null, 0)
 
-        val tag = if (numSim > 1) "_NOVASIM${numSim - 1}" else ""
-        val base = StorageLocal.removerAcentosMaiusculas(nomePaciente).replace(" ", "_")
+        // O zip é cópia de ENTREGA (pen-drive, compartilhamento): leva o nome
+        // completo do paciente, em ASCII, para quem recebe saber de quem é sem
+        // abrir. A reirradiação usa a mesma marca dos arquivos (NS<n>).
+        val tag = if (numSim > 1) "_NS${numSim - 1}" else ""
+        val base = NomeArquivo.nomeEntregaAscii(nomePaciente)
         val saida = File(context.cacheDir, "${base}${tag}_SIMULACAO.zip")
         if (saida.exists()) saida.delete()
 
-        // Só os arquivos DESTA simulação: uma pasta de paciente pode conter
-        // várias (reirradiação), e exportar tudo entregaria material de outra
-        // simulação sem quem exporta perceber.
-        val doArquivo = { n: String ->
-            if (numSim == 1) !n.contains("_NOVASIM") else n.contains("_NOVASIM${numSim - 1}")
-        }
+        // Só os arquivos DESTA simulação: todas as simulações do paciente dividem
+        // a mesma pasta e se separam pela marca no nome do arquivo, e exportar
+        // tudo entregaria material de outra simulação sem quem exporta perceber.
+        // A regra de pertencer é a de NomeArquivo, que entende as duas marcas
+        // (NS<n> e _NOVASIMn) e deixa de fora os ocultos de Time-Out e
+        // observação, que entram no zip pelo RESUMO.
         val arquivos = pasta.listFiles()
-            ?.filter { it.isFile && !it.name.startsWith(".") && doArquivo(it.name) }
-            ?.sortedBy { it.name }
+            ?.filter { it.isFile && NomeArquivo.pertenceASimulacao(it.name, numSim) }
+            // Ordem cronológica: o nome novo começa por iniciais e tipo, e
+            // ordenar por ele espalharia a simulação por dia do mês.
+            ?.sortedWith(compareBy<File>({ it.lastModified() }, { it.name }))
             .orEmpty()
         if (arquivos.isEmpty()) return Resultado(false, null, 0)
 

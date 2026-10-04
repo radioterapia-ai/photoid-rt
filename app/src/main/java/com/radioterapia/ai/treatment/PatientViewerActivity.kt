@@ -136,7 +136,7 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
     // C6/M2: a Activity é recriada ao girar; sem isto o carrossel voltava
     // sempre para a primeira foto e o bloco selecionado se perdia.
     /**
-     * ITEM 4: o botão voltar do sistema retorna ao RESUMO quando há uma foto ou
+     * O botão voltar do sistema retorna ao RESUMO quando há uma foto ou
      * o carrossel em destaque — só sai do paciente estando já no resumo.
      */
     private fun configurarVoltar() {
@@ -171,8 +171,10 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         layoutVazio.visibility = View.GONE
 
         CoroutineScope(Dispatchers.Main).launch {
+            // Com o prontuário: a pasta de uma homônima de outro prontuário não
+            // entra no carrossel, nem as fotos, a ficha e os alertas dela.
             simulacoes = withContext(Dispatchers.IO) {
-                fetcher.buscarSimulacoes(nomePaciente)
+                fetcher.buscarSimulacoes(nomePaciente, prontuario)
             }
             progresso.visibility = View.GONE
 
@@ -187,10 +189,17 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
             // Configura dropdown de simulações
             if (simulacoes.size > 1) {
                 rowSimSelector.visibility = View.VISIBLE
+                // Sem prontuário, a busca devolve as simulações de todas as
+                // pastas que casam pelo nome — inclusive de uma homônima. Com
+                // mais de uma pasta na lista, o rótulo diz de qual pasta cada
+                // simulação vem: "Simulação original" repetido não deixaria
+                // escolher a certa.
+                val variasPastas = simulacoes.map { it.nomePastaCompleto }.distinct().size > 1
                 val rotulos = simulacoes.map { sim ->
                     val data = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(sim.timestampPrincipal))
-                    if (sim.numeroSimulacao == 1) getString(R.string.sim_original, data)
-                    else getString(R.string.sim_new, sim.numeroSimulacao - 1, data)
+                    val rotulo = if (sim.numeroSimulacao == 1) getString(R.string.sim_original, data)
+                                 else getString(R.string.sim_new, sim.numeroSimulacao - 1, data)
+                    if (variasPastas) "$rotulo · ${sim.nomePastaCompleto}" else rotulo
                 }
                 val adapterSpin = ArrayAdapter(
                     this@PatientViewerActivity,
@@ -251,7 +260,7 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
             imgEtiqueta.setOnClickListener(null)
         }
 
-        // ITEM 5: carrossel ÚNICO e contínuo — etiqueta, posicionamentos,
+        // Carrossel ÚNICO e contínuo — etiqueta, posicionamentos,
         // acessórios e impressos numa sequência só. Rolar atravessa os blocos e
         // apenas o realce da miniatura acompanha; rolar antes do primeiro volta
         // ao RESUMO. `blocoDaPagina` diz a qual miniatura cada página pertence.
@@ -388,7 +397,7 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         ajustarOrientacaoResumo()
         marcarBlocoSelecionado(R.id.frameThumbResumo)
 
-        val dados = patientCache.obterDadosPaciente(nomePaciente, prontuario)
+        val dados = cadastroDestePaciente()
         findViewById<TextView>(R.id.txtResumoNome).text = nomePaciente.uppercase()
         val ids = mutableListOf<String>()
         (prontuario.takeIf { it.isNotBlank() } ?: dados?.prontuario)
@@ -426,9 +435,21 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
     /** Lê Time-Out + observações da simulação (IO). */
     private fun lerTimeOutEObs(sim: TreatmentPhotoFetcher.Simulacao):
             Pair<com.radioterapia.ai.util.TimeOutStore.Registro?, String> {
+        // GUARDA: sem a pasta exata, o resolvedor desempata por uma regra mais
+        // fraca e pode cair na pasta de uma homônima, cujos alertas (alergia,
+        // queda, contato) apareceriam no resumo deste paciente. Só vale a pasta
+        // que a regra de escolha aceita; senão fica o plano B, a pasta das fotos.
         val pasta = try {
             com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
                 this, nomePaciente, sim.numeroSimulacao, sim.nomePastaCompleto, prontuario)
+                .takeIf { p ->
+                    !p.exists() || TreatmentPhotoFetcher.pastaDeRegistrosServe(
+                        p.name, sim.nomePastaCompleto,
+                        com.radioterapia.ai.util.StorageLocal.photos(this)
+                            .listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty(),
+                        nomePaciente, prontuario,
+                        prontuario.isBlank() && patientCache.temHomonimos(nomePaciente))
+                }
         } catch (_: Exception) { null }
         var reg = try {
             pasta?.let { com.radioterapia.ai.util.TimeOutStore.ler(it, sim.numeroSimulacao) }
@@ -480,14 +501,15 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         // ---- Pílulas de alerta (mesmas cores da ficha de Time-Out) ----
         val box = findViewById<android.widget.LinearLayout>(R.id.boxResumoAlertas)
         box.removeAllViews()
+        val pilula = com.radioterapia.ai.ui.PilulaAlerta
         if (reg?.precaucaoContato == true)
-            box.addView(criarPilula(getString(R.string.resumo_alerta_contato),
+            box.addView(pilula.criar(this, getString(R.string.resumo_alerta_contato),
                 R.drawable.pill_alert_orange, 0xFFFFFFFF.toInt()))
         if (reg?.alergia == "SIM")
-            box.addView(criarPilula(getString(R.string.resumo_alerta_alergia),
+            box.addView(pilula.criar(this, getString(R.string.resumo_alerta_alergia),
                 R.drawable.pill_alert_red, 0xFFFFFFFF.toInt()))
         if (reg?.riscoQueda == true)
-            box.addView(criarPilula(getString(R.string.resumo_alerta_queda),
+            box.addView(pilula.criar(this, getString(R.string.resumo_alerta_queda),
                 R.drawable.pill_alert_yellow, 0xFF1A1A1A.toInt()))
 
         val naoInf = getString(R.string.resumo_sem_dados)
@@ -500,34 +522,6 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
             reg?.medico?.takeIf { it.isNotBlank() }
                 ?: dados?.medicoAssistente?.takeIf { it.isNotBlank() } ?: naoInf
 
-    }
-
-    /** Pílula de alerta 32dp, arredondada, com ⚠ e texto em caixa alta. */
-    private fun criarPilula(texto: String, fundo: Int, cor: Int): View {
-        val ll = android.widget.LinearLayout(this).apply {
-            orientation = android.widget.LinearLayout.HORIZONTAL
-            gravity = android.view.Gravity.CENTER_VERTICAL
-            setBackgroundResource(fundo)
-            setPadding(dpPx(14), 0, dpPx(14), 0)
-            layoutParams = android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, dpPx(32)
-            ).apply { bottomMargin = dpPx(7) }
-        }
-        ll.addView(TextView(this).apply {
-            text = "⚠"; textSize = 15f; setTextColor(cor)
-        })
-        ll.addView(TextView(this).apply {
-            text = texto
-            textSize = 12f
-            setTextColor(cor)
-            letterSpacing = 0.05f
-            setTypeface(typeface, android.graphics.Typeface.BOLD)
-            layoutParams = android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { marginStart = dpPx(7) }
-        })
-        return ll
     }
 
     /**
@@ -692,13 +686,12 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         //
         // Sem o prontuário, obterDadosPaciente cai na heurística do "registro
         // mais completo" e pode devolver o HOMÔNIMO — justamente nesta faixa,
-        // que existe para confirmar que a foto é do paciente certo. É a mesma
-        // família do bug de cadastro que a JORNADA descreve, cuja consequência
-        // registrada foi a data de nascimento da paciente errada. A linha 394
-        // deste mesmo arquivo já passava o prontuário; esta ficou para trás, e
-        // ainda construía um PatientCache novo — que relê e reparseia o JSON
-        // inteiro do cadastro — a cada página virada do carrossel.
-        val dados = try { patientCache.obterDadosPaciente(nomePaciente, prontuario) } catch (_: Exception) { null }
+        // que existe para confirmar que a foto é do paciente certo. A
+        // consequência é a data de nascimento da paciente errada. E o campo
+        // existente evita construir um PatientCache novo — que relê e
+        // reparseia o JSON inteiro do cadastro — a cada página virada do
+        // carrossel.
+        val dados = try { cadastroDestePaciente() } catch (_: Exception) { null }
         val idioma = com.radioterapia.ai.i18n.LocaleManager.obterIdiomaAtual(this)
         val nascRaw = dados?.nascimento?.takeIf { it.isNotBlank() }
         val nasc = nascRaw?.let { com.radioterapia.ai.util.DateUtils.formatarNascimento(it, idioma) }
@@ -751,13 +744,18 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
                 this, R.string.pdf_not_found, android.widget.Toast.LENGTH_SHORT).show()
         }
         liga(R.id.popVerPdf, comPdf { abrirPdf(it) })
-        liga(R.id.popImprimir, comPdf { escolherModoImpressao(it) })
-        liga(R.id.popImprimirPaginas, comPdf { escolherPaginasEImprimir(it) })
+        // Pen-drive, pasta de impressão e compartilhar recebem uma CÓPIA com o
+        // nome completo do paciente; a ficha guardada, com as iniciais, fica.
+        liga(R.id.popImprimir, comPdf { escolherModoImpressao(it, nomeDeEntrega(it, nomePaciente)) })
+        liga(R.id.popImprimirPaginas, comPdf { escolherPaginasEImprimir(it, nomeDeEntrega(it, nomePaciente)) })
         liga(R.id.popCompartilhar, comPdf { compartilharPdf(it) })
         liga(R.id.popExportarZip) { exportarSimulacaoZip() }
         liga(R.id.popEditarCadastro) {
             val it2 = Intent(this, com.radioterapia.ai.ui.EditarPacienteActivity::class.java)
             it2.putExtra(com.radioterapia.ai.ui.EditarPacienteActivity.EXTRA_NOME, nomePaciente)
+            // Com o prontuário: só pelo nome, a edição abriria o cadastro de uma
+            // homônima, e excluir ou migrar seguiria as pastas dela.
+            it2.putExtra(com.radioterapia.ai.ui.EditarPacienteActivity.EXTRA_PRONTUARIO, prontuario)
             startActivity(it2)
         }
         liga(R.id.popEditarSimulacao) { abrirEditarSimulacao() }
@@ -806,20 +804,13 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
         }
     }
 
-    /** Compartilha o PDF via chooser do Android (WhatsApp, Gmail, Drive, etc.). */
+    /**
+     * Compartilha o PDF via chooser do Android (WhatsApp, Gmail, Drive, etc.),
+     * numa cópia com o nome completo do paciente: o anexo sai do tablet sem a
+     * pasta que identifica a ficha guardada.
+     */
     private fun compartilharPdf(pdf: java.io.File) {
-        try {
-            val uri = androidx.core.content.FileProvider.getUriForFile(
-                this, "$packageName.fileprovider", pdf)
-            val envio = Intent(Intent.ACTION_SEND)
-                .setType("application/pdf")
-                .putExtra(Intent.EXTRA_STREAM, uri)
-                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivity(Intent.createChooser(envio, getString(R.string.share_pdf)))
-        } catch (e: Exception) {
-            android.widget.Toast.makeText(this, R.string.pdf_not_found,
-                android.widget.Toast.LENGTH_SHORT).show()
-        }
+        compartilharComoEntrega(pdf, nomeDeEntrega(pdf, nomePaciente))
     }
 
     private fun abrirPdf(pdf: java.io.File) {
@@ -842,13 +833,34 @@ class PatientViewerActivity : com.radioterapia.ai.BaseActivity() {
      * já preenchidos. Atende ao fluxo "Sim" sem precisar de tela separada.
      */
     private fun resimularPaciente() {
+        // O nascimento vai junto, lido do cadastro pela chave nome + prontuário
+        // e aceito só quando o registro é deste paciente. Sem ele, a captura
+        // completaria do cadastro por conta própria.
+        val nascimento = try {
+            cadastroDestePaciente()?.nascimento.orEmpty()
+        } catch (_: Exception) { "" }
         val intent = Intent(this, com.radioterapia.ai.MainActivity::class.java).apply {
             putExtra("paciente_reusar", nomePaciente)
             putExtra("prontuario_reusar", prontuario)
-            // data de nascimento não está no viewer; o MainActivity completa do cache se houver
+            putExtra("nascimento_reusar", nascimento)
         }
         startActivity(intent)
     }
+
+    /**
+     * O registro do cadastro deste paciente, ou nenhum.
+     *
+     * Pela chave nome + prontuário, e só quando o prontuário do registro bate
+     * (ver [TreatmentPhotoFetcher.cadastroServeAoPaciente]). Sem prontuário e
+     * com homônimas não há registro que sirva: a tela mostra menos, e não o
+     * nascimento de outra paciente na faixa que existe para conferir a
+     * identidade.
+     */
+    private fun cadastroDestePaciente(): com.radioterapia.ai.patient.PatientCache.DadosPaciente? =
+        patientCache.obterDadosPaciente(nomePaciente, prontuario)?.takeIf { d ->
+            TreatmentPhotoFetcher.cadastroServeAoPaciente(prontuario, d.prontuario,
+                prontuario.isBlank() && patientCache.temHomonimos(nomePaciente))
+        }
 
     companion object {
         /** Blocos do visor (preservados na rotação). */

@@ -53,12 +53,7 @@ class PerfilStore(private val context: Context) {
      * a senha de um perfil que ainda vai ser regravado.
      */
     fun salvarTodos(perfis: List<PerfilSync>) {
-        val arr = JSONArray()
-        perfis.forEach { arr.put(it.paraJson()) }
-        val raiz = JSONObject().apply {
-            put("versao", VERSAO_SCHEMA)
-            put("perfis", arr)
-        }
+        val raiz = montarJson(perfis)
         // BACKUP ANTES DE REESCREVER, como o PatientCache faz. Gravação
         // interrompida deixa JSON truncado, e JSON truncado é a lista inteira
         // perdida — inclusive os endereços de servidor que alguém da TI do
@@ -72,6 +67,29 @@ class PerfilStore(private val context: Context) {
         val vivos = perfis.map { it.id }.toSet()
         credenciais.podarSenhasOrfas(vivos)
         IndiceEnviados.podar(context, vivos)
+    }
+
+    /**
+     * Os perfis no mesmo formato `{versao, perfis[]}` do arquivo em disco, mas
+     * SEM O ESTADO ([PerfilSync.semEstado]). É o que o pacote de configuração
+     * leva como `sync_perfis.json`, e o importador o grava como está.
+     *
+     * Nulo quando ainda não existe arquivo de perfis. Senha não entra porque
+     * nunca esteve neste JSON.
+     */
+    fun jsonParaTransferencia(): String? {
+        if (!arquivo.exists()) return null
+        return montarJson(listar().map { it.semEstado() }).toString(2)
+    }
+
+    /** Um só formato para o arquivo em disco e para a transferência. */
+    private fun montarJson(perfis: List<PerfilSync>): JSONObject {
+        val arr = JSONArray()
+        perfis.forEach { arr.put(it.paraJson()) }
+        return JSONObject().apply {
+            put("versao", VERSAO_SCHEMA)
+            put("perfis", arr)
+        }
     }
 
     /** Insere ou substitui um perfil, preservando a ordem dos demais. */

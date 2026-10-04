@@ -21,11 +21,15 @@ import java.security.MessageDigest
  * nova». O link permanente de release não tem essa cota, não pede token, e por
  * isso nenhum segredo precisa viajar dentro do APK.
  *
- * TUDO AQUI FALHA CALADO. Sem DNS, sem rota, tempo esgotado, 404, JSON torto:
- * devolve `null`. Os tablets rodam a maior parte do tempo em intranite, então
- * não ter internet é o estado NORMAL, não um erro — e avisar sobre isso seria
- * treinar a equipe a ignorar avisos. Quem quiser distinguir «não achei versão
- * nova» de «não consegui perguntar» usa [checar] e olha o retorno.
+ * A PERGUNTA FALHA CALADA. Sem DNS, sem rota, tempo esgotado, 404, JSON torto:
+ * [checar] devolve `null`. Os tablets rodam a maior parte do tempo em
+ * intranete, então não ter internet é o estado NORMAL, não um erro — e avisar
+ * sobre isso seria treinar a equipe a ignorar avisos.
+ *
+ * O DOWNLOAD DIZ POR QUE FALHOU. [baixarApk] só roda porque alguém tocou no
+ * botão e está esperando, e a mensagem certa depende do motivo: cancelar não
+ * pede mensagem, falta de rede pede «tente de novo», e hash diferente pede
+ * «não instale». Por isso ele devolve [Download], e não sim ou não.
  */
 object AtualizacaoRemota {
 
@@ -46,7 +50,13 @@ object AtualizacaoRemota {
 
     private const val TIMEOUT_MS = 12_000
 
-    /** Resultado da pergunta «qual a última versão publicada». */
+    /**
+     * Resultado da pergunta «qual a última versão publicada».
+     *
+     * [urlApk] vem do campo `apkUrl` do version.json; a regra de leitura, e o
+     * motivo de o campo não se chamar `apk`, estão em
+     * [GerenciadorAtualizacao.interpretarVersao].
+     */
     data class Publicada(
         val versionCode: Int,
         val versionName: String,
@@ -56,51 +66,42 @@ object AtualizacaoRemota {
         val notas: String
     )
 
+    /** Como terminou um [baixarApk]. */
+    enum class Download {
+        /** O arquivo chegou inteiro e o SHA-256 bate com o publicado. */
+        OK,
+
+        /** Quem chamou desistiu no meio. Não é erro e não pede mensagem. */
+        CANCELADO,
+
+        /** Rede, servidor, endereço não HTTPS ou disco: nada foi conferido. */
+        FALHA,
+
+        /** Chegou, mas não é o arquivo publicado. Foi apagado. */
+        HASH_DIFERENTE,
+    }
+
     /**
      * Pergunta ao repositório qual a última versão. `null` em qualquer falha.
      *
-     * Não decide nada: só lê. Comparar com a versão instalada e concluir se
-     * cabe atualizar é do [GerenciadorAtualizacao], que não tem rede e por isso
-     * pode ser testado.
+     * Não decide nada: só lê. Interpretar o version.json, comparar com a versão
+     * instalada e concluir se cabe atualizar é do [GerenciadorAtualizacao], que
+     * não tem rede e por isso pode ser testado.
      */
-    fun checar(): Publicada? = try {
-        val txt = baixarTexto(URL_VERSAO)
-        // Sem `return` aqui de propósito: corpo-expressão não aceita `return`,
-        // e trocar por corpo-bloco só para caber um `return` precoce deixaria a
-        // função mais longa sem ficar mais clara.
-        if (txt == null) null else {
-        val o = org.json.JSONObject(txt)
-        val code = o.optInt("versionCode", 0)
-        val nome = o.optString("versionName", "")
-        val apk = o.optString("apk", "")
-        val sha = o.optString("sha256", "").lowercase()
-        // Um version.json sem os quatro campos é version.json quebrado, e
-        // adivinhar o que falta seria oferecer instalação de coisa não
-        // conferida. Sem eles, nao ha versao publicada.
-        if (code <= 0 || nome.isBlank() || apk.isBlank() || sha.length != 64) null
-        else Publicada(
-            versionCode = code,
-            versionName = nome,
-            urlApk = apk,
-            sha256 = sha,
-            minSdk = o.optInt("minSdk", 24),
-            notas = o.optString("notas", "")
-        )
-        }
-    } catch (_: Throwable) {
-        // Throwable, e não Exception: JSON torto lança Exception, mas uma API
-        // ausente lança Error, e nas duas situacoes a resposta certa é a mesma
-        // — o app segue sem novidade.
-        null
+    fun checar(): Publicada? {
+        val txt = baixarTexto(URL_VERSAO) ?: return null
+        return GerenciadorAtualizacao.interpretarVersao(txt)
     }
 
     /**
      * Baixa o APK para [destino] e confere o SHA-256 contra o publicado.
      *
-     * Devolve `true` só quando o arquivo chegou inteiro E o hash bate. Hash
-     * diferente apaga o arquivo: entregar ao instalador um APK que não é o
-     * publicado seria pior do que não atualizar, e a assinatura do Android
-     * pegaria o caso grosseiro mas não o arquivo truncado.
+     * Só devolve [Download.OK] quando o arquivo chegou inteiro E o hash bate.
+     * Em qualquer outro desfecho o arquivo é apagado: entregar ao instalador um
+     * APK que não é o publicado seria pior do que não atualizar, e a assinatura
+     * do Android pegaria o caso grosseiro mas não o arquivo truncado.
+     *
+     * [cancelado] é consultado a cada bloco de 64 KB lido.
      *
      * [aoProgresso] recebe (baixado, total). total = -1 quando o servidor não
      * informa tamanho.
@@ -111,12 +112,12 @@ object AtualizacaoRemota {
         sha256Esperado: String,
         cancelado: () -> Boolean = { false },
         aoProgresso: (Long, Long) -> Unit = { _, _ -> }
-    ): Boolean {
+    ): Download {
         var conexao: HttpURLConnection? = null
         try {
-            if (!url.startsWith("https://")) return false
+            if (!url.startsWith("https://")) return Download.FALHA
             conexao = abrir(url)
-            if (conexao.responseCode !in 200..299) return false
+            if (conexao.responseCode !in 200..299) return Download.FALHA
             val total = conexao.contentLengthLong
             destino.parentFile?.mkdirs()
             val digest = MessageDigest.getInstance("SHA-256")
@@ -125,7 +126,7 @@ object AtualizacaoRemota {
                 destino.outputStream().use { saida ->
                     val buf = ByteArray(64 * 1024)
                     while (true) {
-                        if (cancelado()) { destino.delete(); return false }
+                        if (cancelado()) { destino.delete(); return Download.CANCELADO }
                         val n = entrada.read(buf)
                         if (n <= 0) break
                         saida.write(buf, 0, n)
@@ -138,12 +139,12 @@ object AtualizacaoRemota {
             val obtido = digest.digest().joinToString("") { "%02x".format(it) }
             if (!obtido.equals(sha256Esperado, ignoreCase = true)) {
                 destino.delete()
-                return false
+                return Download.HASH_DIFERENTE
             }
-            return true
+            return Download.OK
         } catch (_: Throwable) {
             destino.delete()
-            return false
+            return Download.FALHA
         } finally {
             conexao?.disconnect()
         }

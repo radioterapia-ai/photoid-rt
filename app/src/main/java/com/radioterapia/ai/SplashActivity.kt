@@ -10,7 +10,7 @@ import com.radioterapia.ai.wizard.WizardActivity
 
 /**
  * Roteador de entrada. Decide para onde ir e sai do caminho:
- *   1) Se o usuário ainda NÃO aceitou os termos → ConsentActivity (item 11)
+ *   1) Se o usuário ainda NÃO aceitou os termos → ConsentActivity
  *   2) Se aceitou mas o wizard ainda não rodou  → WizardActivity
  *   3) Caso contrário                            → HomeActivity
  *

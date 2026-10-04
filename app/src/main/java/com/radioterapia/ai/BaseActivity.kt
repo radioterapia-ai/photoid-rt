@@ -27,7 +27,7 @@ import kotlinx.coroutines.withContext
  *  - Aplica o locale (idioma) escolhido pelo usuário (via attachBaseContext + LocaleManager)
  *  - Intercepta setContentView e injeta uma TOOLBAR CUSTOM padrão (sem usar a ActionBar
  *    do framework) com botão "voltar" (seta) à esquerda + título centralizado + opcional
- *    botão de engrenagem à direita (apenas na Home, item 13).
+ *    botão de engrenagem à direita (apenas na Home).
  *
  * Subclasses NÃO chamam mais setSupportActionBar nem mexem com supportActionBar.
  * Para esconder a toolbar (Splash, Main da câmera, Wizard, Scan): override mostrarToolbar() = false.
@@ -399,9 +399,24 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
             } catch (_: Exception) { emptyList() }
 
+            // Outra varredura ficou com a vez durante todo o prazo: nada foi
+            // enviado por este toque, e isso não é falha. Mas a que está
+            // rodando fez a lista dela ao começar e não vê o que foi gravado
+            // depois. O trabalho posto na fila aqui espera a vez, lista de
+            // novo e leva o que chegou depois logo em seguida. Enfileira antes
+            // de conferir a tela: quem saiu dela também tem fotos novas.
+            val emAndamento = resumos.any { it.emAndamento }
+            if (emAndamento) com.radioterapia.ai.sync.SyncWorker.agora(applicationContext)
+
             sincronizando = false
             pintarEstadoSync()
             if (isFinishing || isDestroyed) return@launch
+
+            if (emAndamento) {
+                Toast.makeText(this@BaseActivity, R.string.sync_em_andamento,
+                    Toast.LENGTH_LONG).show()
+                return@launch
+            }
 
             val env = resumos.sumOf { it.enviados }
             val ja = resumos.sumOf { it.jaEstavam }
@@ -440,6 +455,8 @@ abstract class BaseActivity : AppCompatActivity() {
     /** Dados de origem do lote agrupado — o PDF é REMONTADO a partir deles,
      *  preservando texto e vetores em vez de colar imagens. */
     private var itensParaPenDrive: List<com.radioterapia.ai.pdf.PdfBuilder.ItemLote> = emptyList()
+    /** Nome da cópia da ficha avulsa no pen-drive (ver [nomeDeEntrega]); nulo = nome do arquivo. */
+    private var nomeEntregaPenDrive: String? = null
     /** Como gravar: ficha avulsa, um arquivo por paciente, ou tudo num só. */
     private var modoPenDrive: ModoPenDrive = ModoPenDrive.PACIENTE_ATUAL
 
@@ -458,7 +475,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     /**
-     * ITEM 10 — seletor de MODO de impressão. O botão nunca fica apagado: o que
+     * Seletor de MODO de impressão. O botão nunca fica apagado: o que
      * varia é a disponibilidade de cada modo.
      *
      *  • Impressora da rede (IP): a rotina JetDirect/IPP já existente. Fica
@@ -482,10 +499,14 @@ abstract class BaseActivity : AppCompatActivity() {
      * A extração RASTERIZA a página (ver PdfPaginas). Por isso ela não é o
      * caminho padrão: quem imprime a ficha inteira continua imprimindo o
      * vetor original, sem passar por aqui.
+     *
+     * @param nomeEntrega nome das cópias que saem para o pen-drive e para a
+     *   pasta de impressão (ver [nomeDeEntrega]). As páginas avulsas levam o
+     *   nome da ficha de onde saíram: quem as pega precisa saber de quem são.
      */
-    protected fun escolherPaginasEImprimir(pdf: java.io.File) {
+    protected fun escolherPaginasEImprimir(pdf: java.io.File, nomeEntrega: String? = null) {
         val total = com.radioterapia.ai.pdf.PdfPaginas.contar(pdf)
-        if (total <= 1) { escolherModoImpressao(pdf); return }
+        if (total <= 1) { escolherModoImpressao(pdf, nomeEntrega); return }
 
         val rotulos = Array(total) { getString(R.string.print_page_n, it + 1) }
         val marcadas = BooleanArray(total)
@@ -512,7 +533,7 @@ abstract class BaseActivity : AppCompatActivity() {
                             android.widget.Toast.LENGTH_LONG).show()
                         return@launch
                     }
-                    escolherModoImpressao(parcial)
+                    escolherModoImpressao(parcial, nomeEntrega)
                 }
             }
             .setNegativeButton(R.string.cancel, null)
@@ -520,7 +541,12 @@ abstract class BaseActivity : AppCompatActivity() {
         dlg.show()
     }
 
-    protected fun escolherModoImpressao(pdf: java.io.File) {
+    /**
+     * @param nomeEntrega nome das cópias que saem para o pen-drive e para a
+     *   pasta de impressão (ver [nomeDeEntrega]); nulo, saem com o nome do
+     *   arquivo.
+     */
+    protected fun escolherModoImpressao(pdf: java.io.File, nomeEntrega: String? = null) {
         val cfg = com.radioterapia.ai.AppConfig(this)
         val opcoes = arrayOf(
             getString(R.string.print_mode_ip),
@@ -535,10 +561,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
             1. `AbsListView` despacha o clique pelo `adapter.isEnabled(position)`.
                O `isEnabled` da View filha nao participa da decisao, entao a
-               linha ficava cinza E CONTINUAVA disparando imprimirPorIp. E o
-               retorno exato do defeito que a JORNADA registra como resolvido:
-               "o app mostrava barra de progresso e 'imprimia' mesmo com a
-               impressora offline".
+               linha ficava cinza E CONTINUAVA disparando imprimirPorIp: o app
+               mostrava barra de progresso e "imprimia" mesmo com a
+               impressora offline.
             2. `getChildAt(0)` e posicao VISUAL, nao posicao do adapter — e o
                ping de 3s podia voltar depois de o dialogo ter sido fechado,
                mexendo numa lista que nao esta mais na tela.
@@ -566,8 +591,8 @@ abstract class BaseActivity : AppCompatActivity() {
             .setAdapter(adaptador) { _, i ->
                 when (i) {
                     0 -> imprimirPorIp(pdf, cfg)
-                    1 -> abrirDialogoPenDrive(listOf(pdf))
-                    2 -> copiarParaPastaImpressao(pdf)
+                    1 -> abrirDialogoPenDrive(listOf(pdf), nomeEntrega = nomeEntrega)
+                    2 -> copiarParaPastaImpressao(pdf, nomeEntrega)
                 }
             }
             .setNegativeButton(R.string.cancel, null)
@@ -596,16 +621,21 @@ abstract class BaseActivity : AppCompatActivity() {
      * da conexão: o botão de gravar só habilita quando o Android confirma um
      * volume removível montado. Plugar ou remover o pen-drive com o diálogo
      * aberto atualiza a tela na hora, sem o usuário precisar reabrir nada.
+     *
+     * @param nomeEntrega nome da cópia da ficha avulsa no pen-drive (ver
+     *   [nomeDeEntrega]). No lote, o nome de cada ficha sai de [nomes].
      */
     protected fun abrirDialogoPenDrive(
         pdfs: List<java.io.File>,
         modo: ModoPenDrive = ModoPenDrive.PACIENTE_ATUAL,
         nomes: List<String> = emptyList(),
-        itens: List<com.radioterapia.ai.pdf.PdfBuilder.ItemLote> = emptyList()
+        itens: List<com.radioterapia.ai.pdf.PdfBuilder.ItemLote> = emptyList(),
+        nomeEntrega: String? = null
     ) {
         pdfsParaPenDrive = pdfs
         nomesParaPenDrive = nomes
         itensParaPenDrive = itens
+        nomeEntregaPenDrive = nomeEntrega
         modoPenDrive = modo
         val view = layoutInflater.inflate(R.layout.dialog_pendrive, null)
         viewPenDrive = view
@@ -707,20 +737,26 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun gravarNoPenDrive() {
         val pdfs = pdfsParaPenDrive
         val itens = itensParaPenDrive
+        val nomes = nomesParaPenDrive
+        val nomeAvulsa = nomeEntregaPenDrive
+        val modo = modoPenDrive
         if (pdfs.isEmpty() && itens.isEmpty()) return
         val btn = viewPenDrive?.findViewById<Button>(R.id.btnOtgGravar)
         btn?.isEnabled = false
         btn?.setText(R.string.pd_gravando)
         CoroutineScope(Dispatchers.Main).launch {
             val res = withContext(Dispatchers.IO) {
-                when (modoPenDrive) {
+                when (modo) {
                     ModoPenDrive.PACIENTE_ATUAL ->
-                        penDrive.gravarPacienteAtual(pdfs.first())
+                        penDrive.gravarPacienteAtual(pdfs.first(), nomeAvulsa)
                     // No lote, os DOIS formatos são gravados de uma vez: quem
                     // opera escolhe na impressora se abre um arquivo só ou
                     // paciente a paciente, sem precisar voltar ao tablet.
                     ModoPenDrive.LOTE -> penDrive.gravarLote(
-                        pdfs, nomesParaPenDrive, itens)
+                        pdfs, nomes, itens,
+                        pdfs.mapIndexed { i, f ->
+                            nomeDeEntregaDoGuardado(f.name, nomes.getOrNull(i))
+                        })
                 }
             }
             btn?.setText(R.string.pd_gravar)
@@ -748,23 +784,47 @@ abstract class BaseActivity : AppCompatActivity() {
             getString(R.string.print_mode_ip),
             getString(R.string.print_mode_pendrive),
             getString(R.string.print_mode_folder))
+        // GUARDA: o clique é decidido pelo adapter.isEnabled, como na ficha
+        // avulsa. Esmaecer a View da linha (getChildAt) deixa a linha cinza e
+        // ainda despachando o clique, e mandaria o lote a uma impressora que
+        // não respondeu ao teste.
+        val ipIndisponivel = java.util.concurrent.atomic.AtomicBoolean(!cfg.temImpressora())
+        val adaptador = object : android.widget.ArrayAdapter<String>(
+            this, android.R.layout.simple_list_item_1, opcoes) {
+            override fun areAllItemsEnabled() = false
+            override fun isEnabled(position: Int) =
+                position != 0 || !ipIndisponivel.get()
+            override fun getView(position: Int, convertView: View?,
+                                 parent: android.view.ViewGroup): View {
+                val v = super.getView(position, convertView, parent)
+                v.alpha = if (isEnabled(position)) 1f else 0.4f
+                return v
+            }
+        }
         val dlg = AlertDialog.Builder(this)
             .setTitle(R.string.print_mode_title)
-            .setItems(opcoes) { _, i ->
+            .setAdapter(adaptador) { _, i ->
                 when (i) {
                     1 -> abrirDialogoPenDrive(pdfs, ModoPenDrive.LOTE, nomes, itens)
-                    else -> comLoteAgrupado(itens, pdfs) { unico ->
-                        if (i == 0) imprimirPorIp(unico, cfg)
-                        else copiarParaPastaImpressao(unico)
-                    }
+                    0 -> comLoteAgrupado(itens, pdfs,
+                        agrupado = { unico -> imprimirPorIp(unico, cfg) },
+                        avulsas = { fichas -> imprimirVariasPorIp(fichas, cfg) })
+                    // As fichas avulsas vão para a pasta com o nome de entrega,
+                    // como no pen-drive: ali não há pasta de paciente em volta,
+                    // e as iniciais sozinhas se repetem entre pacientes.
+                    else -> comLoteAgrupado(itens, pdfs,
+                        agrupado = { unico -> copiarParaPastaImpressao(unico) },
+                        avulsas = { fichas ->
+                            copiarFichasParaPastaImpressao(fichas.map { f ->
+                                f to nomeDeEntrega(f, nomes.getOrNull(pdfs.indexOf(f)))
+                            })
+                        })
                 }
             }
             .setNegativeButton(R.string.cancel, null)
             .create()
         dlg.show()
-        if (!cfg.temImpressora()) {
-            dlg.listView?.getChildAt(0)?.let { it.isEnabled = false; it.alpha = 0.4f }
-        } else {
+        if (cfg.temImpressora()) {
             CoroutineScope(Dispatchers.Main).launch {
                 val ok = withContext(Dispatchers.IO) {
                     try {
@@ -772,23 +832,31 @@ abstract class BaseActivity : AppCompatActivity() {
                             .testarConexao(3_000).sucesso
                     } catch (_: Exception) { false }
                 }
-                if (!ok) dlg.listView?.getChildAt(0)?.let { it.isEnabled = false; it.alpha = 0.4f }
+                if (!ok && dlg.isShowing) {
+                    ipIndisponivel.set(true)
+                    adaptador.notifyDataSetChanged()
+                }
             }
         }
     }
 
     /**
-     * Monta o PDF único do lote em cache e entrega ao destino. Se a remontagem
-     * falhar (dados incompletos), cai para o primeiro PDF disponível em vez de
-     * deixar o usuário sem nada.
+     * Monta o PDF único do lote em cache e entrega a [agrupado]. Sem dados para
+     * remontar, ou se a remontagem falhar (dados incompletos, memória), entrega
+     * a [avulsas] as fichas guardadas de TODOS os pacientes do lote, na ordem.
+     *
+     * GUARDA: nunca só a primeira ficha. Mandar uma quando o lote tinha várias
+     * deixava os outros pacientes de fora sem aviso, e quem opera a impressora
+     * não tem como perceber que faltou alguém.
      */
     private fun comLoteAgrupado(
         itens: List<com.radioterapia.ai.pdf.PdfBuilder.ItemLote>,
-        alternativa: List<java.io.File>,
-        destino: (java.io.File) -> Unit
+        fichas: List<java.io.File>,
+        agrupado: (java.io.File) -> Unit,
+        avulsas: (List<java.io.File>) -> Unit
     ) {
         if (itens.isEmpty()) {
-            alternativa.firstOrNull()?.let(destino)
+            entregarAvulsas(fichas, avulsas)
             return
         }
         val prog = AlertDialog.Builder(this)
@@ -806,32 +874,23 @@ abstract class BaseActivity : AppCompatActivity() {
                 } catch (_: Exception) { null }
             }
             prog.dismiss()
-            val arquivo = unico ?: alternativa.firstOrNull()
-            if (arquivo == null) {
-                android.widget.Toast.makeText(this@BaseActivity, R.string.lote_sem_pdf,
-                    android.widget.Toast.LENGTH_LONG).show()
-                return@launch
-            }
-            destino(arquivo)
+            if (unico != null) agrupado(unico) else entregarAvulsas(fichas, avulsas)
         }
+    }
+
+    private fun entregarAvulsas(fichas: List<java.io.File>,
+                                avulsas: (List<java.io.File>) -> Unit) {
+        if (fichas.isEmpty()) {
+            android.widget.Toast.makeText(this, R.string.lote_sem_pdf,
+                android.widget.Toast.LENGTH_LONG).show()
+            return
+        }
+        avulsas(fichas)
     }
 
     private fun imprimirPorIp(pdf: java.io.File, cfg: com.radioterapia.ai.AppConfig) {
         CoroutineScope(Dispatchers.Main).launch {
-            val res = withContext(Dispatchers.IO) {
-                try {
-                    // FICHA COM VERSO MANDA NO MODO. Se o protocolo trouxe uma
-                    // folha frente-e-verso, imprimir em simplex separaria as duas
-                    // faces em folhas diferentes — e o impresso que a clinica
-                    // desenhou para ser virado deixaria de funcionar. Nos demais
-                    // casos vale a configuracao da impressora, como sempre.
-                    val modo =
-                        if (com.radioterapia.ai.pdf.PdfBuilder.temFrenteVerso(pdf)) "long"
-                        else cfg.printerDuplexMode
-                    com.radioterapia.ai.print.PrinterClient(cfg.impressoraIp)
-                        .imprimirPdf(pdf, modo)
-                } catch (e: Exception) { null }
-            }
+            val res = withContext(Dispatchers.IO) { enviarPorIp(pdf, cfg) }
             android.widget.Toast.makeText(this@BaseActivity,
                 if (res?.sucesso == true) getString(R.string.print_sent)
                 else (res?.mensagem ?: getString(R.string.printer_offline)),
@@ -839,26 +898,158 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    /** Copia o PDF para uma pasta simples (pendrive / leitura direta). */
-    private fun copiarParaPastaImpressao(pdf: java.io.File) {
+    /**
+     * Fichas avulsas do lote pela impressora de rede: um trabalho por paciente,
+     * um depois do outro, na ordem do lote. Para no primeiro que falhar e mostra
+     * o motivo — seguir mandando para uma impressora que não responde só
+     * somaria esperas, e o aviso diz a quem opera que o lote não saiu inteiro.
+     */
+    private fun imprimirVariasPorIp(pdfs: List<java.io.File>, cfg: com.radioterapia.ai.AppConfig) {
+        if (pdfs.size == 1) { imprimirPorIp(pdfs[0], cfg); return }
+        val semResposta = getString(R.string.printer_offline)
         CoroutineScope(Dispatchers.Main).launch {
-            val destino = withContext(Dispatchers.IO) {
+            val falha = withContext(Dispatchers.IO) {
+                var motivo: String? = null
+                for (pdf in pdfs) {
+                    val res = enviarPorIp(pdf, cfg)
+                    if (res?.sucesso != true) {
+                        motivo = res?.mensagem ?: semResposta
+                        break
+                    }
+                }
+                motivo
+            }
+            android.widget.Toast.makeText(this@BaseActivity,
+                falha ?: getString(R.string.print_sent),
+                android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
+
+    /** Manda um PDF à impressora de rede. Bloqueia: chamar em Dispatchers.IO. */
+    private fun enviarPorIp(pdf: java.io.File, cfg: com.radioterapia.ai.AppConfig) = try {
+        // FICHA COM VERSO MANDA NO MODO. Se o protocolo trouxe uma
+        // folha frente-e-verso, imprimir em simplex separaria as duas
+        // faces em folhas diferentes — e o impresso que a clinica
+        // desenhou para ser virado deixaria de funcionar. Nos demais
+        // casos vale a configuracao da impressora, como sempre.
+        val modo =
+            if (com.radioterapia.ai.pdf.PdfBuilder.temFrenteVerso(pdf, this@BaseActivity)) "long"
+            else cfg.printerDuplexMode
+        com.radioterapia.ai.print.PrinterClient(cfg.impressoraIp)
+            .imprimirPdf(pdf, modo)
+    } catch (e: Exception) { null }
+
+    /**
+     * Copia o PDF para uma pasta simples (pendrive / leitura direta).
+     *
+     * @param nomeEntrega nome da cópia (ver [nomeDeEntrega]); nulo, sai com o
+     *   nome do arquivo.
+     */
+    private fun copiarParaPastaImpressao(pdf: java.io.File, nomeEntrega: String? = null) =
+        copiarFichasParaPastaImpressao(
+            listOf(pdf to (nomeEntrega?.takeIf { it.isNotBlank() } ?: pdf.name)))
+
+    /**
+     * Copia cada PDF para a pasta de impressão com o nome dado ao lado dele.
+     *
+     * A pasta é esvaziada uma vez, antes da primeira cópia: a impressora
+     * encontra só o pedido atual no teclado dela, e um lote fica inteiro. Dois
+     * nomes iguais no mesmo pedido ganham `_2`, `_3` antes da extensão, sem
+     * diferenciar maiúsculas — a pasta pode estar num sistema de arquivos que
+     * não diferencia, e a segunda cópia apagaria a primeira.
+     */
+    private fun copiarFichasParaPastaImpressao(copias: List<Pair<java.io.File, String>>) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val pasta = withContext(Dispatchers.IO) {
                 try {
                     val dir = java.io.File(
                         android.os.Environment.getExternalStoragePublicDirectory(
                             android.os.Environment.DIRECTORY_DOCUMENTS), "PhotoID_Imprimir")
-                    // Limpa a pasta a cada novo pedido: a impressora encontra
-                    // apenas o documento atual no teclado dela.
                     if (dir.exists()) dir.listFiles()?.forEach { it.delete() } else dir.mkdirs()
-                    val alvo = java.io.File(dir, pdf.name)
-                    pdf.copyTo(alvo, overwrite = true)
-                    alvo
+                    val usados = HashSet<String>()
+                    for ((pdf, nome) in copias) {
+                        pdf.copyTo(java.io.File(dir, nomeSemRepetir(nome, usados)), overwrite = true)
+                    }
+                    dir
                 } catch (e: Exception) { null }
             }
             android.widget.Toast.makeText(this@BaseActivity,
-                if (destino != null) getString(R.string.print_mode_folder_ok, destino.parent)
+                if (pasta != null) getString(R.string.print_mode_folder_ok, pasta.path)
                 else getString(R.string.err_save, ""),
                 android.widget.Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun nomeSemRepetir(nome: String, usados: MutableSet<String>): String {
+        val base = nome.substringBeforeLast('.')
+        val ext = nome.substringAfterLast('.', "")
+        var candidato = nome
+        var n = 2
+        while (!usados.add(candidato.lowercase(java.util.Locale.ROOT))) {
+            candidato = if (ext.isEmpty()) "${base}_$n" else "${base}_$n.$ext"
+            n++
+        }
+        return candidato
+    }
+
+    // ---------- Cópias de entrega ----------
+
+    /**
+     * Nome da cópia que sai da pasta do paciente para alguém pegar: pen-drive,
+     * pasta de impressão, compartilhar.
+     *
+     * Na pasta do paciente o arquivo leva só as iniciais, porque a pasta já diz
+     * de quem é. A cópia entregue anda sozinha — na bandeja da impressora, no
+     * pen-drive, no anexo — e leva o nome completo. Devolve o nome do próprio
+     * arquivo quando a troca não se aplica (ver [nomeDeEntregaDoGuardado]).
+     */
+    protected fun nomeDeEntrega(arquivo: java.io.File, nomePaciente: String?): String =
+        nomeDeEntregaDoGuardado(arquivo.name, nomePaciente) ?: arquivo.name
+
+    /**
+     * Abre o "compartilhar" do Android com uma cópia de entrega do arquivo.
+     *
+     * A cópia vai para `cache/entrega/` com o nome de entrega, porque o app que
+     * recebe o anexo usa o nome do arquivo compartilhado. Cópias com mais de
+     * uma hora são apagadas a cada chamada: o compartilhamento anterior já foi
+     * lido, e cópia com nome de paciente não fica esquecida no cache. Se a cópia
+     * falhar, compartilha o arquivo original — o anexo sai com as iniciais, mas
+     * sai.
+     *
+     * @param nomeEntrega nome da cópia; nulo ou igual ao do arquivo, compartilha
+     *   o próprio arquivo, sem cópia.
+     */
+    protected fun compartilharComoEntrega(arquivo: java.io.File, nomeEntrega: String?,
+                                          mime: String = "application/pdf") {
+        if (!arquivo.exists()) {
+            Toast.makeText(this, R.string.pdf_not_found, Toast.LENGTH_SHORT).show()
+            return
+        }
+        CoroutineScope(Dispatchers.Main).launch {
+            val enviar = withContext(Dispatchers.IO) {
+                if (nomeEntrega.isNullOrBlank() || nomeEntrega == arquivo.name) arquivo
+                else try {
+                    val dir = java.io.File(cacheDir, "entrega").apply { mkdirs() }
+                    val limite = System.currentTimeMillis() - 60 * 60 * 1000L
+                    dir.listFiles()?.forEach { if (it.lastModified() < limite) it.delete() }
+                    val copia = java.io.File(dir, nomeEntrega)
+                    arquivo.copyTo(copia, overwrite = true)
+                    copia
+                } catch (_: Exception) { arquivo }
+            }
+            if (isFinishing || isDestroyed) return@launch
+            try {
+                val uri = androidx.core.content.FileProvider.getUriForFile(
+                    this@BaseActivity, "$packageName.fileprovider", enviar)
+                val envio = android.content.Intent(android.content.Intent.ACTION_SEND)
+                    .setType(mime)
+                    .putExtra(android.content.Intent.EXTRA_STREAM, uri)
+                    .addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                startActivity(android.content.Intent.createChooser(envio, getString(R.string.share_pdf)))
+            } catch (e: Exception) {
+                Toast.makeText(this@BaseActivity,
+                    getString(R.string.share_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -910,4 +1101,15 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun dp(v: Int): Int =
         (v * resources.displayMetrics.density + 0.5f).toInt()
+
+    companion object {
+        /**
+         * Nome de entrega de um arquivo guardado na pasta do paciente: as
+         * iniciais dão lugar ao nome completo, e todo o resto fica. A regra, e
+         * os casos em que ela devolve `null` para quem chama manter o nome do
+         * arquivo, moram em `NomeArquivo.entregaDoGuardado`, testável na JVM.
+         */
+        fun nomeDeEntregaDoGuardado(nomeArquivo: String, nomePaciente: String?): String? =
+            com.radioterapia.ai.util.NomeArquivo.entregaDoGuardado(nomeArquivo, nomePaciente)
+    }
 }

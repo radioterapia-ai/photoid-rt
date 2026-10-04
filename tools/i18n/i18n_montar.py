@@ -5,8 +5,8 @@ Monta os res/values-XX/strings.xml a partir do que os tradutores gravaram.
 O ESCAPE DO ANDROID E FEITO AQUI, e nao pelo tradutor. Escapar e deterministico:
 apostrofo vira \\', & vira &amp;, e as sequencias \\n \\" \\\\ \\uXXXX passam
 intactas. Deixar isso com o modelo poria o build na dependencia de ele acertar
-seiscentas vezes seguidas em nove idiomas — e o footgun n.6 do projeto e
-exatamente apostrofo nao escapado, que so aparece em frances e italiano.
+seiscentas vezes seguidas em nove idiomas — e apostrofo nao escapado e
+exatamente o erro que so aparece em frances e italiano.
 
 Roda em dois modos:
     python i18n_montar.py --conferir   so valida e relata, nao escreve
@@ -40,11 +40,9 @@ SP = os.path.join(RAIZ, "docs", "i18n")
 TRAD = os.path.join(SP, "pendente", "traducoes")
 
 IDIOMAS = ["fr", "de", "it", "pl", "zh", "ja", "ko", "ar", "bn"]
-# b6 nasceu depois: e o bloco das strings acrescentadas apos a primeira
-# rodada. Bloco novo em vez de refatiar b1..b5, que invalidaria o que ja
-# estava traduzido.
-# b10 nasceu na rodada de correcoes de 20-21/09/2026, pelo mesmo
-# criterio do b6: bloco novo em vez de refatiar os anteriores.
+# b6 em diante sao strings acrescentadas depois da primeira traducao. String
+# nova entra em bloco novo, no fim da lista, e nao refatiando os anteriores:
+# refatiar invalidaria o que ja estava traduzido.
 BLOCOS = ["b1", "b2", "b3", "b4", "b5", "juridico", "b6", "b7", "b8",
           "b9", "b10"]
 

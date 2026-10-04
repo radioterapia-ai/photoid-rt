@@ -21,7 +21,7 @@ import com.radioterapia.ai.R
 import com.radioterapia.ai.i18n.LocaleManager
 
 /**
- * Tela de consentimento da LGPD (item 11).
+ * Tela de consentimento da LGPD.
  *
  * Aparece UMA ÚNICA VEZ no primeiro acesso ao app. Após aceitar:
  *  - Persiste em SharedPreferences "consent_prefs" os campos: accepted=true,
@@ -82,8 +82,13 @@ class ConsentActivity : AppCompatActivity() {
          *     nao pela instituicao. Subir o numero faz todo aparelho em uso
          *     reabrir nesta tela, que e o que garante que ninguem passe a
          *     consultar o repositorio sem ter lido e aceitado o texto.
+         * 5 - a sincronizacao passou a levar uma copia das configuracoes do
+         *     servico, com as rubricas da equipe e os enderecos, usuarios e
+         *     dominios dos destinos. Sem senha e sem dado de paciente, mas e
+         *     categoria nova de dado saindo do aparelho, e nada novo sai sem
+         *     alguem ter lido e concordado.
          */
-        const val VERSAO_TERMOS = 4
+        const val VERSAO_TERMOS = 5
 
         /**
          * O consentimento vigente cobre a versão ATUAL dos Termos?

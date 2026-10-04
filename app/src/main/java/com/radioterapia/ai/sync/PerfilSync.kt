@@ -99,6 +99,18 @@ data class PerfilSync(
         Tipo.SAF -> safUri.isNotBlank()
     }
 
+    /**
+     * O perfil sem o ESTADO: só a configuração.
+     *
+     * É o que viaja no pacote de transferência e na cópia da configuração
+     * enviada ao destino. O [ultimoErro] guarda a mensagem da exceção do
+     * adaptador, que costuma citar o caminho remoto — e o caminho remoto traz
+     * o nome da pasta do paciente. A [ultimaSincronizacao] muda a cada rodada,
+     * o que faria dois pacotes da mesma configuração saírem diferentes. O
+     * importador já zerava os dois; aqui eles nem chegam a sair.
+     */
+    fun semEstado(): PerfilSync = copy(ultimaSincronizacao = 0L, ultimoErro = "")
+
     fun paraJson(): JSONObject = JSONObject().apply {
         put("id", id)
         put("nome", nome)

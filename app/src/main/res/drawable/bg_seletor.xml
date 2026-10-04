@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Fundo dos campos de seleção da finalização (médico, equipamento, sítio,
+    número máximo de visitas) e da caixa de observação.
+
+    O degrau de tom (bg_input sobre o fundo) é o que diz "aqui se escolhe"; o
+    traço de 1dp no divisor quase não se vê e só firma a borda. A SELEÇÃO SE
+    DIZ POR CONTORNO: em foco ou pressionado, o campo ganha o preenchimento e o
+    traço de 2dp do bloco selecionado (bg_bloco_selecionado).
+
+    A ordem dos itens é a regra: o primeiro estado que casa vence. Desabilitado
+    vem antes de foco, para um campo travado nunca parecer escolhido.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Desabilitado: bg_input a 50% (#1A2545 com alfa 0x80). -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="#801A2545" />
+            <stroke android:width="1dp" android:color="@color/divider" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#12244F" />
+            <stroke android:width="2dp" android:color="@color/brand_primary" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#12244F" />
+            <stroke android:width="2dp" android:color="@color/brand_primary" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/bg_input" />
+            <stroke android:width="1dp" android:color="@color/divider" />
+            <corners android:radius="8dp" />
+        </shape>
+    </item>
+</selector>

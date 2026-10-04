@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.radioterapia.ai.R
 import com.radioterapia.ai.util.FotosArquivadas
+import com.radioterapia.ai.util.NomeArquivo
 import java.io.File
 
 /**
@@ -81,7 +82,7 @@ object ArquivadasDialog {
                     scaleType = ImageView.ScaleType.CENTER_CROP
                 }
                 val arq = restantes[p]
-                img.contentDescription = arq.name
+                img.contentDescription = descricao(origem, arq.name)
                 // Subamostrada: a grade pode ter dezenas de fotos e carregar
                 // cada JPEG inteiro estoura a memoria do tablet.
                 val bmp = try {
@@ -118,4 +119,19 @@ object ArquivadasDialog {
         dialog.show()
         dialog.window?.setGravity(Gravity.CENTER)
     }
+
+    /**
+     * O que o leitor de tela fala sobre a miniatura: a categoria da foto. O nome
+     * do arquivo, lido em voz alta, seria uma sequência de códigos e números
+     * sem significado para quem ouve.
+     */
+    private fun descricao(origem: Activity, nomeArquivo: String): String =
+        origem.getString(when (NomeArquivo.tipo(nomeArquivo)) {
+            NomeArquivo.Tipo.ROSTO -> R.string.cat_face
+            NomeArquivo.Tipo.ETIQUETA -> R.string.cat_label
+            NomeArquivo.Tipo.POSICIONAMENTO -> R.string.cat_positioning
+            NomeArquivo.Tipo.ACESSORIOS -> R.string.cat_accessories
+            NomeArquivo.Tipo.IMPRESSO -> R.string.cat_documents
+            else -> R.string.arq_titulo
+        })
 }

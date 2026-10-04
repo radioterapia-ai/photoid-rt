@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Uma opção da lista de um campo de seleção da finalização: o item de popup
+    do app (52dp, 17sp). paddingStart/End sobrepõem o paddingLeft/Right do
+    estilo, para o recuo seguir a direção do texto em árabe.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PopupItem"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:gravity="center_vertical|start"
+    android:textAlignment="viewStart"
+    android:maxLines="2"
+    android:ellipsize="end" />

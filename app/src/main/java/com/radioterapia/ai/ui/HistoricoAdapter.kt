@@ -18,7 +18,7 @@ import android.view.View
  * Adapter da lista do histórico de pacientes.
  *
  * Cada item mostra:
- *  - Thumbnail da foto-rosto (item 12/13) - se houver caminho salvo no PatientCache
+ *  - Thumbnail da foto-rosto - se houver caminho salvo no PatientCache
  *  - Nome do paciente em destaque
  *  - Prontuário, data de nascimento e data da última simulação
  *  - Contagem de simulações como badge

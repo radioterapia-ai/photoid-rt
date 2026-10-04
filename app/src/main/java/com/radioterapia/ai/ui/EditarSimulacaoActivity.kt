@@ -13,6 +13,8 @@ import com.radioterapia.ai.R
 import com.radioterapia.ai.pdf.PdfBuilder
 import com.radioterapia.ai.patient.PatientCache
 import com.radioterapia.ai.treatment.TreatmentPhotoFetcher
+import com.radioterapia.ai.util.Linhas
+import com.radioterapia.ai.util.NomeArquivo
 import com.radioterapia.ai.util.ObsStore
 import com.radioterapia.ai.util.StorageLocal
 import com.radioterapia.ai.util.TimeOutStore
@@ -55,31 +57,18 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
         val actMed = findViewById<AutoCompleteTextView>(R.id.actEsMedico)
         val actEq = findViewById<AutoCompleteTextView>(R.id.actEsEquip)
         val actSit = findViewById<AutoCompleteTextView>(R.id.actEsSitio)
-        configurarSelecao(actMed,
-            config.timeoutMedicos.split("\n").map { it.trim() }.filter { it.isNotBlank() }, true)
-        configurarSelecao(actEq,
-            config.equipamentos.split("\n").map { it.trim() }.filter { it.isNotBlank() }, false)
-        configurarSelecao(actSit,
-            config.sitiosLista.split("\n").map { it.trim() }.filter { it.isNotBlank() }, true)
+        configurarSelecao(actMed, Linhas.deTexto(config.timeoutMedicos), true)
+        configurarSelecao(actEq, Linhas.deTexto(config.equipamentos), false)
+        configurarSelecao(actSit, Linhas.deTexto(config.sitiosLista), true)
 
         carregarValoresAtuais(actMed, actEq, actSit)
 
-        // Mesmo limite da tela de finalizacao: o box da ficha comporta 2 linhas.
-        // Sem isso, o texto extra era salvo e sumia silenciosamente no PDF.
+        // Mesmo limite da tela de finalizacao: ate 4 linhas digitadas, o que a
+        // caixa de observacoes da ficha mostra no corpo cheio. A observacao
+        // gravada chega ao campo depois (carregarValoresAtuais), e o vigia a
+        // aceita inteira mesmo que tenha mais linhas. Ver CampoObservacao.
         val edtObs = findViewById<EditText>(R.id.edtEsObs)
-        edtObs.addTextChangedListener(object : android.text.TextWatcher {
-            private var anterior = ""
-            override fun beforeTextChanged(s: CharSequence?, st: Int, c2: Int, a: Int) {
-                anterior = s?.toString() ?: ""
-            }
-            override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c2: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
-                if ((s?.toString() ?: "").count { it == '\n' } > 1) {
-                    edtObs.setText(anterior)
-                    edtObs.setSelection(anterior.length.coerceAtMost(edtObs.text.length))
-                }
-            }
-        })
+        CampoObservacao.limitar(edtObs)
 
         findViewById<Button>(R.id.btnEsCancelar).setOnClickListener { finish() }
         findViewById<Button>(R.id.btnEsSalvar).setOnClickListener { salvarERegerar() }
@@ -99,20 +88,39 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
      * TODOS os campos em branco, sem dizer que não localizou nada.
      */
     private suspend fun pastaDaSimulacao(): java.io.File? {
+        // GUARDA: o resolvedor, sem a pasta exata, desempata por uma regra mais
+        // fraca e pode devolver a pasta de uma homônima — onde o Time-Out seria
+        // lido e depois gravado. Só vale a que a regra de escolha aceita.
         val resolvida = try {
             StorageLocal.resolverPastaSim(this, nomePaciente, numeroSimulacao,
-                nomePastaServidor, prontuario)
+                nomePastaServidor, prontuario).takeIf { pastaDeRegistrosServe(it) }
         } catch (_: Exception) { null }
         if (resolvida != null && TimeOutStore.ler(resolvida, numeroSimulacao) != null) return resolvida
 
         val daFoto = try {
-            val sims = TreatmentPhotoFetcher(this).buscarSimulacoes(nomePaciente)
-            val sim = sims.find { it.numeroSimulacao == numeroSimulacao }
+            // Pasta E número, com o prontuário: só pelo número, a simulação
+            // achada pode ser a de uma homônima, e o Time-Out seria lido — e
+            // depois gravado — na pasta dela.
+            val sims = TreatmentPhotoFetcher(this).buscarSimulacoes(nomePaciente, prontuario)
+            val sim = TreatmentPhotoFetcher.simulacaoExata(sims, numeroSimulacao, nomePastaServidor)
             sim?.rosto?.arquivoLocal?.parentFile
                 ?: sim?.posicionamentos?.firstOrNull()?.arquivoLocal?.parentFile
                 ?: sim?.etiqueta?.arquivoLocal?.parentFile
         } catch (_: Exception) { null }
         return daFoto ?: resolvida
+    }
+
+    /**
+     * A pasta devolvida pelo resolvedor é deste paciente? É, quando tem o nome
+     * da pasta aberta, ou quando [TreatmentPhotoFetcher.pastaDeRegistrosServe]
+     * a aceita. Pasta que ainda não existe passa: ler não acha nada. Só disco:
+     * fora da thread principal.
+     */
+    private fun pastaDeRegistrosServe(pasta: java.io.File): Boolean {
+        if (!pasta.exists()) return true
+        val nomes = StorageLocal.photos(this).listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty()
+        return TreatmentPhotoFetcher.pastaDeRegistrosServe(pasta.name, nomePastaServidor, nomes,
+            nomePaciente, prontuario, prontuario.isBlank() && patientCache.temHomonimos(nomePaciente))
     }
 
     /** Pré-preenche com o que já existe gravado para esta simulação. */
@@ -237,7 +245,7 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
             val ok = withContext(Dispatchers.IO) {
                 try {
                     val fetcher = TreatmentPhotoFetcher(this@EditarSimulacaoActivity)
-                    val sims = fetcher.buscarSimulacoes(nomePaciente)
+                    val sims = fetcher.buscarSimulacoes(nomePaciente, prontuario)
                     // Sem a simulação EXATA, falha. Havia aqui um
                     // `?: sims.maxByOrNull { it.timestampPrincipal }`: quando a
                     // simulação pedida não era encontrada, o app gravava
@@ -245,7 +253,9 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                     // técnico salvava, reabria a tela — que lê a pasta certa — e
                     // a edição tinha sumido. Pior: o dado ficava numa simulação
                     // que não era a dele.
-                    val sim = sims.find { it.numeroSimulacao == numeroSimulacao }
+                    // EXATA é pasta E número: só pelo número, com uma homônima
+                    // no tablet, a ficha regerada sairia com as fotos dela.
+                    val sim = TreatmentPhotoFetcher.simulacaoExata(sims, numeroSimulacao, nomePastaServidor)
                         ?: return@withContext false
                     // Mesma resolução da leitura, para gravar onde se lê.
                     val pasta = pastaDaSimulacao() ?: return@withContext false
@@ -274,8 +284,13 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                         ))
                     ObsStore.gravar(pasta, numeroSimulacao, obs)
                     // Guarda equipamento/médico habituais no cadastro (comodidade).
-                    equip.takeIf { it.isNotBlank() }?.let { patientCache.atualizarEquipamento(nomePaciente, it, prontuario) }
-                    med.takeIf { it.isNotBlank() }?.let { patientCache.atualizarSexoMedico(nomePaciente, "", it, prontuario) }
+                    // Sem prontuário e com homônimas no cadastro, não: a
+                    // atualização cairia no registro que a busca escolhe entre
+                    // elas, e o médico deste paciente iria para o da outra.
+                    if (!(prontuario.isBlank() && patientCache.temHomonimos(nomePaciente))) {
+                        equip.takeIf { it.isNotBlank() }?.let { patientCache.atualizarEquipamento(nomePaciente, it, prontuario) }
+                        med.takeIf { it.isNotBlank() }?.let { patientCache.atualizarSexoMedico(nomePaciente, "", it, prontuario) }
+                    }
 
                     // Monta a lista de fotos da simulação para regenerar o PDF.
                     val fotos = mutableListOf<File>()
@@ -294,7 +309,13 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                         fotos.add(f.arquivoLocal); rotulos.add("Acessório." + (i + 1)) }
                     if (fotos.isEmpty()) return@withContext false
 
+                    // Só registro deste paciente: sem prontuário, a busca escolhe
+                    // entre homônimas, e o nascimento e o sexo sairiam os da outra.
                     val dadosPac = patientCache.obterDadosPaciente(nomePaciente, prontuario)
+                        ?.takeIf { d ->
+                            TreatmentPhotoFetcher.cadastroServeAoPaciente(prontuario, d.prontuario,
+                                prontuario.isBlank() && patientCache.temHomonimos(nomePaciente))
+                        }
                     val dados = PdfBuilder.DadosCabecalho(
                         nomePaciente = nomePaciente,
                         nascimento = dadosPac?.nascimento ?: "",
@@ -322,19 +343,20 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                             sim.rosto?.arquivoLocal, equip, alergia,
                             fracoesGravadas) else null
 
-                    // Remove PDFs antigos desta simulação (traziam dados velhos).
+                    // Remove os PDFs antigos DESTA simulação (traziam dados
+                    // velhos). GUARDA: só desta. Todas as simulações dividem a pasta, e
+                    // a regra de NomeArquivo separa pela marca no nome nos dois
+                    // esquemas. Uma regra por ausência de marca ("sem _NOVASIM"
+                    // = simulação 1) apagaria a ficha da reirradiação gravada
+                    // no esquema novo, que leva NS<n>.
                     pasta.listFiles()?.filter { f ->
-                        f.isFile && f.name.endsWith(".pdf", true) &&
-                            (if (numeroSimulacao == 1) !f.name.contains("_NOVASIM")
-                             else f.name.contains("_NOVASIM" + (numeroSimulacao - 1)))
+                        f.isFile && NomeArquivo.ehFichaDaSimulacao(f.name, numeroSimulacao)
                     }?.forEach { it.delete() }
 
-                    val prefN = com.radioterapia.ai.util.StorageLocal
-                        .removerAcentosMaiusculas(nomePaciente).replace(" ", "_")
-                    val tagSim = if (numeroSimulacao > 1) "_NOVASIM" + (numeroSimulacao - 1) else ""
-                    val ts = java.text.SimpleDateFormat("dd-MMM-yyyy_HH-mm-ss",
-                        java.util.Locale("pt", "BR")).format(java.util.Date()).uppercase()
-                    val saida = File(pasta, prefN + "_FOLHA_SIMULACAO" + tagSim + "_" + ts + ".pdf")
+                    // Gravada na pasta do paciente: nome com iniciais.
+                    val saida = File(pasta, NomeArquivo.montar(nomePaciente,
+                        NomeArquivo.Tipo.FICHA, numeroSimulacao,
+                        System.currentTimeMillis(), 1, "pdf"))
                     PdfBuilder.gerarFolhaPosicionamento(
                         this@EditarSimulacaoActivity, dados, fotos, saida,
                         rotulos = rotulos, landscape = config.pdfLandscape,
@@ -371,7 +393,7 @@ class EditarSimulacaoActivity : com.radioterapia.ai.BaseActivity() {
                     }
                 }
         }
-        // ITEM 8: sem opções configuradas → campo 100% livre para digitar
+        // Sem opções configuradas → campo 100% livre para digitar
         // (não faz sentido "dropdown-first" com lista vazia).
         if (opcoes.isEmpty()) {
             act.setAdapter(null)

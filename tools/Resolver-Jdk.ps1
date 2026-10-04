@@ -2,12 +2,10 @@
     Descobre o JDK que o Gradle deste projeto precisa e devolve o caminho.
 
     POR QUE EXISTE
-    O `gradlew` nao acha Java sozinho num terminal sem Java no PATH, e a
-    documentacao passou a carregar a linha
-    `JAVA_HOME="C:/Users/<alguem>/.jdks/jbr-21.0.11"` escrita a mao. Isso e caminho
-    absoluto de UMA maquina dentro de arquivo versionado: quebra no computador
-    de qualquer outra pessoa, e contraria a regra do ecossistema de nao ter
-    caminho absoluto no codigo.
+    O `gradlew` nao acha Java sozinho num terminal sem Java no PATH. Escrever
+    JAVA_HOME a mao em arquivo versionado poe ali o caminho absoluto de UMA
+    maquina, que quebra no computador de qualquer outra pessoa. Por isso o JDK
+    e descoberto, e nao gravado.
 
     A ordem de busca vai do explicito para o palpite, e nunca chuta em silencio:
     sem JDK utilizavel, aborta com mensagem em portugues.

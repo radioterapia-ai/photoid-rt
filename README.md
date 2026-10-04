@@ -140,9 +140,8 @@ The photographs and the PDF are written to the tablet's shared storage. Getting
 them to the service's server is a separate problem, and the app offers two
 answers to it.
 
-**The one that has always been there:** point any synchronization app
-and the like — at the `PhotoID_RT` folder. The app does nothing; the folder is
-just a folder.
+**The one that has always been there:** point any synchronization app at the
+`PhotoID_RT` folder. The app does nothing; the folder is just a folder.
 
 **The one added in 4.0:** the app delivers them itself, to destinations the
 service configures — an SMB file server, WebDAV, FTP, SFTP, or a folder in a
@@ -164,6 +163,14 @@ Two properties that are part of the design, not of the current implementation:
 - **Credentials never leave the device.** They live in `EncryptedSharedPreferences`
   under an Android Keystore master key, and they are deliberately excluded from
   the configuration transfer package — which travels by e-mail and on USB drives.
+
+From 4.5, every synchronization also carries **a copy of the service's
+settings**, so that a reinstalled tablet can be restored from the destination:
+teams and their signatures, protocols with their PDFs, printer, sheet layout, and
+the addresses, user names and domains of the destinations. It carries no password
+and no patient data, goes to a `_CONFIG_PHOTOID_RT` folder at the destination, and
+is only made again when the settings actually change, so a sync every few minutes
+does not flood the server with identical copies.
 
 There is no destination of ours anywhere in this. The app has no server, and the
 authors receive no copy.
@@ -216,9 +223,9 @@ you installed.
 
 ## Updates
 
-From 4.4 the app can tell you when a newer version exists. **Settings → App
-update** has two buttons: *Check for update* asks the repository now, and *Update
-now* downloads, verifies and hands the file to the Android installer.
+The app can tell you when a newer version exists. **Settings → Update app** has
+one button, *Update now*: it asks the repository, and if there is a newer
+version it names it and asks you to confirm before doing anything else.
 
 It also checks on its own — at startup and after a successful synchronization, at
 most once every six hours — and marks the settings gear with a red dot when it
@@ -228,8 +235,8 @@ screen.
 **Nothing is reported when there is no internet.** Tablets in a radiotherapy
 department usually live on an internal network with no route out, so a failed
 check is the expected state, not an error; warning about it would only train the
-team to ignore warnings. The manual *Check for update* button does report
-failure, because there a human asked and silence would look like a broken button.
+team to ignore warnings. The *Update now* button does report failure, because
+there a human asked and silence would look like a broken button.
 
 What it actually does:
 
@@ -241,10 +248,13 @@ What it actually does:
    that is how a version check stops working exactly when a project passes its
    ninth minor release. The published `minSdk` is part of the comparison, so a
    tablet is never invited to install something it cannot run.
-3. Before installing, saves a copy of the patient records and settings **on the
-   device**. That copy never leaves it and contains no password. It is small
-   because an APK update cannot touch the photographs — they live in shared
-   storage, and the Time-Out and observation files sit beside them.
+3. Before installing, saves a copy of the patient records, teams, signature
+   register, protocols and settings **on the device**. That copy is never
+   synchronized and contains no password and no photographs: an APK update cannot
+   touch the photographs, which live in shared storage with the Time-Out and
+   observation files beside them. On the first launch after the update the app
+   compares the counts with the ones saved before installing and says so if
+   anything shrank.
 4. Downloads the APK, checks its SHA-256 against the published value, and only
    then hands it to the Android installer, **which asks you to confirm**. An app
    that is not a system app and not a device owner cannot install silently, and
@@ -252,7 +262,14 @@ What it actually does:
 
 Installing this way needs `REQUEST_INSTALL_PACKAGES` and a one-time system
 permission for PhotoID RT. The app asks for that permission *before* downloading,
-so a missing permission does not waste the department's bandwidth.
+so a missing permission does not waste the department's bandwidth. When the
+installer finishes, tap **Open**: Android 10 and later do not let an app reopen
+itself after replacing itself.
+
+**Tablets on 4.4 install 4.5 once by hand**, from the permanent link above. The
+4.4 update routine is deliberately not offered the new version, because its
+pre-install backup would have copied the whole photo archive. From 4.5 on,
+updating from inside the app is the normal path.
 
 ## Build your own
 
@@ -325,7 +342,7 @@ install over an existing one.
 ## Before touching the code
 
 **Run `./gradlew check` before and after.** It runs the unit tests and lint
-together — 180 tests across the two variants, and lint with
+together — 1,340 tests across the two variants (670 each), and lint with
 `MissingTranslation` and `ExtraTranslation` as **errors**, so a missing or
 surplus translation fails the build. That is the safety net, not an obstacle.
 `assembleDebug` does **not** run lint; a green `assembleDebug` proves nothing
@@ -359,6 +376,19 @@ Storage conventions are load-bearing: patient folders are `NAME - RECORD`,
 resolved only through `StorageLocal.resolverPastaSim()`, never by concatenating
 strings. Re-irradiation reuses the patient folder with a `NOVA SIMULACAO n`
 suffix. Changing any of this breaks installations already in the field.
+
+File names inside a patient folder are built in one place, `util/NomeArquivo.kt`:
+`<INITIALS>_<TYPE>[_TRAT][_NS<n>]_<DD>_<MMM>_<YYYY>_<HH>_<MM>_<SS>_<N>[_ORIGINAL].<ext>`,
+upper-case ASCII, initials separated by underscores with particles skipped
+(*Maria Aparecida dos Santos* → `M_A_S`), with a fixed month table (`JAN FEV MAR ABR MAI JUN JUL AGO SET
+OUT NOV DEZ`) that never depends on the device language. The types are `ROST`,
+`ETIQ`, `POS`, `ACES`, `DOC` and `FSIM` (the positioning sheet); `TRAT` marks a
+photo added in the treatment module and `NS<n>` a re-irradiation. Older
+installations hold files in the previous naming, and those are never converted
+to the new scheme (correcting a patient's name renames them within their own
+scheme): every reader goes through `NomeArquivo.analisar`, which recognises both. Copies a
+person picks up by hand (USB drive, printer folder, share sheet) carry the full
+name in ASCII instead of the initials.
 
 ## Project layout
 

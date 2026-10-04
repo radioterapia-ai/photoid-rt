@@ -4,9 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.RectF
-import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
@@ -17,7 +15,7 @@ import java.io.File
  *
  * O PDF DO USUÁRIO NÃO É EDITADO. Ele é reproduzido página a página e o app
  * sobrepõe, por cima, no máximo três coisas: a etiqueta de identificação do
- * paciente, o logotipo do serviço e o número da página. Nada é removido,
+ * paciente, o logotipo do serviço e o rodapé da ficha. Nada é removido,
  * reposicionado ou reescrito — a promessa feita a quem carrega o arquivo é que
  * o documento sai como entrou.
  *
@@ -26,11 +24,21 @@ import java.io.File
  * `PdfRenderer` só desenha em bitmap. O layout é reproduzido na medida exata; o
  * que muda é a nitidez do texto.
  *
- * O NÚMERO DA PÁGINA é desenhado mesmo quando o logotipo está desligado, e
- * isso é deliberado. Sem ele, o rodapé das páginas que o app gera passaria a
- * mentir: "página 2 de 3" num documento que tem seis. Folha de ficha clínica
- * que perde a rastreabilidade da ordem é achado de auditoria, e é a herança
- * registrada do Portal Ficha Técnica.
+ * A ETIQUETA E O RODAPÉ VÊM DE QUEM GERA A FICHA, como funções: a mesma rotina
+ * de etiqueta das primeiras páginas e o mesmo rodapé de toda página. Uma
+ * rotina paralela aqui divergiria da original — contorno, corpo, rótulos
+ * traduzidos — a cada ajuste feito só numa delas. Este objeto decide só ONDE
+ * e EM QUE PÁGINA cada coisa entra.
+ *
+ * POSIÇÃO POR PÁGINA: cada página do PDF da frente usa
+ * [ProtocoloStore.Pagina.posicaoDa] — o ajuste próprio dela ou, sem ajuste, a
+ * posição da primeira página, que é o que um PDF salvo antes da posição por
+ * página continua recebendo.
+ *
+ * O RODAPÉ sai em toda página, frente e verso, salvo onde o editor o desligou
+ * (o impresso da clínica pode ter rodapé próprio no mesmo lugar). Sem ele, a
+ * ordem das folhas soltas deixa de ser rastreável — e folha de ficha clínica
+ * que perde a ordem é achado de auditoria.
  */
 object ProtocoloRenderer {
 
@@ -44,32 +52,22 @@ object ProtocoloRenderer {
     private const val LOGO_LARGURA_MAX_PT = 150f
 
     /**
-     * Dados que a etiqueta virtual imprime. Só o que já existe no cabeçalho das
-     * outras páginas — esta função não inventa campo novo.
-     */
-    data class Identificacao(
-        val nome: String,
-        val nascimento: String,
-        val prontuario: String,
-        val dataSimulacao: String
-    )
-
-    /**
      * Desenha todas as páginas do protocolo no documento aberto.
      *
-     * @param numeroInicial número da primeira página do protocolo dentro da
-     *   ficha inteira, para o rodapé continuar a contagem das anteriores.
-     * @param totalDaFicha total de páginas do documento final.
-     * @return quantas páginas foram acrescentadas.
+     * @param desenharEtiqueta desenha a etiqueta do paciente no retângulo dado,
+     *   em pontos da página.
+     * @param rodape desenha o rodapé: canvas, número da página no documento,
+     *   largura e altura da página em pontos. O número é a posição da página no
+     *   arquivo, contadas as folhas em branco de pareamento.
+     * @return quantas páginas foram acrescentadas, folhas em branco incluídas.
      */
     fun desenhar(
         doc: PdfDocument,
         context: Context,
         protocolo: ProtocoloStore.Protocolo,
-        ident: Identificacao,
         logo: Bitmap?,
-        numeroInicial: Int,
-        totalDaFicha: Int
+        desenharEtiqueta: (Canvas, RectF) -> Unit,
+        rodape: (Canvas, Int, Int, Int) -> Unit
     ): Int {
         if (protocolo.paginas.isEmpty()) return 0
         val store = ProtocoloStore(context)
@@ -93,31 +91,42 @@ object ProtocoloRenderer {
                 Time-Out, e a frente do impresso ficaria sozinha. Uma folha
                 gasta é mais barata que um impresso clínico montado errado.
              */
-            if (verso != null && (numeroInicial + desenhadas) % 2 == 0) {
+            if (precisaFolhaEmBranco(doc.pages.size + 1, verso != null)) {
                 desenhadas += paginaEmBranco(doc, arq)
             }
 
-            desenhadas += desenharArquivo(
-                doc, arq, pag, ident, logo,
-                numeroInicial + desenhadas, totalDaFicha)
+            desenhadas += desenharArquivo(doc, arq, pag, logo, desenharEtiqueta, rodape)
 
             if (verso != null) {
                 // SEM SOBREPOSIÇÃO: a etiqueta e o logotipo já estão na frente
-                // desta mesma folha.
+                // desta mesma folha. O rodapé, que numera, sai.
                 desenhadas += desenharArquivo(
-                    doc, verso, pag, ident, logo,
-                    numeroInicial + desenhadas, totalDaFicha, sobrepor = false)
+                    doc, verso, pag, logo, desenharEtiqueta, rodape, sobrepor = false)
             }
         }
         return desenhadas
     }
 
     /**
+     * A frente de uma folha com verso precisa de uma página em branco antes?
+     *
+     * Sim quando ela cairia em posição PAR, que a impressora em frente-e-verso
+     * põe no verso da folha anterior. [proximaPosicao] é a posição (base 1) que
+     * a próxima página teria no documento.
+     *
+     * Página SÓ DE FRENTE nunca recebe a folha em branco: ela pode começar no
+     * verso da última página anterior, o que economiza uma folha.
+     */
+    internal fun precisaFolhaEmBranco(proximaPosicao: Int, temVerso: Boolean): Boolean =
+        temVerso && proximaPosicao % 2 == 0
+
+    /**
      * Folha em branco, do tamanho da página que vem a seguir.
      *
      * Existe só para acertar o pareamento do frente-e-verso (ver [desenhar]).
-     * Sai limpa: sem número de rodapé, porque ela não é uma página do documento
-     * do ponto de vista de quem lê — é um efeito da impressão.
+     * Sai limpa: sem rodapé, porque ela não é uma página do documento do ponto
+     * de vista de quem lê — é um efeito da impressão. Mas conta na numeração
+     * das páginas seguintes, que é a ordem física que sai da impressora.
      */
     private fun paginaEmBranco(doc: PdfDocument, modelo: File): Int = try {
         var pfd: ParcelFileDescriptor? = null
@@ -142,15 +151,20 @@ object ProtocoloRenderer {
         0
     }
 
-    /** Um PDF do protocolo pode ter mais de uma página; todas entram. */
+    /**
+     * Um PDF do protocolo pode ter mais de uma página; todas entram.
+     *
+     * No VERSO, a página i segue a escolha de rodapé da página i da frente: é a
+     * mesma folha quando frente e verso têm o mesmo número de páginas, e uma
+     * página sem ajuste próprio segue a primeira.
+     */
     private fun desenharArquivo(
         doc: PdfDocument,
         arq: File,
         pag: ProtocoloStore.Pagina,
-        ident: Identificacao,
         logo: Bitmap?,
-        numeroInicial: Int,
-        totalDaFicha: Int,
+        desenharEtiqueta: (Canvas, RectF) -> Unit,
+        rodape: (Canvas, Int, Int, Int) -> Unit,
         /** `false` no verso: etiqueta e logotipo já vieram na frente da folha. */
         sobrepor: Boolean = true
     ): Int {
@@ -187,10 +201,15 @@ object ProtocoloRenderer {
                 cv.drawBitmap(bmp, null, RectF(0f, 0f, wPt.toFloat(), hPt.toFloat()), null)
                 bmp.recycle()
 
-                if (sobrepor && pag.etqAtiva) desenharEtiqueta(cv, pag, ident)
-                if (sobrepor && pag.logoAtivo && logo != null)
-                    desenharLogo(cv, pag, logo, wPt.toFloat())
-                desenharNumero(cv, wPt.toFloat(), hPt.toFloat(), numeroInicial + n, totalDaFicha)
+                val pos = pag.posicaoDa(i)
+                if (sobrepor && pos.etqAtiva) sobreporEtiqueta(cv, pos, desenharEtiqueta)
+                if (sobrepor && pos.logoAtivo && logo != null)
+                    desenharLogo(cv, pos, logo, wPt.toFloat())
+                // A página ainda não foi finalizada, e getPages() só conta as
+                // finalizadas: esta é a de número pages.size + 1.
+                if (pos.rodapeAtivo) {
+                    try { rodape(cv, doc.pages.size + 1, wPt, hPt) } catch (_: Exception) {}
+                }
 
                 doc.finishPage(nova)
                 n++
@@ -207,84 +226,34 @@ object ProtocoloRenderer {
     }
 
     /**
-     * Etiqueta virtual: a mesma identificação que abre as demais páginas.
-     *
-     * Fundo BRANCO OPACO sob a moldura. A etiqueta é colada sobre o documento
-     * do serviço, e sem o fundo o texto dela se misturaria com o que já estiver
-     * impresso naquele ponto — que é justamente onde o usuário calibrou para
-     * não haver nada, mas o app não tem como garantir isso.
+     * Etiqueta no retângulo calibrado, em mm convertidos para pontos, com o
+     * teto do maior formato que a configuração aceita. Não passa pelos tetos
+     * do cabeçalho das primeiras páginas: aqui vale o box que o usuário
+     * desenhou sobre o documento dele.
      */
-    private fun desenharEtiqueta(
-        cv: Canvas, pag: ProtocoloStore.Pagina, ident: Identificacao
+    private fun sobreporEtiqueta(
+        cv: Canvas, pos: ProtocoloStore.Posicao, desenharEtiqueta: (Canvas, RectF) -> Unit
     ) {
-        val x = pag.etqXmm * MM_TO_PT
-        val y = pag.etqYmm * MM_TO_PT
-        val w = pag.etqWmm.coerceAtMost(ProtocoloStore.ETQ_MAX_W) * MM_TO_PT
-        val h = pag.etqHmm.coerceAtMost(ProtocoloStore.ETQ_MAX_H) * MM_TO_PT
-        val r = RectF(x, y, x + w, y + h)
-
-        cv.drawRect(r, Paint().apply { color = Color.WHITE; style = Paint.Style.FILL })
-        cv.drawRect(r, Paint().apply {
-            color = Color.parseColor("#666666"); style = Paint.Style.STROKE
-            strokeWidth = 0.8f; isAntiAlias = true
-        })
-
-        val pRot = Paint().apply {
-            color = Color.parseColor("#444444"); textSize = 6.5f
-            typeface = Typeface.DEFAULT_BOLD; isAntiAlias = true
-        }
-        val pVal = Paint().apply { color = Color.BLACK; textSize = 8.5f; isAntiAlias = true }
-
-        // Nome em corpo maior: é o que se procura numa folha solta.
-        val pNome = Paint().apply {
-            color = Color.BLACK; textSize = 10f
-            typeface = Typeface.DEFAULT_BOLD; isAntiAlias = true
-        }
-        var ty = y + 12f
-        val margem = 5f
-        val util = w - margem * 2
-        // Encolhe até caber: cortar o nome do paciente seria pior que reduzir.
-        while (pNome.textSize > 6f && pNome.measureText(ident.nome) > util) {
-            pNome.textSize -= 0.5f
-        }
-        cv.drawText(ident.nome, x + margem, ty, pNome)
-        ty += 11f
-
-        fun linha(rot: String, valor: String) {
-            if (valor.isBlank() || ty > y + h - 3f) return
-            cv.drawText(rot, x + margem, ty, pRot)
-            cv.drawText(valor, x + margem + pRot.measureText(rot) + 4f, ty, pVal)
-            ty += 10f
-        }
-        linha("NASC.:", ident.nascimento)
-        linha("REG.:", ident.prontuario)
-        linha("SIM.:", ident.dataSimulacao)
+        try {
+            val x = pos.etqXmm * MM_TO_PT
+            val y = pos.etqYmm * MM_TO_PT
+            val w = pos.etqWmm.coerceAtMost(ProtocoloStore.ETQ_MAX_W) * MM_TO_PT
+            val h = pos.etqHmm.coerceAtMost(ProtocoloStore.ETQ_MAX_H) * MM_TO_PT
+            desenharEtiqueta(cv, RectF(x, y, x + w, y + h))
+        } catch (_: Exception) { /* a etiqueta nunca derruba a folha */ }
     }
 
     /** Logotipo ancorado à DIREITA, como nas demais páginas. */
     private fun desenharLogo(
-        cv: Canvas, pag: ProtocoloStore.Pagina, logo: Bitmap, larguraPagina: Float
+        cv: Canvas, pos: ProtocoloStore.Posicao, logo: Bitmap, larguraPagina: Float
     ) {
         try {
             val esc = minOf(LOGO_LARGURA_MAX_PT / logo.width, LOGO_ALTURA_PT / logo.height)
             val w = logo.width * esc
             val h = logo.height * esc
-            val direita = larguraPagina - pag.logoXmm * MM_TO_PT
-            val topo = pag.logoYmm * MM_TO_PT
+            val direita = larguraPagina - pos.logoXmm * MM_TO_PT
+            val topo = pos.logoYmm * MM_TO_PT
             cv.drawBitmap(logo, null, RectF(direita - w, topo, direita, topo + h), null)
         } catch (_: Exception) { /* logo é reforço, nunca requisito */ }
-    }
-
-    /** "n / total" discreto, na margem inferior direita. */
-    private fun desenharNumero(
-        cv: Canvas, w: Float, h: Float, numero: Int, total: Int
-    ) {
-        try {
-            val p = Paint().apply {
-                color = Color.parseColor("#777777"); textSize = 7f
-                isAntiAlias = true; textAlign = Paint.Align.RIGHT
-            }
-            cv.drawText("$numero / $total", w - 20f, h - 14f, p)
-        } catch (_: Exception) {}
     }
 }

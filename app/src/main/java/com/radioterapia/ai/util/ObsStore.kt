@@ -8,11 +8,20 @@ import java.io.File
  * fluxo de adicionar fotos do tratamento — sempre partindo da última versão.
  */
 object ObsStore {
+    private const val PREFIXO = ".obs_sim"
+    private const val EXTENSAO = ".txt"
+
+    /**
+     * Número em dígitos ASCII, pela mesma regra do Time-Out
+     * ([TimeOutStore.nomeOculto]): o nome não pode depender do idioma da
+     * interface, senão a observação some quando o idioma muda.
+     */
     private fun arquivo(pastaPaciente: File, numSim: Int) =
-        File(pastaPaciente, ".obs_sim%d.txt".format(numSim))
+        File(pastaPaciente, TimeOutStore.nomeOculto(PREFIXO, numSim, EXTENSAO))
 
     fun ler(pastaPaciente: File, numSim: Int): String = try {
-        arquivo(pastaPaciente, numSim).takeIf { it.exists() }?.readText()?.trim() ?: ""
+        TimeOutStore.arquivoParaLer(pastaPaciente, PREFIXO, numSim, EXTENSAO)
+            .takeIf { it.exists() }?.readText()?.trim() ?: ""
     } catch (_: Exception) { "" }
 
     /**
@@ -20,7 +29,8 @@ object ObsStore {
      *
      * Mesmo conserto do [TimeOutStore.gravar]: cria a pasta antes de escrever e
      * devolve o resultado em vez de engolir a exceção. A observação da simulação
-     * era perdida em silêncio junto com o Time-Out, pela mesma causa.
+     * era perdida em silêncio junto com o Time-Out, pela mesma causa. E, como
+     * lá, a cópia com algarismos de outra escrita sai depois de gravar.
      */
     fun gravar(pastaPaciente: File, numSim: Int, texto: String): Boolean = try {
         val f = arquivo(pastaPaciente, numSim)
@@ -30,6 +40,8 @@ object ObsStore {
             pastaPaciente.mkdirs()
             f.writeText(texto.trim())
         }
+        TimeOutStore.variantesLocalizadas(pastaPaciente, PREFIXO, numSim, EXTENSAO)
+            .forEach { it.delete() }
         true
     } catch (_: Exception) { false }
 }

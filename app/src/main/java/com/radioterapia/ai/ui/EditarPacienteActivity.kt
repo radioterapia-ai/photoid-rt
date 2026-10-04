@@ -51,7 +51,12 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
         auditLogger = AuditLogger(this)
 
         nomeOriginal = intent.getStringExtra(EXTRA_NOME) ?: ""
-        val dados = patientCache.obterDadosPaciente(nomeOriginal)
+        // Com o prontuário de quem abriu (o visualizador do paciente), o
+        // registro é o deste paciente. Só pelo nome, a busca escolhe entre
+        // homônimas o registro mais completo — e a edição, a migração da pasta
+        // e a exclusão seguiriam o prontuário da outra.
+        val prontuarioPedido = intent.getStringExtra(EXTRA_PRONTUARIO) ?: ""
+        val dados = patientCache.obterDadosPaciente(nomeOriginal, prontuarioPedido)
         if (dados == null) {
             Toast.makeText(this, getString(R.string.hc_patient_not_found), Toast.LENGTH_LONG).show()
             finish()
@@ -174,13 +179,6 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
     private var medicoEditado = ""
     private var equipEditado = ""
 
-    private fun normalizarNome(nome: String): String {
-        val s = java.text.Normalizer.normalize(nome, java.text.Normalizer.Form.NFD)
-            .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
-        return s.replace(Regex("[^A-Za-z0-9 ]"), "")
-            .replace(Regex("\\s+"), " ").trim().uppercase(java.util.Locale.getDefault())
-    }
-
     /** ATUALIZAR TUDO: renomeia a pasta e os arquivos, migra o registro, transfere a
      *  lista de tratamento e regenera o PDF da simulação mais recente com o novo nome. */
     private fun executarMigracao(novoNome: String, novoNasc: String, novoPront: String,
@@ -218,8 +216,6 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
         return try {
             val photos = com.radioterapia.ai.util.StorageLocal.photos(this)
             val prontAntigo = dadosOriginais.prontuario
-            val prefA = normalizarNome(nomeOriginal).replace(" ", "_")
-            val prefN = normalizarNome(novoNome).replace(" ", "_")
 
             // Pasta antiga pelo resolvedor oficial. O fallback anterior casava
             // SO POR NOME: com duas homonimas, editar o cadastro de uma
@@ -227,10 +223,16 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
             // nome errado sem nenhum aviso. resolverPastaSim aplica a regra de
             // divergencia de prontuario e, quando nao tem certeza, devolve o
             // caminho exato (que nao existe) — e o `exists()` abaixo trata.
-            val dirAntigo = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
-                this, nomeOriginal, 1,
-                com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomeOriginal, prontAntigo),
-                prontAntigo)
+            // GUARDA: sem a pasta exata, o resolvedor desempata por uma regra
+            // mais fraca (sem prontuário, a primeira homônima de nome exato; com
+            // ele, a pasta antiga mesmo ao lado de uma homônima de outro
+            // prontuário). Só se renomeia a pasta que a regra de escolha aceita;
+            // senão ela fica como está, que é o erro barato.
+            val nomeExato = com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nomeOriginal, prontAntigo)
+            val dirResolvido = com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
+                this, nomeOriginal, 1, nomeExato, prontAntigo)
+            val dirAntigo = if (!dirResolvido.exists() || pastaServeAEstePaciente(dirResolvido, nomeExato))
+                dirResolvido else java.io.File(photos, nomeExato)
             val dirNovo = java.io.File(photos,
                 com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(novoNome, novoPront))
 
@@ -239,10 +241,36 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
                     return "conflito"
                 if (dirNovo.absolutePath != dirAntigo.absolutePath &&
                     !dirAntigo.renameTo(dirNovo)) return "falha ao renomear a pasta"
-                // Prefixo do nome nos arquivos: PREF_ANTIGO_* -> PREF_NOVO_*
-                dirNovo.listFiles()?.forEach { f ->
-                    if (f.isFile && f.name.startsWith(prefA + "_"))
-                        f.renameTo(java.io.File(dirNovo, prefN + f.name.substring(prefA.length)))
+                // O nome do paciente nos ARQUIVOS, pela regra de cada esquema
+                // (NomeArquivo.renomearParaPaciente):
+                //  - esquema novo: troca so as iniciais; tipo, data, contador e
+                //    os sufixos de arquivada e de original ficam, e o par foto +
+                //    original continua par. Iniciais iguais = arquivo intocado.
+                //  - legado: continua legado, so o prefixo com o nome completo
+                //    muda, reconhecido nas duas grafias em que foi gravado (com
+                //    e sem apostrofo/hifen). Nenhum arquivo e convertido para o
+                //    esquema novo.
+                // ARQUIVADAS entra junto (um nivel): o arquivado tambem e
+                // registro do paciente e nao pode ficar com o nome antigo.
+                // Alvo que ja existe nao e sobrescrito, e cada arquivo que nao
+                // pode ser renomeado conta no log de auditoria.
+                var falhas = 0
+                val pastasComArquivos = listOf(dirNovo,
+                    java.io.File(dirNovo, com.radioterapia.ai.util.FotosArquivadas.PASTA))
+                for (p in pastasComArquivos) {
+                    p.listFiles()?.forEach { f ->
+                        if (!f.isFile || f.name.startsWith(".")) return@forEach
+                        val novo = com.radioterapia.ai.util.NomeArquivo
+                            .renomearParaPaciente(f.name, nomeOriginal, novoNome) ?: return@forEach
+                        if (novo == f.name) return@forEach
+                        val alvo = java.io.File(p, novo)
+                        if (alvo.exists() || !f.renameTo(alvo)) falhas++
+                    }
+                }
+                if (falhas > 0) {
+                    auditLogger.registrar(AuditLogger.Tipo.ERROR,
+                        "Arquivos nao renomeados na migracao",
+                        mapOf("nome_novo" to novoNome, "arquivos" to falhas))
                 }
             }
 
@@ -253,7 +281,7 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
                 trat.remover(nomeOriginal); trat.alocar(novoNome)
             }
 
-            try { regenerarPdfPosMigracao(novoNome, novoNasc, novoPront, dirNovo, prefN, sexoEditado) }
+            try { regenerarPdfPosMigracao(novoNome, novoNasc, novoPront, dirNovo, sexoEditado) }
             catch (_: Exception) { /* pdf é best-effort; fotos/registro já migrados */ }
             "ok"
         } catch (e: Exception) { e.message ?: "erro" }
@@ -268,10 +296,14 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
      * pastas acontecia, que é justamente o pool de onde a varredura precisa sair.
      */
     private suspend fun regenerarPdfPosMigracao(nome: String, nasc: String, pront: String,
-                                                dir: java.io.File, prefN: String, sexo: String) {
+                                                dir: java.io.File, sexo: String) {
         if (!dir.exists()) return
+        // Só simulação da pasta migrada ('dir'), buscada com o prontuário: a
+        // mais recente pelo nome pode ser a de uma homônima, e a ficha dela
+        // seria gravada nesta pasta com o cabeçalho deste paciente.
         val fetcher = com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this)
-        val sim = fetcher.buscarSimulacoes(nome)
+        val sim = fetcher.buscarSimulacoes(nome, pront)
+            .filter { it.nomePastaCompleto == dir.name }
             .maxByOrNull { it.timestampPrincipal } ?: return
 
         val fotos = mutableListOf<java.io.File>()
@@ -284,18 +316,19 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
             fotos.add(f.arquivoLocal); rotulos.add("Acessório." + (i + 1)) }
         if (fotos.isEmpty()) return
 
-        val tagSim = if (sim.numeroSimulacao > 1) "_NOVASIM" + (sim.numeroSimulacao - 1) else ""
-        // Remove os PDFs antigos DESTA simulação (traziam o nome anterior)
+        // Remove os PDFs antigos DESTA simulação (traziam o nome anterior). Só
+        // desta: as simulações dividem a pasta, e a regra de NomeArquivo separa
+        // pela marca no nome, nos dois esquemas.
         dir.listFiles()?.filter { f ->
-            f.isFile && f.name.endsWith(".pdf", true) &&
-                (if (sim.numeroSimulacao == 1) !f.name.contains("_NOVASIM")
-                 else f.name.contains("_NOVASIM" + (sim.numeroSimulacao - 1)))
+            f.isFile && com.radioterapia.ai.util.NomeArquivo
+                .ehFichaDaSimulacao(f.name, sim.numeroSimulacao)
         }?.forEach { it.delete() }
 
         val config = com.radioterapia.ai.AppConfig(this)
-        val ts = java.text.SimpleDateFormat("dd-MMM-yyyy_HH-mm-ss",
-            java.util.Locale("pt", "BR")).format(java.util.Date()).uppercase()
-        val saida = java.io.File(dir, prefN + "_FOLHA_SIMULACAO" + tagSim + "_" + ts + ".pdf")
+        // Gravada na pasta do paciente: nome com as iniciais do nome NOVO.
+        val saida = java.io.File(dir, com.radioterapia.ai.util.NomeArquivo.montar(
+            nome, com.radioterapia.ai.util.NomeArquivo.Tipo.FICHA, sim.numeroSimulacao,
+            System.currentTimeMillis(), 1, "pdf"))
         val dados = com.radioterapia.ai.pdf.PdfBuilder.DadosCabecalho(
             nomePaciente = nome,
             nascimento = nasc,
@@ -305,7 +338,12 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
             numeroSimulacao = sim.numeroSimulacao,
             nomeClinica = config.nomeClinica,
             sexo = sexo,
-            medicoAssistente = patientCache.obterDadosPaciente(nome)?.medicoAssistente ?: ""
+            medicoAssistente = patientCache.obterDadosPaciente(nome, pront)
+                ?.takeIf { d ->
+                    com.radioterapia.ai.treatment.TreatmentPhotoFetcher.cadastroServeAoPaciente(
+                        pront, d.prontuario, pront.isBlank() && patientCache.temHomonimos(nome))
+                }
+                ?.medicoAssistente ?: ""
         )
         // Time-Out da pasta correta (após migração, os arquivos já estão em 'dir').
         val toReg = com.radioterapia.ai.util.TimeOutStore.ler(dir, sim.numeroSimulacao)
@@ -399,7 +437,13 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
      *  (a próxima sincronização não deve retê-lo se ele foi apagado lá também). */
     private fun removerTudoLocal() {
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+            // -1: nada foi excluído, porque sem prontuário não há como saber
+            // quais pastas e registros são deste paciente e quais da homônima.
             val arquivos = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
+                // GUARDA: sem prontuário, pastasDoPaciente fica com a homônima de
+                // nome exato, e remover() e removerPorNome() apagam toda chave do
+                // nome. Na dúvida nada sai.
+                if (semProntuarioComHomonimas()) return@withContext -1
                 var removidos = 0
                 try {
                     // A pasta sai do MESMO resolvedor que a leitura usa. Antes
@@ -410,9 +454,11 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
                     // na duvida, e vazio aqui significa "nao apaguei nada",
                     // que e o erro barato.
                     //
-                    // Sao TODAS as pastas, nao uma: reirradiacao mora em pastas
-                    // irmas ("... NOVA SIMULACAO n"), que antes sobreviviam a
-                    // uma exclusao que prometia remover tudo.
+                    // Sao TODAS as pastas, nao uma. Hoje a reirradiacao divide
+                    // a pasta do paciente, separada pela marca no nome do
+                    // arquivo; mas layouts antigos guardavam cada reirradiacao
+                    // numa pasta irma ("... NOVA SIMULACAO n"), que sobreviveria
+                    // a uma exclusao que promete remover tudo.
                     val pastas = com.radioterapia.ai.util.StorageLocal.pastasDoPaciente(
                         this@EditarPacienteActivity, nomeOriginal, dadosOriginais.prontuario)
                     for (dir in pastas) {
@@ -422,10 +468,22 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
                     }
                 } catch (_: Exception) {}
                 patientCache.remover(nomeOriginal, dadosOriginais.prontuario)
-                patientCache.removerPorNome(nomeOriginal)  // chaves legadas/órfãs
+                // Chaves legadas/órfãs. GUARDA: removerPorNome apaga TODA chave
+                // do nome; com homônima de outro prontuário ainda no cadastro, o
+                // registro dela iria junto (nascimento, sexo, médico).
+                if (patientCache.prontuariosDoNome(nomeOriginal).isEmpty())
+                    patientCache.removerPorNome(nomeOriginal)
                 com.radioterapia.ai.treatment.TreatmentListManager(this@EditarPacienteActivity)
                     .remover(nomeOriginal)
                 removidos
+            }
+            if (arquivos < 0) {
+                AlertDialog.Builder(this@EditarPacienteActivity)
+                    .setTitle(R.string.warning)
+                    .setMessage(R.string.edit_remove_incerto)
+                    .setPositiveButton(R.string.ok, null)
+                    .show()
+                return@launch
             }
             auditLogger.registrar(
                 AuditLogger.Tipo.EDIT, "Paciente excluído (dados e fotos locais)",
@@ -438,8 +496,40 @@ class EditarPacienteActivity : com.radioterapia.ai.BaseActivity() {
         }
     }
 
+    /**
+     * Este paciente não tem prontuário, e há como ele ser outro: pastas do
+     * nome que são de mais de um paciente, ou outro registro do nome com
+     * prontuário. Sem prontuário nada desempata. Só disco e cadastro: fora da
+     * thread principal.
+     */
+    private fun semProntuarioComHomonimas(): Boolean {
+        if (dadosOriginais.prontuario.isNotBlank()) return false
+        val nomes = com.radioterapia.ai.util.StorageLocal.photos(this)
+            .listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty()
+        return com.radioterapia.ai.treatment.TreatmentPhotoFetcher.decidirPasta(
+            nomes, nomeOriginal, "", "",
+            patientCache.prontuariosDoNome(nomeOriginal).isNotEmpty()) is
+            com.radioterapia.ai.treatment.TreatmentPhotoFetcher.DecisaoPasta.Incerta
+    }
+
+    /**
+     * A pasta achada pelo resolvedor é a deste paciente? É, quando tem o nome
+     * exato da pasta dele, ou quando a regra de escolha a aceita
+     * ([com.radioterapia.ai.treatment.TreatmentPhotoFetcher.pastaDeRegistrosServe]).
+     */
+    private fun pastaServeAEstePaciente(pasta: java.io.File, nomeExato: String): Boolean {
+        val pront = dadosOriginais.prontuario
+        val nomes = com.radioterapia.ai.util.StorageLocal.photos(this)
+            .listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty()
+        return com.radioterapia.ai.treatment.TreatmentPhotoFetcher.pastaDeRegistrosServe(
+            pasta.name, nomeExato, nomes, nomeOriginal, pront,
+            pront.isBlank() && patientCache.prontuariosDoNome(nomeOriginal).isNotEmpty())
+    }
+
     companion object {
         const val EXTRA_NOME = "extra_nome"
+        /** Prontuário do paciente aberto; vazio, o registro é procurado só pelo nome. */
+        const val EXTRA_PRONTUARIO = "extra_prontuario"
         const val EXTRA_NOME_FINAL = "nome_final"
     }
 }

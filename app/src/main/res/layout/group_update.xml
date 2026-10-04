@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    ATUALIZAÇÃO DO APLICATIVO.
+    ATUALIZAR APLICATIVO.
 
-    Dois botões, e a diferença entre eles é deliberada: "Checar" só pergunta, e
-    "Atualizar" baixa, confere o hash e chama o instalador do sistema. Separados
-    porque perguntar não tem consequência e instalar tem, e porque em rede
-    interna a pergunta costuma falhar — falhar ao perguntar não pode parecer
-    falha ao atualizar.
+    Um botão só, «Atualizar agora», que faz o caminho inteiro: pergunta ao
+    repositório, confirma com a versão e as notas, pede ao Android a liberação
+    para instalar, grava a cópia de segurança, baixa e confere o SHA-256,
+    confere a assinatura e entrega ao instalador do sistema. Perguntar e
+    instalar são passos do mesmo caminho. Em rede interna a pergunta costuma
+    falhar, e essa falha aparece na linha de estado com frase própria, que não
+    se confunde com falha ao atualizar.
 
-    O interruptor de procura automática fica no TOPO, antes dos botões, porque é
+    O interruptor de procura automática fica no TOPO, antes do botão, porque é
     a decisão de rede: é a única situação em que este app contata endereço que
-    não foi a instituição que informou.
+    não foi a instituição que informou. Ele governa só a procura em segundo
+    plano; o botão sempre pergunta, porque há alguém esperando a resposta.
+
+    A linha de estado nasce recolhida e só aparece quando tem texto. A página
+    da versão é a saída manual: aparece quando a procura de fundo já achou
+    versão nova, depois de «Depois» e depois de um download que falhou.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -41,10 +48,10 @@
 
     <View style="@style/SeparadorFino" />
 
-    <Button android:id="@+id/btnUpdateChecar" style="@style/ButtonSecondary"
+    <Button android:id="@+id/btnUpdateAtualizar" style="@style/ButtonPrimary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/update_check_btn" />
+        android:text="@string/update_now_btn" />
 
     <TextView android:id="@+id/txtUpdateEstado"
         android:layout_width="match_parent"
@@ -52,23 +59,7 @@
         android:layout_marginTop="6dp"
         android:padding="8dp"
         android:textSize="13sp"
-        android:textColor="@color/text_secondary" />
-
-    <Button android:id="@+id/btnUpdateAgora" style="@style/ButtonPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:visibility="gone"
-        android:text="@string/update_now_btn" />
-
-    <TextView android:id="@+id/txtUpdateNotas"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:padding="8dp"
-        android:textSize="13sp"
-        android:visibility="gone"
-        android:background="@drawable/bg_card_warning"
         android:textColor="@color/text_secondary" />
 
     <Button android:id="@+id/btnUpdatePagina" style="@style/ButtonSecondary"

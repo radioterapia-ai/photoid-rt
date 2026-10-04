@@ -47,7 +47,9 @@ class CredentialStore(context: Context) {
     fun obterSenha(): String = prefs.getString(KEY_SENHA, "") ?: ""
 
     fun limparSenha() {
-        prefs.edit().remove(KEY_SENHA).apply()
+        // commit, não apply: quem limpa a senha grava o destino novo logo em
+        // seguida, e a senha antiga não pode sobreviver a uma queda no meio.
+        prefs.edit().remove(KEY_SENHA).commit()
     }
 
     // ---- Senhas dos perfis de sincronização, uma por perfil.
@@ -67,7 +69,7 @@ class CredentialStore(context: Context) {
 
     fun limparSenhaPerfil(idPerfil: String) {
         if (idPerfil.isBlank()) return
-        prefs.edit().remove(PREFIXO_PERFIL + idPerfil).apply()
+        prefs.edit().remove(PREFIXO_PERFIL + idPerfil).commit()
     }
 
     /**

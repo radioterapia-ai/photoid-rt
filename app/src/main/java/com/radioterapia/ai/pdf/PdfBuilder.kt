@@ -79,8 +79,10 @@ object PdfBuilder {
     /** Teto de ampliação da célula quando sobra espaço na grade (25%). */
     private const val MAX_AMPLIACAO = 1.25f
     /** Raio dos cantos arredondados. Um só valor para o contorno da etiqueta e
-     *  para as fotos, para os dois não saírem do mesmo desenho por descuido. */
-    private const val RAIO_CANTO = 10f
+     *  para as fotos, para os dois não saírem do mesmo desenho por descuido.
+     *  `internal` porque a prévia da calibração do protocolo
+     *  (ProtocoloPaginaView) arredonda o box com o mesmo raio. */
+    internal const val RAIO_CANTO = 10f
     private const val LEGENDA_HEIGHT = 12f
 
     /** Proporção da foto capturada (16:9). Teto de largura da célula em
@@ -116,6 +118,50 @@ object PdfBuilder {
      *  70% de 9,5 pt da 6,65 pt no valor — o mesmo corpo das celulas da tabela
      *  de fracoes ao lado, que e lida e preenchida a mao todo dia. */
     private const val PISO_LINHA = 0.70f
+
+    // ---- OBSERVAÇÕES: corpo, entrelinha e a caixa que cresce com o texto ----
+
+    /** Corpo das observações, fixo: Typeface.DEFAULT preto, a família e o peso
+     *  dos descritivos dentro do quadro da etiqueta. Não segue o corpo que o
+     *  quadro calcula, que cai com nome longo e faria a observação mudar de
+     *  tamanho de paciente para paciente. */
+    private const val OBS_CORPO = 11.5f
+    /** Piso do corpo das observações: o corpo que a caixa do Time-Out sempre
+     *  usou. A observação nunca sai menor que isso; o texto que nem nele cabe
+     *  no teto é cortado com " …" (ver arranjarObservacoes). */
+    private const val OBS_CORPO_MIN = 8.5f
+    private const val OBS_PASSO_CORPO = 0.5f
+    private const val OBS_ENTRELINHA = 1.25f
+    /** Respiro entre a borda da caixa e o texto, em cima, embaixo e dos lados. */
+    private const val OBS_PAD = 6f
+    /** Faixa do título "Observações" no alto da caixa do Time-Out. */
+    private const val OBS_CAB_TO = 15f
+    /** Caixa do Time-Out sem texto, ou com até 2 linhas: a de sempre, que deixa
+     *  espaço para escrever à mão e não mexe na tabela. */
+    private const val OBS_TO_ALTURA_MIN = 66f
+    /**
+     * Teto da altura do TEXTO das observações, nas duas páginas.
+     *
+     * Sai da tabela de 40 frações do Time-Out, que é A4 fixo: com a caixa de
+     * 66 pt cada uma das 20 linhas tem 19,5 pt, e a menor linha em que ainda se
+     * escreve à mão é 18 pt (6,35 mm, pauta estreita). São 20 × 1,5 = 30 pt a
+     * ceder, e a caixa vai a no máximo 96 pt = 15 (título) + 2 × 6 (respiro) +
+     * 69 (texto). Mudar este número muda a menor linha da tabela.
+     */
+    private const val OBS_TEXTO_MAX = 69f
+    private const val OBS_TO_ALTURA_MAX = OBS_CAB_TO + 2 * OBS_PAD + OBS_TEXTO_MAX
+    /** Largura do rótulo "Observações" à esquerda da faixa das páginas de fotos. */
+    private const val OBS_ROTULO_W = 95f
+    /** Largura útil do texto na caixa do Time-Out, que é sempre A4 retrato. */
+    private const val LARGURA_TEXTO_OBS_TO = A4_CURTO - 2 * MARGIN - 2 * OBS_PAD
+
+    // Estado por geração das observações (como obsBandHeight). Declarado depois
+    // das constantes porque o inicializador não pode citar constante declarada
+    // mais abaixo no objeto.
+    /** Corpo das observações desta simulação, o MESMO no Time-Out e nas fotos. */
+    private var obsCorpo = OBS_CORPO
+    /** Linhas já quebradas para a faixa das páginas de fotos. */
+    private var obsLinhasFotos: List<String> = emptyList()
 
 
     /** Define orientação da página (afeta PAGE_WIDTH/HEIGHT). */
@@ -360,8 +406,12 @@ object PdfBuilder {
         val doc = PdfDocument()
         val logo = LogoManager(context).obterBitmap()
         try {
-            if (desenharSimulacao(doc, context, item, logo)) marcarFrenteVerso(arquivoSaida)
+            val comVerso = desenharSimulacao(doc, context, item, logo)
             FileOutputStream(arquivoSaida).use { saida -> doc.writeTo(saida) }
+            // Marca OU desmarca: a mesma ficha regerada com outro protocolo, sem
+            // verso, deixa de forçar a borda longa na impressão.
+            if (comVerso) marcarFrenteVerso(arquivoSaida, context)
+            else desmarcarFrenteVerso(arquivoSaida, context)
             return arquivoSaida
         } finally {
             doc.close()
@@ -379,17 +429,32 @@ object PdfBuilder {
      * Cada item traz a própria configuração (orientação, etiqueta, margem), de
      * modo que um lote com fichas configuradas de formas diferentes continua
      * correto — o PdfDocument aceita páginas de tamanhos distintos.
+     *
+     * UMA FOLHA NUNCA LEVA DOIS PACIENTES. Em frente-e-verso, um paciente com
+     * número ímpar de páginas faria a primeira página do seguinte sair no verso
+     * da última dele. Por isso, quando a impressão é frente-e-verso, cada
+     * simulação começa em posição ímpar, com uma página em branco antes quando
+     * preciso (ver [precisaPaginaSeparadora]). Em simplex nada muda.
      */
     fun gerarLoteAgrupado(context: Context, itens: List<ItemLote>, arquivoSaida: File): File? {
         if (itens.isEmpty()) return null
         val doc = PdfDocument()
         val logo = LogoManager(context).obterBitmap()
         var desenhadas = 0
+        var algumVerso = false
+        // Frente-e-verso quando a impressora está configurada assim, ou quando
+        // algum protocolo do lote tem verso — que força a borda longa na
+        // impressão por IP, qualquer que seja a configuração.
+        val duplex = try {
+            com.radioterapia.ai.AppConfig(context).printerDuplexMode != "simplex" ||
+                itens.any { protocoloTemVerso(context, it.protocoloId) }
+        } catch (_: Exception) { false }
         try {
             for (item in itens) {
                 try {
-                    if (desenharSimulacao(doc, context, item, logo))
-                        marcarFrenteVerso(arquivoSaida)
+                    if (precisaPaginaSeparadora(doc.pages.size, duplex))
+                        acrescentarPaginaEmBranco(doc)
+                    if (desenharSimulacao(doc, context, item, logo)) algumVerso = true
                     desenhadas++
                 } catch (_: Exception) {
                     // Uma simulação com foto corrompida não derruba o lote inteiro.
@@ -397,6 +462,8 @@ object PdfBuilder {
             }
             if (desenhadas == 0) return null
             FileOutputStream(arquivoSaida).use { saida -> doc.writeTo(saida) }
+            if (algumVerso) marcarFrenteVerso(arquivoSaida, context)
+            else desmarcarFrenteVerso(arquivoSaida, context)
             return arquivoSaida
         } catch (e: Exception) {
             return null
@@ -429,16 +496,23 @@ object PdfBuilder {
         else { margemExtraEsqPt = extra; margemExtraTopoPt = 0f }
 
         headerHAtual = calcularHeaderH()
-        // Altura PROPORCIONAL ao numero de linhas. Era fixa em 54, dimensionada
-        // para tres linhas; com as observacoes reduzidas a duas, sobrava uma
-        // faixa de papel vazio dentro da caixa e o grid de fotos comecava mais
-        // abaixo do que precisava — na folha deitada isso empurrava as fotos
-        // para o centro e deixava a caixa parecendo deslocada.
-        obsBandHeight = if (observacoesTexto.isBlank()) 0f else {
-            val nLinhas = observacoesTexto.split("\n")
-                .count { it.isNotBlank() }.coerceIn(1, 2)
-            18f + nLinhas * 12f
-        }
+        // OBSERVAÇÕES: o corpo é escolhido UMA vez por simulação, olhando todas
+        // as caixas em que o texto vai sair — a do Time-Out (quando há) e a
+        // faixa das fotos, que é a mais estreita em retrato. Assim as duas
+        // páginas saem sempre no mesmo corpo.
+        //
+        // A faixa tem a altura das linhas DESENHADAS, já quebradas pela
+        // largura, e não das digitadas: uma linha digitada que quebra em duas
+        // ganha a altura da segunda, em vez de desenhá-la por cima da borda.
+        // A grade de fotos se encaixa no que sobra (ver desenharGridFotos).
+        val medirObs = medidorObservacoes()
+        val larguraFaixaObs = PAGE_WIDTH - MARGIN * 2 - OBS_ROTULO_W - 2 * OBS_PAD
+        val largurasObs = (if (item.timeOut != null) listOf(LARGURA_TEXTO_OBS_TO)
+            else emptyList()) + larguraFaixaObs
+        obsCorpo = escolherCorpoObs(observacoesTexto, largurasObs, medirObs)
+        val arranjoFotos = arranjarObservacoes(observacoesTexto, larguraFaixaObs, obsCorpo, medirObs)
+        obsLinhasFotos = arranjoFotos.linhas
+        obsBandHeight = alturaFaixaObsFotos(arranjoFotos)
 
         // ----- A etiqueta NÃO vai para o grid de fotos -----
         // Pedido dos técnicos: a folha impressa serve para conferir o setup, e a
@@ -463,7 +537,7 @@ object PdfBuilder {
         if (item.timeOut != null) {
             try {
                 desenharPaginaTimeOut(doc, context, dados, item.timeOut, logo,
-                    item.observacoes, item.etiquetaLarguraMm, item.etiquetaAlturaMm)
+                    item.observacoes, item.etiquetaLarguraMm, item.etiquetaAlturaMm, obsCorpo)
             } catch (_: Exception) { /* nunca bloqueia a folha de fotos */ }
         }
 
@@ -472,6 +546,9 @@ object PdfBuilder {
             val info = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, numeroPagina).create()
             val page = doc.startPage(info)
             val canvas = page.canvas
+            // O recuo de furação vale para o conteúdo, não para o rodapé: ver
+            // o restoreToCount antes de desenharRodape.
+            val salvo = canvas.save()
             canvas.translate(margemExtraEsqPt, margemExtraTopoPt)
 
             desenharCabecalhoCompleto(canvas, dados, logo)
@@ -489,6 +566,10 @@ object PdfBuilder {
             desenharGridFotos(canvas, fotosPag, totalNaSimulacao = fotos.size,
                 indiceInicial = inicio, rotulos = rotulosGrid, nomePaciente = dados.nomePaciente)
 
+            // RODAPÉ NA FOLHA FÍSICA. Dentro do translate, na folha deitada o
+            // recuo empurraria a base para fora do papel, e em pé o centro
+            // andaria junto com o recuo.
+            canvas.restoreToCount(salvo)
             desenharRodape(canvas, numeroPagina, dados.nomeClinica)
 
             doc.finishPage(page)
@@ -545,6 +626,8 @@ object PdfBuilder {
         // recuo vai a esquerda; em paisagem vai ao topo, que e onde a folha e
         // furada quando impressa deitada.
         val recuo = margemExtraEsqPt + margemExtraTopoPt   // so um deles e != 0
+        // O rodape fica FORA do recuo: ver o restoreToCount antes dele.
+        val salvoRub = cv.save()
         if (retrato) cv.translate(recuo, 0f) else cv.translate(0f, recuo)
 
         val mL = MARGIN
@@ -688,6 +771,7 @@ object PdfBuilder {
             yCol += 8f
         }
 
+        cv.restoreToCount(salvoRub)
         desenharRodape(cv, doc.pages.size + 1, dados.nomeClinica)
         doc.finishPage(page)
         PAGE_WIDTH = pwSalvo
@@ -697,12 +781,16 @@ object PdfBuilder {
     /**
      * Paginas do protocolo, no fim da ficha.
      *
-     * O TOTAL do rodape e calculado ANTES de desenhar, somando as paginas ja
-     * feitas com as que o protocolo vai acrescentar. Sem isso o "n de N" das
-     * paginas do protocolo diria um total que ainda nao existe — e a folha
-     * anexada contradiria a que a antecede.
+     * A ETIQUETA E O RODAPE SAO OS DESTA CLASSE, passados ao renderizador como
+     * funcoes. A etiqueta do protocolo e desenhada pela MESMA rotina das
+     * primeiras paginas (com fundo branco, porque cai sobre o documento da
+     * clinica), e o rodape tem o mesmo formato e a mesma numeracao de toda
+     * pagina da ficha. Uma rotina paralela no renderizador divergiria da
+     * original a cada ajuste feito so numa delas.
+     *
+     * @return `true` se alguma folha do protocolo tem verso e alguma pagina
+     *   entrou na ficha.
      */
-    /** @return `true` se alguma folha do protocolo tem verso. */
     private fun desenharProtocolo(
         doc: PdfDocument, context: Context, dados: DadosCabecalho,
         item: ItemLote, logo: android.graphics.Bitmap?
@@ -711,48 +799,46 @@ object PdfBuilder {
         val prot = store.obter(item.protocoloId) ?: return false
         if (prot.paginas.isEmpty()) return false
 
-        val jaFeitas = doc.pages.size
+        val temVerso = protocoloTemVerso(store, prot)
+        val acrescentadas = com.radioterapia.ai.protocolo.ProtocoloRenderer.desenhar(
+            doc, context, prot, logo,
+            desenharEtiqueta = { cv, r -> desenharEtiquetaVirtual(cv, r, dados, fundoBranco = true) },
+            rodape = { cv, n, w, h -> desenharRodape(cv, n, dados.nomeClinica, w, h) })
+        return temVerso && acrescentadas > 0
+    }
 
-        /*
-            A CONTA TEM DE INCLUIR O VERSO E A FOLHA DE AJUSTE.
+    /** O protocolo [id] tem alguma folha com verso? Vazio ou ilegivel = nao. */
+    private fun protocoloTemVerso(context: Context, id: String): Boolean {
+        if (id.isBlank()) return false
+        return try {
+            val store = com.radioterapia.ai.protocolo.ProtocoloStore(context)
+            val prot = store.obter(id) ?: return false
+            protocoloTemVerso(store, prot)
+        } catch (_: Exception) { false }
+    }
 
-            O rodape diz "n de N", e o N e calculado aqui, antes de desenhar. A
-            simulacao abaixo repete a MESMA regra de pareamento do
-            ProtocoloRenderer: quando uma folha tem verso e a frente cairia em
-            posicao par, entra uma pagina em branco antes. Contar so as frentes
-            faria a ficha anunciar um total menor do que ela tem — e num
-            documento clinico o rodape que erra o total e pior que rodape nenhum.
-         */
-        var posicao = jaFeitas
-        var aAcrescentar = 0
-        var temVerso = false
-        prot.paginas.forEach { pag ->
-            val nFrente = store.arquivoPagina(prot, pag)
-                ?.let { com.radioterapia.ai.pdf.PdfPaginas.contar(it) } ?: 0
-            if (nFrente == 0) return@forEach
-            val nVerso = store.arquivoVerso(prot, pag)
-                ?.let { com.radioterapia.ai.pdf.PdfPaginas.contar(it) } ?: 0
-            if (nVerso > 0) {
-                temVerso = true
-                if ((posicao + 1) % 2 == 0) { aAcrescentar++; posicao++ }
-            }
-            aAcrescentar += nFrente + nVerso
-            posicao += nFrente + nVerso
-        }
-        if (aAcrescentar == 0) return false
+    private fun protocoloTemVerso(
+        store: com.radioterapia.ai.protocolo.ProtocoloStore,
+        prot: com.radioterapia.ai.protocolo.ProtocoloStore.Protocolo
+    ): Boolean = prot.paginas.any {
+        store.arquivoPagina(prot, it) != null && store.arquivoVerso(prot, it) != null
+    }
 
-        val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        com.radioterapia.ai.protocolo.ProtocoloRenderer.desenhar(
-            doc, context, prot,
-            com.radioterapia.ai.protocolo.ProtocoloRenderer.Identificacao(
-                nome = dados.nomePaciente,
-                nascimento = dados.nascimento,
-                prontuario = dados.prontuario,
-                dataSimulacao = fmt.format(dados.dataSimulacao)),
-            logo,
-            numeroInicial = jaFeitas + 1,
-            totalDaFicha = jaFeitas + aAcrescentar)
-        return temVerso
+    /**
+     * Separador do lote: a proxima simulacao precisa de uma pagina em branco
+     * antes dela? So em frente-e-verso, e so quando o documento tem numero
+     * impar de paginas — senao a primeira pagina do paciente seguinte cairia no
+     * verso da ultima do anterior.
+     */
+    internal fun precisaPaginaSeparadora(paginasNoDocumento: Int, duplex: Boolean): Boolean =
+        duplex && paginasNoDocumento % 2 == 1
+
+    /** Pagina A4 retrato em branco, sem rodape: e efeito da impressao, nao conteudo. */
+    private fun acrescentarPaginaEmBranco(doc: PdfDocument) {
+        val pagina = doc.startPage(
+            PdfDocument.PageInfo.Builder(A4_CURTO, A4_LONGO, doc.pages.size + 1).create())
+        pagina.canvas.drawColor(Color.WHITE)
+        doc.finishPage(pagina)
     }
 
     /**
@@ -889,13 +975,20 @@ object PdfBuilder {
         logo: Bitmap?,
         observacoes: String,
         etiquetaLarguraMm: Int,
-        etiquetaAlturaMm: Int
+        etiquetaAlturaMm: Int,
+        /** Corpo das observações, escolhido em desenharSimulacao para as duas páginas. */
+        corpoObs: Float
     ) {
         val pw = 595; val ph = 842
         val numeroPagina = doc.pages.size + 1
         val page = doc.startPage(PdfDocument.PageInfo.Builder(pw, ph, numeroPagina).create())
         val cv = page.canvas
-        cv.translate(margemExtraEsqPt, margemExtraTopoPt)
+        // O RECUO VAI SEMPRE À ESQUERDA: esta página é retrato em qualquer
+        // configuração, como o rubricário em retrato. No eixo Y, que é o da
+        // ficha deitada, ele empurraria o pé da página para fora do papel. O
+        // rodapé fica fora do recuo (ver o restoreToCount antes dele).
+        val salvoTO = cv.save()
+        cv.translate(margemExtraEsqPt + margemExtraTopoPt, 0f)
         val mL = MARGIN; val mR = pw - MARGIN
         val cinzaMedio = 0xFFD9D9D9.toInt()
         val cinzaClaro = 0xFFE8E8E8.toInt()
@@ -1091,8 +1184,20 @@ object PdfBuilder {
          */
         val alturaCab = 32f
         val headerB = topoTab + alturaCab
+        // A CAIXA DE OBSERVAÇÕES CRESCE PARA CIMA. A base fica presa no pé da
+        // página porque embaixo dela só há 16 pt até a linha de base do rodapé;
+        // crescendo para baixo, quatro linhas já cobririam o rodapé. A tabela
+        // encolhe sozinha, porque a altura da linha sai do que sobra até fimTab.
         val fimObs = ph - MARGIN
-        val obsTop = fimObs - 66f
+        val pObs = Paint().apply {
+            isAntiAlias = true; color = Color.BLACK; typeface = Typeface.DEFAULT
+            textSize = corpoObs; textAlign = Paint.Align.CENTER
+        }
+        val arranjoObs = arranjarObservacoes(observacoes, LARGURA_TEXTO_OBS_TO, corpoObs) { s, c ->
+            pObs.textSize = c; pObs.measureText(s)
+        }
+        pObs.textSize = arranjoObs.corpo
+        val obsTop = fimObs - alturaCaixaObsTimeOut(arranjoObs.alturaTexto)
         val fimTab = obsTop - 6f
         val alturaLinha = (fimTab - headerB) / 20f
         val prop = floatArrayOf(0f, 22.5f, 48f, 73.5f, 98.5f, 124f, 175f, 213.5f, 252f)
@@ -1217,7 +1322,11 @@ object PdfBuilder {
                 // O tamanho passa a bater com o das caixas das colunas
                 // vizinhas, que e a comparacao que quem preenche faz olhando a
                 // propria linha.
-                val ladoSimNao = 10f
+                //
+                // Quando a caixa de observacoes cresce e a linha encolhe, a
+                // caixa acompanha (ver ladoCaixaSimNao): o topo dela fica sempre
+                // 8,2 pt abaixo do topo da linha, sem invadir o rotulo.
+                val ladoSimNao = ladoCaixaSimNao(alturaLinha)
                 val cySimNao = yT + alturaLinha - 1.3f - ladoSimNao / 2f
                 texto(txtSim, simX, yT + 7f, 6.5f, align = Paint.Align.CENTER)
                 texto(txtNao, naoX, yT + 7f, 6.5f, align = Paint.Align.CENTER)
@@ -1233,24 +1342,16 @@ object PdfBuilder {
         fundo.color = cinzaMedio; cv.drawRect(mL, obsTop, mR.toFloat(), obsTop + 15f, fundo)
         cv.drawRect(mL, obsTop, mR.toFloat(), obsTop + 15f, borda)
         texto(txtObservacoes, (mL + mR) / 2f, obsTop + 11f, 9f, bold = true, align = Paint.Align.CENTER)
-        run {
-            // DUAS linhas, nao tres. A terceira era o que empurrava o
-            // cabecalho e provocava o corte com etiqueta 100x50 mm. A
-            // altura liberada foi para o espaco de seguranca acima das
-            // caixas de equipamento e sitio.
-            val linhas = observacoes.split("\n").map { it.trim() }.filter { it.isNotBlank() }.take(2)
-            if (linhas.isNotEmpty()) {
-                val corpoTopo = obsTop + 15f
-                val lineH = 13f
-                // Primeira linha no topo do corpo; centraliza só na horizontal.
-                var y = corpoTopo + 13f
-                for (l2 in linhas) {
-                    texto(l2.take(110), (mL + mR) / 2f, y, 8.5f, align = Paint.Align.CENTER)
-                    y += lineH
-                }
-            }
+        // Linhas já quebradas pela largura medida com o MESMO Paint do desenho:
+        // nenhuma passa da borda. Primeira linha no topo do corpo; centraliza
+        // só na horizontal.
+        var yObs = obsTop + OBS_CAB_TO + OBS_PAD + arranjoObs.corpo
+        for (linhaObs in arranjoObs.linhas) {
+            cv.drawText(linhaObs, (mL + mR) / 2f, yObs, pObs)
+            yObs += arranjoObs.corpo * OBS_ENTRELINHA
         }
 
+        cv.restoreToCount(salvoTO)
         desenharRodape(cv, numeroPagina, dados.nomeClinica, pw, ph)
         doc.finishPage(page)
     }
@@ -1288,6 +1389,38 @@ object PdfBuilder {
         val baseHeader = topo + headerHAtual
         val leftAreaW = totalW - colDirW - 8f
 
+        /*
+            O TITULO FICA CENTRADO NO VAO ENTRE O LOGO E A LINHA DE IDENTIFICACAO.
+
+            A linha de identificacao e desenhada com `PAGE_WIDTH - MARGIN * 2`
+            de largura — ela atravessa a folha inteira, inclusive POR BAIXO
+            da coluna do logo. O vao util do titulo vai da borda inferior do
+            logo DESENHADO ate o topo das letras dessa linha, e o bloco do
+            titulo e centrado nele (ver basesTituloCabecalho).
+
+            Sem logo, conta-se a altura cheia de um logo: o titulo nao muda de
+            lugar entre a clinica que tem logo e a que nao tem.
+
+            ETIQUETA BAIXA: quando o vao nao comporta o titulo com folga, e a
+            linha de identificacao que desce (ver yLinhaIdentificacao). O
+            titulo nunca sobe por cima do logo.
+
+            O modelo em branco usa a MESMA posicao da linha, que ali nao e
+            desenhada, e por isso sai com o titulo no mesmo lugar da ficha.
+         */
+        val paintTitulo = Paint().apply {
+            color = Color.parseColor("#333333"); textSize = 16f
+            isFakeBoldText = true; isAntiAlias = true; textAlign = Paint.Align.CENTER
+        }
+        val linhasTitulo = if (titulo2.isBlank()) 1 else 2
+        val capTitulo = alturaTintaTitulo(paintTitulo, titulo1)
+        val logoTopo = topo + 4f
+        val topoLivre = logoTopo + alturaLogoDesenhado(logo, colDirW * 0.95f)
+        val capIds = VAL_LINHA * CAP_RELATIVA
+        val etqH = alturaCaixaEtiqueta(etiqAltPt)
+        val yIdsBase = yLinhaIdentificacao(topo, etqH, topoLivre,
+            alturaBlocoTitulo(capTitulo, ENTRELINHA_TITULO, linhasTitulo), capIds)
+
         if (semPaciente) {
             // Modelo em branco: nada de paciente entra. O bloco fica vazio de
             // proposito, e o titulo a direita sozinho diz o que a folha e.
@@ -1297,10 +1430,9 @@ object PdfBuilder {
             // conferidas lado a lado — cada diferenca de arranjo entre elas
             // custa uma leitura a mais de quem separa as fichas.
             val etqW = larguraCaixaEtiqueta(etiqLargPt)
-            val etqH = alturaCaixaEtiqueta(etiqAltPt)
             desenharEtiquetaVirtual(canvas,
                 RectF(MARGIN, topo, MARGIN + etqW, topo + etqH), dados)
-            desenharLinhaIdentificacao(canvas, MARGIN, topo + etqH + 12f,
+            desenharLinhaIdentificacao(canvas, MARGIN, yIdsBase,
                 PAGE_WIDTH - MARGIN * 2, dados)
             if (dados.numeroSimulacao > 1) {
                 val paintNova = Paint().apply {
@@ -1316,53 +1448,16 @@ object PdfBuilder {
         val xDir = MARGIN + leftAreaW + 8f
         val rectDir = RectF(xDir, topo, xDir + colDirW, baseHeader)
 
-        /*
-            O TITULO TEM QUE TERMINAR ACIMA DA LINHA DE IDENTIFICACAO.
-
-            A linha de identificacao e desenhada com `PAGE_WIDTH - MARGIN * 2`
-            de largura — ela atravessa a folha inteira, inclusive POR BAIXO
-            desta coluna, que a esta altura ja acabou. Por isso as duas se
-            encontram, apesar de "uma estar a esquerda e outra a direita".
-
-            A conta de antes era fixa: segunda linha em baseHeader - 18. Como
-            headerHAtual = etqH + ALTURA_LINHA_IDS + 8 e a linha de IDs cai em
-            etqH + 12, a linha de IDs fica em baseHeader - 12 — seis pontos
-            abaixo da segunda linha do titulo, que com 16pt de corpo desce
-            quatro. Sobrepunham-se em ~6pt, e quanto maior a etiqueta do
-            servico, pior.
-
-            Agora a posicao vem da linha de IDs, nao de um numero escolhido: o
-            titulo para 10pt acima dela, aconteca o que acontecer com o tamanho
-            da etiqueta. O `minOf` mantem o comportamento antigo quando ha
-            folga de sobra, para a folha nao mudar de cara sem motivo.
-         */
-        val yIdsBase = topo + alturaCaixaEtiqueta(etiqAltPt) + 12f
-        val baseTitulo2 =
-            if (semPaciente) baseHeader - 30f
-            else minOf(baseHeader - 30f, yIdsBase - 10f)
-        val baseTitulo1 = baseTitulo2 - 18f
-
-        val tituloBlocoTopo = baseTitulo1 - 12f
-        val logoTopo = topo + 4f
-        val logoAreaBase = tituloBlocoTopo - 8f
+        val (baseTitulo1, baseTitulo2) = basesTituloCabecalho(topoLivre,
+            yIdsBase - capIds, capTitulo, ENTRELINHA_TITULO, linhasTitulo)
 
         desenharLogoPadrao(canvas, logo, rectDir.right, logoTopo, colDirW * 0.95f)
 
-        val paintTitulo = Paint().apply {
-            color = Color.parseColor("#333333"); textSize = 16f
-            isFakeBoldText = true; isAntiAlias = true; textAlign = Paint.Align.CENTER
-        }
-        // Titulo de UMA linha (rubricario) fica no MEIO da faixa das duas, e
-        // nao na posicao da primeira: desenhado la em cima com nada embaixo,
-        // ele pareceria descolado do bloco do logo.
-        if (titulo2.isBlank()) {
-            canvas.drawText(titulo1, rectDir.centerX(),
-                (baseTitulo1 + baseTitulo2) / 2f, paintTitulo)
-        } else {
-            canvas.drawText(titulo1, rectDir.centerX(), baseTitulo1, paintTitulo)
+        // Titulo de UMA linha (rubricario): a funcao ja o centra no vao, em
+        // baseTitulo1.
+        canvas.drawText(titulo1, rectDir.centerX(), baseTitulo1, paintTitulo)
+        if (linhasTitulo == 2)
             canvas.drawText(titulo2, rectDir.centerX(), baseTitulo2, paintTitulo)
-        }
-
 
 
         // Linha divisória.
@@ -1399,6 +1494,89 @@ object PdfBuilder {
             bordaDir - w
         } catch (_: Exception) { bordaDir }
     }
+
+    // ---- Geometria do título do cabeçalho (funções puras, testadas na JVM) ----
+
+    /** Passo entre as duas linhas do título. */
+    private const val ENTRELINHA_TITULO = 18f
+    /** Sobra mínima do vão do título (somadas a de cima e a de baixo) quando a
+     *  linha de identificação desce. */
+    private const val FOLGA_TITULO = 8f
+    /** Altura de maiúscula relativa ao corpo: reserva quando a medida falha, e
+     *  topo das letras da linha de identificação no corpo cheio. */
+    private const val CAP_RELATIVA = 0.72f
+    /** Ampliação da medida da tinta do título. Ver [alturaTintaTitulo]. */
+    private const val AMPLIACAO_MEDIDA = 64f
+
+    /** Altura do logo como [desenharLogoPadrao] o desenha; sem logo, a altura cheia. */
+    private fun alturaLogoDesenhado(logo: Bitmap?, larguraMax: Float): Float =
+        if (logo == null) LOGO_ALTURA
+        else try { alturaLogo(logo.width, logo.height, larguraMax) } catch (_: Exception) { LOGO_ALTURA }
+
+    /** Mesmo `esc` de [desenharLogoPadrao]: altura cheia, ou menos quando o teto de largura manda. */
+    internal fun alturaLogo(largura: Int, altura: Int, larguraMax: Float): Float {
+        if (largura <= 0 || altura <= 0) return LOGO_ALTURA
+        val esc = minOf(larguraMax / largura, LOGO_ALTURA / altura)
+        return altura * esc
+    }
+
+    /**
+     * Altura da tinta de [texto] acima da linha de base, no Paint do título.
+     *
+     * MEDIDA NA FONTE, e não estimada: cobre o CJK, cujos ideogramas passam da
+     * altura de maiúscula do latim. A medida é feita com o corpo ampliado e
+     * dividida de volta porque `getTextBounds` com `Rect` — o único disponível
+     * abaixo da API 34 — devolve inteiros arredondados para fora; no corpo de
+     * 16 pt isso vira 12 pt para uma tinta de 11,5, e o título sairia deslocado
+     * conforme o idioma por uma conta de arredondamento.
+     */
+    private fun alturaTintaTitulo(paint: Paint, texto: String): Float {
+        if (texto.isBlank()) return paint.textSize * CAP_RELATIVA
+        return try {
+            val ampliado = Paint(paint).apply { textSize = paint.textSize * AMPLIACAO_MEDIDA }
+            val r = android.graphics.Rect()
+            ampliado.getTextBounds(texto, 0, texto.length, r)
+            capDeLimites(r.top, AMPLIACAO_MEDIDA, paint.textSize)
+        } catch (_: Exception) { paint.textSize * CAP_RELATIVA }
+    }
+
+    /** Converte o topo medido no corpo ampliado; topo não negativo = medida vazia. */
+    internal fun capDeLimites(topoAmpliado: Int, ampliacao: Float, corpo: Float): Float =
+        if (topoAmpliado >= 0 || ampliacao <= 0f) corpo * CAP_RELATIVA
+        else -topoAmpliado / ampliacao
+
+    /** Altura do bloco do título: tinta da 1ª linha mais o passo das seguintes. */
+    internal fun alturaBlocoTitulo(capTitulo: Float, entrelinha: Float, linhas: Int): Float =
+        capTitulo + entrelinha * (linhas.coerceAtLeast(1) - 1)
+
+    /**
+     * Linhas de base do título, com o bloco centrado entre [topoLivre] (a borda
+     * inferior do logo) e [baseLivre] (o topo das letras da linha de
+     * identificação). A folga de cima é igual à de baixo.
+     *
+     * @return as bases da 1ª e da 2ª linha; com uma linha só, as duas são iguais.
+     */
+    internal fun basesTituloCabecalho(
+        topoLivre: Float, baseLivre: Float, capTitulo: Float, entrelinha: Float, linhas: Int
+    ): Pair<Float, Float> {
+        val n = linhas.coerceAtLeast(1)
+        val blocoH = alturaBlocoTitulo(capTitulo, entrelinha, n)
+        val centro = (topoLivre + baseLivre) / 2f
+        val base1 = centro - blocoH / 2f + capTitulo
+        return base1 to (base1 + entrelinha * (n - 1))
+    }
+
+    /**
+     * Linha de base da linha de identificação: 12 pt abaixo do quadro, como
+     * sempre, ou mais abaixo quando o vão até o logo não comporta o título com
+     * [FOLGA_TITULO] de sobra, repartida em cima e embaixo — o caso da
+     * etiqueta baixa (menos de cerca de 27 mm), em que, com a linha no lugar
+     * de sempre, o título subiria por cima do logo.
+     */
+    internal fun yLinhaIdentificacao(
+        topo: Float, alturaQuadro: Float, topoLivre: Float, blocoTitulo: Float, capIds: Float
+    ): Float = maxOf(topo + alturaQuadro + 12f,
+        topoLivre + FOLGA_TITULO + blocoTitulo + capIds)
 
     /** Dados empilhados (rótulo em cima, valor embaixo) — usado ao lado da etiqueta normal. */
     /** Idade a partir de dd/MM/yyyy: anos; se menor de 18, "Xa Ym". */
@@ -1437,29 +1615,99 @@ object PdfBuilder {
     private const val FOLGA_SEGURANCA = 10f
     private const val TO_ALTURA_TOPO = 150f    // altura da faixa etiqueta/foto do rosto
 
-    /** Altura do logo, a MESMA em todas as paginas. Ver desenharLogoPadrao. */
     /**
-     * Fichas desta sessao que contem folha frente-e-verso de protocolo.
+     * Fichas que contem folha frente-e-verso de protocolo.
      *
      * O caminho de impressao recebe so o File, e a essa altura nao ha mais como
-     * saber que protocolo gerou aquele PDF. Este conjunto responde isso sem
-     * arrastar o id do protocolo por cinco assinaturas de funcao.
+     * saber que protocolo gerou aquele PDF. Esta marca responde isso sem
+     * arrastar o id do protocolo por varias assinaturas de funcao.
      *
-     * VIVE EM MEMORIA, e o degrade e deliberado: reimprimir do Historico depois
-     * de reabrir o app cai na configuracao de duplex da impressora, que e o
-     * comportamento de sempre. Melhor perder o automatismo numa reimpressao do
-     * que gravar estado em disco para um dado que so vale por alguns minutos.
+     * A CHAVE E O NOME DO ARQUIVO, nao o caminho. A ficha e gerada no cache e
+     * guardada na pasta do paciente com o MESMO nome, e o Historico e o
+     * carrossel imprimem a copia da pasta: pelo caminho a marca nunca casaria
+     * com ela, e a folha com verso sairia em simplex.
+     *
+     * GRAVADA EM PREFERENCIAS, para valer depois de reabrir o app. A lista e
+     * curta e podada (ficam as [LIMITE_MARCAS_FV] mais recentes), e a ficha
+     * regerada sem verso e desmarcada. Em memoria fica a copia de trabalho.
+     *
+     * Sem Context, a consulta usa as preferencias ja abertas nesta execucao —
+     * por qualquer geracao de ficha ou por uma consulta que passou Context.
      */
-    private val fichasFrenteVerso =
-        java.util.Collections.synchronizedSet(mutableSetOf<String>())
+    private const val PREFS_FRENTE_VERSO = "pdf_frente_verso"
+    private const val CHAVE_MARCAS_FV = "fichas"
+    internal const val LIMITE_MARCAS_FV = 300
+    private val travaFrenteVerso = Any()
+    @Volatile private var prefsFrenteVerso: android.content.SharedPreferences? = null
+    /** Nomes marcados, do mais antigo ao mais recente. */
+    private var marcasFV: List<String> = emptyList()
+    /** As marcas gravadas ja foram lidas e juntadas as de memoria? */
+    private var marcasLidas = false
 
-    fun marcarFrenteVerso(arquivo: File) {
-        try { fichasFrenteVerso.add(arquivo.absolutePath) } catch (_: Exception) {}
+    fun marcarFrenteVerso(arquivo: File, context: Context? = null) =
+        registrarFrenteVerso(arquivo, true, context)
+
+    fun desmarcarFrenteVerso(arquivo: File, context: Context? = null) =
+        registrarFrenteVerso(arquivo, false, context)
+
+    /** A ficha [arquivo] tem folha com verso? Passar [context] garante a leitura do que foi gravado. */
+    fun temFrenteVerso(arquivo: File, context: Context? = null): Boolean = try {
+        synchronized(travaFrenteVerso) {
+            sincronizarMarcas(context)
+            arquivo.name in marcasFV
+        }
+    } catch (_: Exception) { false }
+
+    private fun registrarFrenteVerso(arquivo: File, comVerso: Boolean, context: Context?) {
+        try {
+            synchronized(travaFrenteVerso) {
+                sincronizarMarcas(context)
+                val depois = atualizarMarcasFrenteVerso(marcasFV, arquivo.name, comVerso)
+                if (depois != marcasFV) {
+                    marcasFV = depois
+                    prefsFrenteVerso?.edit()
+                        ?.putString(CHAVE_MARCAS_FV, marcasParaTexto(depois))?.apply()
+                }
+            }
+        } catch (_: Exception) { /* marca e conveniencia de impressao, nunca requisito */ }
     }
 
-    fun temFrenteVerso(arquivo: File): Boolean =
-        try { fichasFrenteVerso.contains(arquivo.absolutePath) } catch (_: Exception) { false }
+    /** Abre as preferencias e junta, uma vez, o que esta gravado. Chamar sob a trava. */
+    private fun sincronizarMarcas(context: Context?) {
+        if (prefsFrenteVerso == null && context != null) {
+            prefsFrenteVerso = (context.applicationContext ?: context)
+                .getSharedPreferences(PREFS_FRENTE_VERSO, Context.MODE_PRIVATE)
+        }
+        val prefs = prefsFrenteVerso ?: return
+        if (marcasLidas) return
+        val gravadas = marcasDeTexto(prefs.getString(CHAVE_MARCAS_FV, null))
+        // As gravadas sao mais antigas que qualquer marca feita so em memoria.
+        val juntas = gravadas.filter { it !in marcasFV } + marcasFV
+        marcasFV = if (juntas.size > LIMITE_MARCAS_FV) juntas.takeLast(LIMITE_MARCAS_FV) else juntas
+        marcasLidas = true
+    }
 
+    /**
+     * Lista de marcas depois de marcar ou desmarcar [nome]. A marca refeita vai
+     * para o fim (a mais recente), e a poda tira as mais antigas.
+     */
+    internal fun atualizarMarcasFrenteVerso(
+        atuais: List<String>, nome: String, marcar: Boolean, limite: Int = LIMITE_MARCAS_FV
+    ): List<String> {
+        // Quebra de linha e o separador da gravacao: um nome com ela se
+        // partiria em dois ao ser lido de volta.
+        if (nome.isBlank() || nome.contains('\n')) return atuais
+        val sem = atuais.filter { it != nome }
+        val nova = if (marcar) sem + nome else sem
+        return if (nova.size > limite) nova.takeLast(limite.coerceAtLeast(0)) else nova
+    }
+
+    internal fun marcasDeTexto(texto: String?): List<String> =
+        texto.orEmpty().split('\n').map { it.trim() }.filter { it.isNotEmpty() }.distinct()
+
+    internal fun marcasParaTexto(marcas: List<String>): String = marcas.joinToString("\n")
+
+    /** Altura do logo, a MESMA em todas as paginas. Ver desenharLogoPadrao. */
     private const val LOGO_ALTURA = 40f
 
     /** Fracao da altura da celula que a rubrica ocupa. Igual para todas:
@@ -1597,25 +1845,127 @@ object PdfBuilder {
 
     /** Quebra um texto em várias linhas que caibam em maxW (por palavras; se uma
      *  palavra isolada não couber, quebra por caracteres). */
-    private fun quebrarLinhas(texto: String, paint: Paint, maxW: Float): List<String> {
+    private fun quebrarLinhas(texto: String, paint: Paint, maxW: Float): List<String> =
+        quebrarLinhas(texto, maxW) { paint.measureText(it) }
+
+    /** O mesmo algoritmo, com a medida passada de fora: puro, testável na JVM. */
+    internal fun quebrarLinhas(texto: String, maxW: Float, medir: (String) -> Float): List<String> {
         val palavras = texto.split(" ").filter { it.isNotBlank() }
         val linhas = mutableListOf<String>()
         var atual = ""
         for (p in palavras) {
             val tent = if (atual.isEmpty()) p else "$atual $p"
-            if (paint.measureText(tent) <= maxW) { atual = tent; continue }
+            if (medir(tent) <= maxW) { atual = tent; continue }
             if (atual.isNotEmpty()) { linhas.add(atual); atual = "" }
-            if (paint.measureText(p) <= maxW) { atual = p; continue }
+            if (medir(p) <= maxW) { atual = p; continue }
             var resto = p                       // palavra sozinha maior que a caixa
             while (resto.isNotEmpty()) {
                 var corte = resto.length
-                while (corte > 1 && paint.measureText(resto.substring(0, corte)) > maxW) corte--
+                while (corte > 1 && medir(resto.substring(0, corte)) > maxW) corte--
                 linhas.add(resto.substring(0, corte)); resto = resto.substring(corte)
             }
         }
         if (atual.isNotEmpty()) linhas.add(atual)
         return linhas
     }
+
+    // ---- Observações: quebra, corpo e caixa (funções puras, testadas na JVM) ----
+
+    /** Medida das observações: Typeface.DEFAULT, o Paint do desenho nas duas páginas. */
+    private fun medidorObservacoes(): (String, Float) -> Float {
+        val p = Paint().apply { isAntiAlias = true; typeface = Typeface.DEFAULT }
+        return { s, corpo -> p.textSize = corpo; p.measureText(s) }
+    }
+
+    /**
+     * Linhas das observações numa largura: respeita a quebra digitada, descarta
+     * linhas vazias e espaços nas pontas, e quebra cada parágrafo pela largura.
+     */
+    internal fun linhasObservacoes(
+        texto: String, largura: Float, corpo: Float, medir: (String, Float) -> Float
+    ): List<String> = texto.split("\n").map { it.trim() }.filter { it.isNotEmpty() }
+        .flatMap { par -> quebrarLinhas(par, largura) { medir(it, corpo) } }
+
+    /** Altura do texto de [linhas] linhas no [corpo], com a entrelinha da folha. */
+    internal fun alturaTextoObs(linhas: Int, corpo: Float): Float =
+        linhas * corpo * OBS_ENTRELINHA
+
+    /**
+     * O corpo das observações desta simulação: o maior, de 11,5 pt descendo de
+     * 0,5 em 0,5, em que o texto cabe em [OBS_TEXTO_MAX] em TODAS as caixas de
+     * [larguras]. A mais estreita decide, e as duas páginas saem no mesmo corpo.
+     *
+     * O piso é [OBS_CORPO_MIN] (8,5 pt): texto que nem nele cabe sai no piso e é
+     * cortado por [arranjarObservacoes].
+     */
+    internal fun escolherCorpoObs(
+        texto: String, larguras: List<Float>, medir: (String, Float) -> Float
+    ): Float {
+        if (texto.isBlank() || larguras.isEmpty()) return OBS_CORPO
+        var corpo = OBS_CORPO
+        while (corpo >= OBS_CORPO_MIN - 0.001f) {
+            val c = corpo
+            val cabe = larguras.all { w ->
+                alturaTextoObs(linhasObservacoes(texto, w, c, medir).size, c) <= OBS_TEXTO_MAX + 0.001f
+            }
+            if (cabe) return c
+            corpo -= OBS_PASSO_CORPO
+        }
+        return OBS_CORPO_MIN
+    }
+
+    /** O texto arranjado numa caixa: corpo, linhas a desenhar e a altura delas. */
+    internal data class ArranjoObs(
+        val corpo: Float,
+        val linhas: List<String>,
+        val alturaTexto: Float,
+        /** `true` só quando nem no piso o texto coube e a última linha termina em " …". */
+        val cortado: Boolean
+    )
+
+    /**
+     * Linhas das observações numa caixa de [largura], no [corpo] já escolhido.
+     *
+     * Se nem assim couber em [OBS_TEXTO_MAX], ficam as linhas que cabem e a
+     * última termina em " …", medida para caber. É o único corte possível, e
+     * só acontece com o corpo no piso, acima de 6 linhas desenhadas a 8,5 pt.
+     * Nenhuma linha passa da largura: a medida é a do Paint do desenho.
+     */
+    internal fun arranjarObservacoes(
+        texto: String, largura: Float, corpo: Float, medir: (String, Float) -> Float
+    ): ArranjoObs {
+        val linhas = linhasObservacoes(texto, largura, corpo, medir)
+        val passo = corpo * OBS_ENTRELINHA
+        if (alturaTextoObs(linhas.size, corpo) <= OBS_TEXTO_MAX + 0.001f)
+            return ArranjoObs(corpo, linhas, alturaTextoObs(linhas.size, corpo), false)
+        val cabem = ((OBS_TEXTO_MAX + 0.001f) / passo).toInt().coerceAtLeast(1)
+        val ficam = linhas.take(cabem).toMutableList()
+        var ultima = ficam.last()
+        while (ultima.isNotEmpty() && medir("$ultima …", corpo) > largura)
+            ultima = ultima.dropLast(1).trimEnd()
+        ficam[ficam.size - 1] = if (ultima.isEmpty()) "…" else "$ultima …"
+        return ArranjoObs(corpo, ficam, alturaTextoObs(ficam.size, corpo), true)
+    }
+
+    /**
+     * Caixa de observações do Time-Out: título, respiro e texto, entre a caixa
+     * de sempre (66 pt, que com até 2 linhas não mexe na tabela) e o teto de
+     * 96 pt, em que a linha da tabela chega a 18 pt.
+     */
+    internal fun alturaCaixaObsTimeOut(alturaTexto: Float): Float =
+        (OBS_CAB_TO + 2 * OBS_PAD + alturaTexto).coerceIn(OBS_TO_ALTURA_MIN, OBS_TO_ALTURA_MAX)
+
+    /** Faixa das páginas de fotos (caixa mais o respiro até a grade); 0 sem texto. */
+    internal fun alturaFaixaObsFotos(arranjo: ArranjoObs): Float =
+        if (arranjo.linhas.isEmpty()) 0f else arranjo.alturaTexto + 2 * OBS_PAD + 6f
+
+    /**
+     * Caixa Sim/Não da tabela do Time-Out: 10 pt, ou menos quando a linha
+     * encolhe. O topo dela fica sempre 8,2 pt abaixo do topo da linha, 1,2 pt
+     * sob a base do rótulo (yT + 7): com a caixa fixa, na linha de 18,6 pt
+     * sobrariam 0,3 pt entre os dois.
+     */
+    internal fun ladoCaixaSimNao(alturaLinha: Float): Float = minOf(10f, alturaLinha - 9.5f)
 
     /**
      * O QUADRO DA ETIQUETA — o mesmo nas duas folhas, em qualquer configuracao.
@@ -1627,8 +1977,23 @@ object PdfBuilder {
      * ANTES de ela ser colada, na hora de separar as fichas na impressora.
      *
      * A DATA DA SIMULACAO nao entra aqui: ver desenharLinhaIdentificacao.
+     *
+     * E TAMBEM A ETIQUETA DAS PAGINAS DO PROTOCOLO, pela mesma rotina — so
+     * assim as duas saem iguais.
+     *
+     * @param fundoBranco pinta o quadro de branco antes do contorno. So o
+     *   protocolo usa: la a etiqueta cai sobre o documento da clinica, e sem o
+     *   fundo o texto se misturaria com o que estiver impresso no ponto. Nas
+     *   primeiras paginas o padrao `false` deixa o desenho como sempre foi.
      */
-    private fun desenharEtiquetaVirtual(canvas: Canvas, rect: RectF, dados: DadosCabecalho) {
+    private fun desenharEtiquetaVirtual(
+        canvas: Canvas, rect: RectF, dados: DadosCabecalho, fundoBranco: Boolean = false
+    ) {
+        if (fundoBranco) {
+            canvas.drawRoundRect(rect, RAIO_CANTO, RAIO_CANTO, Paint().apply {
+                color = Color.WHITE; style = Paint.Style.FILL; isAntiAlias = true
+            })
+        }
         val dash = Paint().apply {
             color = Color.parseColor("#999999"); style = Paint.Style.STROKE; strokeWidth = 0.9f
             pathEffect = android.graphics.DashPathEffect(floatArrayOf(4f, 3f), 0f); isAntiAlias = true
@@ -1685,41 +2050,13 @@ object PdfBuilder {
             return out to out.sumOf { it.h.toDouble() }.toFloat()
         }
 
-        // CABE OU ENCOLHE. O conjunto e reduzido ate caber na altura do quadro,
-        // com piso de legibilidade: nome a 7 pt, identificacoes a 6 pt. Abaixo
-        // disso o papel impresso nao se le, e reduzir mais so esconderia o
-        // problema — por isso, no piso, o que nao couber e CORTADO em vez de
-        // transbordar. O que se perde aqui sobrevive na linha logo abaixo do
-        // quadro, que traz nome, nascimento, registro e data.
-        // O CORPO SAI DA ALTURA DO QUADRO, e nao de um numero fixo.
-        //
-        // Com 12 pt para todo tamanho, a etiqueta de 100x50 mm tinha quatro
-        // vezes a area da de 60x30 e a mesma letra — o espaco que o servico
-        // configurou ficava sobrando em volta de um nome pequeno.
-        //
-        // O PISO E 12 pt de proposito: e o corpo que a etiqueta padrao ja usa, e
-        // quadro pequeno nao deve sair com nome MENOR do que saia antes. Quem
-        // reduz abaixo disso e o laco de caber, e so quando nao ha alternativa.
-        var corpoNome = (rect.height() * 0.13f).coerceIn(12f, 20f)
-        var corpoId = (corpoNome * 0.62f).coerceIn(8.5f, 12f)
+        val (corpoNome, corpoId) = corposEtiqueta(rect.height(), maxH) { n, i -> montar(n, i).second }
+        // GUARDA: montar de novo, POR ULTIMO, com os corpos aceitos. As linhas
+        // guardam o Paint e nao o corpo, e o laco de crescer termina numa
+        // tentativa recusada que deixa os dois Paints maiores que o aceito
+        // (meio ponto no nome, 0,31 nas identificacoes). Sem esta chamada o
+        // texto sai maior que a medida e encosta na borda de baixo.
         var (linhas, totalH) = montar(corpoNome, corpoId)
-        while (totalH > maxH && corpoNome > 7f) {
-            corpoNome -= 0.5f
-            corpoId = (corpoId - 0.35f).coerceAtLeast(6f)
-            val r = montar(corpoNome, corpoId)
-            linhas = r.first; totalH = r.second
-        }
-        // SOBROU ALTURA: cresce de volta, ate o teto do quadro. Sem isto, quadro
-        // alto e estreito — em que o nome quebra em tres linhas e o laco acima
-        // reduziu o corpo — ficaria com letra pequena e um palmo de vazio
-        // embaixo, que e o oposto do que o tamanho configurado pediu.
-        while (corpoNome < 20f) {
-            val r = montar(corpoNome + 0.5f, (corpoId + 0.31f).coerceAtMost(12f))
-            if (r.second > maxH) break
-            corpoNome += 0.5f
-            corpoId = (corpoId + 0.31f).coerceAtMost(12f)
-            linhas = r.first; totalH = r.second
-        }
         if (totalH > maxH) {
             val cabem = mutableListOf<Ln>()
             var acum = 0f
@@ -1742,13 +2079,65 @@ object PdfBuilder {
     }
 
     /**
+     * Os corpos do nome e das identificações no quadro da etiqueta.
+     *
+     * O CORPO SAI DA ALTURA DO QUADRO, e nao de um numero fixo. Com 12 pt para
+     * todo tamanho, a etiqueta de 100x50 mm tinha quatro vezes a area da de
+     * 60x30 e a mesma letra — o espaco que o servico configurou ficava sobrando
+     * em volta de um nome pequeno.
+     *
+     * O PISO E 12 pt de proposito: e o corpo que a etiqueta padrao ja usa, e
+     * quadro pequeno nao deve sair com nome MENOR que o da etiqueta padrao.
+     * Quem reduz abaixo disso e o laco de caber, e so quando nao ha alternativa.
+     *
+     * CABE OU ENCOLHE: o conjunto e reduzido ate caber na altura do quadro,
+     * com piso de legibilidade — nome a 7 pt, identificacoes a 6 pt. No piso, o
+     * que nao couber e cortado por quem desenha, em vez de transbordar; o que
+     * se perde sobrevive na linha logo abaixo do quadro.
+     *
+     * SOBROU ALTURA: cresce de volta, ate o teto. Sem isto, quadro alto e
+     * estreito — em que o nome quebra em tres linhas e o laco de caber reduziu
+     * o corpo — ficaria com letra pequena e um palmo de vazio embaixo.
+     *
+     * @param alturaConjunto altura que o conjunto ocupa num par de corpos; e a
+     *   mesma conta do desenho, por isso a decisao e o traco nunca discordam.
+     * @return o par ACEITO (nome, identificacoes). Quem desenha usa exatamente
+     *   este par, e nao o da ultima tentativa.
+     */
+    internal fun corposEtiqueta(
+        alturaQuadro: Float, maxH: Float, alturaConjunto: (Float, Float) -> Float
+    ): Pair<Float, Float> {
+        var corpoNome = (alturaQuadro * 0.13f).coerceIn(12f, 20f)
+        var corpoId = (corpoNome * 0.62f).coerceIn(8.5f, 12f)
+        var totalH = alturaConjunto(corpoNome, corpoId)
+        while (totalH > maxH && corpoNome > 7f) {
+            corpoNome -= 0.5f
+            corpoId = (corpoId - 0.35f).coerceAtLeast(6f)
+            totalH = alturaConjunto(corpoNome, corpoId)
+        }
+        while (corpoNome < 20f) {
+            val nome = corpoNome + 0.5f
+            val id = (corpoId + 0.31f).coerceAtMost(12f)
+            if (alturaConjunto(nome, id) > maxH) break
+            corpoNome = nome
+            corpoId = id
+        }
+        return corpoNome to corpoId
+    }
+
+    /**
      * Faixa de Observações (estilo da ficha clínica): rótulo "Observações" com
-     * fundo cinza à esquerda + caixa com o texto centralizado (até 2 linhas) à direita.
+     * fundo cinza à esquerda e, à direita, a caixa com o texto centralizado.
+     *
+     * A caixa tem a altura das linhas já quebradas ([obsLinhasFotos]), no corpo
+     * comum às duas páginas ([obsCorpo]); a grade de fotos começa abaixo dela e
+     * se encaixa no que sobra. Primeira linha no topo da caixa, centralizada só
+     * na horizontal; o rótulo fica no meio da altura.
      */
     private fun desenharBandaObservacoes(canvas: Canvas, yTop: Float) {
         val xEsq = MARGIN
         val larguraTotal = PAGE_WIDTH - MARGIN * 2
-        val larguraRotulo = 95f
+        val larguraRotulo = OBS_ROTULO_W
         val altura = obsBandHeight - 6f
         val rectRotulo = RectF(xEsq, yTop, xEsq + larguraRotulo, yTop + altura)
         val rectBox = RectF(xEsq + larguraRotulo, yTop, xEsq + larguraTotal, yTop + altura)
@@ -1768,20 +2157,14 @@ object PdfBuilder {
         canvas.drawText(txtObservacoes, rectRotulo.centerX(), rectRotulo.centerY() + 3f, paintRot)
 
         val paintObs = Paint().apply {
-            color = Color.BLACK; textSize = 9.5f; isAntiAlias = true; textAlign = Paint.Align.CENTER
+            color = Color.BLACK; textSize = obsCorpo; typeface = Typeface.DEFAULT
+            isAntiAlias = true; textAlign = Paint.Align.CENTER
         }
-        // Respeita as quebras de linha digitadas pelo usuário (\n) e, se ainda for
-        // largo demais, quebra por largura — no máximo 2 linhas no total.
-        val linhas = mutableListOf<String>()
-        for (linhaBruta in observacoesTexto.split("\n")) {
-            if (linhas.size >= 3) break
-            val restante = 3 - linhas.size
-            linhas.addAll(quebrarSeNecessario(linhaBruta, paintObs, rectBox.width() - 12f, restante))
+        var ty = rectBox.top + OBS_PAD + obsCorpo
+        obsLinhasFotos.forEach {
+            canvas.drawText(it, rectBox.centerX(), ty, paintObs)
+            ty += obsCorpo * OBS_ENTRELINHA
         }
-        val linhasFinal = linhas.take(2)   // ver comentario acima: 3 -> 2
-        // Primeira linha no TOPO do box (não centraliza na vertical); centro só na horizontal.
-        var ty = rectBox.top + 15f
-        linhasFinal.forEach { canvas.drawText(it, rectBox.centerX(), ty, paintObs); ty += 12f }
     }
 
     /**
@@ -1858,7 +2241,11 @@ object PdfBuilder {
         // observacoes. Estava em +12, que passou a cair ACIMA da regua quando a
         // folga da divisoria subiu para 14.
         val areaTopo = MARGIN + headerHAtual + FOLGA_DIVISORIA + 8f + obsBandHeight
-        val areaBase = PAGE_HEIGHT - 28f
+        // Os 28 pt de baixo sao do rodape na folha FISICA. Esta area esta no
+        // canvas deslocado pelo recuo, que na folha deitada vai ao topo: sem
+        // descontar o recuo a grade desceria por cima do rodape. Em pe o recuo
+        // de topo e zero e nada muda.
+        val areaBase = PAGE_HEIGHT - 28f - margemExtraTopoPt
         val areaW = PAGE_WIDTH - MARGIN * 2
         val areaH = areaBase - areaTopo
 
@@ -2212,10 +2599,17 @@ object PdfBuilder {
     }
 
     /**
-     * Rodapé do PDF.
-     * Sem versão "Radioterapia.AI v.X.X" - apenas:
-     *  - "<Nome da Clínica> • Página X / Y" (quando clínica informada)
-     *  - "Página X / Y" (caso contrário)
+     * Rodape de TODA pagina numerada da ficha — Time-Out, fotos, rubricario,
+     * rubricario avulso e as paginas do protocolo, frente e verso:
+     *  - "<Nome da Clinica> • Pagina n" (quando a clinica esta informada)
+     *  - "Pagina n" (caso contrario)
+     *
+     * n e a posicao da pagina no arquivo, contadas as folhas em branco de
+     * pareamento (que nao levam rodape): e o numero que a impressora e o
+     * dialogo de impressao mostram.
+     *
+     * Centralizado na largura FISICA da pagina: quem chama desenha fora do
+     * recuo de furacao (ver os restoreToCount antes de cada chamada).
      */
     private fun desenharRodape(canvas: Canvas, numeroPagina: Int,
                                 nomeClinica: String = "",
@@ -2225,32 +2619,27 @@ object PdfBuilder {
             textSize = 9f
             isAntiAlias = true
         }
-        val pag = String.format(txtPagina, numeroPagina)
-        val texto = if (nomeClinica.isNotBlank()) "$nomeClinica  ●  $pag" else pag
+        val texto = textoRodape(nomeClinica, String.format(txtPagina, numeroPagina))
+        // Nome de clínica muito longo encolhe o rodapé para caber entre as
+        // margens, em vez de passar da borda do papel.
+        paint.textSize = corpoRodape(paint.measureText(texto), pageW - MARGIN * 2)
         val w = paint.measureText(texto)
         canvas.drawText(texto, (pageW - w) / 2f, (pageH - 12).toFloat(), paint)
     }
 
-    private fun quebrarSeNecessario(texto: String, paint: Paint, larguraMax: Float, maxLinhas: Int): List<String> {
-        if (paint.measureText(texto) <= larguraMax) return listOf(texto)
-        val palavras = texto.split(" ")
-        val linhas = mutableListOf<StringBuilder>()
-        linhas.add(StringBuilder())
-        for (p in palavras) {
-            val l = linhas.last()
-            val tentativa = if (l.isEmpty()) p else "$l $p"
-            if (paint.measureText(tentativa) <= larguraMax) {
-                if (l.isEmpty()) l.append(p) else { l.append(" "); l.append(p) }
-            } else {
-                if (linhas.size >= maxLinhas) {
-                    // Trunca
-                    val ultimo = linhas.last().toString() + " …"
-                    linhas[linhas.size - 1] = StringBuilder(ultimo)
-                    return linhas.map { it.toString() }
-                }
-                linhas.add(StringBuilder(p))
-            }
-        }
-        return linhas.map { it.toString() }
+    /** Corpo do rodapé: 9 pt, ou o que couber em [larguraMax], com piso de 6,5 pt. */
+    internal fun corpoRodape(larguraEm9pt: Float, larguraMax: Float): Float =
+        if (larguraEm9pt <= larguraMax || larguraEm9pt <= 0f) 9f
+        else (9f * larguraMax / larguraEm9pt).coerceAtLeast(6.5f)
+
+    /**
+     * Texto do rodape: clinica e pagina separadas por " • " (U+2022, um espaco
+     * de cada lado). Sem clinica, so a pagina. Puro, testado na JVM, e usado
+     * tambem pela previa da calibracao do protocolo.
+     */
+    internal fun textoRodape(nomeClinica: String, paginaFormatada: String): String {
+        val clinica = nomeClinica.trim()
+        return if (clinica.isEmpty()) paginaFormatada.trim()
+        else "$clinica \u2022 ${paginaFormatada.trim()}"
     }
 }

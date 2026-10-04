@@ -1,6 +1,5 @@
 package com.radioterapia.ai
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -15,7 +14,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.radioterapia.ai.session.SessionManager
-import com.radioterapia.ai.treatment.PatientViewerActivity
 import com.radioterapia.ai.treatment.TreatmentActivity
 import com.radioterapia.ai.ui.HistoricoActivity
 import java.util.concurrent.TimeUnit
@@ -46,12 +44,15 @@ class SimulationHomeActivity : BaseActivity() {
 
         findViewById<Button>(R.id.btnHistory).setOnClickListener {
             // Histórico UNIFICADO: mesma tela e fluxo do modo Check.
-            // Abre a lista (miniaturas) em modo seleção; ao tocar, abre o
-            // PatientViewerActivity (fotos + carrossel + cabeçalho + botões
-            // "Adicionar fotos" / "Resimular paciente"). Edição só nas Configurações.
+            // Abre a lista (miniaturas) em modo seleção; ao tocar, a própria lista
+            // abre o PatientViewerActivity (fotos + carrossel + cabeçalho + botões
+            // "Adicionar fotos" / "Resimular paciente") e continua na pilha, de modo
+            // que o voltar do visualizador retorna à lista, e não a esta tela.
+            // Abrir como pedido de resultado faria a lista se encerrar ao escolher
+            // o paciente. Edição só nas Configurações.
             val intent = Intent(this, HistoricoActivity::class.java)
             intent.putExtra(TreatmentActivity.EXTRA_MODO_SELECAO, true)
-            abrirHistorico.launch(intent)
+            startActivity(intent)
         }
 
         findViewById<Button>(R.id.btnContinueDraft).setOnClickListener {
@@ -186,32 +187,6 @@ class SimulationHomeActivity : BaseActivity() {
                 .setNegativeButton(R.string.cancel, null),
             destrutivo = android.content.DialogInterface.BUTTON_POSITIVE,
             seguro = android.content.DialogInterface.BUTTON_NEGATIVE)
-    }
-
-    /**
-     * Resultado da seleção no Histórico (modo Sim). Abre o PatientViewerActivity
-     * do paciente escolhido — mesma tela do modo Check, mostrando fotos, carrossel,
-     * cabeçalho com identificação e os botões "Adicionar fotos" / "Resimular".
-     *
-     * Usa `registerForActivityResult` em vez do par
-     * `startActivityForResult`/`onActivityResult`, obsoleto desde a AndroidX
-     * Activity 1.2. Além de tirar o `requestCode` mágico do caminho, o contrato
-     * registrado sobrevive à recriação da Activity — com a API antiga, um
-     * resultado que chegasse depois de o sistema recriar a tela caía num
-     * `onActivityResult` de uma instância que já não existia.
-     */
-    private val abrirHistorico = registerForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
-    ) { res ->
-        if (res.resultCode != Activity.RESULT_OK) return@registerForActivityResult
-        val data = res.data ?: return@registerForActivityResult
-        val nome = data.getStringExtra(TreatmentActivity.EXTRA_NOME_SELECIONADO)
-            ?: return@registerForActivityResult
-        val pront = data.getStringExtra(TreatmentActivity.EXTRA_PRONT_SELECIONADO) ?: ""
-        val intent = Intent(this, PatientViewerActivity::class.java)
-        intent.putExtra(PatientViewerActivity.EXTRA_NOME, nome)
-        intent.putExtra(PatientViewerActivity.EXTRA_PRONTUARIO, pront)
-        startActivity(intent)
     }
 
     companion object {

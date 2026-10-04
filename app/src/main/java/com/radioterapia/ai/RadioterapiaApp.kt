@@ -19,6 +19,9 @@ class RadioterapiaApp : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // Aqui, e não só na Home: o Android pode restaurar o processo direto em
+        // outra tela, e a vigia da instalação pendente tem de estar ligada já.
+        com.radioterapia.ai.update.GerenciadorAtualizacao.vigiarInstalacaoPendente(this)
         criarEstruturaLocal()
     }
 

@@ -80,8 +80,8 @@ for nome, itens in blocos.items():
 
 # ---------------------------------------------------------------- glossario
 # Termos que se repetem e PRECISAM sair iguais em toda a interface. Extraidos
-# por frequencia e depois filtrados a mao: e a lista que faz cinco blocos
-# traduzidos por cinco agentes diferentes falarem a mesma lingua.
+# por frequencia e depois filtrados a mao: e a lista que faz blocos
+# traduzidos separadamente falarem a mesma lingua.
 TERMOS = [
     "simulação", "posicionamento", "paciente", "prontuário", "registro",
     "ficha de posicionamento", "Time-Out", "rubricário", "rubrica", "cargo",

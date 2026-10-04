@@ -79,7 +79,7 @@ class MainActivity : BaseActivity() {
     /** UI cheia de câmera - sem toolbar da BaseActivity. */
     override fun mostrarToolbar(): Boolean = false
 
-    /** Estado: clique da câmera mudo? (item 9) */
+    /** Estado: clique da câmera mudo? */
     private var cliqueMudo: Boolean = false
     private var usarCameraFrontal = false
 
@@ -194,17 +194,30 @@ class MainActivity : BaseActivity() {
         if (!pacienteReusar.isNullOrBlank()) {
             val prontReusar = intent.getStringExtra("prontuario_reusar") ?: ""
             var nascReusar = intent.getStringExtra("nascimento_reusar") ?: ""
-            // Se não veio nascimento mas o cache tem, completa
+            // Se não veio nascimento mas o cadastro tem, completa — pela chave
+            // nome + prontuário, e só com registro deste paciente. Só pelo
+            // nome, a busca escolhe entre homônimas o registro mais completo; a
+            // data da outra iria para a ficha impressa e, na finalização, para o
+            // cadastro deste. Sem registro que sirva, fica em branco.
             if (nascReusar.isBlank()) {
-                nascReusar = patientCache.obterDadosPaciente(pacienteReusar)?.nascimento ?: ""
+                nascReusar = patientCache.obterDadosPaciente(pacienteReusar, prontReusar)
+                    ?.takeIf { d ->
+                        com.radioterapia.ai.treatment.TreatmentPhotoFetcher.cadastroServeAoPaciente(
+                            prontReusar, d.prontuario,
+                            prontReusar.isBlank() && patientCache.temHomonimos(pacienteReusar))
+                    }
+                    ?.nascimento.orEmpty()
             }
-            sessionManager.idSimulacao = UUID.randomUUID().toString().take(8)
-            sessionManager.marcarInicio()
-            atualizarCategoriaUI()
-            atualizarStatusUI()
-            txtPacienteAtivo.post {
-                finalizarIdentificacao(pacienteReusar, prontReusar, nascReusar)
-                copiarBaseDaSimulacaoAnterior(pacienteReusar)
+            when {
+                // Recriada pelo sistema com o mesmo Intent: a sessão em disco já
+                // é a que saiu deste reuso (ou o rascunho que o técnico escolheu
+                // continuar). Refazer o reuso perguntaria pelo rascunho que ele
+                // mesmo criou.
+                savedInstanceState != null && sessionManager.temRascunho() -> restaurarRascunho()
+                sessionManager.temRascunho() -> txtPacienteAtivo.post {
+                    perguntarRascunhoAntesDoReuso(pacienteReusar, prontReusar, nascReusar)
+                }
+                else -> iniciarReuso(pacienteReusar, prontReusar, nascReusar)
             }
             return
         }
@@ -367,9 +380,35 @@ class MainActivity : BaseActivity() {
             val pasta = sessionManager.editandoNomePasta
             if (pasta.isNotBlank()) {
                 lista.add(File(com.radioterapia.ai.util.StorageLocal.photos(this), pasta))
+                // O nome guardado na edicao pode ser a chave do layout antigo
+                // ("NOME POSICIONAMENTO ..."), que nao existe em disco. A pasta
+                // real e a do paciente ("NOME - PRONTUARIO"), onde moram todas as
+                // simulacoes; e a simulacao 1 que o resolvedor procura, porque e
+                // a pasta sem sufixo de reirradiacao.
+                // GUARDA: o resolvedor, sem prontuario e com uma unica candidata,
+                // aceita pasta que so comeca pelo nome ("ANA" -> "ANA MARIA - 9");
+                // sem prontuario e com homonimas, fica com a primeira de nome
+                // exato. Aqui a pasta oferece fotos para voltar a ficha, entao so
+                // entra a que a regra de escolha aceita para ESTE paciente.
+                val nome = sessionManager.nomePaciente
+                if (nome.isNotBlank()) {
+                    val pront = sessionManager.prontuario
+                    val photos = com.radioterapia.ai.util.StorageLocal.photos(this)
+                    val nomes = photos.listFiles { f -> f.isDirectory }?.map { it.name }.orEmpty()
+                    com.radioterapia.ai.util.StorageLocal.resolverPastaSim(
+                        this, nome, 1,
+                        com.radioterapia.ai.util.StorageLocal.nomePastaPaciente(nome, pront),
+                        pront)
+                        .takeIf {
+                            com.radioterapia.ai.treatment.TreatmentPhotoFetcher.pastaDeRegistrosServe(
+                                it.name, pasta, nomes, nome, pront,
+                                pront.isBlank() && patientCache.temHomonimos(nome))
+                        }
+                        ?.let { lista.add(it) }
+                }
             }
         } catch (_: Exception) {}
-        return lista.filter { it.exists() }
+        return lista.filter { it.exists() }.distinctBy { it.absolutePath }
     }
 
     /**
@@ -399,12 +438,20 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    /** Categoria gravada no nome do arquivo ("..._rosto_ARQ123.jpg" -> FACE). */
-    private fun categoriaDoArquivo(nome: String): SessionManager.Category? {
-        val n = nome.lowercase()
-        return SessionManager.Category.values()
-            .firstOrNull { n.contains(it.nomeArquivoBase.lowercase()) }
-    }
+    /**
+     * Categoria gravada no nome do arquivo, nos tres formatos que chegam a
+     * ARQUIVADAS: o da sessao ("_rosto_ARQ123.jpg"), o novo
+     * ("M_S_ROST_..._ARQ123.jpg") e o legado ("MARIA_SILVA_ROSTO_..._ARQ123.jpg").
+     *
+     * O nome do paciente sai antes da classificacao (ver
+     * FotosArquivadas.tipoConfiavel): procurar a palavra no nome inteiro faria
+     * uma foto de posicionamento de ANA FACELI voltar como rosto. `null` deixa
+     * a decisao para a categoria ativa.
+     */
+    private fun categoriaDoArquivo(nome: String): SessionManager.Category? =
+        com.radioterapia.ai.util.FotosArquivadas
+            .tipoProvavel(nome, sessionManager.nomePaciente)
+            ?.let { com.radioterapia.ai.util.NomeArquivo.categoriaDe(it) }
 
     /** Fila de fotos importadas esperando o recorte. Ver [proximoRecorteGaleria]. */
     private val filaRecorteGaleria = ArrayDeque<java.io.File>()
@@ -680,33 +727,46 @@ class MainActivity : BaseActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val sim = withContext(Dispatchers.IO) {
+                    // Sem prontuário de propósito: quem decide é a pasta exata
+                    // logo abaixo. Com ele, a regra de escolha tiraria da busca
+                    // uma pasta antiga (sem prontuário no nome) que tem homônima
+                    // ao lado — mesmo sendo justamente a pasta reaberta.
                     val sims = com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this@MainActivity)
                         .buscarSimulacoes(nome)
-                    // Pasta + numero: varias simulacoes dividem o mesmo
-                    // diretorio, entao a pasta sozinha nao identifica mais.
+                    // Pasta E numero, sem alternativa: a regravacao em modo de
+                    // edicao apaga desta pasta o que a sessao trouxe. Uma
+                    // simulacao achada so pelo numero, ou "a mais recente", pode
+                    // ser de um homonimo — e a ficha dele iria para a pasta
+                    // errada. Sem casamento exato, a sessao fica vazia.
                     sims.find {
                         it.nomePastaCompleto == nomePasta &&
                             it.numeroSimulacao == sessionManager.editandoNumSim
-                    } ?: sims.find { it.numeroSimulacao == sessionManager.editandoNumSim }
-                        ?: sims.maxByOrNull { it.timestampPrincipal }
+                    }
                 } ?: return@launch
                 withContext(Dispatchers.IO) {
                     // Sem isto, a sessão voltava com as FOTOS mas sem
                     // identificação, e o app pedia o nome do paciente de novo.
                     if (sessionManager.nomePaciente.isBlank()) sessionManager.nomePaciente = nome
-                    val dCache = patientCache.obterDadosPaciente(nome)
+                    // O prontuário vem da própria pasta ("NOME - PRONTUÁRIO"), e o
+                    // cadastro só é consultado pela chave nome + prontuário: a
+                    // busca só pelo nome devolve o homônimo.
                     if (sessionManager.prontuario.isBlank())
-                        dCache?.prontuario?.takeIf { p -> p.isNotBlank() }
+                        nomePasta.substringAfterLast(" - ", "").trim()
+                            .takeIf { p -> p.isNotBlank() }
                             ?.let { p -> sessionManager.prontuario = p }
-                    if (sessionManager.dataNascimento.isBlank())
-                        dCache?.nascimento?.takeIf { n -> n.isNotBlank() }
+                    if (sessionManager.dataNascimento.isBlank() && sessionManager.prontuario.isNotBlank())
+                        patientCache.obterDadosPaciente(nome, sessionManager.prontuario)
+                            ?.takeIf { d -> d.prontuario == sessionManager.prontuario }
+                            ?.nascimento?.takeIf { n -> n.isNotBlank() }
                             ?.let { n -> sessionManager.dataNascimento = n }
 
-                    sim.rosto?.let { sessionManager.adicionarCopiando(it.arquivoLocal, Category.FACE) }
-                    sim.etiqueta?.let { sessionManager.adicionarCopiando(it.arquivoLocal, Category.LABEL) }
-                    sim.posicionamentos.forEach { sessionManager.adicionarCopiando(it.arquivoLocal, Category.POSITIONING) }
-                    sim.acessoriosLista.forEach { sessionManager.adicionarCopiando(it.arquivoLocal, Category.ACCESSORIES) }
-                    sim.documentos.forEach { sessionManager.adicionarCopiando(it.arquivoLocal, Category.DOCUMENTS) }
+                    // adicionarDaPasta traz o quadro cheio junto e registra o
+                    // par em reconstruidos(), que é o que a regravação apaga.
+                    sim.rosto?.let { sessionManager.adicionarDaPasta(it.arquivoLocal, Category.FACE) }
+                    sim.etiqueta?.let { sessionManager.adicionarDaPasta(it.arquivoLocal, Category.LABEL) }
+                    sim.posicionamentos.forEach { sessionManager.adicionarDaPasta(it.arquivoLocal, Category.POSITIONING) }
+                    sim.acessoriosLista.forEach { sessionManager.adicionarDaPasta(it.arquivoLocal, Category.ACCESSORIES) }
+                    sim.documentos.forEach { sessionManager.adicionarDaPasta(it.arquivoLocal, Category.DOCUMENTS) }
                 }
                 // Banner com o paciente de volta (a identificação foi restaurada acima).
                 atualizarBannerPaciente(sessionManager.nomePaciente,
@@ -719,14 +779,31 @@ class MainActivity : BaseActivity() {
 
     /** Resimulação confirmada: traz o ROSTO e a ETIQUETA da última simulação para a
      *  sessão nova e posiciona direto em POSICIONAMENTO (novos posicionamentos,
-     *  acessórios e impressos seguem normalmente). */
-    private fun copiarBaseDaSimulacaoAnterior(nome: String) {
+     *  acessórios e impressos seguem normalmente).
+     *
+     *  GUARDA: só da pasta DESTE paciente. A busca pelo nome acha também a pasta
+     *  de uma homônima ("MARIA DA SILVA - 1001" ao lado de "... - 2002"), e "a
+     *  simulação mais recente" pode ser a dela: o rosto e a etiqueta da outra
+     *  entrariam nesta sessão, iriam para a pasta deste paciente e sairiam na
+     *  página de identificação do Time-Out. A pasta vem da mesma regra de quem
+     *  grava (TreatmentPhotoFetcher.decidirPasta); incerta ou ausente, nada é
+     *  copiado e a captura segue do zero. */
+    private fun copiarBaseDaSimulacaoAnterior(nome: String, prontuario: String) {
         if (sessionManager.quantidadeCategoria(Category.FACE) > 0) return  // já copiado
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 val sim = withContext(Dispatchers.IO) {
-                    com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this@MainActivity)
-                        .buscarSimulacoes(nome).maxByOrNull { it.timestampPrincipal }
+                    val sims = com.radioterapia.ai.treatment.TreatmentPhotoFetcher(this@MainActivity)
+                        .buscarSimulacoes(nome, prontuario)
+                    // Sem prontuário e com outro registro do mesmo nome no
+                    // cadastro, nem a única pasta do tablet é com certeza a dele.
+                    val homonimos = prontuario.isBlank() && patientCache.temHomonimos(nome)
+                    val decisao = com.radioterapia.ai.treatment.TreatmentPhotoFetcher.decidirPasta(
+                        sims.map { it.nomePastaCompleto }.distinct(), nome, prontuario, "", homonimos)
+                    val pasta = (decisao as? com.radioterapia.ai.treatment.TreatmentPhotoFetcher.DecisaoPasta.Existente)?.nomePasta
+                    pasta?.let { p ->
+                        sims.filter { it.nomePastaCompleto == p }.maxByOrNull { it.timestampPrincipal }
+                    }
                 } ?: return@launch
                 var copiou = false
                 withContext(Dispatchers.IO) {
@@ -740,6 +817,57 @@ class MainActivity : BaseActivity() {
                 }
             } catch (_: Exception) { /* sem simulação anterior legível: segue normal */ }
         }
+    }
+
+    /**
+     * Paciente reusado (Histórico, Resimular): sessão nova já com os dados dele.
+     * Só com a sessão vazia — com rascunho aberto, quem decide é
+     * [perguntarRascunhoAntesDoReuso].
+     */
+    private fun iniciarReuso(nome: String, prontuario: String, nascimento: String) {
+        sessionManager.idSimulacao = UUID.randomUUID().toString().take(8)
+        sessionManager.marcarInicio()
+        atualizarCategoriaUI()
+        atualizarStatusUI()
+        txtPacienteAtivo.post {
+            finalizarIdentificacao(nome, prontuario, nascimento)
+            copiarBaseDaSimulacaoAnterior(nome, prontuario)
+        }
+    }
+
+    /**
+     * Reuso de paciente com um rascunho aberto: descartar ou continuar, a mesma
+     * pergunta de "Novo paciente" na tela de Simulação.
+     *
+     * GUARDA: o reuso nunca entra por cima do rascunho. A identificação troca
+     * o nome, mas prontuário e nascimento em branco ficariam os do rascunho; as
+     * fotos dele ficariam na sessão, e o rosto já presente impede a cópia do
+     * rosto da simulação anterior; e as marcas de edição deixadas por
+     * "Adicionar mais fotos" seguiriam valendo. A finalização gravaria as fotos
+     * de outra pessoa na pasta deste paciente e, com as marcas de edição,
+     * apagaria antes os arquivos de uma simulação dele.
+     *
+     * Continuar devolve o rascunho como estava, sem o paciente reusado; o
+     * reuso se refaz depois, pelo mesmo caminho.
+     */
+    private fun perguntarRascunhoAntesDoReuso(nome: String, prontuario: String, nascimento: String) {
+        val inicio = sessionManager.timestampInicio
+        val dias = if (inicio > 0) java.util.concurrent.TimeUnit.MILLISECONDS
+            .toDays(System.currentTimeMillis() - inicio).toInt().coerceAtLeast(0) else 0
+        val resumo = getString(R.string.draft_info,
+            sessionManager.nomePaciente.ifBlank { "—" }, sessionManager.quantidade(), dias)
+        mostrarDialogPintado(
+            AlertDialog.Builder(this)
+                .setTitle(R.string.draft_in_progress)
+                .setMessage(resumo + "\n\n" + getString(R.string.confirm_discard_draft))
+                .setCancelable(false)
+                .setPositiveButton(R.string.discard_draft) { _, _ ->
+                    sessionManager.limparSessao()
+                    iniciarReuso(nome, prontuario, nascimento)
+                }
+                .setNegativeButton(R.string.continue_draft) { _, _ -> restaurarRascunho() },
+            destrutivo = android.content.DialogInterface.BUTTON_POSITIVE,
+            seguro = android.content.DialogInterface.BUTTON_NEGATIVE)
     }
 
     private fun selecionarCategoria(c: Category) {
@@ -967,7 +1095,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun alternarFlash() {
-        // Item 9: 2 estados - on/off
+        // 2 estados - on/off
         flashMode = if (flashMode == ImageCapture.FLASH_MODE_ON) ImageCapture.FLASH_MODE_OFF
                     else ImageCapture.FLASH_MODE_ON
         imageCapture?.flashMode = flashMode
@@ -985,7 +1113,7 @@ class MainActivity : BaseActivity() {
         txtFlashLabel.setTextColor(if (ligado) ContextCompat.getColor(this, R.color.brand_primary) else 0xFFCCCCCC.toInt())
     }
 
-    // ===== MUDO DO CLIQUE DA CÂMERA (item 9) =====
+    // ===== MUDO DO CLIQUE DA CÂMERA =====
     // Botão simples toggle on/off. Quando MUDO: alpha cheio (indica ação contrária).
     private fun configurarMudoClique() {
         atualizarVisualMudo()
@@ -1651,7 +1779,14 @@ class MainActivity : BaseActivity() {
         etNasc.setText(com.radioterapia.ai.util.DateUtils.canonicoParaEntrada(
             sessionManager.dataNascimento, config.formatoData))
         etProt.setText(sessionManager.prontuario)
-        val dadosPac = patientCache.obterDadosPaciente(sessionManager.nomePaciente)
+        // Sexo pré-marcado só com registro deste paciente (nome + prontuário):
+        // só pelo nome, a busca escolhe entre homônimas e marcaria o da outra.
+        val dadosPac = patientCache.obterDadosPaciente(sessionManager.nomePaciente, sessionManager.prontuario)
+            ?.takeIf { d ->
+                com.radioterapia.ai.treatment.TreatmentPhotoFetcher.cadastroServeAoPaciente(
+                    sessionManager.prontuario, d.prontuario,
+                    sessionManager.prontuario.isBlank() && patientCache.temHomonimos(sessionManager.nomePaciente))
+            }
         when (dadosPac?.sexo) {
             "M" -> view.findViewById<android.widget.RadioButton>(R.id.rbCadSexoM).isChecked = true
             "F" -> view.findViewById<android.widget.RadioButton>(R.id.rbCadSexoF).isChecked = true
@@ -1717,8 +1852,8 @@ class MainActivity : BaseActivity() {
      * "NOME | PRONTUARIO" resolveu os homônimos do lado do cadastro, e o lado
      * da entrada ficou sem aviso nenhum: nome diferente com o mesmo prontuário
      * fazia obterContagemSimulacoes devolver 0 e passava em silêncio. O efeito
-     * clínico é o que a JORNADA já registrou uma vez — etiqueta e cabeçalho do
-     * PDF saindo com o dado da paciente errada.
+     * clínico é etiqueta e cabeçalho do PDF saindo com o dado da paciente
+     * errada.
      *
      * AVISA, NÃO OBRIGA. O técnico está com o paciente na mesa e pode ter
      * razão: prontuário reaproveitado, nome grafado diferente, cadastro antigo.

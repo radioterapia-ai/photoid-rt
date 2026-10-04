@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Controles da calibração de um PDF do protocolo. Incluído pelos dois layouts
+    da tela: embaixo da prévia em retrato, numa coluna ao lado em paisagem.
+
+    saveEnabled="false" nas caixas e nos campos de tamanho: o estado deles vem
+    do rascunho da página mostrada, preenchido pela Activity. Restaurados pelo
+    sistema, eles disparariam os mesmos listeners do toque e misturariam a
+    posição de uma página com a de outra.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@+id/edtProtPagNome"
+        android:text="@string/prot_pagina_nome"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <EditText
+        android:id="@+id/edtProtPagNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textCapSentences"
+        android:imeOptions="actionDone"
+        android:textColor="@color/text_primary"
+        android:autofillHints="" />
+
+    <CheckBox
+        android:id="@+id/chkProtEtq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:saveEnabled="false"
+        android:text="@string/prot_usar_etiqueta"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:id="@+id/linhaTamEtq"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:labelFor="@+id/edtProtEtqW"
+            android:text="@string/pdf_label_width_mm"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/edtProtEtqW"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:saveEnabled="false"
+            android:inputType="number"
+            android:textColor="@color/text_primary"
+            android:autofillHints="" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:labelFor="@+id/edtProtEtqH"
+            android:text="@string/pdf_label_height_mm"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp" />
+
+        <EditText
+            android:id="@+id/edtProtEtqH"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:saveEnabled="false"
+            android:inputType="number"
+            android:textColor="@color/text_primary"
+            android:autofillHints="" />
+    </LinearLayout>
+
+    <!-- Só nas páginas 2 em diante; a página 1 é a base que elas seguem. -->
+    <CheckBox
+        android:id="@+id/chkProtMesmaPag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:saveEnabled="false"
+        android:visibility="gone"
+        android:text="@string/prot_mesma_posicao"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <CheckBox
+        android:id="@+id/chkProtLogo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:saveEnabled="false"
+        android:text="@string/prot_usar_logo"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <!--
+        Rodapé da ficha (nome da clínica e número da página) nesta página.
+        Desligar serve ao impresso que já tem texto centrado na margem de
+        baixo, que o rodapé cobriria.
+    -->
+    <CheckBox
+        android:id="@+id/chkProtRodape"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:saveEnabled="false"
+        android:text="@string/prot_usar_rodape"
+        android:textColor="@color/text_primary"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/txtProtPos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnProtPagCancelar"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/action_neutral" />
+
+        <Button
+            android:id="@+id/btnProtPagSalvar"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/save"
+            android:textColor="@color/text_on_dark"
+            android:backgroundTint="@color/brand_primary_dark" />
+    </LinearLayout>
+</LinearLayout>

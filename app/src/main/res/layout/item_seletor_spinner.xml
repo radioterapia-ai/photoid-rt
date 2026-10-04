@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    O Spinner fechado: o valor escolhido, com o mesmo texto e o mesmo recuo dos
+    outros campos de seleção. paddingEnd de 44dp deixa o lugar da seta, que é
+    desenhada pelo fundo (bg_seletor_spinner): 14dp de margem + 24dp de seta +
+    6dp de folga.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical|start"
+    android:textAlignment="viewStart"
+    android:paddingStart="14dp"
+    android:paddingEnd="44dp"
+    android:textSize="@dimen/fin_campo_texto"
+    android:textColor="@color/text_primary"
+    android:maxLines="1"
+    android:ellipsize="end" />

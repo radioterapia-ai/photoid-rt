@@ -31,4 +31,14 @@
     <dimen name="hist_nome_text">17sp</dimen>
     <dimen name="hist_sub_text">13sp</dimen>
     <dimen name="hist_sub2_text">12sp</dimen>
+
+    <!-- Finalizar: cartão de resumo, campos de seleção e linhas de estado -->
+    <dimen name="fin_resumo_texto">14sp</dimen>
+    <dimen name="fin_campo_altura">52dp</dimen>
+    <dimen name="fin_campo_texto">16sp</dimen>
+    <!-- As linhas de estado (sincronia e impressora) têm o mesmo tamanho nos
+         dois aparelhos. A altura mínima é o piso de alvo de toque: as duas
+         respondem ao toque (testar de novo, abrir as Configurações). -->
+    <dimen name="fin_status_texto">13sp</dimen>
+    <dimen name="fin_status_altura_min">48dp</dimen>
 </resources>

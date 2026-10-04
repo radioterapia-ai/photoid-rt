@@ -4,11 +4,10 @@ REM  PORTAO DE QUALIDADE do PhotoID RT - testes + lint, num comando.
 REM
 REM  Existe por dois motivos:
 REM
-REM  1. `assembleDebug` NAO roda lint. Foi por isso que o portao ficou
-REM     vermelho por meses sem ninguem ver. Aqui roda `check`, que roda
-REM     os dois.
-REM  2. A linha com JAVA_HOME estava escrita a mao na documentacao, com
-REM     o caminho do JDK de UMA maquina. Agora o JDK e descoberto.
+REM  1. `assembleDebug` NAO roda lint: com ele, o lint pode estar
+REM     vermelho sem ninguem ver. Aqui roda `check`, que roda os dois.
+REM  2. JAVA_HOME escrito a mao leva o caminho do JDK de UMA maquina e
+REM     quebra nas outras. Aqui o JDK e descoberto pelo Resolver-Jdk.ps1.
 REM
 REM  Uso:  tools\portao.cmd
 REM ===================================================================
