@@ -266,10 +266,10 @@ so a missing permission does not waste the department's bandwidth. When the
 installer finishes, tap **Open**: Android 10 and later do not let an app reopen
 itself after replacing itself.
 
-**Tablets on 4.4 install 4.5 once by hand**, from the permanent link above. The
-4.4 update routine is deliberately not offered the new version, because its
-pre-install backup would have copied the whole photo archive. From 4.5 on,
-updating from inside the app is the normal path.
+**Tablets still on 4.4 install the current version once by hand**, from the
+permanent link above. The 4.4 update routine is deliberately not offered newer
+versions, because its pre-install backup would have copied the whole photo
+archive. From 4.5 on, updating from inside the app is the normal path.
 
 ## Build your own
 
@@ -342,7 +342,7 @@ install over an existing one.
 ## Before touching the code
 
 **Run `./gradlew check` before and after.** It runs the unit tests and lint
-together — 1,340 tests across the two variants (670 each), and lint with
+together — 1,394 tests across the two variants (697 each), and lint with
 `MissingTranslation` and `ExtraTranslation` as **errors**, so a missing or
 surplus translation fails the build. That is the safety net, not an obstacle.
 `assembleDebug` does **not** run lint; a green `assembleDebug` proves nothing

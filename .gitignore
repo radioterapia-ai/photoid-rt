@@ -53,3 +53,6 @@ entrega/
 # decisao em rascunho e registro de erro sao materia de trabalho, nao de
 # apresentacao do projeto.
 .planning/
+
+# Intermediario de montagem e entrega para revisao: nao e versao, nao vai ao Git.
+/_montagem/

@@ -688,6 +688,24 @@ object PdfBuilder {
         var yCol = y
         var colunaAtual = 0
 
+        // UM CORPO PARA A FOLHA INTEIRA: nomes e registros de todas as pessoas,
+        // nas duas colunas, saem no mesmo tamanho, quebrando linha dentro da
+        // célula quando preciso (ver TipografiaRubricario). As larguras são as
+        // das colunas desenhadas abaixo, menos o respiro de 4 pt de cada lado.
+        val larguraNome = larguraCol * 0.56f - 8f
+        val larguraReg = larguraCol * (0.78f - 0.56f) - 8f
+        val pMedida = Paint(pLinha)
+        val todas = grupos.flatMap { it.second }
+        val corpo = TipografiaRubricario.corpoComum(
+            nomes = todas.map { it.nome },
+            larguraNome = larguraNome,
+            registros = todas.map { it.registro }.filter { it.isNotBlank() },
+            larguraRegistro = larguraReg,
+            medir = { t, c -> pMedida.textSize = c; pMedida.measureText(t) },
+        )
+        val pTexto = Paint(pLinha).apply { textSize = corpo }
+        val medirNoCorpo = { t: String -> pTexto.measureText(t) }
+
         grupos.forEach { (cargo, pessoas) ->
             val h = alturaGrupo(pessoas.size)
             // Quebra para a segunda coluna quando a primeira encheu.
@@ -726,15 +744,16 @@ object PdfBuilder {
                 cv.drawLine(colReg, topo, colReg, base, borda)
                 cv.drawLine(colRub, topo, colRub, base, borda)
 
-                // Nome encolhe se nao couber: cortar seria pior que reduzir.
-                val pN = Paint(pLinha)
-                var t = 10f
-                while (t > 6.5f && pN.measureText(p.nome) > (colReg - colNome - 8f)) {
-                    t -= 0.5f; pN.textSize = t
+                // Nome e registro no corpo da folha, em até duas linhas
+                // centradas na célula.
+                val linhasNome = TipografiaRubricario.linhas(p.nome, larguraNome, medirNoCorpo)
+                TipografiaRubricario.linhasDeBase(linhasNome.size, topo, alturaLinha, corpo)
+                    .forEachIndexed { i, yBase -> cv.drawText(linhasNome[i], colNome + 4f, yBase, pTexto) }
+                if (p.registro.isNotBlank()) {
+                    val linhasReg = TipografiaRubricario.linhas(p.registro, larguraReg, medirNoCorpo)
+                    TipografiaRubricario.linhasDeBase(linhasReg.size, topo, alturaLinha, corpo)
+                        .forEachIndexed { i, yBase -> cv.drawText(linhasReg[i], colReg + 4f, yBase, pTexto) }
                 }
-                cv.drawText(p.nome, colNome + 4f, topo + alturaLinha / 2 + 3.5f, pN)
-                if (p.registro.isNotBlank())
-                    cv.drawText(p.registro, colReg + 4f, topo + alturaLinha / 2 + 3.5f, pLinha)
 
                 // RUBRICA: desenhada dentro da celula, mantendo a proporcao. O
                 // PNG vem recortado no traco e com fundo transparente, entao nao

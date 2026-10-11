@@ -292,8 +292,9 @@ class ProtocoloActivity : BaseActivity() {
                 return@launch
             }
             desenharPaginas()
-            // NÃO abre a calibração: o verso não recebe etiqueta nem logotipo,
-            // então não há box nenhum para posicionar nele.
+            // NÃO abre a calibração: o verso sai sem etiqueta e sem logotipo
+            // até alguém ligá-los, em Calibrar > Verso, e abrir a tela aqui
+            // custaria um toque a todo serviço que não quer nada no verso.
             Toast.makeText(this@ProtocoloActivity, R.string.prot_verso_add,
                 Toast.LENGTH_SHORT).show()
         }
@@ -305,7 +306,7 @@ class ProtocoloActivity : BaseActivity() {
             .setMessage(R.string.prot_verso_remover_q)
             .setPositiveButton(R.string.rub_excluir) { _, _ ->
                 val novas = atual.paginas.map {
-                    if (it.arquivo == pag.arquivo) it.copy(verso = "") else it
+                    if (it.arquivo == pag.arquivo) it.semVerso() else it
                 }
                 // A lista vai a disco ANTES de o arquivo sair: se gravar
                 // falhar, a página continua apontando para um verso que existe.

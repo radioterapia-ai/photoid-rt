@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ mostra a própria splash antes da primeira tela: por padrão, o
+         ícone do app sobre o fundo do tema. Aqui ela é só o fundo, o mesmo da
+         abertura, e sai no primeiro quadro da tela de destino, onde a
+         assinatura é desenhada (AberturaSobreposta). O ícone seguido da
+         assinatura seriam duas aberturas em sequência.
+
+         O estilo inteiro é repetido porque, em values-v31, ele substitui o de
+         values em vez de se somar a ele. -->
+    <style name="Theme.Radioterapia.Splash" parent="Theme.Radioterapia">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSplashScreenBackground">@color/bg_main</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/abertura_sem_icone</item>
+    </style>
+</resources>

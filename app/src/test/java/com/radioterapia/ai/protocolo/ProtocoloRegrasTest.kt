@@ -388,6 +388,133 @@ class ProtocoloRegrasTest {
         assertEquals(30f, pg.posicaoDa(1).etqXmm)
     }
 
+    // ---------------------------------------------------------------- calibração do verso
+
+    /** Sem calibração, o verso é o de sempre: sem etiqueta, sem logo, rodapé da frente. */
+    @Test
+    fun `verso sem calibracao sai como sempre saiu`() {
+        assertNull(base.versoBase)
+        assertEquals(base.posicaoBase.copy(etqAtiva = false, logoAtivo = false), base.posicaoDoVerso(0))
+        val pg = base.comPosicao(2, outra.copy(rodapeAtivo = false))
+        assertFalse(pg.posicaoDoVerso(2).rodapeAtivo)
+        assertTrue(pg.posicaoDoVerso(1).rodapeAtivo)
+        listOf(0, 1, 2, 5).forEach { i ->
+            assertFalse(pg.posicaoDoVerso(i).etqAtiva)
+            assertFalse(pg.posicaoDoVerso(i).logoAtivo)
+            // Sem calibração, o verso herda da frente, inclusive o "tem ajuste".
+            assertEquals(pg.temAjuste(i), pg.versoTemAjuste(i))
+        }
+    }
+
+    /**
+     * A primeira calibração do verso parte do verso de sempre. A página do
+     * verso que tinha posição própria, herdada da frente, continua saindo
+     * igual — rodapé por página incluído —, e as que seguiam a página 1 passam
+     * a seguir a página 1 do verso, como na frente.
+     */
+    @Test
+    fun `calibrar a pagina 1 do verso preserva as paginas com posicao propria`() {
+        val pg = base.comPosicao(1, base.posicaoBase.copy(rodapeAtivo = false))
+        val antes = pg.posicaoDoVerso(1)
+        val calibrada = pg.comPosicaoNoVerso(0, pg.posicaoDoVerso(0).copy(etqAtiva = true))
+        assertTrue(calibrada.posicaoDoVerso(0).etqAtiva)
+        assertEquals(antes, calibrada.posicaoDoVerso(1))
+        assertFalse(calibrada.posicaoDoVerso(1).rodapeAtivo)
+        assertTrue(calibrada.versoTemAjuste(1))
+        assertEquals(calibrada.posicaoDoVerso(0), calibrada.posicaoDoVerso(2))
+        val p = Protocolo("p9", "Mama", false, paginas = listOf(calibrada))
+        assertEquals(p, ProtocoloStore.deJson(JSONObject(ProtocoloStore.protocoloParaJson(p).toString())))
+    }
+
+    @Test
+    fun `vp com chave ausente nao liga etiqueta nem logo`() {
+        val p = ProtocoloStore.deJson(JSONObject(
+            """{"id":"p1","paginas":[{"arquivo":"a.pdf","verso":"v.pdf","vp":{"rd":false}}]}"""))!!
+        val vb = p.paginas.single().versoBase!!
+        assertFalse(vb.etqAtiva)
+        assertFalse(vb.logoAtivo)
+        assertFalse(vb.rodapeAtivo)
+    }
+
+    @Test
+    fun `lista antiga nao tem calibracao de verso e regrava sem vp`() {
+        ProtocoloStore.listaDeTexto(listaAntiga).flatMap { it.paginas }.forEach { pg ->
+            assertNull(pg.versoBase)
+            assertTrue(pg.versoAjustes.isEmpty())
+            assertFalse(ProtocoloStore.paginaParaJson(pg).has("vp"))
+        }
+    }
+
+    @Test
+    fun `calibrar o verso grava vp e volta igual sem mexer na frente`() {
+        val etqNoVerso = outra.copy(etqAtiva = true)
+        val pg = base.comPosicaoNoVerso(0, etqNoVerso)
+            .comPosicaoNoVerso(2, etqNoVerso.copy(etqXmm = 70f, rodapeAtivo = false))
+        assertEquals(base.posicaoBase, pg.posicaoBase)
+        assertEquals(base.ajustes, pg.ajustes)
+        assertEquals(etqNoVerso, pg.posicaoDoVerso(0))
+        assertEquals(etqNoVerso, pg.posicaoDoVerso(1))
+        assertEquals(70f, pg.posicaoDoVerso(2).etqXmm)
+
+        val vp = ProtocoloStore.paginaParaJson(pg).getJSONObject("vp")
+        assertTrue(vp.getBoolean("etq"))
+        val pp = vp.getJSONArray("pp")
+        assertEquals(1, pp.length())
+        assertEquals(2, pp.getJSONObject(0).getInt("i"))
+        assertFalse(pp.getJSONObject(0).getBoolean("rd"))
+
+        val p = Protocolo("p9", "Mama", false, paginas = listOf(pg))
+        assertEquals(p, ProtocoloStore.deJson(JSONObject(ProtocoloStore.protocoloParaJson(p).toString())))
+    }
+
+    @Test
+    fun `ajustar pagina do verso sem base cria a base do verso de sempre`() {
+        val pg = base.comPosicaoNoVerso(1, outra)
+        assertEquals(base.posicaoDoVerso(0), pg.versoBase)
+        assertEquals(outra, pg.posicaoDoVerso(1))
+        assertEquals(pg.versoBase, pg.posicaoDoVerso(2))
+        assertTrue(pg.versoTemAjuste(1))
+        val volta = pg.semAjusteNoVerso(1)
+        assertFalse(volta.versoTemAjuste(1))
+        assertEquals(pg.versoBase, volta.posicaoDoVerso(1))
+        assertSame(base, base.semAjusteNoVerso(1))
+    }
+
+    @Test
+    fun `tirar o verso leva a calibracao junto`() {
+        val pg = base.comPosicaoNoVerso(0, outra.copy(etqAtiva = true))
+            .comPosicaoNoVerso(2, outra).semVerso()
+        assertEquals("", pg.verso)
+        assertNull(pg.versoBase)
+        assertTrue(pg.versoAjustes.isEmpty())
+        assertFalse(ProtocoloStore.paginaParaJson(pg).has("vp"))
+        assertEquals("pag_1.pdf", pg.arquivo)
+        assertEquals("Termo", pg.nome)
+    }
+
+    @Test
+    fun `vp sem pdf de verso e ignorado`() {
+        val p = ProtocoloStore.deJson(JSONObject(
+            """{"id":"p1","paginas":[{"arquivo":"a.pdf","verso":"","vp":{"etq":true,"ex":5}}]}"""))!!
+        assertNull(p.paginas.single().versoBase)
+    }
+
+    @Test
+    fun `pp do verso herda da base do verso chave a chave`() {
+        val p = ProtocoloStore.deJson(JSONObject(
+            """{"id":"p1","paginas":[{"arquivo":"a.pdf","verso":"v.pdf",
+               "vp":{"etq":true,"ex":20,"rd":false,"pp":[{"i":1,"ey":99}]}}]}"""))!!
+        val pg = p.paginas.single()
+        val vb = pg.versoBase!!
+        assertTrue(vb.etqAtiva)
+        assertEquals(20f, vb.etqXmm)
+        assertFalse(vb.rodapeAtivo)
+        assertEquals(vb.copy(etqYmm = 99f), pg.posicaoDoVerso(1))
+        assertEquals(vb, pg.posicaoDoVerso(3))
+        // A frente continua a de antes: a chave do verso não vaza para ela.
+        assertEquals(Posicao(), pg.posicaoBase)
+    }
+
     // ---------------------------------------------------------------- duplicar
 
     @Test

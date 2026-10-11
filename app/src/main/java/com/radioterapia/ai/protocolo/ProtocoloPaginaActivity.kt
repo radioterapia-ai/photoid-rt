@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.radioterapia.ai.BaseActivity
@@ -49,6 +50,12 @@ import java.io.File
  * página GRAVADA e só muda por `copy`: verso, nome e ajustes que a tela não
  * mostra passam intactos para o disco.
  *
+ * FRENTE | VERSO: quando a folha tem verso, a mesma tela calibra os dois, com
+ * os mesmos controles e a mesma herança da página 1, e um Salvar grava ambos.
+ * O verso nasce como sempre saiu, sem etiqueta e sem logotipo, e só ganha
+ * calibração própria quando alguém mexe nele: olhar a face e voltar não muda
+ * o que já se imprimia.
+ *
  * EM PAISAGEM os controles ficam numa coluna ao lado da página. Empilhados,
  * eles tomariam a altura de que a prévia precisa. A Activity não é recriada ao
  * girar (configChanges no manifesto), então a troca de layout é feita aqui,
@@ -77,9 +84,16 @@ class ProtocoloPaginaActivity : BaseActivity() {
     private lateinit var txtPagNum: TextView
     private lateinit var btnAnt: Button
     private lateinit var btnProx: Button
+    private lateinit var rgFace: RadioGroup
 
     /** Layout em uso: true = controles na coluna ao lado (paisagem). */
     private var colunaLateral = false
+
+    /** Face em calibração: false = frente, true = verso. */
+    private var faceVerso = false
+
+    /** Alguém mexeu no verso nesta abertura da tela (ver o KDoc da classe). */
+    private var versoAlterado = false
 
     /** A página sendo calibrada, com o que já foi ajustado e ainda não salvo. */
     private lateinit var rascunho: ProtocoloStore.Pagina
@@ -188,6 +202,19 @@ class ProtocoloPaginaActivity : BaseActivity() {
         txtPagNum = findViewById(R.id.txtProtPagNum)
         btnAnt = findViewById(R.id.btnProtPagAnt)
         btnProx = findViewById(R.id.btnProtPagProx)
+        rgFace = findViewById(R.id.rgProtFace)
+
+        rgFace.visibility = if (rascunho.verso.isNotBlank()) View.VISIBLE else View.GONE
+        aplicando = true
+        try {
+            rgFace.check(if (faceVerso) R.id.rbProtFaceVerso else R.id.rbProtFaceFrente)
+        } finally {
+            aplicando = false
+        }
+        rgFace.setOnCheckedChangeListener { _, id ->
+            if (aplicando) return@setOnCheckedChangeListener
+            trocarFace(id == R.id.rbProtFaceVerso)
+        }
 
         // O teto vem do modelo, e não do XML, para o campo e o que se grava
         // nunca divergirem.
@@ -214,7 +241,7 @@ class ProtocoloPaginaActivity : BaseActivity() {
             if (aplicando) return@setOnCheckedChangeListener
             // Marcar devolve a página à posição da primeira. Desmarcar mantém
             // o que está na tela, que vira o ponto de partida do ajuste.
-            if (marcado) aplicarPosicao(rascunho.posicaoBase)
+            if (marcado) aplicarPosicao(posicaoDaFace(0))
         }
         view.aoMover = {
             mudouPelaMao()
@@ -234,12 +261,19 @@ class ProtocoloPaginaActivity : BaseActivity() {
 
     // ---------------------------------------------------------------- posição
 
+    /** Posição da página [i] na face em calibração. */
+    private fun posicaoDaFace(i: Int): ProtocoloStore.Posicao =
+        if (faceVerso) rascunho.posicaoDoVerso(i) else rascunho.posicaoDa(i)
+
+    private fun temAjusteNaFace(i: Int): Boolean =
+        if (faceVerso) rascunho.versoTemAjuste(i) else rascunho.temAjuste(i)
+
     /** Mostra a posição da página [indice] e o estado da herança dela. */
     private fun carregarPosicao() {
-        aplicarPosicao(rascunho.posicaoDa(indice))
+        aplicarPosicao(posicaoDaFace(indice))
         aplicando = true
         try {
-            chkMesma.isChecked = indice > 0 && !rascunho.temAjuste(indice)
+            chkMesma.isChecked = indice > 0 && !temAjusteNaFace(indice)
         } finally {
             aplicando = false
         }
@@ -281,7 +315,9 @@ class ProtocoloPaginaActivity : BaseActivity() {
      * de seguir a página 1. Na página 1 não há o que desmarcar — ela é a base.
      */
     private fun mudouPelaMao() {
-        if (aplicando || indice <= 0 || !chkMesma.isChecked) return
+        if (aplicando) return
+        if (faceVerso) versoAlterado = true
+        if (indice <= 0 || !chkMesma.isChecked) return
         aplicando = true
         try {
             chkMesma.isChecked = false
@@ -296,8 +332,31 @@ class ProtocoloPaginaActivity : BaseActivity() {
      */
     private fun guardarAtual() {
         lerTamanho()
-        rascunho = if (indice > 0 && chkMesma.isChecked) rascunho.semAjuste(indice)
-                   else rascunho.comPosicao(indice, posicaoDaView())
+        // Verso nunca calibrado e em que ninguém mexeu: continua sem calibração.
+        if (faceVerso && rascunho.versoBase == null && !versoAlterado) return
+        val segue = indice > 0 && chkMesma.isChecked
+        rascunho = when {
+            faceVerso && segue -> rascunho.semAjusteNoVerso(indice)
+            faceVerso -> rascunho.comPosicaoNoVerso(indice, posicaoDaView())
+            segue -> rascunho.semAjuste(indice)
+            else -> rascunho.comPosicao(indice, posicaoDaView())
+        }
+    }
+
+    /**
+     * Troca a face em calibração. A posição da face que sai vai para o
+     * rascunho; a outra abre na página 1, e o número de páginas vem da prévia,
+     * porque frente e verso podem ter quantidades diferentes.
+     */
+    private fun trocarFace(verso: Boolean) {
+        if (verso == faceVerso) return
+        guardarAtual()
+        faceVerso = verso
+        indice = 0
+        total = 0
+        carregarPosicao()
+        atualizarNav()
+        carregarPrevia()
     }
 
     private fun lerTamanho() {
@@ -386,7 +445,7 @@ class ProtocoloPaginaActivity : BaseActivity() {
      * nova entra: sem isso, cada toque na seta somaria um bitmap à memória.
      */
     private fun carregarPrevia() {
-        val arq = File(store.pastaDe(idProtocolo), nomeArquivo)
+        val arq = File(store.pastaDe(idProtocolo), if (faceVerso) rascunho.verso else nomeArquivo)
         val pedido = indice
         val g = ++geracao
         val lerLogo = aspectoLogo <= 0f

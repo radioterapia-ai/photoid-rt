@@ -57,8 +57,9 @@
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="ocr,barcode" />
 
-        <!-- Splash (única que NÃO é landscape porque a logo é horizontal e funciona em
-             qualquer orientação inicial; demais activities travadas em landscape - item 2) -->
+        <!-- Entrada do app: só roteia, sem desenhar nada, e não fixa orientação.
+             A assinatura da abertura é desenhada pela tela de destino
+             (AberturaSobreposta). -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"

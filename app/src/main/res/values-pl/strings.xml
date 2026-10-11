@@ -940,6 +940,8 @@ Otwórz każde miejsce docelowe i wpisz hasło raz na tym tablecie. Potem włąc
     <string name="prot_pagina_nome">Nazwa tego pliku PDF</string>
     <string name="prot_pag_n_de">Strona %1$d z %2$d</string>
     <string name="prot_mesma_posicao">To samo położenie co na stronie 1</string>
+    <string name="prot_face_frente">Przód</string>
+    <string name="prot_face_verso">Odwrót</string>
     <string name="prot_pag_anterior">Poprzednia strona</string>
     <string name="prot_pag_proxima">Następna strona</string>
     <string name="prot_usar_rodape">Drukuj stopkę (ośrodek i numer strony)</string>

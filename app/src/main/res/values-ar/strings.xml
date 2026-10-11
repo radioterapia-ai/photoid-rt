@@ -940,6 +940,8 @@
     <string name="prot_pagina_nome">اسم ملف PDF هذا</string>
     <string name="prot_pag_n_de">الصفحة %1$d من %2$d</string>
     <string name="prot_mesma_posicao">الموضع نفسه كما في الصفحة 1</string>
+    <string name="prot_face_frente">الوجه</string>
+    <string name="prot_face_verso">الظهر</string>
     <string name="prot_pag_anterior">الصفحة السابقة</string>
     <string name="prot_pag_proxima">الصفحة التالية</string>
     <string name="prot_usar_rodape">طباعة التذييل (المركز ورقم الصفحة)</string>

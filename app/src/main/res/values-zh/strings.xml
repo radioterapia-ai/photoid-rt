@@ -940,6 +940,8 @@
     <string name="prot_pagina_nome">此 PDF 的名称</string>
     <string name="prot_pag_n_de">第 %1$d 页，共 %2$d 页</string>
     <string name="prot_mesma_posicao">与第 1 页位置相同</string>
+    <string name="prot_face_frente">正面</string>
+    <string name="prot_face_verso">背面</string>
     <string name="prot_pag_anterior">上一页</string>
     <string name="prot_pag_proxima">下一页</string>
     <string name="prot_usar_rodape">打印页脚（机构名称和页码）</string>

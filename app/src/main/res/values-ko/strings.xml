@@ -940,6 +940,8 @@
     <string name="prot_pagina_nome">이 PDF의 이름</string>
     <string name="prot_pag_n_de">%2$d쪽 중 %1$d쪽</string>
     <string name="prot_mesma_posicao">1쪽과 같은 위치</string>
+    <string name="prot_face_frente">앞면</string>
+    <string name="prot_face_verso">뒷면</string>
     <string name="prot_pag_anterior">이전 페이지</string>
     <string name="prot_pag_proxima">다음 페이지</string>
     <string name="prot_usar_rodape">바닥글 인쇄(기관 및 페이지 번호)</string>

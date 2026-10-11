@@ -940,6 +940,8 @@ Apri ogni destinazione e digita la password una volta su questo tablet. Dopo si 
     <string name="prot_pagina_nome">Nome di questo PDF</string>
     <string name="prot_pag_n_de">Pagina %1$d di %2$d</string>
     <string name="prot_mesma_posicao">Stessa posizione della pagina 1</string>
+    <string name="prot_face_frente">Fronte</string>
+    <string name="prot_face_verso">Retro</string>
     <string name="prot_pag_anterior">Pagina precedente</string>
     <string name="prot_pag_proxima">Pagina successiva</string>
     <string name="prot_usar_rodape">Stampa il piè di pagina (struttura e numero di pagina)</string>

@@ -54,6 +54,8 @@ class HomeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        // Abertura do app: só quando a SplashActivity pediu (ver AberturaSobreposta).
+        com.radioterapia.ai.ui.AberturaSobreposta.aplicar(this, savedInstanceState)
         avisarEspacoBaixo()
         // GATILHO DE ABERTURA. O tablet da sala passa a noite desligado; sem
         // isto, a primeira varredura do dia esperaria o periodo configurado.

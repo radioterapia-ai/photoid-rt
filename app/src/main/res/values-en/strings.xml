@@ -1013,6 +1013,8 @@ Open each destination and type the password once on this tablet. They switch on 
     <string name="prot_pagina_nome">Name of this PDF</string>
     <string name="prot_pag_n_de">Page %1$d of %2$d</string>
     <string name="prot_mesma_posicao">Same position as page 1</string>
+    <string name="prot_face_frente">Front</string>
+    <string name="prot_face_verso">Back</string>
     <string name="prot_pag_anterior">Previous page</string>
     <string name="prot_pag_proxima">Next page</string>
     <string name="prot_usar_rodape">Print the footer (clinic and page number)</string>

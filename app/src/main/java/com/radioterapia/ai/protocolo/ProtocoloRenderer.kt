@@ -78,30 +78,35 @@ object ProtocoloRenderer {
             val verso = store.arquivoVerso(protocolo, pag)
 
             /*
-                PAREAMENTO DA FOLHA, quando há verso.
+                PAREAMENTO DA FOLHA, quando há verso, do SEGUNDO impresso do
+                protocolo em diante.
 
                 A impressora em frente-e-verso junta as páginas aos pares: 1 com
                 2, 3 com 4. Para a frente e o verso caírem na MESMA folha, a
-                frente precisa estar em posição ímpar — e isso depende de
-                quantas páginas a ficha teve antes, que varia com o número de
-                fotos do paciente.
+                frente precisa estar em posição ímpar; em posição par, ela
+                recebe uma folha em branco antes. Uma folha gasta é mais barata
+                que um impresso clínico montado errado.
 
-                Sem esta folha em branco, o verso de um paciente com número par
-                de páginas anteriores sairia impresso no verso da página de
-                Time-Out, e a frente do impresso ficaria sozinha. Uma folha
-                gasta é mais barata que um impresso clínico montado errado.
+                O PRIMEIRO impresso começa logo depois da ficha, sem página em
+                branco entre a ficha e o protocolo — no verso da última página
+                da ficha quando ela tem número ímpar de páginas, o que varia
+                com o número de fotos do paciente. Se esse impresso tem verso,
+                frente e verso dele ficam então em folhas consecutivas, e o
+                verso abre a folha seguinte — sem etiqueta, salvo se o serviço
+                a ligou na calibração do verso.
              */
-            if (precisaFolhaEmBranco(doc.pages.size + 1, verso != null)) {
+            if (precisaFolhaEmBranco(doc.pages.size + 1, verso != null,
+                    inicioDaCauda = desenhadas == 0)) {
                 desenhadas += paginaEmBranco(doc, arq)
             }
 
-            desenhadas += desenharArquivo(doc, arq, pag, logo, desenharEtiqueta, rodape)
+            desenhadas += desenharArquivo(doc, arq, pag::posicaoDa, logo, desenharEtiqueta, rodape)
 
             if (verso != null) {
-                // SEM SOBREPOSIÇÃO: a etiqueta e o logotipo já estão na frente
-                // desta mesma folha. O rodapé, que numera, sai.
+                // O verso só leva etiqueta e logotipo quando o serviço os ligou
+                // na calibração dele (ver ProtocoloStore.Pagina.verso).
                 desenhadas += desenharArquivo(
-                    doc, verso, pag, logo, desenharEtiqueta, rodape, sobrepor = false)
+                    doc, verso, pag::posicaoDoVerso, logo, desenharEtiqueta, rodape)
             }
         }
         return desenhadas
@@ -114,11 +119,14 @@ object ProtocoloRenderer {
      * põe no verso da folha anterior. [proximaPosicao] é a posição (base 1) que
      * a próxima página teria no documento.
      *
-     * Página SÓ DE FRENTE nunca recebe a folha em branco: ela pode começar no
-     * verso da última página anterior, o que economiza uma folha.
+     * Nunca para página SÓ DE FRENTE, que pode começar no verso da página
+     * anterior e economiza uma folha, nem para o primeiro impresso do
+     * protocolo ([inicioDaCauda]), que começa logo depois da ficha, sem página
+     * em branco entre as duas (ver [desenhar]).
      */
-    internal fun precisaFolhaEmBranco(proximaPosicao: Int, temVerso: Boolean): Boolean =
-        temVerso && proximaPosicao % 2 == 0
+    internal fun precisaFolhaEmBranco(
+        proximaPosicao: Int, temVerso: Boolean, inicioDaCauda: Boolean = false
+    ): Boolean = temVerso && !inicioDaCauda && proximaPosicao % 2 == 0
 
     /**
      * Folha em branco, do tamanho da página que vem a seguir.
@@ -154,19 +162,17 @@ object ProtocoloRenderer {
     /**
      * Um PDF do protocolo pode ter mais de uma página; todas entram.
      *
-     * No VERSO, a página i segue a escolha de rodapé da página i da frente: é a
-     * mesma folha quando frente e verso têm o mesmo número de páginas, e uma
-     * página sem ajuste próprio segue a primeira.
+     * [posicaoDe] dá a posição da página i do arquivo: a da frente, ou a do
+     * verso, que sem calibração própria segue o rodapé da página i da frente
+     * (ver ProtocoloStore.Pagina.posicaoDoVerso).
      */
     private fun desenharArquivo(
         doc: PdfDocument,
         arq: File,
-        pag: ProtocoloStore.Pagina,
+        posicaoDe: (Int) -> ProtocoloStore.Posicao,
         logo: Bitmap?,
         desenharEtiqueta: (Canvas, RectF) -> Unit,
-        rodape: (Canvas, Int, Int, Int) -> Unit,
-        /** `false` no verso: etiqueta e logotipo já vieram na frente da folha. */
-        sobrepor: Boolean = true
+        rodape: (Canvas, Int, Int, Int) -> Unit
     ): Int {
         var pfd: ParcelFileDescriptor? = null
         var r: PdfRenderer? = null
@@ -201,10 +207,9 @@ object ProtocoloRenderer {
                 cv.drawBitmap(bmp, null, RectF(0f, 0f, wPt.toFloat(), hPt.toFloat()), null)
                 bmp.recycle()
 
-                val pos = pag.posicaoDa(i)
-                if (sobrepor && pos.etqAtiva) sobreporEtiqueta(cv, pos, desenharEtiqueta)
-                if (sobrepor && pos.logoAtivo && logo != null)
-                    desenharLogo(cv, pos, logo, wPt.toFloat())
+                val pos = posicaoDe(i)
+                if (pos.etqAtiva) sobreporEtiqueta(cv, pos, desenharEtiqueta)
+                if (pos.logoAtivo && logo != null) desenharLogo(cv, pos, logo, wPt.toFloat())
                 // A página ainda não foi finalizada, e getPages() só conta as
                 // finalizadas: esta é a de número pages.size + 1.
                 if (pos.rodapeAtivo) {

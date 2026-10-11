@@ -22,10 +22,12 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
+    <!-- Sem tela cheia: a janela de partida mostra a mesma barra de status da
+         tela de destino, onde a abertura e desenhada. Esconder a barra aqui e
+         mostra-la la faria tudo pular na troca. -->
     <style name="Theme.Radioterapia.Splash" parent="Theme.Radioterapia">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 

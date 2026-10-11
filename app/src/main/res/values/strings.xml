@@ -1082,6 +1082,8 @@ Abra cada destino e digite a senha uma vez neste tablet. Eles ligam sozinhos dep
     <string name="prot_pagina_nome">Nome deste PDF</string>
     <string name="prot_pag_n_de">Página %1$d de %2$d</string>
     <string name="prot_mesma_posicao">Mesma posição da página 1</string>
+    <string name="prot_face_frente">Frente</string>
+    <string name="prot_face_verso">Verso</string>
     <string name="prot_pag_anterior">Página anterior</string>
     <string name="prot_pag_proxima">Próxima página</string>
     <string name="prot_usar_rodape">Imprimir o rodapé (clínica e número da página)</string>

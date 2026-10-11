@@ -127,6 +127,8 @@ class ConsentActivity : AppCompatActivity() {
         // significa que o usuario ainda esta escolhendo.
         passo = intent.getIntExtra(EXTRA_PASSO, PASSO_IDIOMA)
         render()
+        // Abertura do app: só quando a SplashActivity pediu (ver AberturaSobreposta).
+        com.radioterapia.ai.ui.AberturaSobreposta.aplicar(this, savedInstanceState)
     }
 
     /**

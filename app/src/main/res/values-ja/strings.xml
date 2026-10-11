@@ -940,6 +940,8 @@
     <string name="prot_pagina_nome">この PDF の名前</string>
     <string name="prot_pag_n_de">%2$d ページ中 %1$d ページ</string>
     <string name="prot_mesma_posicao">1 ページ目と同じ位置</string>
+    <string name="prot_face_frente">表面</string>
+    <string name="prot_face_verso">裏面</string>
     <string name="prot_pag_anterior">前のページ</string>
     <string name="prot_pag_proxima">次のページ</string>
     <string name="prot_usar_rodape">フッター（施設名とページ番号）を印刷する</string>

@@ -940,6 +940,8 @@
     <string name="prot_pagina_nome">এই PDF-এর নাম</string>
     <string name="prot_pag_n_de">পাতা %1$d, মোট %2$d</string>
     <string name="prot_mesma_posicao">পাতা ১-এর মতো একই অবস্থান</string>
+    <string name="prot_face_frente">সামনের দিক</string>
+    <string name="prot_face_verso">পিছনের দিক</string>
     <string name="prot_pag_anterior">আগের পাতা</string>
     <string name="prot_pag_proxima">পরের পাতা</string>
     <string name="prot_usar_rodape">পাদটীকা ছাপুন (প্রতিষ্ঠান ও পাতার নম্বর)</string>

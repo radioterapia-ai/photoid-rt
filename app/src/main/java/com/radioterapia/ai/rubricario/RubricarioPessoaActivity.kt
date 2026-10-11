@@ -92,6 +92,18 @@ class RubricarioPessoaActivity : BaseActivity() {
             }
         }
 
+        // Limite do nome: é o que garante, na folha impressa, nome em até duas
+        // linhas sem a fonte cair abaixo do piso (ver TipografiaRubricario).
+        // O teto é o limite ou o nome já gravado, o que for maior, medido
+        // DEPOIS do preenchimento. O filtro também age no setText — o deste
+        // preenchimento e o da restauração depois de girar a tela —, e com o
+        // teto fixo um nome gravado antes do limite seria cortado em silêncio,
+        // e o teclado apagaria a palavra que tentasse substituir nele. Assim
+        // ele abre inteiro, pode ser corrigido e só não cresce.
+        edtNome.filters = arrayOf(android.text.InputFilter.LengthFilter(maxOf(
+            com.radioterapia.ai.pdf.TipografiaRubricario.NOME_MAX_CARACTERES,
+            edtNome.text.length)))
+
         // Tocar no quadro com rubrica gravada pergunta antes. O toque não vira
         // traço até a confirmação, senão a rubrica antiga já estaria perdida
         // quando a pergunta aparecesse.

@@ -13,9 +13,10 @@ import java.io.File
  * A impressora em frente-e-verso junta as páginas aos pares — 1 com 2, 3 com
  * 4. As regras fixadas aqui são três:
  *
- *   1. a frente de um impresso com verso começa sempre em posição ímpar, com
- *      uma folha em branco antes quando preciso, para frente e verso caírem
- *      na mesma folha;
+ *   1. a frente de um impresso com verso começa em posição ímpar, com uma
+ *      folha em branco antes quando preciso, para frente e verso caírem na
+ *      mesma folha — salvo a primeira página do protocolo, que segue no verso
+ *      da última página da ficha;
  *   2. página só de frente pode começar no verso da última página anterior;
  *   3. no lote em frente-e-verso, uma folha nunca leva dois pacientes.
  *
@@ -33,8 +34,9 @@ class ProtocoloParidadeTest {
      */
     private fun simular(iniciais: Int, entradas: List<Entrada>): List<String> {
         val doc = MutableList(iniciais) { "I" }
-        for (e in entradas) {
-            if (ProtocoloRenderer.precisaFolhaEmBranco(doc.size + 1, e.verso > 0)) doc.add("B")
+        for ((i, e) in entradas.withIndex()) {
+            if (ProtocoloRenderer.precisaFolhaEmBranco(doc.size + 1, e.verso > 0, inicioDaCauda = i == 0))
+                doc.add("B")
             repeat(e.frente) { doc.add("F") }
             repeat(e.verso) { doc.add("V") }
         }
@@ -50,6 +52,8 @@ class ProtocoloParidadeTest {
         assertTrue(ProtocoloRenderer.precisaFolhaEmBranco(4, true))
         assertFalse(ProtocoloRenderer.precisaFolhaEmBranco(4, false))
         assertFalse(ProtocoloRenderer.precisaFolhaEmBranco(5, false))
+        // A primeira página do protocolo nunca recebe a branca.
+        assertFalse(ProtocoloRenderer.precisaFolhaEmBranco(4, true, inicioDaCauda = true))
     }
 
     @Test
@@ -63,15 +67,19 @@ class ProtocoloParidadeTest {
     }
 
     @Test
-    fun `caso B - frente e verso na mesma folha`() {
+    fun `caso B - a cauda comeca no verso da ultima pagina da ficha`() {
+        // Ficha com número par de páginas: frente e verso na mesma folha.
         val sem = simular(2, listOf(Entrada(1, 1)))
         assertEquals(listOf("I", "I", "F", "V"), sem)
+        assertEquals(listOf("F", "V"), folhas(sem)[1])
+        // Com rubricário (3 páginas): a frente vai no verso do rubricário, sem
+        // folha em branco, e o verso dela abre a folha seguinte.
         val com = simular(3, listOf(Entrada(1, 1)))
-        assertEquals(listOf("I", "I", "I", "B", "F", "V"), com)
-        assertEquals(listOf("F", "V"), folhas(com)[2])
-        // Rodapé: a frente é a página 5 e o verso a 6; a branca conta, mas sem número.
-        assertEquals(5, com.indexOf("F") + 1)
-        assertEquals(6, com.indexOf("V") + 1)
+        assertEquals(listOf("I", "I", "I", "F", "V"), com)
+        assertFalse(com.contains("B"))
+        assertEquals(listOf("I", "F"), folhas(com)[1])
+        assertEquals(4, com.indexOf("F") + 1)
+        assertEquals(5, com.indexOf("V") + 1)
     }
 
     @Test
@@ -87,11 +95,11 @@ class ProtocoloParidadeTest {
         val sem = simular(2, listOf(Entrada(1, 1), Entrada(1, 1)))
         assertEquals(6, sem.size)
         assertFalse(sem.contains("B"))
+        // Com rubricário: o primeiro impresso segue no verso dele; o segundo
+        // volta ao pareamento, com a branca para cair inteiro numa folha.
         val com = simular(3, listOf(Entrada(1, 1), Entrada(1, 1)))
-        assertEquals(8, com.size)
-        assertEquals(4, com.indexOf("B") + 1)
-        // Toda frente começa em posição ímpar.
-        com.forEachIndexed { i, p -> if (p == "F" && (i == 0 || com[i - 1] != "F")) assertEquals(0, i % 2) }
+        assertEquals(listOf("I", "I", "I", "F", "V", "B", "F", "V"), com)
+        assertEquals(listOf("F", "V"), folhas(com)[3])
     }
 
     // ---------------------------------------------------------------- lote

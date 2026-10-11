@@ -92,8 +92,10 @@ class ProtocoloStore(private val context: Context) {
     /**
      * Posição própria de UMA página de um PDF de várias páginas.
      *
-     * @param indice base 0 dentro do PDF da frente. Sempre maior que 0: a
-     *   página 0 é a base, guardada nos campos planos de [Pagina].
+     * @param indice base 0 dentro do PDF — o da frente em [Pagina.ajustes], o
+     *   do verso em [Pagina.versoAjustes]. Sempre maior que 0: a página 0 é a
+     *   base, nos campos planos de [Pagina] na frente e em [Pagina.versoBase]
+     *   no verso.
      */
     data class AjustePagina(val indice: Int, val posicao: Posicao)
 
@@ -141,9 +143,13 @@ class ProtocoloStore(private val context: Context) {
          * como duas páginas separadas — o que sai em duas folhas, e faz a
          * etiqueta de identificação aparecer duas vezes.
          *
-         * O VERSO NÃO RECEBE ETIQUETA NEM LOGOTIPO. Eles já estão na frente da
-         * mesma folha: repetir seria gastar duas etiquetas por paciente e sujar
-         * um impresso que a clínica desenhou com o espaço contado.
+         * O VERSO SAI SEM ETIQUETA E SEM LOGOTIPO até o serviço ligá-los na
+         * calibração dele ([versoBase]). Eles já estão na frente do impresso,
+         * que sai na mesma folha, e repetir por padrão sujaria um impresso que
+         * a clínica desenhou com o espaço contado. A exceção é o primeiro
+         * impresso do protocolo, que começa logo depois da ficha e pode ter o
+         * verso abrindo a folha seguinte (ver ProtocoloRenderer.desenhar): é
+         * para esse verso que a calibração existe.
          */
         val verso: String = "",
         val etqAtiva: Boolean = true,
@@ -154,11 +160,21 @@ class ProtocoloStore(private val context: Context) {
         val logoAtivo: Boolean = false,
         val logoXmm: Float = MARGEM_PADRAO_MM,
         val logoYmm: Float = MARGEM_PADRAO_MM,
-        // nome, ajustes e rodapeAtivo ficam no FIM: quem constrói Pagina por
-        // posição continua preenchendo exatamente os mesmos campos.
+        // nome, ajustes, rodapeAtivo e os do verso ficam no FIM: quem constrói
+        // Pagina por posição continua preenchendo exatamente os mesmos campos.
         val nome: String = "",
         val ajustes: List<AjustePagina> = emptyList(),
-        val rodapeAtivo: Boolean = true
+        val rodapeAtivo: Boolean = true,
+        /**
+         * Etiqueta, logotipo e rodapé do VERSO, com a mesma herança da frente:
+         * [versoBase] é a página 1 do verso e a de toda página dele sem ajuste
+         * próprio em [versoAjustes].
+         *
+         * `null` é o verso de sempre, que [posicaoDoVerso] descreve. Só passa a
+         * existir quando alguém mexe na calibração do verso.
+         */
+        val versoBase: Posicao? = null,
+        val versoAjustes: List<AjustePagina> = emptyList()
     ) {
         /** A posição da página 0, que é também a herdada pelas demais. */
         val posicaoBase: Posicao
@@ -197,6 +213,62 @@ class ProtocoloStore(private val context: Context) {
         fun semAjuste(indice: Int): Pagina =
             if (!temAjuste(indice)) this
             else copy(ajustes = ajustes.filter { it.indice != indice })
+
+        /**
+         * Posição da página [indice] (base 0) do VERSO.
+         *
+         * Sem calibração do verso ([versoBase] nulo), é a página de mesmo
+         * número da frente com a etiqueta e o logotipo desligados: o verso
+         * sai como sempre saiu, com o rodapé seguindo a frente, e a
+         * calibração do verso parte das posições da frente.
+         */
+        fun posicaoDoVerso(indice: Int): Posicao {
+            val base = versoBase
+                ?: return posicaoDa(indice).copy(etqAtiva = false, logoAtivo = false)
+            return if (indice <= 0) base
+            else versoAjustes.firstOrNull { it.indice == indice }?.posicao ?: base
+        }
+
+        /**
+         * A página [indice] do verso tem posição própria? Sem calibração do
+         * verso, é a mesma resposta da frente, de onde ele herda.
+         */
+        fun versoTemAjuste(indice: Int): Boolean =
+            if (versoBase == null) temAjuste(indice)
+            else indice > 0 && versoAjustes.any { it.indice == indice }
+
+        /**
+         * O verso de sempre escrito como calibração: base e ajustes da frente,
+         * com a etiqueta e o logotipo desligados. É o ponto de partida da
+         * primeira calibração do verso, e é o que faz a página do verso em que
+         * ninguém mexeu continuar saindo exatamente como saía — rodapé por
+         * página incluído.
+         */
+        private fun comVersoDeSempre(): Pagina =
+            if (versoBase != null) this
+            else copy(
+                versoBase = posicaoBase.copy(etqAtiva = false, logoAtivo = false),
+                versoAjustes = ajustes.map {
+                    AjustePagina(it.indice, it.posicao.copy(etqAtiva = false, logoAtivo = false))
+                })
+
+        /** Cópia com a página [indice] do verso em [pos]. */
+        fun comPosicaoNoVerso(indice: Int, pos: Posicao): Pagina {
+            val p = comVersoDeSempre()
+            return if (indice <= 0) p.copy(versoBase = pos)
+            else p.copy(versoAjustes = (p.versoAjustes.filter { it.indice != indice } +
+                AjustePagina(indice, pos)).sortedBy { it.indice })
+        }
+
+        /** Cópia em que a página [indice] do verso volta a seguir a página 1 dele. */
+        fun semAjusteNoVerso(indice: Int): Pagina {
+            if (!versoTemAjuste(indice)) return this
+            val p = comVersoDeSempre()
+            return p.copy(versoAjustes = p.versoAjustes.filter { it.indice != indice })
+        }
+
+        /** Cópia sem verso: o PDF dele e a calibração saem juntos. */
+        fun semVerso(): Pagina = copy(verso = "", versoBase = null, versoAjustes = emptyList())
     }
 
     data class Protocolo(
@@ -534,26 +606,38 @@ class ProtocoloStore(private val context: Context) {
         /**
          * Uma página em JSON — a mesma para o `lista.json` e para o pacote.
          *
-         * `nome`, `pp` e `rd` só são escritos quando têm conteúdo. Protocolo que
-         * ninguém tocou continua gerando exatamente os mesmos bytes, o que
-         * mantém estável qualquer comparação feita sobre o arquivo.
+         * `nome`, `pp`, `rd` e `vp` só são escritos quando têm conteúdo.
+         * Protocolo que ninguém tocou continua gerando exatamente os mesmos
+         * bytes, o que mantém estável qualquer comparação feita sobre o arquivo.
+         *
+         * `vp` é a calibração do verso: um objeto com as mesmas chaves curtas da
+         * base e o próprio `pp`. Versão anterior do app ignora a chave e
+         * imprime o verso sem etiqueta, como sempre imprimiu.
          */
         internal fun paginaParaJson(pg: Pagina): JSONObject = JSONObject().apply {
             put("arquivo", pg.arquivo)
             put("verso", pg.verso)
             escreverPosicao(this, pg.posicaoBase)
             if (pg.nome.isNotEmpty()) put("nome", pg.nome)
-            if (pg.ajustes.isNotEmpty()) {
-                put("pp", JSONArray().apply {
-                    pg.ajustes.forEach { a ->
-                        put(JSONObject().apply {
-                            put("i", a.indice)
-                            escreverPosicao(this, a.posicao, rodapeReferencia = pg.rodapeAtivo)
-                        })
-                    }
+            if (pg.ajustes.isNotEmpty()) put("pp", ajustesParaJson(pg.ajustes, pg.rodapeAtivo))
+            pg.versoBase?.let { vb ->
+                put("vp", JSONObject().apply {
+                    escreverPosicao(this, vb)
+                    if (pg.versoAjustes.isNotEmpty())
+                        put("pp", ajustesParaJson(pg.versoAjustes, vb.rodapeAtivo))
                 })
             }
         }
+
+        private fun ajustesParaJson(ajustes: List<AjustePagina>, rodapeDaBase: Boolean) =
+            JSONArray().apply {
+                ajustes.forEach { a ->
+                    put(JSONObject().apply {
+                        put("i", a.indice)
+                        escreverPosicao(this, a.posicao, rodapeReferencia = rodapeDaBase)
+                    })
+                }
+            }
 
         /**
          * Um protocolo em JSON.
@@ -584,7 +668,8 @@ class ProtocoloStore(private val context: Context) {
          *
          * `pp` é lido com cada chave caindo na base da própria página; entrada
          * com índice 0 ou negativo é descartada (a página 0 é a base), e índice
-         * repetido fica com a primeira ocorrência.
+         * repetido fica com a primeira ocorrência. `vp` segue as mesmas regras,
+         * e só é lido quando a página tem verso.
          */
         internal fun deJson(o: JSONObject?): Protocolo? {
             if (o == null) return null
@@ -599,6 +684,15 @@ class ProtocoloStore(private val context: Context) {
                     if (!nomeSimples(arq) || (verso.isNotBlank() && !nomeSimples(verso))) null
                     else {
                         val base = lerPosicao(po, Posicao())
+                        // Calibração de verso sem PDF de verso não tem onde valer.
+                        val vpo = if (verso.isBlank()) null else po.optJSONObject("vp")
+                        // Chave ausente no verso cai em etiqueta e logotipo
+                        // desligados, que é o verso de sempre.
+                        val versoBase = vpo?.let {
+                            lerPosicao(it, Posicao(etqAtiva = false, logoAtivo = false))
+                        }
+                        val versoAjustes = if (vpo != null && versoBase != null)
+                            lerAjustes(vpo.optJSONArray("pp"), versoBase) else emptyList()
                         Pagina(
                             arquivo = arq,
                             verso = verso,
@@ -609,7 +703,9 @@ class ProtocoloStore(private val context: Context) {
                             logoXmm = base.logoXmm, logoYmm = base.logoYmm,
                             nome = po.optString("nome"),
                             ajustes = lerAjustes(po.optJSONArray("pp"), base),
-                            rodapeAtivo = base.rodapeAtivo)
+                            rodapeAtivo = base.rodapeAtivo,
+                            versoBase = versoBase,
+                            versoAjustes = versoAjustes)
                     }
                 }
             val miniatura = o.optString("miniatura")
